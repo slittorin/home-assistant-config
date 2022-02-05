@@ -1,31 +1,9 @@
 # This file includes all the entities for the Home Assistant system.
 
-input_text:
-  home_assistant_git_push_comment:
-    name: Comment to add for git push
-    icon: mdi:github
-    mode: text
-
-input_button:
-  github_push:
-    name: Press to perform Github push
-    icon: mdi:github
-
-automation:
-- alias: "Github push"
-  trigger:
-    - platform: state
-      entity_id: input_button.github_push
-  action:
-    - service: shell_command.github_push
-      data:
-        value: "{{ states('input_text.home_assistant_git_push_comment') }}"
-
+# --------------------------------------------------------------------------------------------------------------
+# For Database and table sizes.
+# --------------------------------------------------------------------------------------------------------------
 sensor:
-    # Get the last line in the git_push-logfile
-  - platform: file
-    name: home_assistant_file_github_push_log
-    file_path: /config/logs/github_push.log
     # Get the MariaDB database size.
   - platform: sql
     db_url: !secret recorder_db_url

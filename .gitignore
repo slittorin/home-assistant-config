@@ -29,16 +29,8 @@
 !/.storage/lovelace
 !/.storage/lovelace.*
 !/.storage/lovelace_*
-#/.storage/
 
-
-# Ignore folders.
-#.cloud
-#.storage
-#.google.token
-#logs
-
-# Last rule: Ensure these files are ignored, otherwise your secret data/credentials will leak.
+# Last rule: If we make a mistake above, ensure these files are ignored, otherwise your secret data/credentials will leak.
 .env
 ip_bans.yaml
 secrets.yaml

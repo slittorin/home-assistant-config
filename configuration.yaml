@@ -49,7 +49,8 @@ homeassistant:
   allowlist_external_dirs:
     - '/config/logs'
   packages:
-    ha_system: !include packages/ha_system.yaml
+    database_table_sizes: !include packages/database_table_sizes.yaml
+    github_push: !include packages/github_push.yaml
     weather: !include packages/weather.yaml
     tariff_electrical: !include packages/tariff_electrical.yaml
     balboa_spa: !include packages/balboa_spa.yaml
