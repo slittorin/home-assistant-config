@@ -34,6 +34,7 @@ _initialize() {
     touch "${logfile}"
 
     echo ""
+    echo "----------------------------------------------------------------------------------------------------------------"
     echo "$(date +%Y%m%d_%H%M%S): Starting Github push."
 
     if [ ${no_comment} -eq 1 ] 
@@ -48,26 +49,19 @@ _github_push() {
     exit_code=0
     status_error=""
     
-    # Add all in /config dir (according to .gitgnore).
+    # Add all in /config dir (according to .gitignore).
     echo "$(date +%Y%m%d_%H%M%S): Added all in base directory"
     git add .
     
     # We also add .storage, but allow .gitignore to only allow whitelisted files.
     # This to be able to add Lovelace files managed by UI.
-    echo "$(date +%Y%m%d_%H%M%S): Added directory: .storage"
-    git add .storage/*
+    echo "$(date +%Y%m%d_%H%M%S): Added directory: .storage/"
+    git add .storage/
 
     # Loop through all directories and add to git (according to .gitignore).
     for dir in */ ; do
-        add_dir=1
-        
-        if [ ${add_dir} -eq 1 ]
-        then
-            echo "$(date +%Y%m%d_%H%M%S): Added directory: ${dir}"
-            git add "${dir}"
-        else
-            echo "$(date +%Y%m%d_%H%M%S): Did not add directory: ${dir}"
-        fi
+        echo "$(date +%Y%m%d_%H%M%S): Added directory: ${dir}"
+        git add "${dir}"
     done
 
     git status
