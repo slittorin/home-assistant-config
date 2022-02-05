@@ -1,0 +1,467 @@
+# This file includes all the items for the Weather integration.
+
+# Logic:
+# - For historical purpuse we track:
+#   - The sun over the horizon, time in readable format and in seconds.
+#   - Time over the horizon when it reaches my solar panels (approximatelly of course):
+#     - 4 degrees above the horizon at sunrise.
+#     - 6 degrees above the horizon at sunset.
+
+# Modern format.
+# If required, utilize name, and set unique_id.
+template:
+  - binary_sensor:
+      # Binary sensor for when sun is rising and above the horizon.
+      - name: Weather sun snapshot elevation above 0 degrees
+        unique_id: weather_sun_snapshot_elevation_above_0_degrees
+        state: >
+          {% set elevation = float(state_attr('sun.sun', 'elevation')) %}
+          {% set rising = state_attr('sun.sun', 'rising') %}
+          {% if ((rising == true) and (elevation > 0)) %}
+          {{ true }}
+          {% else %}
+          {{ false }}
+          {% endif %}
+          
+  - binary_sensor:
+      # Binary sensor for when sun is not rising and below the horizon.
+      - name: Weather sun snapshot elevation below 0 degrees
+        unique_id: weather_sun_snapshot_elevation_below_0_degrees
+        state: >
+          {% set elevation = float(state_attr('sun.sun', 'elevation')) %}
+          {% set rising = state_attr('sun.sun', 'rising') %}
+          {% if ((rising == false) and (elevation < 0)) %}
+          {{ true }}
+          {% else %}
+          {{ false }}
+          {% endif %}
+
+  - binary_sensor:
+      # Binary sensor for when sun is rising, and above 3 degrees, for when the sun reaches the solar panels.
+      - name: Weather sun snapshot elevation reaches solarpanels
+        unique_id: weather_sun_snapshot_elevation_reaches_solarpanels
+        state: >
+          {% set elevation = float(state_attr('sun.sun', 'elevation')) %}
+          {% set rising = state_attr('sun.sun', 'rising') %}
+          {% if ((rising == true) and (elevation > 3)) %}
+          {{ true }}
+          {% else %}
+          {{ false }}
+          {% endif %}
+
+  - binary_sensor:
+      # Binary sensor for when sun is not rising, and below 6 degrees, for when the sun leaves the solar panels.
+      - name: Weather sun snapshot elevation leaves solarpanels
+        unique_id: weather_sun_snapshot_elevation_leaves_solarpanels
+        state: >
+          {% set elevation = float(state_attr('sun.sun', 'elevation')) %}
+          {% set rising = state_attr('sun.sun', 'rising') %}
+          {% if ((rising == false) and (elevation < 6)) %}
+          {{ true }}
+          {% else %}
+          {{ false }}
+          {% endif %}
+
+  # Set a snapshot in seconds and readable format since 00:00 when sun is rising, and above 0 degrees.
+  - trigger:
+      - entity_id: binary_sensor.weather_sun_snapshot_elevation_above_0_degrees
+        platform: state
+        from: "off"
+        to: "on"
+    sensor:
+      - name: weather_sun_snapshot_elevation_above_0_degrees_seconds
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+      - name: weather_sun_snapshot_elevation_above_0_degrees_hhmmss
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
+
+  # Set a snapshot in seconds and readable format since 00:00 when sun is rising, and above 4 degrees, for when the sun reaches the solar panels.
+  - trigger:
+      - entity_id: binary_sensor.weather_sun_snapshot_elevation_reaches_solarpanels
+        platform: state
+        from: "off"
+        to: "on"
+    sensor:
+      - name: weather_sun_snapshot_elevation_reaches_solarpanels_seconds
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+      - name: weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
+
+  # Set a snapshot in seconds and readable format since 00:00 when sun is not rising, and below 0 degrees.
+  - trigger:
+      - entity_id: binary_sensor.weather_sun_snapshot_elevation_below_0_degrees
+        platform: state
+        from: "off"
+        to: "on"
+    sensor:
+      - name: weather_sun_snapshot_elevation_below_0_degrees_seconds
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+      - name: weather_sun_snapshot_elevation_below_0_degrees_hhmmss
+        unit_of_measurement: 'time'
+        state: >
+          {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
+          
+  # Set time in seconds and readable format for how long time has been above the horizon.
+  - trigger:
+      - entity_id: binary_sensor.weather_sun_snapshot_elevation_below_0_degrees
+        platform: state
+        from: "off"
+        to: "on"
+    sensor:
+      - name: weather_sun_time_above_horizon_seconds
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% if (states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') == "unknown") %}
+          {{ 0 }}
+          {% else %}
+          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds')) %}
+          {%   set stop = (now().hour * 3600) + (now().minute * 60) + now().second %}
+          {%   set time = (stop - start) %}
+          {{   int(time) }}
+          {% endif %}
+      - name: weather_sun_time_above_horizon_hhmmss
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% if (states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') == "unknown") %}
+          {{ "" }}
+          {% else %}
+          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds')) %}
+          {%   set stop = int((now().hour * 3600) + (now().minute * 60) + now().second) %}
+          {%   set time  = (stop - start) %}
+          {%   set hours = int(time/3600) %}
+          {%   set time = (time - (hours*3600)) %}
+          {%   set minutes = int(time/60) %}
+          {%   set time = (time - (minutes*60)) %}
+          {%   set seconds = time %}
+          {{ "%02d"|format(hours) }}:{{ "%02d"|format(minutes) }}:{{ "%02d"|format(seconds) }}
+          {% endif %}
+
+  # Set a snapshot in seconds and readable format since 00:00 when sun is not rising, and below 6 degrees.
+  - trigger:
+      - entity_id: binary_sensor.weather_sun_snapshot_elevation_leaves_solarpanels
+        platform: state
+        from: "off"
+        to: "on"
+    sensor:
+      - name: weather_sun_snapshot_elevation_leaves_solarpanels_seconds
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+      - name: weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
+        unit_of_measurement: 'time'
+        state: >
+          {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
+
+  # Set time in seconds and readable format when sun can reach the solar panels
+  - trigger:
+      - entity_id: binary_sensor.weather_sun_snapshot_elevation_leaves_solarpanels
+        platform: state
+        from: "off"
+        to: "on"
+    sensor:
+      - name: weather_sun_time_reaches_solarpanels_seconds
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% if (states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') == "unknown") %}
+          {{ 0 }}
+          {% else %}
+          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds')) %}
+          {%   set stop = (now().hour * 3600) + (now().minute * 60) + now().second %}
+          {%   set time = (stop - start) %}
+          {{   time }}
+          {% endif %}
+      - name: weather_sun_time_reaches_solarpanels_hhmmss
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% if (states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') == "unknown") %}
+          {{ "" }}
+          {% else %}
+          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds')) %}
+          {%   set stop = int((now().hour * 3600) + (now().minute * 60) + now().second) %}
+          {%   set time  = (stop - start) %}
+          {%   set hours = int(time/3600) %}
+          {%   set time = (time - (hours*3600)) %}
+          {%   set minutes = int(time/60) %}
+          {%   set time = (time - (minutes*60)) %}
+          {%   set seconds = time %}
+          {{ "%02d"|format(hours) }}:{{ "%02d"|format(minutes) }}:{{ "%02d"|format(seconds) }}
+          {% endif %}
+
+  - sensor:
+      # We want to keep track of temperature, since that sensor data is in an attribute.
+      - name: Weather temperature
+        unique_id: weather_temperature
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'temperature')) }}"
+
+      # We want to keep track of humidity, since that sensor data is in an attribute.
+      - name: Weather humidity
+        unique_id: weather_humidity
+        device_class: 'humidity'
+        unit_of_measurement: '%'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'humidity')) }}"
+
+      # We want to keep track of atmospheric pressure, since that sensor data is in an attribute.
+      - name: Weather pressure
+        unique_id: weather_pressure
+        device_class: 'pressure'
+        unit_of_measurement: 'hPa'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'pressure')) }}"
+
+      # We want to keep track of wind bearing, since that sensor data is in an attribute.
+      - name: Weather wind bearing
+        unique_id: weather_wind_bearing
+        unit_of_measurement: '°'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'wind_bearing')) }}"
+
+      # We want to keep track of wind speed, since that sensor data is in an attribute.
+      - name: Weather wind speed
+        unique_id: weather_wind_speed
+        unit_of_measurement: 'km/h'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'wind_speed')) }}"
+
+      # We want to keep track of wind gust speed, since that sensor data is in an attribute.
+      - name: Weather wind gust speed
+        unique_id: weather_wind_gust_speed
+        unit_of_measurement: 'km/h'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'wind_gust_speed')) }}"
+
+      # We want to keep track of visibility, since that sensor data is in an attribute.
+      - name: Weather visibility
+        unique_id: weather_visibility
+        unit_of_measurement: 'km'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'visibility')) }}"
+
+      # We want to keep track of humidity, since that sensor data is in an attribute.
+      - name: Weather cloudiness
+        unique_id: weather_cloudiness
+        unit_of_measurement: '%'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'cloudiness')) }}"
+
+      # We want to keep track of thunder probability, since that sensor data is in an attribute.
+      - name: Weather thunder probability
+        unique_id: weather_thunder_probability
+        unit_of_measurement: '%'
+        state_class: measurement
+        state: "{{ float(state_attr('weather.smhi_home', 'thunder_probability')) }}"
+
+      # We want to keep track of weather wind speed in m/s, as SMHI integration gives km/h.
+      - name: Weather wind speed ms
+        unique_id: weather_wind_speed_ms
+        unit_of_measurement: 'm/s' # SMHI integration gives km/h, so we convert.
+        state_class: measurement
+        state: "{{ (state_attr('weather.smhi_home', 'wind_speed') / 3.6) | round(1) }}"
+        
+      # We want to keep track of weather wind gust speed in m/s, as SMHI integration gives km/h.
+      - name: Weather wind gust speed ms
+        unique_id: weather_wind_gust_speed_ms
+        unit_of_measurement: 'm/s' # SMHI integration gives km/h, so we convert.
+        state_class: measurement
+        state: "{{ (state_attr('weather.smhi_home', 'wind_gust_speed') / 3.6) | round(1) }}"
+        
+      # We want to measure the chill-effect of wind speed on temperature
+      # https://www.smhi.se/kunskapsbanken/meteorologi/vind/vindens-kyleffekt-1.259
+      - name: Weather wind feels like
+        unique_id: weather_wind_feels_like
+        unit_of_measurement: '°C'
+        state_class: measurement
+        state: >
+          {% set t = float(state_attr('weather.smhi_home', 'temperature')) %}
+          {% set v = float(states('sensor.weather_wind_speed_ms')) %}
+          {% set t_calc = t %}
+          {% if (((v > 2) and (v < 40)) and ((t > -40) and (t < 10))) %}
+          {%   set t1 = 0.6215 * t %}
+          {%   set t2 = -13.956 * (v**0.16) %}
+          {%   set t3 = 0.48669 * t * (v**0.16) %}
+          {%   set t_calc = (13.12 + t1 + t2 + t3) | round(1) %}
+          {% endif %}
+          {{ t_calc }}
+          
+      # We want to measure the chill-effect of wind-gust speed on temperature
+      # https://www.smhi.se/kunskapsbanken/meteorologi/vind/vindens-kyleffekt-1.259
+      - name: Weather wind gust feels like
+        unique_id: weather_wind_gust_feels_like
+        unit_of_measurement: '°C'
+        state_class: measurement
+        state: >
+          {% set t = float(state_attr('weather.smhi_home', 'temperature')) %}
+          {% set v = float(states('sensor.weather_wind_gust_speed_ms')) %}
+          {% set t_calc = t %}
+          {% if (((v > 2) and (v < 40)) and ((t > -40) and (t < 10))) %}
+          {%   set t1 = 0.6215 * t %}
+          {%   set t2 = -13.956 * (v**0.16) %}
+          {%   set t3 = 0.48669 * t * (v**0.16) %}
+          {%   set t_calc = (13.12 + t1 + t2 + t3) | round(1) %}
+          {% endif %}
+          {{ t_calc }}
+          
+      # We want to transate wind bearing to readable format.
+      - name: Weather wind bearing readable
+        unique_id: weather_wind_bearing_readable
+        state_class: measurement
+        state: >
+          {% set bearing = float(state_attr('weather.smhi_home', 'wind_bearing')) %}
+          {% set readable = '' %}
+          {% if ((bearing >= 348.75) or (bearing < 11.25)) %}
+          {%   set readable = 'N' %}
+          {% elif ((bearing >= 11.25) and (bearing < 33.75)) %}
+          {%   set readable = 'NNO' %}
+          {% elif ((bearing >= 33.75) and (bearing < 56.25)) %}
+          {%   set readable = 'NO' %}
+          {% elif ((bearing >= 56.25) and (bearing < 78.75)) %}
+          {%   set readable = 'ONO' %}
+          {% elif ((bearing >= 78.75) and (bearing < 101.25)) %}
+          {%   set readable = 'Ö' %}
+          {% elif ((bearing >= 101.25) and (bearing < 123.75)) %}
+          {%   set readable = 'OSO' %}
+          {% elif ((bearing >= 123.75) and (bearing < 146.25)) %}
+          {%   set readable = 'SO' %}
+          {% elif ((bearing >= 146.25) and (bearing < 168.75)) %}
+          {%   set readable = 'SSO' %}
+          {% elif ((bearing >= 168.75) and (bearing < 191.25)) %}
+          {%   set readable = 'S' %}
+          {% elif ((bearing >= 191.25) and (bearing < 213.75)) %}
+          {%   set readable = 'SSV' %}
+          {% elif ((bearing >= 213.75) and (bearing < 236.25)) %}
+          {%   set readable = 'SV' %}
+          {% elif ((bearing >= 236.25) and (bearing < 258.75)) %}
+          {%   set readable = 'VSV' %}
+          {% elif ((bearing >= 258.75) and (bearing < 281.25)) %}
+          {%   set readable = 'V' %}
+          {% elif ((bearing >= 281.25) and (bearing < 303.75)) %}
+          {%   set readable = 'VNV' %}
+          {% elif ((bearing >= 303.75) and (bearing < 326.25)) %}
+          {%   set readable = 'NV' %}
+          {% elif ((bearing >= 326.25) and (bearing < 348.75)) %}
+          {%   set readable = 'NNV' %}
+          {% endif %}
+          {{ readable }}
+          
+      # We want to transate wind speed to readable format.
+      - name: Weather wind speed readable
+        unique_id: weather_wind_speed_readable
+        state_class: measurement
+        state: >
+          {% set bearing = float(state_attr('weather.smhi_home', 'wind_speed')) %}
+          {% set readable = '' %}
+          {% if ((bearing >= 348.75) or (bearing < 11.25)) %}
+          {%   set readable = 'N' %}
+          {% elif ((bearing >= 11.25) and (bearing < 33.75)) %}
+          {%   set readable = 'NNO' %}
+          {% elif ((bearing >= 33.75) and (bearing < 56.25)) %}
+          {%   set readable = 'NO' %}
+          {% elif ((bearing >= 56.25) and (bearing < 78.75)) %}
+          {%   set readable = 'ONO' %}
+          {% elif ((bearing >= 78.75) and (bearing < 101.25)) %}
+          {%   set readable = 'Ö' %}
+          {% elif ((bearing >= 101.25) and (bearing < 123.75)) %}
+          {%   set readable = 'OSO' %}
+          {% elif ((bearing >= 123.75) and (bearing < 146.25)) %}
+          {%   set readable = 'SO' %}
+          {% elif ((bearing >= 146.25) and (bearing < 168.75)) %}
+          {%   set readable = 'SSO' %}
+          {% elif ((bearing >= 168.75) and (bearing < 191.25)) %}
+          {%   set readable = 'S' %}
+          {% elif ((bearing >= 191.25) and (bearing < 213.75)) %}
+          {%   set readable = 'SSV' %}
+          {% elif ((bearing >= 213.75) and (bearing < 236.25)) %}
+          {%   set readable = 'SV' %}
+          {% elif ((bearing >= 236.25) and (bearing < 258.75)) %}
+          {%   set readable = 'VSV' %}
+          {% elif ((bearing >= 258.75) and (bearing < 281.25)) %}
+          {%   set readable = 'V' %}
+          {% elif ((bearing >= 281.25) and (bearing < 303.75)) %}
+          {%   set readable = 'VNV' %}
+          {% elif ((bearing >= 303.75) and (bearing < 326.25)) %}
+          {%   set readable = 'NV' %}
+          {% elif ((bearing >= 326.25) and (bearing < 348.75)) %}
+          {%   set readable = 'NNV' %}
+          {% endif %}
+          
+      # We want to transate wind speed to readable format.
+      # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252
+      - name: Weather wind speed readable format
+        unique_id: weather_wind_speed_readable_format
+        state_class: measurement
+        state: >
+          {% set speed = float(states('sensor.weather_wind_speed_ms')) %}
+          {% set readable = '123' %}
+          {% if (speed < 0.3) %}
+          {%   set readable = 'Lugnt' %}
+          {% elif ((speed >= 0.3) and (speed < 3.4)) %}
+          {%   set readable = 'Svag vind' %}
+          {% elif ((speed >= 3.4) and (speed < 8.0)) %}
+          {%   set readable = 'Måttlig vind' %}
+          {% elif ((speed >= 8.0) and (speed < 13.9)) %}
+          {%   set readable = 'Frisk vind' %}
+          {% elif ((speed >= 13.9) and (speed < 24.5)) %}
+          {%   set readable = 'Hård vind' %}
+          {% elif ((speed >= 24.5) and (speed < 32.7)) %}
+          {%   set readable = 'Storm' %}
+          {% elif (speed >= 32.7) %}
+          {%   set readable = 'Orkan' %}
+          {% endif %}
+          {{ readable }}
+
+      # We want to transate wind gust speed to readable format.
+      # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252
+      - name: Weather wind gust speed readable
+        unique_id: weather_wind_gust_speed_readable
+        state_class: measurement
+        state: >
+          {% set speed = float(states('sensor.weather_wind_gust_speed_ms')) %}
+          {% set readable = '' %}
+          {% if (speed < 0.3) %}
+          {%   set readable = 'Lugnt' %}
+          {% elif ((speed >= 0.3) and (speed < 3.4)) %}
+          {%   set readable = 'Svag vind' %}
+          {% elif ((speed >= 3.4) and (speed < 8.0)) %}
+          {%   set readable = 'Måttlig vind' %}
+          {% elif ((speed >= 8.0) and (speed < 13.9)) %}
+          {%   set readable = 'Frisk vind' %}
+          {% elif ((speed >= 13.9) and (speed < 24.5)) %}
+          {%   set readable = 'Hård vind' %}
+          {% elif ((speed >= 24.5) and (speed < 32.7)) %}
+          {%   set readable = 'Storm' %}
+          {% elif (speed >= 32.7) %}
+          {%   set readable = 'Orkan' %}
+          {% endif %}
+          {{ readable }}
+
+      # We want to keep track of sun elevation, since that sensor data is in an attribute.
+      - name: Sun elevation
+        unique_id: sun_elevation
+        unit_of_measurement: '°'
+        state_class: measurement
+        state: "{{ float(state_attr('sun.sun', 'elevation')) }}"
+
+      # We want to keep track of sun azimuth, since that sensor data is in an attribute.
+      - name: Sun azimuth
+        unique_id: sun_azimuth
+        unit_of_measurement: '°'
+        state_class: measurement
+        state: "{{ float(state_attr('sun.sun', 'azimuth')) }}"

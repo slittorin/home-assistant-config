@@ -1,0 +1,64 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+logger:
+  default: warn
+
+# Recorder is enabled by default.
+recorder:
+  db_url: !secret recorder_db_url
+  purge_keep_days: 30
+  commit_interval: 10
+
+# Logbook is enabled by default.
+logbook:
+
+# History is enabled by default.
+history:
+  exclude:
+    domains:
+      # Updater: Is not required in history data.
+      - updater
+    entity_globs:
+      # We do not include any of the test_-sensors.
+      - binary_sensor.test_*
+      - sensor.test_*
+
+# We utilize InfluxDB as state-history database.
+influxdb:
+  api_version: 2
+  ssl: false
+  host: 192.168.2.30
+  port: 8086
+  organization: lite
+  bucket: ha
+  token: !secret history_db_token
+  max_retries: 3
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+sensor: !include sensors.yaml
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+homeassistant:
+  allowlist_external_dirs:
+    - '/config/logs'
+  packages:
+    ha_system: !include packages/ha_system.yaml
+    weather: !include packages/weather.yaml
+    tariff_electrical: !include packages/tariff_electrical.yaml
+    balboa_spa: !include packages/balboa_spa.yaml
+
+frontend:
+  extra_module_url:
+    - /local/card-mod.js
+
+shell_command:
+  github_push: /config/scripts/github_push.sh "{{ value }}"
+  remove_daily_snapshots: find /root/backup/ -name 'ha_snapshot_daily_*' -mtime +7 -print
+  remove_weekly_snapshots: find /root/backup/ -name 'ha_snapshot_weekly_*'' -mtime +56 -print

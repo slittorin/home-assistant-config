@@ -1,0 +1,10 @@
+# This file includes all the items for the electrical tariffs.
+
+sensor:
+  # We get all the data from Nordpool, for my region and currency,
+  - platform: nordpool
+    region: "SE3"
+    VAT: True
+    currency: "EUR"
+    precision: 3
+    price_type: kWh

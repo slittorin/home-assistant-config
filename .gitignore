@@ -1,0 +1,37 @@
+# .gitignore for Home Assistant.
+
+# First rule: Ignore everything
+*
+*/*
+
+# Second rule: Whitelisted folders, these will not be ignored.
+!/blueprints/
+!/blueprints/**
+!/deps/
+!/deps/**
+!/packages/
+!/packages/**
+!/scripts/
+!/scripts/**
+!/tts/
+!/tts/**
+!/www/
+!/www/**
+
+# Third rule: Whitelisted files, these will not be ignored.
+!*.yaml
+!.gitignore
+!*.md
+!*.sh
+!/.storage/lovelace**
+
+# Ignore folders.
+#.cloud
+#.storage
+#.google.token
+#logs
+
+# Last rule: Ensure these files are ignored, otherwise your secret data/credentials will leak.
+.env
+ip_bans.yaml
+secrets.yaml

@@ -1,0 +1,140 @@
+# This file includes all the entities for the Home Assistant system.
+
+input_text:
+  home_assistant_git_push_comment:
+    name: Comment to add for git push
+    icon: mdi:github
+    mode: text
+
+input_button:
+  github_push:
+    name: Press to perform Github push
+    icon: mdi:github
+
+automation:
+- alias: "Github push"
+  trigger:
+    - platform: state
+      entity_id: input_button.github_push
+  action:
+    - service: shell_command.github_push
+      data:
+        value: "{{ states('input_text.home_assistant_git_push_comment') }}"
+
+sensor:
+    # Get the last line in the git_push-logfile
+  - platform: file
+    name: home_assistant_file_github_push_log
+    file_path: /config/logs/github_push.log
+    # Get the MariaDB database size.
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan every 30:t minute.
+    scan_interval: 1800
+    queries:
+      # We keep track of the MariaDB database size.
+      - name: home_assistant_db_size
+        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="homeassistant" GROUP BY table_schema;'
+        column: "value"
+        unit_of_measurement: 'MB'
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan every 30:t minute.
+    scan_interval: 1800
+    queries:
+      # We keep track of the size for table: events
+      - name: home_assistant_table_size_events
+        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="events";'
+        column: "value"
+        unit_of_measurement: 'MB'
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan every 30:t minute.
+    scan_interval: 1800
+    queries:
+      # We keep track of the size for table: states
+      - name: home_assistant_table_size_states
+        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="states";'
+        column: "value"
+        unit_of_measurement: 'MB'
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan every 30:t minute.
+    scan_interval: 1800
+    queries:
+      # We keep track of the size for table: statistics
+      - name: home_assistant_table_size_statistics
+        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="statistics";'
+        column: "value"
+        unit_of_measurement: 'MB'
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan every 30:t minute.
+    scan_interval: 1800
+    queries:
+      # We keep track of the size for table: statistics_short_term
+      - name: home_assistant_table_size_statistics_short_term
+        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="statistics_short_term";'
+        column: "value"
+        unit_of_measurement: 'MB'
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan once every day.
+    scan_interval: 1800
+    queries:
+      # We keep track of the min(created date) for table: events
+      - name: home_assistant_min_created_events
+        query: 'select convert(min(created), DATE) as "value" from homeassistant.events;'
+        column: "value"
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan once every day.
+    scan_interval: 1800
+    queries:
+      # We keep track of the min(created date) for table: states
+      - name: home_assistant_min_created_states
+        query: 'select convert(min(created), DATE) as "value" from homeassistant.states;'
+        column: "value"
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan once every day.
+    scan_interval: 1800
+    queries:
+      # We keep track of the min(created date) for table: statistics
+      - name: home_assistant_min_created_statistics
+        query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics;'
+        column: "value"
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan once every day.
+    scan_interval: 86400
+    queries:
+      # We keep track of the min(created date) for table: statistics_short_term
+      - name: home_assistant_min_created_statistics_short_term
+        query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics_short_term;'
+        column: "value"
+  - platform: sql
+    db_url: !secret recorder_db_url
+    # Scan once every day.
+    scan_interval: 86400
+    queries:
+      # We keep track of 30 entities with most rows in the database.
+      # Inspiration from: https://stackoverflow.com/questions/276927/can-i-concatenate-multiple-mysql-rows-into-one-field?rq=1
+      - name: home_assistant_entities_with_most_rows
+        query: 'select * from (select concat(entity_id,": ",count(distinct state_id)) as "value" from homeassistant.states group by entity_id order by COUNT(*) desc limit 0,30) t limit 0,30;'
+        column: "value"
+
+template:
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of domains, and entities within each domain.
+      # https://community.home-assistant.io/t/where-can-i-find-a-list-of-domains/62654/20
+      - name: home_assistant_domains_in_use
+        state_class: measurement
+        state: >
+          {%- for d in states | groupby('domain') %}
+          {% if loop.first %}{{loop.length}} Domains:
+          {% endif %}- {{ d[0] }}: {{d[0]|count}}
+          {%- endfor %}
