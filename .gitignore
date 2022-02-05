@@ -23,7 +23,7 @@
 !.gitignore
 !*.md
 !*.sh
-!/.storage/lovelace**
+!.storage/lovelace.homeassistant
 
 # Ignore folders.
 #.cloud
