@@ -25,7 +25,7 @@
 !*.sh
 
 # Fourth rule is more specific, as we want to whitelist certain files in .storage
-!/.storage/*
+!/.storage/
 !/.storage/lovelace*
 /.storage/*
 
