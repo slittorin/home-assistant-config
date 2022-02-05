@@ -1,6 +1,6 @@
 # .gitignore for Home Assistant.
 
-# First rule: Ignore everything
+# First rule: Ignore everything, all files in root and all directories.
 *
 */*
 
@@ -23,7 +23,12 @@
 !.gitignore
 !*.md
 !*.sh
-!.storage/lovelace.homeassistant
+
+# Fourth rule is more specific, as we want to whitelist certain files in .storage
+!/.storage/*
+!/.storage/lovelace*
+/.storage/*
+
 
 # Ignore folders.
 #.cloud
