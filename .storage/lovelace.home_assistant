@@ -1,0 +1,101 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.home_assistant",
+    "data": {
+        "config": {
+            "views": [
+                {
+                    "title": "Home",
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "input_text.home_assistant_git_push_comment",
+                                    "name": "Git push kommentar"
+                                },
+                                {
+                                    "entity": "input_button.github_push",
+                                    "name": "Tryck f\u00f6r att utf\u00f6ra Git push"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_file_github_push_log",
+                                    "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
+                                    "icon": "mdi:github"
+                                }
+                            ],
+                            "title": "Push till Github"
+                        },
+                        {
+                            "type": "history-graph",
+                            "entities": [
+                                {
+                                    "entity": "sensor.home_assistant_db_size",
+                                    "name": "Full databasstorlek"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_table_size_states",
+                                    "name": "Tabell - states"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_table_size_events",
+                                    "name": "Tabell - events"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_table_size_statistics",
+                                    "name": "Tabell - statistics"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_table_size_statistics_short_term",
+                                    "name": "Tabell - statistics_short_term"
+                                }
+                            ],
+                            "hours_to_show": 168,
+                            "refresh_interval": 0,
+                            "title": "Storlek p\u00e5 Recorder-databas och tabeller"
+                        },
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.home_assistant_min_created_events",
+                                    "name": "Tabell: events",
+                                    "icon": "mdi:database"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_min_created_states",
+                                    "name": "Tabell: states",
+                                    "icon": "mdi:database"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_min_created_statistics",
+                                    "name": "Tabell: statistics",
+                                    "icon": "mdi:database"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_min_created_statistics_short_term",
+                                    "name": "Tabell: statistics_short_term",
+                                    "icon": "mdi:database"
+                                }
+                            ],
+                            "title": "Tabeller: Fr\u00e5n n\u00e4r finns data"
+                        },
+                        {
+                            "type": "entity",
+                            "entity": "sensor.home_assistant_domains_in_use",
+                            "icon": "mdi:home-assistant",
+                            "name": "Antal domains som anv\u00e4nds i Home Assistant"
+                        },
+                        {
+                            "type": "entity",
+                            "entity": "sensor.home_assistant_entities_with_most_rows",
+                            "icon": "mdi:database",
+                            "name": "Recorder databas - states - 30 entitieter med mest antal rader"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

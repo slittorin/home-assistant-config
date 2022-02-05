@@ -26,8 +26,10 @@
 
 # Fourth rule is more specific, as we want to whitelist certain files in .storage
 !/.storage/
-!/.storage/lovelace*
-/.storage/*
+!/.storage/lovelace
+!/.storage/lovelace.*
+!/.storage/lovelace_*
+#/.storage/
 
 
 # Ignore folders.
