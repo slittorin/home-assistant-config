@@ -22,11 +22,20 @@ template:
       - platform: time
         at: "01:00:00"
     sensor:
-      # Get the number of domains
+      # Get the number of domains.
       - name: home_assistant_number_of_domains_in_use
         state_class: measurement
         state: >
           {{ states|map(attribute='domain')|unique|list|length }}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities.
+      - name: home_assistant_number_of_entities
+        state_class: measurement
+        state: >
+          {{ states|map(attribute='entity_id')|unique|list|length }}
   - trigger:
       - platform: time
         at: "01:00:00"
