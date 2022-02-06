@@ -82,18 +82,8 @@
                             "title": "Tabeller: Fr\u00e5n n\u00e4r finns data"
                         },
                         {
-                            "type": "entity",
-                            "entity": "sensor.home_assistant_entities_with_most_rows",
-                            "icon": "mdi:database",
-                            "name": "Recorder databas - states - 30 entitieter med mest antal rader"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.home_assistant_domains_in_use"
-                                }
-                            ],
+                            "type": "markdown",
+                            "content": "{% set rows = states('sensor.home_assistant_domains_in_use').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
                             "title": "Dom\u00e4ner som anv\u00e4nds"
                         },
                         {
@@ -112,37 +102,37 @@
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_binary_sensor",
                                     "name": "Dom\u00e4n: binary-sensor",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:toggle-switch"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_automation",
                                     "name": "Dom\u00e4n: automation",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:home-automation"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_climate",
                                     "name": "Dom\u00e4n: climate",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:home-thermometer"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_input_button",
                                     "name": "Dom\u00e4n: input_button",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:gesture-tap-button"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_input_text",
                                     "name": "Dom\u00e4n: input_text",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:form-textbox"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_persistent_notification",
                                     "name": "Dom\u00e4n: persistent_notification",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:bell"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_person",
                                     "name": "Dom\u00e4n: person",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:account"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_sensor",
@@ -152,20 +142,25 @@
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_sun",
                                     "name": "Dom\u00e4n: sun",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:white-balance-sunny"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_weather",
                                     "name": "Dom\u00e4n: weather",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:weather-cloudy"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_zone",
                                     "name": "Dom\u00e4n: zone",
-                                    "icon": "mdi:home-assistant"
+                                    "icon": "mdi:home-map-marker"
                                 }
                             ],
                             "title": "Dom\u00e4ner och entiteter som anv\u00e4nds"
+                        },
+                        {
+                            "type": "markdown",
+                            "content": "{% set rows = states('sensor.home_assistant_entities_with_most_rows').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
+                            "title": "De 30 entiteterna med st\u00f6rst antal event-rader i Recorder-databas"
                         }
                     ]
                 }

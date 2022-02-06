@@ -17,10 +17,10 @@ template:
       - name: home_assistant_domains_in_use
         state_class: measurement
         state: >
-          - {{ states|map(attribute='domain')|unique|list|join('\n- ') }}
+          - {{ states|map(attribute='domain')|unique|list|join(',') }}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:01:00"
     sensor:
       # Get the number of domains.
       - name: home_assistant_number_of_domains_in_use
@@ -29,7 +29,7 @@ template:
           {{ states|map(attribute='domain')|unique|list|length }}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:02:00"
     sensor:
       # Get the number of entities.
       - name: home_assistant_number_of_entities
@@ -38,7 +38,7 @@ template:
           {{ states|map(attribute='entity_id')|unique|list|length }}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:03:00"
     sensor:
       # Get the number of entities within domain: automation
       - name: home_assistant_entities_domain_automation
@@ -54,7 +54,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:04:00"
     sensor:
       # Get the number of entities within domain: binary_sensor
       - name: home_assistant_entities_domain_binary_sensor
@@ -70,7 +70,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:05:00"
     sensor:
       # Get the number of entities within domain: climate
       - name: home_assistant_entities_domain_climate
@@ -86,7 +86,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:06:00"
     sensor:
       # Get the number of entities within domain: input_button
       - name: home_assistant_entities_domain_input_button
@@ -102,7 +102,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:07:00"
     sensor:
       # Get the number of entities within domain: input_text
       - name: home_assistant_entities_domain_input_text
@@ -118,7 +118,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:08:00"
     sensor:
       # Get the number of entities within domain: persistent_notification
       - name: home_assistant_entities_domain_persistent_notification
@@ -134,7 +134,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:09:00"
     sensor:
       # Get the number of entities within domain: person
       - name: home_assistant_entities_domain_person
@@ -150,7 +150,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:10:00"
     sensor:
       # Get the number of entities within domain: sensor
       - name: home_assistant_entities_domain_sensor
@@ -166,7 +166,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:11:00"
     sensor:
       # Get the number of entities within domain: sun
       - name: home_assistant_entities_domain_sun
@@ -182,7 +182,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:12:00"
     sensor:
       # Get the number of entities within domain: weather
       - name: home_assistant_entities_domain_weather
@@ -198,7 +198,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:00:00"
+        at: "01:13:00"
     sensor:
       # Get the number of entities within domain: zone
       - name: home_assistant_entities_domain_zone

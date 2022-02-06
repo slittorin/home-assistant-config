@@ -95,6 +95,7 @@ sensor:
     queries:
       # We keep track of 30 entities with most rows in the database.
       # Inspiration from: https://stackoverflow.com/questions/276927/can-i-concatenate-multiple-mysql-rows-into-one-field?rq=1
+      # The output is in one row, separated by colon ",".
       - name: home_assistant_entities_with_most_rows
-        query: 'select * from (select concat(entity_id,": ",count(distinct state_id)) as "value" from homeassistant.states group by entity_id order by COUNT(*) desc limit 0,30) t limit 0,30;'
+        query: 'select group_concat(value separator ",") as "value" from (select concat(entity_id, ": ", count(distinct state_id)) as "value" from homeassistant.states group by entity_id order by COUNT(*) desc limit 0,30) t limit 0,30;'
         column: "value"
