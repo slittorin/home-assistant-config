@@ -50,6 +50,7 @@ homeassistant:
     - '/config/logs'
   packages:
     database_table_sizes: !include packages/database_table_sizes.yaml
+    domains_entities: !include packages/domains_entities.yaml
     github_push: !include packages/github_push.yaml
     weather: !include packages/weather.yaml
     tariff_electrical: !include packages/tariff_electrical.yaml
