@@ -1,4 +1,4 @@
-# This file includes all the items for the Weather integration.
+# This file includes all the entities for tracking weather data.
 
 # Logic:
 # - For historical purpuse we track:

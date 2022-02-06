@@ -1,4 +1,4 @@
-# This file includes all the items for the electrical tariffs.
+# This file includes all the entities for the electrical tariffs.
 
 sensor:
   # We get all the data from Nordpool, for my region and currency,

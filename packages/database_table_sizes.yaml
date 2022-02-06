@@ -1,8 +1,5 @@
-# This file includes all the entities for the Home Assistant system.
+# This file includes all the entities for tracking database and table sizes.
 
-# --------------------------------------------------------------------------------------------------------------
-# For Database and table sizes.
-# --------------------------------------------------------------------------------------------------------------
 sensor:
     # Get the MariaDB database size.
   - platform: sql
@@ -101,18 +98,3 @@ sensor:
       - name: home_assistant_entities_with_most_rows
         query: 'select * from (select concat(entity_id,": ",count(distinct state_id)) as "value" from homeassistant.states group by entity_id order by COUNT(*) desc limit 0,30) t limit 0,30;'
         column: "value"
-
-template:
-  - trigger:
-      - platform: time
-        at: "01:00:00"
-    sensor:
-      # Get the number of domains, and entities within each domain.
-      # https://community.home-assistant.io/t/where-can-i-find-a-list-of-domains/62654/20
-      - name: home_assistant_domains_in_use
-        state_class: measurement
-        state: >
-          {%- for d in states | groupby('domain') %}
-          {% if loop.first %}{{loop.length}} Domains:
-          {% endif %}- {{ d[0] }}: {{d[0]|count}}
-          {%- endfor %}

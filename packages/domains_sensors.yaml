@@ -1,0 +1,205 @@
+# This file includes all the entities for tracking domains and sensors.
+
+#        state: >
+#          {%- for d in states | groupby('domain') %}
+#          {% if loop.first %}{{loop.length}} Domains:
+#          {% endif %}
+#          - {{ d[0] }}: {{d[0]|count + "\n"}}
+#          {%- endfor %}
+
+template:
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the domains currently in use.
+      # https://community.home-assistant.io/t/where-can-i-find-a-list-of-domains/62654/20
+      - name: home_assistant_domains_in_use
+        state_class: measurement
+        state: >
+          - {{ states|map(attribute='domain')|unique|list|join('\n- ') }}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of domains
+      - name: home_assistant_number_of_domains_in_use
+        state_class: measurement
+        state: >
+          {{ states|map(attribute='domain')|unique|list|length }}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: automation
+      - name: home_assistant_entities_domain_automation
+        state_class: measurement
+        state: >
+          {%- set domains = ['automation'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: binary_sensor
+      - name: home_assistant_entities_domain_binary_sensor
+        state_class: measurement
+        state: >
+          {%- set domains = ['binary_sensor'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: climate
+      - name: home_assistant_entities_domain_climate
+        state_class: measurement
+        state: >
+          {%- set domains = ['climate'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: input_button
+      - name: home_assistant_entities_domain_input_button
+        state_class: measurement
+        state: >
+          {%- set domains = ['input_button'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: input_text
+      - name: home_assistant_entities_domain_input_text
+        state_class: measurement
+        state: >
+          {%- set domains = ['input_text'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: persistent_notification
+      - name: home_assistant_entities_domain_persistent_notification
+        state_class: measurement
+        state: >
+          {%- set domains = ['persistent_notification'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: person
+      - name: home_assistant_entities_domain_person
+        state_class: measurement
+        state: >
+          {%- set domains = ['person'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: sensor
+      - name: home_assistant_entities_domain_sensor
+        state_class: measurement
+        state: >
+          {%- set domains = ['sensor'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: sun
+      - name: home_assistant_entities_domain_sun
+        state_class: measurement
+        state: >
+          {%- set domains = ['sun'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: weather
+      - name: home_assistant_entities_domain_weather
+        state_class: measurement
+        state: >
+          {%- set domains = ['weather'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:00:00"
+    sensor:
+      # Get the number of entities within domain: zone
+      - name: home_assistant_entities_domain_zone
+        state_class: measurement
+        state: >
+          {%- set domains = ['zone'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}

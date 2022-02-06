@@ -1,9 +1,7 @@
-# This file includes all the entities for the Home Assistant system.
+# This file includes all the entities for the Github push.
 
-# --------------------------------------------------------------------------------------------------------------
-# For Github push
 # See also configuration.yaml that holds the shell_command.
-# --------------------------------------------------------------------------------------------------------------
+
 input_text:
   home_assistant_git_push_comment:
     name: Comment to add for git push
