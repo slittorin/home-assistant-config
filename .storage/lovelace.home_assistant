@@ -101,66 +101,61 @@
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_binary_sensor",
-                                    "name": "Dom\u00e4n: binary-sensor",
+                                    "name": "Entiteter, dom\u00e4n: binary-sensor",
                                     "icon": "mdi:toggle-switch"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_automation",
-                                    "name": "Dom\u00e4n: automation",
+                                    "name": "Entiteter, dom\u00e4n: automation",
                                     "icon": "mdi:home-automation"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_climate",
-                                    "name": "Dom\u00e4n: climate",
+                                    "name": "Entiteter, dom\u00e4n: climate",
                                     "icon": "mdi:home-thermometer"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_input_button",
-                                    "name": "Dom\u00e4n: input_button",
+                                    "name": "Entiteter, dom\u00e4n: input_button",
                                     "icon": "mdi:gesture-tap-button"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_input_text",
-                                    "name": "Dom\u00e4n: input_text",
+                                    "name": "Entiteter, dom\u00e4n: input_text",
                                     "icon": "mdi:form-textbox"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_persistent_notification",
-                                    "name": "Dom\u00e4n: persistent_notification",
+                                    "name": "Entiteter, dom\u00e4n: persistent_notification",
                                     "icon": "mdi:bell"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_person",
-                                    "name": "Dom\u00e4n: person",
+                                    "name": "Entiteter, dom\u00e4n: person",
                                     "icon": "mdi:account"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_sensor",
-                                    "name": "Dom\u00e4n: sensor",
+                                    "name": "Entiteter, dom\u00e4n: sensor",
                                     "icon": "mdi:home-assistant"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_sun",
-                                    "name": "Dom\u00e4n: sun",
+                                    "name": "Entiteter, dom\u00e4n: sun",
                                     "icon": "mdi:white-balance-sunny"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_weather",
-                                    "name": "Dom\u00e4n: weather",
+                                    "name": "Entiteter, dom\u00e4n: weather",
                                     "icon": "mdi:weather-cloudy"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_zone",
-                                    "name": "Dom\u00e4n: zone",
+                                    "name": "Entiteter, dom\u00e4n: zone",
                                     "icon": "mdi:home-map-marker"
                                 }
                             ],
                             "title": "Dom\u00e4ner och entiteter som anv\u00e4nds"
-                        },
-                        {
-                            "type": "markdown",
-                            "content": "{% set rows = states('sensor.home_assistant_entities_with_most_rows').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
-                            "title": "De 30 entiteterna med st\u00f6rst antal event-rader i Recorder-databas"
                         }
                     ]
                 }

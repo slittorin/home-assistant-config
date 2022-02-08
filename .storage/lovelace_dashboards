@@ -20,6 +20,14 @@
                 "url_path": "lovelace-weather",
                 "mode": "storage",
                 "id": "lovelace_weather"
+            },
+            {
+                "require_admin": false,
+                "show_in_sidebar": true,
+                "title": "Energiuppf\u00f6ljning",
+                "url_path": "lovelace-energy",
+                "mode": "storage",
+                "id": "lovelace_energy"
             }
         ]
     }

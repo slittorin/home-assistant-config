@@ -1,0 +1,238 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.lovelace_energy",
+    "data": {
+        "config": {
+            "views": [
+                {
+                    "title": "Home"
+                },
+                {
+                    "title": "Energiinst\u00e4llningar",
+                    "path": "energiinstallningar",
+                    "icon": "",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "input_number.electrical_distribution_cost",
+                                    "name": "Fast eldistributionskostnad"
+                                },
+                                {
+                                    "entity": "input_number.electrical_distribution_tax",
+                                    "name": "Eldist. kostnad - Skatt"
+                                },
+                                {
+                                    "entity": "input_number.electrical_distribution_vat",
+                                    "name": "Eldist. kostnad - Moms"
+                                },
+                                {
+                                    "entity": "sensor.electrical_distribution_cost_summary",
+                                    "name": "Total distributionskostnad"
+                                }
+                            ],
+                            "title": "Eldistribution"
+                        },
+                        {
+                            "type": "vertical-stack",
+                            "cards": [
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "input_boolean.electrical_consumption_cost_toggle",
+                                            "name": "Elkonsumption - Fast kostnad"
+                                        }
+                                    ],
+                                    "title": "Elkonsumption"
+                                },
+                                {
+                                    "type": "conditional",
+                                    "conditions": [
+                                        {
+                                            "entity": "input_boolean.electrical_consumption_cost_toggle",
+                                            "state": "on"
+                                        }
+                                    ],
+                                    "card": {
+                                        "type": "entities",
+                                        "entities": [
+                                            {
+                                                "entity": "input_number.electrical_consumption_cost_manual",
+                                                "name": "Elkonsumptionskostnad"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "conditional",
+                                    "conditions": [
+                                        {
+                                            "entity": "input_boolean.electrical_consumption_cost_toggle",
+                                            "state": "off"
+                                        }
+                                    ],
+                                    "card": {
+                                        "type": "entities",
+                                        "entities": [
+                                            {
+                                                "entity": "input_text.electrical_consumption_spot_sensor",
+                                                "name": "Sensornamn f\u00f6r spotpris kostnad"
+                                            },
+                                            {
+                                                "entity": "sensor.electrical_consumption_cost_spot",
+                                                "name": "Nuvarande spotpris"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "input_number.electrical_consumption_compensation_manual",
+                                            "name": "Elkons. kostnad kompensation"
+                                        },
+                                        {
+                                            "entity": "input_number.electrical_consumption_tax",
+                                            "name": "Elkons. kostnad - Skatt"
+                                        },
+                                        {
+                                            "entity": "input_number.electrical_consumption_vat",
+                                            "name": "Elkons. kostnad - Moms"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.electrical_consumption_cost_summary",
+                                            "name": "Total elkonsumptionskostnad"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "vertical-stack",
+                            "cards": [
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "input_boolean.electrical_consumption_yield_toggle",
+                                            "name": "Elproduktion - Fast int\u00e4kt"
+                                        }
+                                    ],
+                                    "title": "Elproduktion"
+                                },
+                                {
+                                    "type": "conditional",
+                                    "conditions": [
+                                        {
+                                            "entity": "input_boolean.electrical_consumption_yield_toggle",
+                                            "state": "on"
+                                        }
+                                    ],
+                                    "card": {
+                                        "type": "entities",
+                                        "entities": [
+                                            {
+                                                "entity": "input_number.electrical_yield_manual",
+                                                "name": "Fast elproduktionsint\u00e4kt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "conditional",
+                                    "conditions": [
+                                        {
+                                            "entity": "input_boolean.electrical_consumption_yield_toggle",
+                                            "state": "off"
+                                        }
+                                    ],
+                                    "card": {
+                                        "type": "entities",
+                                        "entities": [
+                                            {
+                                                "entity": "input_text.electrical_yield_spot_sensor",
+                                                "name": "Sensornamn f\u00f6r spotpris int\u00e4kt"
+                                            },
+                                            {
+                                                "entity": "sensor.electrical_yield_cost_spot",
+                                                "name": "Nuvarande spotpris"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "input_number.electrical_yield_compensation_manual",
+                                            "name": "Elprod. int\u00e4ktskompensation"
+                                        },
+                                        {
+                                            "entity": "input_number.electrical_yield_tax",
+                                            "name": "Elprod. int\u00e4kt - Skatt"
+                                        },
+                                        {
+                                            "entity": "input_number.electrical_yield_vat",
+                                            "name": "Elprod. int\u00e4kt - Moms"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "input_number.electrical_yield_tax_reduction",
+                                            "name": "Skattereduktion (till n\u00e4sta \u00e5rs deklaration)"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.electrical_yield_income_summary",
+                                            "name": "Total elproduktionsint\u00e4kt"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "input_text.electrical_consumption_sensor",
+                                    "name": "F\u00f6r elkonsumption in i huset"
+                                },
+                                {
+                                    "entity": "input_text.electrical_production_sensor",
+                                    "name": "F\u00f6r elproduktion av panelerna"
+                                },
+                                {
+                                    "entity": "input_text.electrical_yield_sensor",
+                                    "name": "F\u00f6r elproduktion ut ur huset"
+                                }
+                            ],
+                            "title": "Sensornamn"
+                        },
+                        {
+                            "type": "markdown",
+                            "content": "#### Note:\n- Sensors are updated per hour.\n- Sensors are in either the unit `\u00f6re/kWh`, `%` or `text for name of sensor`.\n- The sensor names for consumption, production and yield needs to be of `state_class: total_increasing`, and `unit_of_measurement: kWh`.\n- The sensor names for spot-prices must be unit `kWh` and currency `SEK`.\n\n#### Tracking difference per hour:\n- `sensor.electrical_consumption_hourly`:\n   - Electricity from the grid into the house.\n   - That takes diff in kWh from sensor defined in `input_text.electrical_consumption_sensor`.\n- `sensor.electrical_production_hourly`:\n  - Generated by the solar panels.\n  - That takes diff in kWh from sensor defined in `input_text.electrical_production_sensor`.\n- `sensor.electrical_yield_hourly`:\n  - Electricity back to the grid from the house.\n  - That takes diff in kWh from sensor defined in `input_text.electrical_yield_sensor`.\n\n#### Electrical consumption is based on toggle `input_boolean.electrical_consumption_cost_toggle`:\n- If \"on\", the hourly cost in `\u00f6re/kWh` is taken from `input_number.electrical_consumption_cost_manual`.\n- If \"off\", the hourly cost `\u00f6re/kWh` is taken from sensor named in `input_text.electrical_consumption_spot_sensor`.\nNamed `\\[consumption cost\\]` below.\n\n#### Yield (electricity back to the grid) is based on toggle `input_boolean.electrical_consumption_yield_toggle`:\n- If \"on\", the hourly income in `\u00f6re/kWh` is taken from `input_number.electrical_yield_manual`.\n- If \"off\", the hourly income in `\u00f6re/kWh` is taken from sensor named in `input_text.electrical_yield_spot_sensor`.\nNamed `\\[yield income\\]` below.\n\n#### Both electrical consumption and yield can have adjustment made on the cost:\n- For consumption, adjustment is made with `input_number.electrical_consumption_compensation_manual`.\n- For yield adjustment is made with `input_number.electrical_yield_compensation_manual`.\n\n### Cost for purchased electricity (electrical consumption for the house) per hour is calculated according to:\n- Distribution cost:\n  - `sensor.electrical_consumption_hourly` * (((`input_number.electrical_distribution_cost`/100) + (`input_number.electrical_distribution_tax`/100)) * (1+(`input_number.electrical_distribution_vat`/100)))\n- (+) consumption cost:\n  - `sensor.electrical_consumption_hourly` * (((`\\[consumption cost\\]`/100) + (`input_number.electrical_consumption_compensation_manual`/100) + (`input_number.electrical_consumption_tax`/100)) * (1+(`input_number.electrical_consumption_vat`/100)))\n\n### Reduction in cost for production from the solar panels per hour is calculated according to:\n- Distribution cost (since we otherwise needed to pay for distribution):\n  - `sensor.electrical_production_hourly` * (((`input_number.electrical_distribution_cost`/100) + (`input_number.electrical_distribution_tax`/100)) * (1+(`input_number.electrical_distribution_vat`/100)))\n- (+) consumption cost (since we otherwise needed to pay for consumption):\n  - `sensor.electrical_production_hourly` * (((`\\[consumption cost\\]`/100) + (`input_number.electrical_consumption_compensation_manual`/100) + \n- (+) yield (electricity back to the grid):\n  - `sensor.electrical_yield_hourly` * (((`\\[yield income\\]`/100) + (`input_number.electrical_yield_compensation_manual`/100) + (`input_number.electrical_yield_tax`/100)) * (1+(`input_number.electrical_yield_vat`/100)))\n",
+                            "title": "Calculation is made according"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

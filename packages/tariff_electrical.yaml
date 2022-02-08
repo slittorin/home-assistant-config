@@ -1,10 +1,224 @@
 # This file includes all the entities for the electrical tariffs.
 
+# Also linked to configuration made for the energy integration.
+
 sensor:
-  # We get all the data from Nordpool, for my region and currency,
+  # For spotprices, we get all the data from Nordpool, for my region and currency,
   - platform: nordpool
     region: "SE3"
     VAT: True
-    currency: "EUR"
+    currency: "SEK"
     precision: 3
     price_type: kWh
+
+# All the below is related to keep track of the true electrical cost and income of the solar panels.
+input_number:
+  electrical_distribution_cost:
+    name: 'Electrical distribution cost (before tax and VAT)'
+    icon: mdi:transmission-tower
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_distribution_tax:
+    name: 'Electrical distribution tax'
+    icon: mdi:transmission-tower
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_distribution_vat:
+    name: 'Electrical distribution VAT'
+    icon: mdi:transmission-tower
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "%"
+  electrical_consumption_cost_manual:
+    name: 'Electrical consumption manual cost (before tax and VAT)'
+    icon: mdi:transmission-tower-import
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_consumption_compensation_manual:
+    name: 'Electrical manual compensation consumption (before tax and VAT)'
+    icon: mdi:transmission-tower-import
+    mode: box
+    initial: 0
+    min: -1000
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_consumption_tax:
+    name: 'Electrical consumption tax'
+    icon: mdi:transmission-tower-import
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_consumption_vat:
+    name: 'Electrical consumption VAT'
+    icon: mdi:transmission-tower-import
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.01
+    max: 100
+    unit_of_measurement: "%"
+  electrical_yield_manual:
+    name: 'Electrical manual yield (for output to grid, before tax and VAT)'
+    icon: mdi:transmission-tower-export
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_yield_compensation_manual:
+    name: 'Electrical manual compensation yield (for output to grid,before tax and VAT)'
+    icon: mdi:transmission-tower-export
+    mode: box
+    initial: 0
+    min: -1000
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_yield_tax:
+    name: 'Electrical yield tax (for output to grid)'
+    icon: mdi:transmission-tower-export
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+  electrical_yield_vat:
+    name: 'Electrical yield VAT (for output to grid)'
+    icon: mdi:transmission-tower-export
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.01
+    max: 100
+    unit_of_measurement: "%"
+  electrical_yield_tax_reduction:
+    name: 'Electrical yield tax reduction (for output to grid)'
+    icon: mdi:transmission-tower-export
+    mode: box
+    initial: 0
+    min: 0
+    step: 0.001
+    max: 1000
+    unit_of_measurement: "öre/kWh"
+
+input_boolean:
+  electrical_consumption_cost_toggle:
+    name: 'If enabled, manual-cost, otherwise spot-cost.'
+    icon: mdi:toggle-switch
+  electrical_consumption_yield_toggle:
+    name: 'If enabled, manual-yield, otherwise spot-yield.'
+    icon: mdi:toggle-switch
+
+input_text:
+  electrical_consumption_spot_sensor:
+    name: 'Name of sensor for spot-price and consumption (full name)'
+    icon: mdi:home-import-outline
+  electrical_yield_spot_sensor:
+    name: 'Name of sensor for spot-price and yield (full name)'
+    icon: mdi:home-export-outline
+  electrical_consumption_sensor:
+    name: 'Name of sensor for tracking total_increasing electrical consumption into the house in kWh (full name)'
+    icon: mdi:home-import-outline
+  electrical_production_sensor:
+    name: 'Name of sensor for tracking total_increasing electrical production in kWh (full name)'
+    icon: mdi:solar-power
+  electrical_yield_sensor:
+    name: 'Name of sensor for tracking total_increasing electrical yield (output to grid) in kWh (full name)'
+    icon: mdi:home-export-outline
+
+template:
+  - sensor:
+      # We want to keep track of the consumption spot price.
+      - name: Electrical consumption cost spot
+        unique_id: electrical_consumption_cost_spot
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:home-import-outline
+        state: >
+          {% set cost = float(states(states('input_text.electrical_consumption_spot_sensor'))) %}
+          {% set total_cost = cost | round(4) %}
+          {{ total_cost }}
+  - sensor:
+      # We want to keep track of the distribution spot price.
+      - name: Electrical yield cost spot
+        unique_id: electrical_yield_cost_spot
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:home-export-outline
+        state: >
+          {% set cost = float(states(states('input_text.electrical_yield_spot_sensor'))) %}
+          {% set total_cost = cost | round(4) %}
+          {{ total_cost }}
+  - sensor:
+      # We want to keep track of total electrical distribution cost.
+      - name: Electrical distribution cost summary
+        unique_id: electrical_distribution_cost_summary
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower
+        state: >
+          {% set cost = float(states('input_number.electrical_distribution_cost')) %}
+          {% set tax = float(states('input_number.electrical_distribution_tax')) %}
+          {% set vat = float(states('input_number.electrical_distribution_vat')) %}
+          {% set total_cost = ((cost + tax) * ((1+(vat/100))))/100 | round(2) %}
+          {{ total_cost }}
+  - sensor:
+      # We want to keep track of total electrical consumption cost.
+      - name: Electrical consumption cost summary
+        unique_id: electrical_consumption_cost_summary
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower
+        state: >
+          {% if (states('input_boolean.electrical_consumption_cost_toggle') == "on") %}
+          {% set cost = float(states('input_number.electrical_consumption_cost_manual')) %}
+          {% else %}
+          {% set cost = float(states(states('input_text.electrical_consumption_spot_sensor')))*100 %}
+          {% endif %}
+          {% set compensation = float(states('input_number.electrical_consumption_compensation_manual')) %}
+          {% set compensated_cost = cost + compensation  %}
+          {% set tax = float(states('input_number.electrical_consumption_tax')) %}
+          {% set vat = float(states('input_number.electrical_consumption_vat')) %}
+          {% set total_cost = ((compensated_cost + tax) * ((1+(vat/100))))/100 | round(4) %}
+          {{ total_cost }}
+  - sensor:
+      # We want to keep track of total electrical consumption cost.
+      - name: Electrical yield income summary
+        unique_id: electrical_yield_income_summary
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower-export
+        state: >
+          {% if (states('input_boolean.electrical_consumption_yield_toggle') == "on") %}
+          {% set income = float(states('input_number.electrical_yield_manual')) %}
+          {% else %}
+          {% set income = float(states(states('input_text.electrical_yield_spot_sensor')))*100 %}
+          {% endif %}
+          {% set compensation = float(states('input_number.electrical_yield_compensation_manual')) %}
+          {% set compensated_income = income + compensation  %}
+          {% set tax = float(states('input_number.electrical_yield_tax')) %}
+          {% set vat = float(states('input_number.electrical_yield_vat')) %}
+          {% set tax_reduction = float(states('input_number.electrical_yield_tax_reduction')) %}
+          {% set total_income = ((((compensated_income + tax) * ((1+(vat/100))))/100) + (tax_reduction/100)) | round(3) %}
+          {{ total_income }}
