@@ -18,20 +18,20 @@
                             "type": "entities",
                             "entities": [
                                 {
-                                    "entity": "input_number.electrical_distribution_cost",
-                                    "name": "Fast eldistributionskostnad"
+                                    "entity": "input_number.electrical_distribution_rate",
+                                    "name": "Fast eldistributionsavgift"
                                 },
                                 {
-                                    "entity": "input_number.electrical_distribution_tax",
-                                    "name": "Eldist. kostnad - Skatt"
+                                    "entity": "input_number.electrical_distribution_rate_tax",
+                                    "name": "Eldist. avgift - Skatt"
                                 },
                                 {
-                                    "entity": "input_number.electrical_distribution_vat",
-                                    "name": "Eldist. kostnad - Moms"
+                                    "entity": "input_number.electrical_distribution_rate_vat",
+                                    "name": "Eldist. avgift - Moms"
                                 },
                                 {
-                                    "entity": "sensor.electrical_distribution_cost_summary",
-                                    "name": "Total distributionskostnad"
+                                    "entity": "sensor.electrical_distribution_rate_summary",
+                                    "name": "Total distributionsavgift"
                                 }
                             ],
                             "title": "Eldistribution"
@@ -43,8 +43,8 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "input_boolean.electrical_consumption_cost_toggle",
-                                            "name": "Elkonsumption - Fast kostnad"
+                                            "entity": "input_boolean.electrical_consumption_rate_toggle",
+                                            "name": "Elkonsumption - Fast avgift"
                                         }
                                     ],
                                     "title": "Elkonsumption"
@@ -53,7 +53,7 @@
                                     "type": "conditional",
                                     "conditions": [
                                         {
-                                            "entity": "input_boolean.electrical_consumption_cost_toggle",
+                                            "entity": "input_boolean.electrical_consumption_rate_toggle",
                                             "state": "on"
                                         }
                                     ],
@@ -61,8 +61,8 @@
                                         "type": "entities",
                                         "entities": [
                                             {
-                                                "entity": "input_number.electrical_consumption_cost_manual",
-                                                "name": "Elkonsumptionskostnad"
+                                                "entity": "input_number.electrical_consumption_rate_manual",
+                                                "name": "Elkonsumptionsavgift"
                                             }
                                         ]
                                     }
@@ -71,7 +71,7 @@
                                     "type": "conditional",
                                     "conditions": [
                                         {
-                                            "entity": "input_boolean.electrical_consumption_cost_toggle",
+                                            "entity": "input_boolean.electrical_consumption_rate_toggle",
                                             "state": "off"
                                         }
                                     ],
@@ -80,11 +80,11 @@
                                         "entities": [
                                             {
                                                 "entity": "input_text.electrical_consumption_spot_sensor",
-                                                "name": "Sensornamn f\u00f6r spotpris kostnad"
+                                                "name": "Sensornamn f\u00f6r spot-avgift"
                                             },
                                             {
-                                                "entity": "sensor.electrical_consumption_cost_spot",
-                                                "name": "Nuvarande spotpris"
+                                                "entity": "sensor.electrical_consumption_rate_spot",
+                                                "name": "Nuvarande spot-avgift"
                                             }
                                         ]
                                     }
@@ -93,16 +93,16 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "input_number.electrical_consumption_compensation_manual",
-                                            "name": "Elkons. kostnad kompensation"
+                                            "entity": "input_number.electrical_consumption_rate_compensation_manual",
+                                            "name": "Elkons. avgiftskompensation"
                                         },
                                         {
-                                            "entity": "input_number.electrical_consumption_tax",
-                                            "name": "Elkons. kostnad - Skatt"
+                                            "entity": "input_number.electrical_consumption_rate_tax",
+                                            "name": "Elkons. avgift - Skatt"
                                         },
                                         {
-                                            "entity": "input_number.electrical_consumption_vat",
-                                            "name": "Elkons. kostnad - Moms"
+                                            "entity": "input_number.electrical_consumption_rate_vat",
+                                            "name": "Elkons. avgift - Moms"
                                         }
                                     ]
                                 },
@@ -110,8 +110,8 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "sensor.electrical_consumption_cost_summary",
-                                            "name": "Total elkonsumptionskostnad"
+                                            "entity": "sensor.electrical_consumption_rate_summary",
+                                            "name": "Total elkonsumptionsavgift"
                                         }
                                     ]
                                 }
@@ -124,8 +124,8 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "input_boolean.electrical_consumption_yield_toggle",
-                                            "name": "Elproduktion - Fast int\u00e4kt"
+                                            "entity": "input_boolean.electrical_yield_rate_toggle",
+                                            "name": "Elproduktion - Fast bidrag"
                                         }
                                     ],
                                     "title": "Elproduktion"
@@ -134,7 +134,7 @@
                                     "type": "conditional",
                                     "conditions": [
                                         {
-                                            "entity": "input_boolean.electrical_consumption_yield_toggle",
+                                            "entity": "input_boolean.electrical_yield_rate_toggle",
                                             "state": "on"
                                         }
                                     ],
@@ -142,8 +142,8 @@
                                         "type": "entities",
                                         "entities": [
                                             {
-                                                "entity": "input_number.electrical_yield_manual",
-                                                "name": "Fast elproduktionsint\u00e4kt"
+                                                "entity": "input_number.electrical_yield_rate_manual",
+                                                "name": "Elproduktionsbidrag"
                                             }
                                         ]
                                     }
@@ -152,7 +152,7 @@
                                     "type": "conditional",
                                     "conditions": [
                                         {
-                                            "entity": "input_boolean.electrical_consumption_yield_toggle",
+                                            "entity": "input_boolean.electrical_yield_rate_toggle",
                                             "state": "off"
                                         }
                                     ],
@@ -161,11 +161,11 @@
                                         "entities": [
                                             {
                                                 "entity": "input_text.electrical_yield_spot_sensor",
-                                                "name": "Sensornamn f\u00f6r spotpris int\u00e4kt"
+                                                "name": "Sensornamn f\u00f6r spot-bidrag"
                                             },
                                             {
-                                                "entity": "sensor.electrical_yield_cost_spot",
-                                                "name": "Nuvarande spotpris"
+                                                "entity": "sensor.electrical_yield_rate_spot",
+                                                "name": "Nuvarande spot-bidrag"
                                             }
                                         ]
                                     }
@@ -174,16 +174,16 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "input_number.electrical_yield_compensation_manual",
-                                            "name": "Elprod. int\u00e4ktskompensation"
+                                            "entity": "input_number.electrical_yield_rate_compensation_manual",
+                                            "name": "Elprod. bidragskompensation"
                                         },
                                         {
-                                            "entity": "input_number.electrical_yield_tax",
-                                            "name": "Elprod. int\u00e4kt - Skatt"
+                                            "entity": "input_number.electrical_yield_rate_tax",
+                                            "name": "Elprod.  bidrag - Skatt"
                                         },
                                         {
-                                            "entity": "input_number.electrical_yield_vat",
-                                            "name": "Elprod. int\u00e4kt - Moms"
+                                            "entity": "input_number.electrical_yield_rate_vat",
+                                            "name": "Elprod.  bidrag - Moms"
                                         }
                                     ]
                                 },
@@ -191,8 +191,8 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "input_number.electrical_yield_tax_reduction",
-                                            "name": "Skattereduktion (till n\u00e4sta \u00e5rs deklaration)"
+                                            "entity": "input_number.electrical_yield_rate_tax_reduction",
+                                            "name": "Skattereduktionsbidrag (till n\u00e4sta \u00e5rs deklaration)"
                                         }
                                     ]
                                 },
@@ -200,8 +200,8 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "sensor.electrical_yield_income_summary",
-                                            "name": "Total elproduktionsint\u00e4kt"
+                                            "entity": "sensor.electrical_yield_rate_summary",
+                                            "name": "Total elproduktionsbidrag"
                                         }
                                     ]
                                 }

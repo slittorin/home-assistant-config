@@ -6,128 +6,117 @@ sensor:
   # For spotprices, we get all the data from Nordpool, for my region and currency,
   - platform: nordpool
     region: "SE3"
-    VAT: True
+    # We calculate with VAT ourselves.
+    VAT: False
     currency: "SEK"
     precision: 3
     price_type: kWh
 
-# All the below is related to keep track of the true electrical cost and income of the solar panels.
+# All the below is related to keep track of the true electrical rate and income of the solar panels.
 input_number:
-  electrical_distribution_cost:
-    name: 'Electrical distribution cost (before tax and VAT)'
+  electrical_distribution_rate:
+    name: 'Electrical distribution rate (before tax and VAT)'
     icon: mdi:transmission-tower
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_distribution_tax:
-    name: 'Electrical distribution tax'
+  electrical_distribution_rate_tax:
+    name: 'Electrical distribution rate tax'
     icon: mdi:transmission-tower
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_distribution_vat:
-    name: 'Electrical distribution VAT'
+  electrical_distribution_rate_vat:
+    name: 'Electrical distribution rate VAT'
     icon: mdi:transmission-tower
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "%"
-  electrical_consumption_cost_manual:
-    name: 'Electrical consumption manual cost (before tax and VAT)'
+  electrical_consumption_rate_manual:
+    name: 'Electrical consumption manual rate (before tax and VAT)'
     icon: mdi:transmission-tower-import
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_consumption_compensation_manual:
-    name: 'Electrical manual compensation consumption (before tax and VAT)'
+  electrical_consumption_rate_compensation_manual:
+    name: 'Electrical consumption rate manual compensation (before tax and VAT)'
     icon: mdi:transmission-tower-import
     mode: box
-    initial: 0
     min: -1000
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_consumption_tax:
-    name: 'Electrical consumption tax'
+  electrical_consumption_rate_tax:
+    name: 'Electrical consumption rate tax'
     icon: mdi:transmission-tower-import
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_consumption_vat:
-    name: 'Electrical consumption VAT'
+  electrical_consumption_rate_vat:
+    name: 'Electrical consumption rate VAT'
     icon: mdi:transmission-tower-import
     mode: box
-    initial: 0
     min: 0
     step: 0.01
     max: 100
     unit_of_measurement: "%"
-  electrical_yield_manual:
-    name: 'Electrical manual yield (for output to grid, before tax and VAT)'
+  electrical_yield_rate_manual:
+    name: 'Electrical manual yield rate (for output to grid, before tax and VAT)'
     icon: mdi:transmission-tower-export
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_yield_compensation_manual:
-    name: 'Electrical manual compensation yield (for output to grid,before tax and VAT)'
+  electrical_yield_rate_compensation_manual:
+    name: 'Electrical yield rate manual compensation (for output to grid,before tax and VAT)'
     icon: mdi:transmission-tower-export
     mode: box
-    initial: 0
     min: -1000
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_yield_tax:
-    name: 'Electrical yield tax (for output to grid)'
+  electrical_yield_rate_tax:
+    name: 'Electrical yield rate tax (for output to grid)'
     icon: mdi:transmission-tower-export
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
-  electrical_yield_vat:
-    name: 'Electrical yield VAT (for output to grid)'
+  electrical_yield_rate_vat:
+    name: 'Electrical yield rate VAT (for output to grid)'
     icon: mdi:transmission-tower-export
     mode: box
-    initial: 0
     min: 0
     step: 0.01
     max: 100
     unit_of_measurement: "%"
-  electrical_yield_tax_reduction:
-    name: 'Electrical yield tax reduction (for output to grid)'
+  electrical_yield_rate_tax_reduction:
+    name: 'Electrical yield rate tax reduction (for output to grid)'
     icon: mdi:transmission-tower-export
     mode: box
-    initial: 0
     min: 0
     step: 0.001
     max: 1000
     unit_of_measurement: "öre/kWh"
 
 input_boolean:
-  electrical_consumption_cost_toggle:
-    name: 'If enabled, manual-cost, otherwise spot-cost.'
+  electrical_consumption_rate_toggle:
+    name: 'If enabled, manual consumption-rate, otherwise spot based consumption rate.'
     icon: mdi:toggle-switch
-  electrical_consumption_yield_toggle:
-    name: 'If enabled, manual-yield, otherwise spot-yield.'
+  electrical_yield_rate_toggle:
+    name: 'If enabled, manual yield-rate, otherwise spot based yield rate.'
     icon: mdi:toggle-switch
 
 input_text:
@@ -149,76 +138,158 @@ input_text:
 
 template:
   - sensor:
-      # We want to keep track of the consumption spot price.
-      - name: Electrical consumption cost spot
-        unique_id: electrical_consumption_cost_spot
+      # We want to keep track of the consumption spot rate.
+      - name: Electrical consumption rate spot
+        unique_id: electrical_consumption_rate_spot
         unit_of_measurement: 'SEK/kWh'
         state_class: measurement
         icon: mdi:home-import-outline
         state: >
-          {% set cost = float(states(states('input_text.electrical_consumption_spot_sensor'))) %}
-          {% set total_cost = cost | round(4) %}
-          {{ total_cost }}
+          {% set rate = float(states(states('input_text.electrical_consumption_spot_sensor'))) %}
+          {% set total_rate = rate| round(4) %}
+          {{ total_rate }}
   - sensor:
-      # We want to keep track of the distribution spot price.
-      - name: Electrical yield cost spot
-        unique_id: electrical_yield_cost_spot
+      # We want to keep track of the distribution rate rate.
+      - name: Electrical yield rate spot
+        unique_id: electrical_yield_rate_spot
         unit_of_measurement: 'SEK/kWh'
         state_class: measurement
         icon: mdi:home-export-outline
         state: >
-          {% set cost = float(states(states('input_text.electrical_yield_spot_sensor'))) %}
-          {% set total_cost = cost | round(4) %}
-          {{ total_cost }}
+          {% set rate = float(states(states('input_text.electrical_yield_spot_sensor'))) %}
+          {% set total_rate = rate | round(4) %}
+          {{ total_rate }}
   - sensor:
-      # We want to keep track of total electrical distribution cost.
-      - name: Electrical distribution cost summary
-        unique_id: electrical_distribution_cost_summary
-        unit_of_measurement: 'SEK/kWh'
+      # We want to keep track of total electrical distribution rate.
+      - name: Electrical distribution rate summary
+        unique_id: electrical_distribution_rate_summary
+        unit_of_measurement: 'öre/kWh'
         state_class: measurement
         icon: mdi:transmission-tower
         state: >
-          {% set cost = float(states('input_number.electrical_distribution_cost')) %}
-          {% set tax = float(states('input_number.electrical_distribution_tax')) %}
-          {% set vat = float(states('input_number.electrical_distribution_vat')) %}
-          {% set total_cost = ((cost + tax) * ((1+(vat/100))))/100 | round(2) %}
-          {{ total_cost }}
+          {% set rate = float(states('input_number.electrical_distribution_rate')) %}
+          {% set tax = float(states('input_number.electrical_distribution_rate_tax')) %}
+          {% set vat = float(states('input_number.electrical_distribution_rate_vat')) %}
+          {% set total_rate = ((rate + tax) * ((1+(vat/100)))) | round(4) %}
+          {{ total_rate }}
   - sensor:
-      # We want to keep track of total electrical consumption cost.
-      - name: Electrical consumption cost summary
-        unique_id: electrical_consumption_cost_summary
-        unit_of_measurement: 'SEK/kWh'
+      # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
+      # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
+      # Therefore we create a intermediary sensor to get it to [öre/kWh].
+      - name: Electrical consumption spot sensor intermediary
+        unique_id: electrical_consumption_spot_sensor_intermediary
         state_class: measurement
-        icon: mdi:transmission-tower
         state: >
-          {% if (states('input_boolean.electrical_consumption_cost_toggle') == "on") %}
-          {% set cost = float(states('input_number.electrical_consumption_cost_manual')) %}
+          {% set value = states(states('input_text.electrical_consumption_spot_sensor')) %}
+          {% if (value != 'unknown') %}
+          {%   set spot = float(value) * 100 %}
           {% else %}
-          {% set cost = float(states(states('input_text.electrical_consumption_spot_sensor')))*100 %}
+          {%   set spot = 0 %}
           {% endif %}
-          {% set compensation = float(states('input_number.electrical_consumption_compensation_manual')) %}
-          {% set compensated_cost = cost + compensation  %}
-          {% set tax = float(states('input_number.electrical_consumption_tax')) %}
-          {% set vat = float(states('input_number.electrical_consumption_vat')) %}
-          {% set total_cost = ((compensated_cost + tax) * ((1+(vat/100))))/100 | round(4) %}
-          {{ total_cost }}
+          {{ spot }}
   - sensor:
-      # We want to keep track of total electrical consumption cost.
-      - name: Electrical yield income summary
-        unique_id: electrical_yield_income_summary
-        unit_of_measurement: 'SEK/kWh'
+      # We want to keep track of total electrical consumption rate.
+      - name: Electrical consumption rate summary
+        unique_id: electrical_consumption_rate_summary
+        unit_of_measurement: 'öre/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower
+        state: >
+          {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
+          {% set rate = float(states('input_number.electrical_consumption_rate_manual')) %}
+          {% else %}
+          {% set rate = float(states('sensor.electrical_consumption_spot_sensor_intermediary')) %}
+          {% endif %}
+          {% set compensation = float(states('input_number.electrical_consumption_rate_compensation_manual')) %}
+          {% set compensated_rate = rate + compensation  %}
+          {% set tax = float(states('input_number.electrical_consumption_rate_tax')) %}
+          {% set vat = float(states('input_number.electrical_consumption_rate_vat')) %}
+          {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4) %}
+          {{ total_rate }}
+  - sensor:
+      # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_yield_income_summary
+      # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_rate_summary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
+      # Therefore we create a intermediary sensor to get it to [öre/kWh].
+      - name: Electrical yield spot sensor intermediary
+        unique_id: electrical_yield_spot_sensor_intermediary
+        state_class: measurement
+        state: >
+          {% set value = states(states('input_text.electrical_yield_spot_sensor')) %}
+          {% if (value != 'unknown') %}
+          {%   set spot = float(value) * 100 %}
+          {% else %}
+          {%   set spot = 0 %}
+          {% endif %}
+          {{ spot }}
+  - sensor:
+      # We want to keep track of total electrical yield rate.
+      - name: Electrical yield rate summary
+        unique_id: electrical_yield_rate_summary
+        unit_of_measurement: 'öre/kWh'
         state_class: measurement
         icon: mdi:transmission-tower-export
         state: >
-          {% if (states('input_boolean.electrical_consumption_yield_toggle') == "on") %}
-          {% set income = float(states('input_number.electrical_yield_manual')) %}
+          {% if (states('input_boolean.electrical_yield_rate_toggle') == "on") %}
+          {% set rate = float(states('input_number.electrical_yield_rate_manual')) %}
           {% else %}
-          {% set income = float(states(states('input_text.electrical_yield_spot_sensor')))*100 %}
+          {% set rate = float(states('sensor.electrical_yield_spot_sensor_intermediary')) %}
           {% endif %}
-          {% set compensation = float(states('input_number.electrical_yield_compensation_manual')) %}
-          {% set compensated_income = income + compensation  %}
-          {% set tax = float(states('input_number.electrical_yield_tax')) %}
-          {% set vat = float(states('input_number.electrical_yield_vat')) %}
-          {% set tax_reduction = float(states('input_number.electrical_yield_tax_reduction')) %}
-          {% set total_income = ((((compensated_income + tax) * ((1+(vat/100))))/100) + (tax_reduction/100)) | round(3) %}
-          {{ total_income }}
+          {% set compensation = float(states('input_number.electrical_yield_rate_compensation_manual')) %}
+          {% set compensated_rate = rate + compensation  %}
+          {% set tax = float(states('input_number.electrical_yield_rate_tax')) %}
+          {% set vat = float(states('input_number.electrical_yield_rate_vat')) %}
+          {% set tax_reduction = float(states('input_number.electrical_yield_rate_tax_reduction')) %}
+          {% set total_rate = (((compensated_rate + tax) * ((1+(vat/100)))) + tax_reduction) | round(3) %}
+          {{ total_rate }}
+  - trigger:
+      # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
+      # https://www.home-assistant.io/docs/automation/trigger/
+      - platform: time_pattern
+        hours: "/1"
+        minutes: "59"
+        seconds: "59"
+    sensor:
+      # First we get the consumption from the last snapshot (delta) to set the consumption for the hour.
+      # We will therefore not capture the last second for the hour, but the second will not be lost until as we set the new snapshot directly after this.
+      # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      - name:  test_electrical_consumption_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {% set old_snapshot = states('sensor.test_electrical_consumption_hour_snapshot') %}
+          {% set new_snapshot = states(states('input_text.electrical_consumption_sensor')) %}
+          {% set snapshots_valid = true %}
+          {% if (old_snapshot != 'unknown' or old_snapshot != 'unknown') %}
+          {%   set old_snapshot = float(old_snapshot) %}
+          {%   set new_snapshot = float(new_snapshot) %}
+          {%   if (old_snapshot < 0 or new_snapshot < 0) %}
+          {%     set snapshots_valid = false %}
+          {%     set result = 0 %}
+          {%   endif %}
+          {% else %}
+          {%   set snapshots_valid = false %}
+          {%   set result = 0 %}
+          {% endif %}
+          {% if (snapshots_valid == true) %}
+          {%  set result = (float(new_snapshot) - float(old_snapshot)) %}
+          {% endif %}
+          {{ result }}
+      # Then we calculate the consumption cost for the hour.
+      - name:  test_electrical_consumption_cost_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set delta = float(states('sensor.test_electrical_consumption_hour')) %}
+          {% set rate_distribution = float(states('sensor.electrical_distribution_rate_summary')) %}
+          {% set rate_consumption = float(states('sensor.electrical_consumption_rate_summary')) %}
+          {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(2) %}
+          {{ cost }}
+      # Last we set the snapshot.
+      - name:  test_electrical_consumption_hour_snapshot
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {{ states(states('input_text.electrical_consumption_sensor')) }}

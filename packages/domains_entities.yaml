@@ -17,7 +17,7 @@ template:
       - name: home_assistant_domains_in_use
         state_class: measurement
         state: >
-          - {{ states|map(attribute='domain')|unique|list|join(',') }}
+          {{ states|map(attribute='domain')|unique|list|join(',') }}
   - trigger:
       - platform: time
         at: "01:01:00"
