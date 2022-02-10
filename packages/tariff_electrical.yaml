@@ -145,7 +145,12 @@ template:
         state_class: measurement
         icon: mdi:home-import-outline
         state: >
-          {% set rate = float(states(states('input_text.electrical_consumption_spot_sensor'))) %}
+          {% set rate = states(states('input_text.electrical_consumption_spot_sensor')) %}
+          {% if (rate == 'unknown') %}
+          {%   set rate = 0 %}
+          {% else %}
+          {%   set rate = float(rate) %}
+          {% endif %}
           {% set total_rate = rate| round(4) %}
           {{ total_rate }}
   - sensor:
@@ -156,7 +161,12 @@ template:
         state_class: measurement
         icon: mdi:home-export-outline
         state: >
-          {% set rate = float(states(states('input_text.electrical_yield_spot_sensor'))) %}
+          {% set rate = states(states('input_text.electrical_yield_spot_sensor')) %}
+          {% if (rate == 'unknown') %}
+          {%   set rate = 0 %}
+          {% else %}
+          {%   set rate = float(rate) %}
+          {% endif %}
           {% set total_rate = rate | round(4) %}
           {{ total_rate }}
   - sensor:
@@ -167,9 +177,24 @@ template:
         state_class: measurement
         icon: mdi:transmission-tower
         state: >
-          {% set rate = float(states('input_number.electrical_distribution_rate')) %}
-          {% set tax = float(states('input_number.electrical_distribution_rate_tax')) %}
-          {% set vat = float(states('input_number.electrical_distribution_rate_vat')) %}
+          {% set rate = states('input_number.electrical_distribution_rate') %}
+          {% if (rate == 'unknown') %}
+          {%   set rate = 0 %}
+          {% else %}
+          {%   set rate = float(rate) %}
+          {% endif %}
+          {% set tax = states('input_number.electrical_distribution_rate_tax') %}
+          {% if (tax == 'unknown') %}
+          {%   set tax = 0 %}
+          {% else %}
+          {%   set tax = float(tax) %}
+          {% endif %}
+          {% set vat = states('input_number.electrical_distribution_rate_vat') %}
+          {% if (vat == 'unknown') %}
+          {%   set vat = 0 %}
+          {% else %}
+          {%   set vat = float(vat) %}
+          {% endif %}
           {% set total_rate = ((rate + tax) * ((1+(vat/100)))) | round(4) %}
           {{ total_rate }}
   - sensor:
@@ -193,18 +218,80 @@ template:
         unique_id: electrical_consumption_rate_summary
         unit_of_measurement: 'öre/kWh'
         state_class: measurement
-        icon: mdi:transmission-tower
+        icon: mdi:transmission-tower-import
         state: >
           {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
-          {% set rate = float(states('input_number.electrical_consumption_rate_manual')) %}
+          {%   set rate = states('input_number.electrical_consumption_rate_manual') %}
+          {%   if (rate == 'unknown') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate) %}
+          {%   endif %}
           {% else %}
-          {% set rate = float(states('sensor.electrical_consumption_spot_sensor_intermediary')) %}
+          {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary') %}
+          {%   if (rate == 'unknown') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate) %}
+          {%   endif %}
           {% endif %}
-          {% set compensation = float(states('input_number.electrical_consumption_rate_compensation_manual')) %}
+          {% set compensation = states('input_number.electrical_consumption_rate_compensation_manual') %}
+          {% if (compensation == 'unknown') %}
+          {%   set compensation = 0 %}
+          {% else %}
+          {%   set compensation = float(compensation) %}
+          {% endif %}
           {% set compensated_rate = rate + compensation  %}
-          {% set tax = float(states('input_number.electrical_consumption_rate_tax')) %}
-          {% set vat = float(states('input_number.electrical_consumption_rate_vat')) %}
+          {% set tax = states('input_number.electrical_consumption_rate_tax') %}
+          {% if (tax == 'unknown') %}
+          {%   set tax = 0 %}
+          {% else %}
+          {%   set tax = float(tax) %}
+          {% endif %}
+          {% set vat = states('input_number.electrical_consumption_rate_vat') %}
+          {% if (vat == 'unknown') %}
+          {%   set vat = 0 %}
+          {% else %}
+          {%   set vat = float(vat) %}
+          {% endif %}
           {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4) %}
+          {{ total_rate }}
+  - sensor:
+      # We want to keep track of total electrical distribution plus consumption rate.
+      - name: Electrical distribution consumption rate summary
+        unique_id: electrical_distribution_consumption_rate_summary
+        unit_of_measurement: 'öre/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower-import
+        state: >
+          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+          {% if (rate_distribution == 'unknown') %}
+          {%   set rate_distribution = 0 %}
+          {% else %}
+          {%   set rate_distribution = float(rate_distribution) %}
+          {% endif %}
+          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+          {% if (rate_consumption == 'unknown') %}
+          {%   set rate_consumption = 0 %}
+          {% else %}
+          {%   set rate_consumption = float(rate_consumption) %}
+          {% endif %}
+          {% set total_rate = ((rate_distribution + rate_consumption)) | round(2) %}
+          {{ total_rate }}
+  - sensor:
+      # We want to keep track of total electrical distribution plus consumption rate, in SEK/kWh.
+      - name: Electrical distribution consumption rate summary SEK
+        unique_id: electrical_distribution_consumption_rate_summary_sek
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower-import
+        state: >
+          {% set rate = states('sensor.electrical_distribution_consumption_rate_summary') %}
+          {% if (rate == 'unknown') %}
+          {%   set rate = 0 %}
+          {% else %}
+          {%   set total_rate = (float(rate)/100) | round(3) %}
+          {% endif %}
           {{ total_rate }}
   - sensor:
       # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_yield_income_summary
@@ -230,17 +317,91 @@ template:
         icon: mdi:transmission-tower-export
         state: >
           {% if (states('input_boolean.electrical_yield_rate_toggle') == "on") %}
-          {% set rate = float(states('input_number.electrical_yield_rate_manual')) %}
+          {%   set rate = states('input_number.electrical_yield_rate_manual') %}
+          {%   if (rate == 'unknown') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate) %}
+          {%   endif %}
           {% else %}
-          {% set rate = float(states('sensor.electrical_yield_spot_sensor_intermediary')) %}
+          {%   set rate = states('sensor.electrical_yield_spot_sensor_intermediary') %}
+          {%   if (rate == 'unknown') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate) %}
+          {%   endif %}
           {% endif %}
-          {% set compensation = float(states('input_number.electrical_yield_rate_compensation_manual')) %}
+          {% set compensation = states('input_number.electrical_yield_rate_compensation_manual') %}
+          {% if (compensation == 'unknown') %}
+          {%   set compensation = 0 %}
+          {% else %}
+          {%   set compensation = float(compensation) %}
+          {% endif %}
           {% set compensated_rate = rate + compensation  %}
-          {% set tax = float(states('input_number.electrical_yield_rate_tax')) %}
-          {% set vat = float(states('input_number.electrical_yield_rate_vat')) %}
-          {% set tax_reduction = float(states('input_number.electrical_yield_rate_tax_reduction')) %}
+          {% set tax = states('input_number.electrical_yield_rate_tax') %}
+          {% if (tax == 'unknown') %}
+          {%   set tax = 0 %}
+          {% else %}
+          {%   set tax = float(tax) %}
+          {% endif %}
+          {% set vat = states('input_number.electrical_yield_rate_vat') %}
+          {% if (vat == 'unknown') %}
+          {%   set vat = 0 %}
+          {% else %}
+          {%   set vat = float(vat) %}
+          {% endif %}
+          {% set tax_reduction = states('input_number.electrical_yield_rate_tax_reduction') %}
+          {% if (tax_reduction == 'unknown') %}
+          {%   set tax_reduction = 0 %}
+          {% else %}
+          {%   set tax_reduction = float(tax_reduction) %}
+          {% endif %}
           {% set total_rate = (((compensated_rate + tax) * ((1+(vat/100)))) + tax_reduction) | round(3) %}
           {{ total_rate }}
+  - sensor:
+      # We want to keep track of total electrical yield rate., in SEK/kWh.
+      - name: Electrical yield rate summary SEK
+        unique_id: electrical_yield_rate_summary_sek
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        icon: mdi:transmission-tower-export
+        state: >
+          {% set rate = states('sensor.electrical_yield_rate_summary') %}
+          {% if (rate == 'unknown') %}
+          {%   set rate = 0 %}
+          {% else %}
+          {%   set total_rate = (float(rate)/100) | round(3) %}
+          {% endif %}
+          {{ total_rate }}
+  - sensor:
+      # We want to keep track of the consumption of the house: consumption_intake + solar_production - solar_yield
+      # We know that this already exists elsewhere in other integrations.
+      - name: electrical consumption total hour
+        unique_id: electrical_consumption_total_hour
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        icon: mdi:lightning-bolt
+        state: >
+          {% set consumption_intake = states('sensor.electrical_consumption_intake_hour') %}
+          {% if (consumption_intake == 'unknown') %}
+          {%   set consumption_intake = 0 %}
+          {% else %}
+          {%   set consumption_intake = float(consumption_intake) %}
+          {% endif %}
+          {% set solar_production = states('sensor.electrical_solar_production_hour') %}
+          {% if (solar_production == 'unknown') %}
+          {%   set solar_production = 0 %}
+          {% else %}
+          {%   set solar_production = float(solar_production) %}
+          {% endif %}
+          {% set solar_yield = states('sensor.electrical_solar_yield_hour') %}
+          {% if (solar_yield == 'unknown') %}
+          {%   set solar_yield = 0 %}
+          {% else %}
+          {%   set solar_yield = float(solar_yield) %}
+          {% endif %}
+          {% set total = (consumption_intake + solar_production - solar_yield) | round (2) %}
+          {{ total }}
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # https://www.home-assistant.io/docs/automation/trigger/
@@ -249,15 +410,15 @@ template:
         minutes: "59"
         seconds: "59"
     sensor:
-      # First we get the consumption from the last snapshot (delta) to set the consumption for the hour.
-      # We will therefore not capture the last second for the hour, but the second will not be lost until as we set the new snapshot directly after this.
+      # First we get the intake consumption from the last snapshot (delta) to set the consumption for the hour.
+      # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
-      - name:  test_electrical_consumption_hour
+      - name:  electrical_consumption_intake_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
         state_class: measurement
         state: >
-          {% set old_snapshot = states('sensor.test_electrical_consumption_hour_snapshot') %}
+          {% set old_snapshot = states('sensor.electrical_consumption_intake_hour_snapshot') %}
           {% set new_snapshot = states(states('input_text.electrical_consumption_sensor')) %}
           {% set snapshots_valid = true %}
           {% if (old_snapshot != 'unknown' or old_snapshot != 'unknown') %}
@@ -272,24 +433,169 @@ template:
           {%   set result = 0 %}
           {% endif %}
           {% if (snapshots_valid == true) %}
-          {%  set result = (float(new_snapshot) - float(old_snapshot)) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(2) %}
           {% endif %}
           {{ result }}
-      # Then we calculate the consumption cost for the hour.
-      - name:  test_electrical_consumption_cost_hour
+      # Then we calculate the consumption and distribution cost for the hour.
+      - name:  electrical_consumption_intake_cost_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
         state_class: measurement
         state: >
-          {% set delta = float(states('sensor.test_electrical_consumption_hour')) %}
-          {% set rate_distribution = float(states('sensor.electrical_distribution_rate_summary')) %}
-          {% set rate_consumption = float(states('sensor.electrical_consumption_rate_summary')) %}
+          {% set delta = states('sensor.electrical_consumption_intake_hour') %}
+          {% if (delta == 'unknown') %}
+          {%   set delta = 0 %}
+          {% else %}
+          {%   set delta = float(delta) %}
+          {% endif %}
+          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+          {% if (rate_distribution == 'unknown') %}
+          {%   set rate_distribution = 0 %}
+          {% else %}
+          {%   set rate_distribution = float(rate_distribution) %}
+          {% endif %}
+          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+          {% if (rate_consumption == 'unknown') %}
+          {%   set rate_consumption = 0 %}
+          {% else %}
+          {%   set rate_consumption = float(rate_consumption) %}
+          {% endif %}
           {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(2) %}
           {{ cost }}
-      # Last we set the snapshot.
-      - name:  test_electrical_consumption_hour_snapshot
+      # Then we get the solar production from the last snapshot (delta) to set the solar consumption for the hour.
+      # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
+      # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      - name:  electrical_solar_production_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {% set old_snapshot = states('sensor.electrical_solar_production_hour_snapshot') %}
+          {% set new_snapshot = states(states('input_text.electrical_production_sensor')) %}
+          {% set snapshots_valid = true %}
+          {% if (old_snapshot != 'unknown' or old_snapshot != 'unknown') %}
+          {%   set old_snapshot = float(old_snapshot) %}
+          {%   set new_snapshot = float(new_snapshot) %}
+          {%   if (old_snapshot < 0 or new_snapshot < 0) %}
+          {%     set snapshots_valid = false %}
+          {%     set result = 0 %}
+          {%   endif %}
+          {% else %}
+          {%   set snapshots_valid = false %}
+          {%   set result = 0 %}
+          {% endif %}
+          {% if (snapshots_valid == true) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(2) %}
+          {% endif %}
+          {{ result }}
+      # Then we calculate the reduction from solar production (i.e. that we do not need to buy the electricity).
+      - name:  electrical_solar_production_reduction_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set delta = states('sensor.electrical_solar_production_hour') %}
+          {% if (delta == 'unknown') %}
+          {%   set delta = 0 %}
+          {% else %}
+          {%   set delta = float(delta) %}
+          {% endif %}
+          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+          {% if (rate_distribution == 'unknown') %}
+          {%   set rate_distribution = 0 %}
+          {% else %}
+          {%   set rate_distribution = float(rate_distribution) %}
+          {% endif %}
+          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+          {% if (rate_consumption == 'unknown') %}
+          {%   set rate_consumption = 0 %}
+          {% else %}
+          {%   set rate_consumption = float(rate_consumption) %}
+          {% endif %}
+          {% set cost = float((delta * ((rate_distribution + rate_consumption)))/100) | round(2) %}
+          {{ cost }}
+      # Then we get the solar yield from the last snapshot (delta) to set the yield for the hour.
+      # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
+      # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      - name:  electrical_solar_yield_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {% set old_snapshot = states('sensor.electrical_solar_yield_hour_snapshot') %}
+          {% set new_snapshot = states(states('input_text.electrical_yield_sensor')) %}
+          {% set snapshots_valid = true %}
+          {% if (old_snapshot != 'unknown' or old_snapshot != 'unknown') %}
+          {%   set old_snapshot = float(old_snapshot) %}
+          {%   set new_snapshot = float(new_snapshot) %}
+          {%   if (old_snapshot < 0 or new_snapshot < 0) %}
+          {%     set snapshots_valid = false %}
+          {%     set result = 0 %}
+          {%   endif %}
+          {% else %}
+          {%   set snapshots_valid = false %}
+          {%   set result = 0 %}
+          {% endif %}
+          {% if (snapshots_valid == true) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(2) %}
+          {% endif %}
+          {{ result }}
+      # Then we calculate the yield-return for solar production.
+      - name:  electrical_solar_yield_return_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set delta = states('sensor.electrical_solar_yield_hour') %}
+          {% if (delta == 'unknown') %}
+          {%   set delta = 0 %}
+          {% else %}
+          {%   set delta = float(delta) %}
+          {% endif %}
+          {% set yield_summary = states('sensor.electrical_yield_rate_summary') %}
+          {% if (yield_summary == 'unknown') %}
+          {%   set yield_summary = 0 %}
+          {% else %}
+          {%   set yield_summary = float(yield_summary) %}
+          {% endif %}
+          {% set yield = (delta * (yield_summary)/100) | round(2) %}
+          {{ yield }}
+      # Then we calculate the total reduction, plus yield income for solar production).
+      - name:  electrical_solar_total_return_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set reduction = states('sensor.electrical_solar_production_reduction_hour') %}
+          {% if (reduction == 'unknown') %}
+          {%   set reduction = 0 %}
+          {% else %}
+          {%   set reduction = float(reduction) %}
+          {% endif %}
+          {% set yield_payment = states('sensor.electrical_solar_yield_return_hour') %}
+          {% if (yield_payment == 'unknown') %}
+          {%   set yield_payment = 0 %}
+          {% else %}
+          {%   set yield_payment = float(yield_payment) %}
+          {% endif %}
+          {% set total_reduction = (reduction + yield_payment) | round(2) %}
+          {{ total_reduction }}
+      # Last we set the snapshots.
+      - name:  electrical_consumption_intake_hour_snapshot
         device_class: 'energy'
         unit_of_measurement: 'kWh'
         state_class: measurement
         state: >
           {{ states(states('input_text.electrical_consumption_sensor')) }}
+      - name:  electrical_solar_production_hour_snapshot
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {{ states(states('input_text.electrical_production_sensor')) }}
+      - name:  electrical_solar_yield_hour_snapshot
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {{ states(states('input_text.electrical_yield_sensor')) }}

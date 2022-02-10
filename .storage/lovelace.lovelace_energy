@@ -6,7 +6,58 @@
         "config": {
             "views": [
                 {
-                    "title": "Home"
+                    "title": "Energiuppf\u00f6ljning",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.electrical_consumption_total_hour",
+                                    "name": "Total energianv\u00e4ndning"
+                                },
+                                {
+                                    "entity": "sensor.electrical_consumption_intake_hour",
+                                    "name": "Intag av energi till huset"
+                                },
+                                {
+                                    "entity": "sensor.electrical_consumption_intake_cost_hour",
+                                    "name": "Kostnad f\u00f6r intag av energi till huset"
+                                },
+                                {
+                                    "entity": "sensor.electrical_solar_production_hour",
+                                    "name": "Solelsproduktion"
+                                },
+                                {
+                                    "entity": "sensor.electrical_solar_production_reduction_hour",
+                                    "name": "Kostnadsreduktion av solelsproduktion"
+                                },
+                                {
+                                    "entity": "sensor.electrical_solar_yield_hour",
+                                    "name": "Utmatning av solelsproduktion"
+                                },
+                                {
+                                    "entity": "sensor.electrical_solar_yield_return_hour",
+                                    "name": "Int\u00e4kt av utmatning av solelsproduktion"
+                                },
+                                {
+                                    "entity": "sensor.electrical_solar_total_return_hour",
+                                    "name": "Totalt insparande (reduktion + int\u00e4kt) f\u00f6r solelsproduktion"
+                                }
+                            ],
+                            "title": "Uppgifter f\u00f6r senaste hel timme"
+                        },
+                        {
+                            "type": "history-graph",
+                            "entities": [
+                                {
+                                    "entity": "sensor.electrical_consumption_intake_cost_hour"
+                                }
+                            ],
+                            "hours_to_show": 24,
+                            "refresh_interval": 0
+                        }
+                    ]
                 },
                 {
                     "title": "Energiinst\u00e4llningar",
@@ -116,6 +167,16 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.electrical_distribution_consumption_rate_summary",
+                                    "name": "Total elintagsavgift"
+                                }
+                            ],
+                            "title": "Elintagsavgift"
                         },
                         {
                             "type": "vertical-stack",
