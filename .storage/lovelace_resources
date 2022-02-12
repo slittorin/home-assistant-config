@@ -5,14 +5,14 @@
     "data": {
         "items": [
             {
-                "url": "/local/apexcharts-card.js",
+                "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524312",
                 "type": "module",
-                "id": "63733226e1bd428b99769b19093ca727"
+                "id": "8b2378e041bd447ca943137b268b68eb"
             },
             {
-                "url": "/local/card-mod.js",
+                "url": "/hacsfiles/apexcharts-card/apexcharts-card.js?hacstag=3317011521100",
                 "type": "module",
-                "id": "fd5f391fb14d4d9283153097466aa0a7"
+                "id": "cac652c5a9f044ab8ae01a819bff340b"
             }
         ]
     }

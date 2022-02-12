@@ -1,8 +1,45 @@
 # All automations for Home Assistant exists here.
 
 # Take snapshot each day of the week.
-- id: snapshot_each_day
-  alias: 'Snapshot each day of the week'
+#- id: snapshot_each_day
+#  alias: 'Snapshot each day of the week'
+#  trigger:
+#    platform: time
+#    at: '00:01:00'
+#  condition:
+#  - condition: time
+#    weekday:
+#      - mon
+#      - tue
+#      - wed
+#      - thu
+#      - fri
+#      - sat
+#  action:
+#    service: hassio.backup_full
+#    data_template:
+#      name: ha_snapshot_daily_{{now().strftime('%Y%m%d')}}
+
+# Take weekly snapshot each sunday, approx. one hour after the daily.
+#- id: snapshot_weekly
+#  alias: 'Snapshot each sunday of the week'
+#  trigger:
+#    platform: time
+#    at: '00:01:00'
+#  condition:
+#  - condition: time
+#    weekday:
+#      - sun
+#  action:
+#    service: hassio.backup_full
+#    data_template:
+#      name: ha_snapshot_weekly_{{now().strftime('%Y%m%d')}}
+
+# We want to have the following backup-scheme:
+# - Daily backups Monday through Saturday, kept for 7 days.
+# - Weekly backups on Sunday, kept for 8 weeks (56+1 days).
+- id: snapshot_daily
+  alias: 'Daily snapshot each monday through saturday of the week, kept 7 days'
   trigger:
     platform: time
     at: '00:01:00'
@@ -16,13 +53,13 @@
       - fri
       - sat
   action:
-    service: hassio.backup_full
-    data_template:
-      name: ha_snapshot_daily_{{now().strftime('%Y%m%d')}}
+    service: auto_backup.backup_full
+    data:
+      name: ha_snapshot_daily_{{now().strftime('%Y%m%d_%H%M%S')}}
+      keep_days: 7
 
-# Take weekly snapshot each sunday, approx. one hour after the daily.
 - id: snapshot_weekly
-  alias: 'Snapshot each sunday of the week'
+  alias: 'Weekly snapshot each sunday, kept 57 days'
   trigger:
     platform: time
     at: '00:01:00'
@@ -31,6 +68,7 @@
     weekday:
       - sun
   action:
-    service: hassio.backup_full
-    data_template:
-      name: ha_snapshot_weekly_{{now().strftime('%Y%m%d')}}
+    service: auto_backup.backup_full
+    data:
+      name: ha_snapshot_weekly_{{now().strftime('%Y%m%d_%H%M%S')}}
+      keep_days: 57

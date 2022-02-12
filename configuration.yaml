@@ -57,10 +57,6 @@ homeassistant:
     tariff_electrical: !include packages/tariff_electrical.yaml
     balboa_spa: !include packages/balboa_spa.yaml
 
-frontend:
-  extra_module_url:
-    - /local/card-mod.js
-
 shell_command:
   github_push: /config/scripts/github_push.sh "{{ value }}"
   remove_daily_snapshots: find /root/backup/ -name 'ha_snapshot_daily_*' -mtime +7 -print
