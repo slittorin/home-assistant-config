@@ -1,0 +1,27 @@
+# This file includes all the entities for tracking sensor related to SMA Inverter and Home Manager.
+
+sensor:
+  # We want to get the min statistics for the current (A) on line 1.
+  - platform: statistics
+    name: test SMA metering current l1 min
+    unique_id: test_sma_metering_current_l1_min
+    entity_id: sensor.metering_current_l1
+    state_characteristic: value_min
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for the current (A) on line 1.
+  - platform: statistics
+    name: test SMA metering current l1 mean
+    unique_id: test_sma_metering_current_l1_mean
+    entity_id: sensor.metering_current_l1
+    state_characteristic: mean
+    max_age:
+      hours: 1
+  # We want to get the max statistics for the current (A) on line 1.
+  - platform: statistics
+    name: test SMA metering current l1 max
+    unique_id: test_sma_metering_current_l1_max
+    entity_id: sensor.metering_current_l1
+    state_characteristic: value_max
+    max_age:
+      hours: 1

@@ -1,47 +1,52 @@
 # This file includes all the entities for tracking domains and sensors.
 
-#        state: >
-#          {%- for d in states | groupby('domain') %}
-#          {% if loop.first %}{{loop.length}} Domains:
-#          {% endif %}
-#          - {{ d[0] }}: {{d[0]|count + "\n"}}
-#          {%- endfor %}
-
 template:
+    # Get the domains currently in use.
+    # https://community.home-assistant.io/t/where-can-i-find-a-list-of-domains/62654/20
+    # We want this also to be triggered after restart.
   - trigger:
       - platform: time
         at: "01:00:00"
+      - platform: homeassistant
+        event: start
     sensor:
-      # Get the domains currently in use.
-      # https://community.home-assistant.io/t/where-can-i-find-a-list-of-domains/62654/20
       - name: home_assistant_domains_in_use
         state_class: measurement
         state: >
           {{ states|map(attribute='domain')|unique|list|join(',') }}
+  # Get the number of domains.
   - trigger:
       - platform: time
         at: "01:01:00"
+      - platform: homeassistant
+        event: start
     sensor:
-      # Get the number of domains.
       - name: home_assistant_number_of_domains_in_use
+        icon: mdi:domain
         state_class: measurement
         state: >
           {{ states|map(attribute='domain')|unique|list|length }}
   - trigger:
       - platform: time
         at: "01:02:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities.
       - name: home_assistant_number_of_entities
+        icon: mdi:home-assistant
         state_class: measurement
         state: >
           {{ states|map(attribute='entity_id')|unique|list|length }}
   - trigger:
       - platform: time
         at: "01:03:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: automation
       - name: home_assistant_entities_domain_automation
+        icon: mdi:home-automation
         state_class: measurement
         state: >
           {%- set domains = ['automation'] -%}
@@ -55,9 +60,12 @@ template:
   - trigger:
       - platform: time
         at: "01:04:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: binary_sensor
       - name: home_assistant_entities_domain_binary_sensor
+        icon: mdi:toggle-switch
         state_class: measurement
         state: >
           {%- set domains = ['binary_sensor'] -%}
@@ -71,9 +79,12 @@ template:
   - trigger:
       - platform: time
         at: "01:05:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: climate
       - name: home_assistant_entities_domain_climate
+        icon: mdi:home-thermometer
         state_class: measurement
         state: >
           {%- set domains = ['climate'] -%}
@@ -87,9 +98,12 @@ template:
   - trigger:
       - platform: time
         at: "01:06:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: input_button
       - name: home_assistant_entities_domain_input_button
+        icon: mdi:gesture-tap-button
         state_class: measurement
         state: >
           {%- set domains = ['input_button'] -%}
@@ -103,9 +117,12 @@ template:
   - trigger:
       - platform: time
         at: "01:07:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: input_text
       - name: home_assistant_entities_domain_input_text
+        icon: mdi:form-textbox
         state_class: measurement
         state: >
           {%- set domains = ['input_text'] -%}
@@ -119,9 +136,12 @@ template:
   - trigger:
       - platform: time
         at: "01:08:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: persistent_notification
       - name: home_assistant_entities_domain_persistent_notification
+        icon: mdi:bell
         state_class: measurement
         state: >
           {%- set domains = ['persistent_notification'] -%}
@@ -135,9 +155,12 @@ template:
   - trigger:
       - platform: time
         at: "01:09:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: person
       - name: home_assistant_entities_domain_person
+        icon: mdi:account
         state_class: measurement
         state: >
           {%- set domains = ['person'] -%}
@@ -151,9 +174,12 @@ template:
   - trigger:
       - platform: time
         at: "01:10:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: sensor
       - name: home_assistant_entities_domain_sensor
+        icon: mdi:home-assistant
         state_class: measurement
         state: >
           {%- set domains = ['sensor'] -%}
@@ -167,9 +193,12 @@ template:
   - trigger:
       - platform: time
         at: "01:11:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: sun
       - name: home_assistant_entities_domain_sun
+        icon: mdi:white-balance-sunny
         state_class: measurement
         state: >
           {%- set domains = ['sun'] -%}
@@ -183,9 +212,12 @@ template:
   - trigger:
       - platform: time
         at: "01:12:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: weather
       - name: home_assistant_entities_domain_weather
+        icon: mdi:weather-cloudy
         state_class: measurement
         state: >
           {%- set domains = ['weather'] -%}
@@ -199,12 +231,53 @@ template:
   - trigger:
       - platform: time
         at: "01:13:00"
+      - platform: homeassistant
+        event: start
     sensor:
       # Get the number of entities within domain: zone
       - name: home_assistant_entities_domain_zone
+        icon: mdi:home-map-marker
         state_class: measurement
         state: >
           {%- set domains = ['zone'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:14:00"
+      - platform: homeassistant
+        event: start
+    sensor:
+      # Get the number of entities within domain: input_boolean
+      - name: home_assistant_entities_domain_input_boolean
+        icon: mdi:toggle-switch-off-outline
+        state_class: measurement
+        state: >
+          {%- set domains = ['input_boolean'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:15:00"
+      - platform: homeassistant
+        event: start
+    sensor:
+      # Get the number of entities within domain: input_number
+      - name: home_assistant_entities_domain_input_number
+        icon: mdi:numeric
+        state_class: measurement
+        state: >
+          {%- set domains = ['input_number'] -%}
           {%- for domain in domains -%}
           {%- for item in states[domain] -%}
           {% if loop.first %}

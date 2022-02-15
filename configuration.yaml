@@ -54,6 +54,7 @@ homeassistant:
     domains_entities: !include packages/domains_entities.yaml
     github_push: !include packages/github_push.yaml
     weather: !include packages/weather.yaml
+    sma: !include packages/sma.yaml
     tariff_electrical: !include packages/tariff_electrical.yaml
     balboa_spa: !include packages/balboa_spa.yaml
 

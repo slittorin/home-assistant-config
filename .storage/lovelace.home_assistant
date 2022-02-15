@@ -91,68 +91,63 @@
                             "entities": [
                                 {
                                     "entity": "sensor.home_assistant_number_of_domains_in_use",
-                                    "name": "Dom\u00e4ner",
-                                    "icon": "mdi:domain"
+                                    "name": "Dom\u00e4ner"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_number_of_entities",
-                                    "name": "Entiteter",
-                                    "icon": "mdi:home-assistant"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_binary_sensor",
-                                    "name": "Entiteter, dom\u00e4n: binary-sensor",
-                                    "icon": "mdi:toggle-switch"
+                                    "name": "Entiteter"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_automation",
-                                    "name": "Entiteter, dom\u00e4n: automation",
-                                    "icon": "mdi:home-automation"
+                                    "name": "Entiteter, dom\u00e4n: automation"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_entities_domain_binary_sensor",
+                                    "name": "Entiteter, dom\u00e4n: binary-sensor"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_climate",
-                                    "name": "Entiteter, dom\u00e4n: climate",
-                                    "icon": "mdi:home-thermometer"
+                                    "name": "Entiteter, dom\u00e4n: climate"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_entities_domain_input_boolean",
+                                    "name": "Entiteter, dom\u00e4n: input_boolean"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_input_button",
-                                    "name": "Entiteter, dom\u00e4n: input_button",
-                                    "icon": "mdi:gesture-tap-button"
+                                    "name": "Entiteter, dom\u00e4n: input_button"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_entities_domain_input_number",
+                                    "name": "Entiteter, dom\u00e4n: input_number"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_input_text",
-                                    "name": "Entiteter, dom\u00e4n: input_text",
-                                    "icon": "mdi:form-textbox"
+                                    "name": "Entiteter, dom\u00e4n: input_text"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_persistent_notification",
-                                    "name": "Entiteter, dom\u00e4n: persistent_notification",
-                                    "icon": "mdi:bell"
+                                    "name": "Entiteter, dom\u00e4n: persistent_notification"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_person",
-                                    "name": "Entiteter, dom\u00e4n: person",
-                                    "icon": "mdi:account"
+                                    "name": "Entiteter, dom\u00e4n: person"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_sensor",
-                                    "name": "Entiteter, dom\u00e4n: sensor",
-                                    "icon": "mdi:home-assistant"
+                                    "name": "Entiteter, dom\u00e4n: sensor"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_sun",
-                                    "name": "Entiteter, dom\u00e4n: sun",
-                                    "icon": "mdi:white-balance-sunny"
+                                    "name": "Entiteter, dom\u00e4n: sun"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_weather",
-                                    "name": "Entiteter, dom\u00e4n: weather",
-                                    "icon": "mdi:weather-cloudy"
+                                    "name": "Entiteter, dom\u00e4n: weather"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_zone",
-                                    "name": "Entiteter, dom\u00e4n: zone",
-                                    "icon": "mdi:home-map-marker"
+                                    "name": "Entiteter, dom\u00e4n: zone"
                                 }
                             ],
                             "title": "Dom\u00e4ner och entiteter som anv\u00e4nds"
