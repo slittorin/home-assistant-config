@@ -103,7 +103,7 @@
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_binary_sensor",
-                                    "name": "Entiteter, dom\u00e4n: binary-sensor"
+                                    "name": "Entiteter, dom\u00e4n: binary_sensor"
                                 },
                                 {
                                     "entity": "sensor.home_assistant_entities_domain_climate",

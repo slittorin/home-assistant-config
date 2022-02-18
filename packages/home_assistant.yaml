@@ -1,0 +1,6 @@
+# This file includes all the entitites for tracking Home Assistant.
+
+sensor:
+  # We want to keep track on when Home Assistant was restarted.
+  - platform: uptime
+    name: home_assistant_restart

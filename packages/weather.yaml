@@ -7,6 +7,70 @@
 #     - 4 degrees above the horizon at sunrise.
 #     - 6 degrees above the horizon at sunset.
 
+input_text:
+  weather_sun_snapshot_elevation_above_0_degrees_hhmmss_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_above_0_degrees_hhmmss'
+    icon: mdi:angle-acute
+  weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss'
+    icon: mdi:angle-acute
+  weather_sun_snapshot_elevation_below_0_degrees_hhmmss_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_below_0_degrees_hhmmss'
+    icon: mdi:angle-acute
+  weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss'
+    icon: mdi:angle-acute
+  weather_sun_time_reaches_solarpanels_hhmmss_persistent:
+    name: 'Persistence for weather_sun_time_reaches_solarpanels_hhmmss'
+    icon: mdi:angle-acute
+  weather_sun_time_above_horizon_hhmmss_persistent:
+    name: 'Persistence for weather_sun_time_above_horizon_hhmmss'
+    icon: mdi:angle-acute
+
+input_number:
+  weather_sun_snapshot_elevation_above_0_degrees_seconds_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_above_0_degrees_seconds'
+    icon: mdi:angle-acute
+    mode: box
+    min: 0
+    max: 86400
+    unit_of_measurement: "timestamp"
+  weather_sun_snapshot_elevation_reaches_solarpanels_seconds_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_reaches_solarpanels_seconds'
+    icon: mdi:angle-acute
+    mode: box
+    min: 0
+    max: 86400
+    unit_of_measurement: "timestamp"
+  weather_sun_snapshot_elevation_below_0_degrees_seconds_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_below_0_degrees_seconds'
+    icon: mdi:angle-acute
+    mode: box
+    min: 0
+    max: 86400
+    unit_of_measurement: "timestamp"
+  weather_sun_snapshot_elevation_leaves_solarpanels_seconds_persistent:
+    name: 'Persistence for weather_sun_snapshot_elevation_leaves_solarpanels_seconds'
+    icon: mdi:angle-acute
+    mode: box
+    min: 0
+    max: 86400
+    unit_of_measurement: "timestamp"
+  weather_sun_time_reaches_solarpanels_seconds_persistent:
+    name: 'Persistence for weather_sun_time_reaches_solarpanels_seconds_seconds'
+    icon: mdi:angle-acute
+    mode: box
+    min: 0
+    max: 86400
+    unit_of_measurement: "timestamp"
+  weather_sun_time_above_horizon_seconds_persistent:
+    name: 'Persistence for weather_sun_time_above_horizon_seconds'
+    icon: mdi:angle-acute
+    mode: box
+    min: 0
+    max: 86400
+    unit_of_measurement: "timestamp"
+
 # Modern format.
 # If required, utilize name, and set unique_id.
 template:
@@ -72,12 +136,13 @@ template:
       - name: weather_sun_snapshot_elevation_above_0_degrees_seconds
         unit_of_measurement: 'time'
         state_class: measurement
-        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+        state: >
+          {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_above_0_degrees_hhmmss
         unit_of_measurement: 'time'
         state_class: measurement
         state: >
-          {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
+          "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second)
 
   # Set a snapshot in seconds and readable format since 00:00 when sun is rising, and above 4 degrees, for when the sun reaches the solar panels.
   - trigger:
@@ -89,7 +154,8 @@ template:
       - name: weather_sun_snapshot_elevation_reaches_solarpanels_seconds
         unit_of_measurement: 'time'
         state_class: measurement
-        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+        state: >
+          {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
         unit_of_measurement: 'time'
         state_class: measurement
@@ -106,7 +172,8 @@ template:
       - name: weather_sun_snapshot_elevation_below_0_degrees_seconds
         unit_of_measurement: 'time'
         state_class: measurement
-        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+        state: >
+          {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_below_0_degrees_hhmmss
         unit_of_measurement: 'time'
         state: >
@@ -123,10 +190,11 @@ template:
         unit_of_measurement: 'time'
         state_class: measurement
         state: >
-          {% if (states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') == "unknown") %}
+          {% set snapshot = states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') %}
+          {% if (snapshot == "unknown" or snapshot == "unavailable") %}
           {{ 0 }}
           {% else %}
-          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds')) %}
+          {%   set start = int(snapshot) %}
           {%   set stop = (now().hour * 3600) + (now().minute * 60) + now().second %}
           {%   set time = (stop - start) %}
           {{   int(time) }}
@@ -135,10 +203,11 @@ template:
         unit_of_measurement: 'time'
         state_class: measurement
         state: >
-          {% if (states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') == "unknown") %}
+          {% set snapshot = states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') %}
+          {% if (snapshot == "unknown" or snapshot == "unavailable") %}
           {{ "" }}
           {% else %}
-          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds')) %}
+          {%   set start = int(snapshot) %}
           {%   set stop = int((now().hour * 3600) + (now().minute * 60) + now().second) %}
           {%   set time  = (stop - start) %}
           {%   set hours = int(time/3600) %}
@@ -159,7 +228,8 @@ template:
       - name: weather_sun_snapshot_elevation_leaves_solarpanels_seconds
         unit_of_measurement: 'time'
         state_class: measurement
-        state: "{{ (now().hour * 3600) + (now().minute * 60) + now().second }}"
+        state: >
+          {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
         unit_of_measurement: 'time'
         state: >
@@ -176,10 +246,11 @@ template:
         unit_of_measurement: 'time'
         state_class: measurement
         state: >
-          {% if (states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') == "unknown") %}
+          {% set snapshot = states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') %}
+          {% if (snapshot == "unknown" or snapshot == "unavailable") %}
           {{ 0 }}
           {% else %}
-          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds')) %}
+          {%   set start = int(snapshot) %}
           {%   set stop = (now().hour * 3600) + (now().minute * 60) + now().second %}
           {%   set time = (stop - start) %}
           {{   time }}
@@ -188,10 +259,11 @@ template:
         unit_of_measurement: 'time'
         state_class: measurement
         state: >
-          {% if (states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') == "unknown") %}
+          {% set snapshot = states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') %}
+          {% if (snapshot == "unknown" or snapshot == "unavailable") %}
           {{ "" }}
           {% else %}
-          {%   set start = int(states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds')) %}
+          {%   set start = int(snapshot) %}
           {%   set stop = int((now().hour * 3600) + (now().minute * 60) + now().second) %}
           {%   set time  = (stop - start) %}
           {%   set hours = int(time/3600) %}
@@ -465,3 +537,137 @@ template:
         unit_of_measurement: '°'
         state_class: measurement
         state: "{{ float(state_attr('sun.sun', 'azimuth')) }}"
+
+automation:
+  # For persistence, On every state change for weather_sun_snapshot_elevation_above_0_degrees_hhmmss, set input_number sensor.
+  - id: automation_weather_sun_snapshot_elevation_above_0_degrees_hhmmss
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_above_0_degrees_hhmmss'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_above_0_degrees_hhmmss
+    action:
+      service: input_text.set_value
+      data_template:
+        entity_id: input_text.weather_sun_snapshot_elevation_above_0_degrees_hhmmss_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_above_0_degrees_hhmmss') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_above_0_degrees_seconds, set input_text sensor.
+  - id: automation_weather_sun_snapshot_elevation_above_0_degrees_seconds
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_above_0_degrees_seconds'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.weather_sun_snapshot_elevation_above_0_degrees_seconds_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss, set input_number sensor.
+  - id: automation_weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
+    action:
+      service: input_text.set_value
+      data_template:
+        entity_id: input_text.weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_reaches_solarpanels_seconds, set input_text sensor.
+  - id: automation_weather_sun_snapshot_elevation_reaches_solarpanels_seconds
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_reaches_solarpanels_seconds'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.weather_sun_snapshot_elevation_reaches_solarpanels_seconds_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_below_0_degrees_seconds, set input_number sensor.
+  - id: automation_weather_sun_snapshot_elevation_below_0_degrees_seconds
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_below_0_degrees_seconds'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_below_0_degrees_seconds
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.weather_sun_snapshot_elevation_below_0_degrees_seconds_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_below_0_degrees_seconds') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_below_0_degrees_hhmmss, set input_text sensor.
+  - id: automation_weather_sun_snapshot_elevation_below_0_degrees_hhmmss
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_below_0_degrees_hhmmss'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_below_0_degrees_hhmmss
+    action:
+      service: input_text.set_value
+      data_template:
+        entity_id: input_text.weather_sun_snapshot_elevation_below_0_degrees_hhmmss_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_below_0_degrees_hhmmss') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_leaves_solarpanels_seconds, set input_number sensor.
+  - id: automation_weather_sun_snapshot_elevation_leaves_solarpanels_seconds
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_leaves_solarpanels_seconds'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_leaves_solarpanels_seconds
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.weather_sun_snapshot_elevation_leaves_solarpanels_seconds_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_leaves_solarpanels_seconds') }}"
+  # For persistence, On every state change for weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss, set input_text sensor.
+  - id: automation_weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
+    alias: 'Automation for persistance of weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
+    action:
+      service: input_text.set_value
+      data_template:
+        entity_id: input_text.weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss_persistent
+        value: "{{ states('sensor.weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss') }}"
+  # For persistence, On every state change for weather_sun_time_reaches_solarpanels_seconds, set input_number sensor.
+  - id: automation_weather_sun_time_reaches_solarpanels_seconds
+    alias: 'Automation for persistance of weather_sun_time_reaches_solarpanels_seconds'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_time_reaches_solarpanels_seconds
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.weather_sun_time_reaches_solarpanels_seconds_persistent
+        value: "{{ states('sensor.weather_sun_time_reaches_solarpanels_seconds') }}"
+  # For persistence, On every state change for weather_sun_time_reaches_solarpanels_hhmmss, set input_text sensor.
+  - id: automation_weather_sun_time_reaches_solarpanels_hhmmss
+    alias: 'Automation for persistance of weather_sun_time_reaches_solarpanels_hhmmss'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_time_reaches_solarpanels_hhmmss
+    action:
+      service: input_text.set_value
+      data_template:
+        entity_id: input_text.weather_sun_time_reaches_solarpanels_hhmmss_persistent
+        value: "{{ states('sensor.weather_sun_time_reaches_solarpanels_hhmmss') }}"
+  # For persistence, On every state change for weather_sun_time_above_horizon_seconds, set input_number sensor.
+  - id: automation_weather_sun_time_above_horizon_seconds
+    alias: 'Automation for persistance of weather_sun_time_above_horizon_seconds'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_time_above_horizon_seconds
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.weather_sun_time_above_horizon_seconds_persistent
+        value: "{{ states('sensor.weather_sun_time_above_horizon_seconds') }}"
+  # For persistence, On every state change for weather_sun_time_above_horizon_hhmmss, set input_text sensor.
+  - id: automation_weather_sun_time_above_horizon_hhmmss
+    alias: 'Automation for persistance of weather_sun_time_above_horizon_hhmmss'
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_sun_time_above_horizon_hhmmss
+    action:
+      service: input_text.set_value
+      data_template:
+        entity_id: input_text.weather_sun_time_above_horizon_hhmmss_persistent
+        value: "{{ states('sensor.weather_sun_time_above_horizon_hhmmss') }}"

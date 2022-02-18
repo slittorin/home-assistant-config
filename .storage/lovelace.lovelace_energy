@@ -48,14 +48,30 @@
                             "title": "Uppgifter f\u00f6r senaste hel timme"
                         },
                         {
-                            "type": "history-graph",
+                            "type": "statistics-graph",
+                            "entities": [
+                                "sensor.electrical_consumption_intake_cost_hour",
+                                "sensor.electrical_solar_total_return_hour"
+                            ],
+                            "days_to_show": 1,
+                            "stat_types": [
+                                "mean"
+                            ],
+                            "chart_type": "line"
+                        },
+                        {
+                            "type": "entities",
                             "entities": [
                                 {
-                                    "entity": "sensor.electrical_consumption_intake_cost_hour"
+                                    "entity": "sensor.balboa_spa_heater_cost_hour",
+                                    "name": "Spabad - V\u00e4rmare"
+                                },
+                                {
+                                    "entity": "sensor.balboa_spa_circulationpump_cost_hour",
+                                    "name": "Spabad - Circulationspump"
                                 }
                             ],
-                            "hours_to_show": 24,
-                            "refresh_interval": 0
+                            "title": "Kostnad senaste hel timme f\u00f6r"
                         }
                     ]
                 },

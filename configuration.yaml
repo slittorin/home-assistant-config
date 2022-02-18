@@ -35,6 +35,47 @@ influxdb:
   bucket: ha
   token: !secret history_db_token
   max_retries: 3
+  exclude:
+    domains:
+      # Updater: Is not required in history data.
+      - updater
+    entity_globs:
+      # We do not include any of the test_-sensors.
+      - binary_sensor.test_*
+      - sensor.test_*
+      # We exclude specific SMA related sensors, as we down-sample already in HA, and that they otherwise drive increase in database size.
+      - sensor.metering_current_l1
+      - sensor.metering_current_l2
+      - sensor.metering_current_l3
+      - sensor.sma_metering_current_l1_min
+      - sensor.sma_metering_current_l1_mean
+      - sensor.sma_metering_current_l1_max
+      - sensor.sma_metering_current_l2_min
+      - sensor.sma_metering_current_l2_mean
+      - sensor.sma_metering_current_l2_max
+      - sensor.sma_metering_current_l3_min
+      - sensor.sma_metering_current_l3_mean
+      - sensor.sma_metering_current_l3_max
+      - sensor.metering_power_absorbed
+      - sensor.sma_metering_power_absorbed_min
+      - sensor.sma_metering_power_absorbed_mean
+      - sensor.sma_metering_power_absorbed_max
+      - sensor.metering_active_power_draw_l1
+      - sensor.metering_active_power_draw_l2
+      - sensor.metering_active_power_draw_l3
+      - sensor.sma_metering_active_power_draw_l1_min
+      - sensor.sma_metering_active_power_draw_l1_mean
+      - sensor.sma_metering_active_power_draw_l1_max
+      - sensor.sma_metering_active_power_draw_l2_min
+      - sensor.sma_metering_active_power_draw_l2_mean
+      - sensor.sma_metering_active_power_draw_l2_max
+      - sensor.sma_metering_active_power_draw_l3_min
+      - sensor.sma_metering_active_power_draw_l3_mean
+      - sensor.sma_metering_active_power_draw_l3_max
+      - sensor.metering_frequency
+      - sensor.sma_metering_frequency_min
+      - sensor.sma_metering_frequency_mean
+      - sensor.sma_metering_frequency_max
 
 # Text to speech
 tts:
@@ -50,9 +91,11 @@ homeassistant:
   allowlist_external_dirs:
     - '/config/logs'
   packages:
+    home_assistant: !include packages/home_assistant.yaml
     database_table_sizes: !include packages/database_table_sizes.yaml
     domains_entities: !include packages/domains_entities.yaml
     github_push: !include packages/github_push.yaml
+    server1: !include packages/server1.yaml
     weather: !include packages/weather.yaml
     sma: !include packages/sma.yaml
     tariff_electrical: !include packages/tariff_electrical.yaml

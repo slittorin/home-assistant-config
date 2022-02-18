@@ -55,7 +55,7 @@ sensor:
   - platform: sql
     db_url: !secret recorder_db_url
     # Scan once every day.
-    scan_interval: 1800
+    scan_interval: 86400
     queries:
       # We keep track of the min(created date) for table: events
       - name: home_assistant_min_created_events
@@ -64,7 +64,7 @@ sensor:
   - platform: sql
     db_url: !secret recorder_db_url
     # Scan once every day.
-    scan_interval: 1800
+    scan_interval: 86400
     queries:
       # We keep track of the min(created date) for table: states
       - name: home_assistant_min_created_states
@@ -73,7 +73,7 @@ sensor:
   - platform: sql
     db_url: !secret recorder_db_url
     # Scan once every day.
-    scan_interval: 1800
+    scan_interval: 86400
     queries:
       # We keep track of the min(created date) for table: statistics
       - name: home_assistant_min_created_statistics
