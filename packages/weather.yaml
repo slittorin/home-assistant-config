@@ -142,7 +142,7 @@ template:
         unit_of_measurement: 'time'
         state_class: measurement
         state: >
-          "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second)
+          {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
   # Set a snapshot in seconds and readable format since 00:00 when sun is rising, and above 4 degrees, for when the sun reaches the solar panels.
   - trigger:
