@@ -12,6 +12,9 @@ input_button:
   github_push:
     name: Press to perform Github push
     icon: mdi:github
+  test_command:
+    name: Press to perform test-command
+    icon: mdi:github
 
 automation:
 - alias: "Github push"
@@ -22,6 +25,12 @@ automation:
     - service: shell_command.github_push
       data:
         value: "{{ states('input_text.home_assistant_git_push_comment') }}"
+- alias: "Test command"
+  trigger:
+    - platform: state
+      entity_id: input_button.test_command
+  action:
+    - service: shell_command.test_command
 
 sensor:
     # Get the last line in the git_push-logfile

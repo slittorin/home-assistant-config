@@ -538,6 +538,18 @@ template:
         state_class: measurement
         state: "{{ float(state_attr('sun.sun', 'azimuth')) }}"
 
+      # As we cannot use more reliable data, such as 'sar' and 'processor_use' is a snapshot.
+      # We need to convert the load_15m dependent on cores.
+      # On my system I have 4 cores (and no multi-threading).
+      # Command 'nproc gives the number of cores.
+      # Note that the load can be more than 100%.
+      # https://scoutapm.com/blog/understanding-load-averages
+      - name: Home assistant load 15m
+        unique_id: homeassistant_load_15m
+        unit_of_measurement: '%'
+        state_class: measurement
+        state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2) }}"
+
 automation:
   # For persistence, On every state change for weather_sun_snapshot_elevation_above_0_degrees_hhmmss, set input_number sensor.
   - id: automation_weather_sun_snapshot_elevation_above_0_degrees_hhmmss

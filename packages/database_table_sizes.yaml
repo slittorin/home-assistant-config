@@ -4,8 +4,8 @@ sensor:
     # Get the MariaDB database size.
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every 30:t minute.
-    scan_interval: 1800
+    # Scan every hour.
+    scan_interval: 3600
     queries:
       # We keep track of the MariaDB database size.
       - name: home_assistant_db_size
@@ -14,8 +14,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every 30:t minute.
-    scan_interval: 1800
+    # Scan every hour.
+    scan_interval: 3600
     queries:
       # We keep track of the size for table: events
       - name: home_assistant_table_size_events
@@ -24,8 +24,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every 30:t minute.
-    scan_interval: 1800
+    # Scan every hour.
+    scan_interval: 3600
     queries:
       # We keep track of the size for table: states
       - name: home_assistant_table_size_states
@@ -34,8 +34,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every 30:t minute.
-    scan_interval: 1800
+    # Scan every hour.
+    scan_interval: 3600
     queries:
       # We keep track of the size for table: statistics
       - name: home_assistant_table_size_statistics
@@ -44,8 +44,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every 30:t minute.
-    scan_interval: 1800
+    # Scan every hour.
+    scan_interval: 3600
     queries:
       # We keep track of the size for table: statistics_short_term
       - name: home_assistant_table_size_statistics_short_term

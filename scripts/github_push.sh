@@ -25,10 +25,11 @@ else
 fi
 
 # Variables:
+config_dir="/config"
 base_dir="/config/scripts"
 log_dir="/config/logs"
-config_dir="/config"
 logfile="${log_dir}/github_push.log"
+logfile_tmp="${log_dir}/github_push.tmp"
 
 _initialize() {
     touch "${logfile}"
@@ -105,4 +106,10 @@ _finalize() {
 _initialize >> "${logfile}" 2>&1
 _github_push >> "${logfile}" 2>&1
 _finalize >> "${logfile}" 2>&1
+
+# Limit the number of rows in the logfile
+tail -n1000 ${logfile} > ${logfile_tmp}
+rm ${logfile}
+mv ${logfile_tmp} ${logfile}
+
 exit ${exit_code}

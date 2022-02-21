@@ -103,3 +103,4 @@ homeassistant:
 
 shell_command:
   github_push: /config/scripts/github_push.sh "{{ value }}"
+  test_command: /config/scripts/remote_stats.sh pi@192.168.2.30 cpu_temp value
