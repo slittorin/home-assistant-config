@@ -8,76 +8,115 @@ sensor:
     unique_id: server1_cpu_temperature
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 cpu_temp value"
     unit_of_measurement: "°C"
+    
   # Every 15 minute, for server1 we retrieve: The date end time CPU temperature was updated (not standard datetime-format).
   - platform: command_line
     scan_interval: 900
     name: server1 cpu temperature datetime
     unique_id: server1_cpu_temperature_datetime
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 cpu_temp datetime"
-    unit_of_measurement: "timestamp"
     value_template: >
       {{ strptime(value, "%Y%m%d %H%M%S") }}
+      
   # Every 15 minute, for server1 we retrieve: CPU usage in pct.
   - platform: command_line
     scan_interval: 900
     name: server1 cpu used pct
     unique_id: server1_cpu_used_pct
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 cpu_used_pct value"
-    unit_of_measurement: "°C"
-  # Every 15 minute, for server1 we retrieve: The date end time CPU temperature was updated (not standard datetime-format).
+    unit_of_measurement: "%"
+    
+  # Every 15 minute, for server1 we retrieve: The date end time CPU usage in pct was updated (not standard datetime-format).
   - platform: command_line
     scan_interval: 900
     name: server1 cpu used pct datetime
     unique_id: server1_cpu_used_pct_datetime
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 cpu_used_pct datetime"
-    unit_of_measurement: "timestamp"
     value_template: >
       {{ strptime(value, "%Y%m%d %H%M%S") }}
+      
   # Every 15 minute, for server1 we retrieve: Mem used in pct.
   - platform: command_line
     scan_interval: 900
     name: server1 mem used pct
     unique_id: server1_mem_used_pct
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 mem_used_pct value"
-    unit_of_measurement: "°C"
-  # Every 15 minute, for server1 we retrieve: The date end time CPU temperature was updated (not standard datetime-format).
+    unit_of_measurement: "%"
+    
+  # Every 15 minute, for server1 we retrieve: The date end time Mem used in pct was updated (not standard datetime-format).
   - platform: command_line
     scan_interval: 900
     name: server1 mem used pct datetime
     unique_id: server1_mem_used_pct_datetime
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 mem_used_pct datetime"
-    unit_of_measurement: "timestamp"
     value_template: >
       {{ strptime(value, "%Y%m%d %H%M%S") }}
+      
   # Every 15 minute, for server1 we retrieve: Swap used in pct.
   - platform: command_line
     scan_interval: 900
     name: server1 swap used pct
     unique_id: server1_swap_used_pct
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 swap_used_pct value"
-    unit_of_measurement: "°C"
-  # Every 15 minute, for server1 we retrieve: The date end time CPU temperature was updated (not standard datetime-format).
+    unit_of_measurement: "%"
+    
+  # Every 15 minute, for server1 we retrieve: The date end time Swap used in pct was updated (not standard datetime-format).
   - platform: command_line
     scan_interval: 900
     name: server1 swap used pct_datetime
     unique_id: server1_swap_used_pct_datetime
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 swap_used_pct datetime"
-    unit_of_measurement: "timestamp"
     value_template: >
       {{ strptime(value, "%Y%m%d %H%M%S") }}
-  # Every hur, for server1 we retrieve: Disk usage in pct.
+      
+  # Every hour, for server1 we retrieve: Disk usage in pct.
   - platform: command_line
     scan_interval: 3600
     name: server1 disk used pct
     unique_id: server1_disk_used_pct
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 disk_used_pct value"
-    unit_of_measurement: "°C"
-  # Every 15 minute, for server1 we retrieve: The date end time CPU temperature was updated (not standard datetime-format).
+    unit_of_measurement: "%"
+    
+  # Every hour, for server1 we retrieve: The date end time Disk usage in pct was updated (not standard datetime-format).
   - platform: command_line
     scan_interval: 3600
-    name: server1 disk used pct_datetime
+    name: server1 disk used pct datetime
     unique_id: server1_disk_used_pct_datetime
     command: "/config/scripts/remote_stats.sh pi@192.168.2.30 disk_used_pct datetime"
-    unit_of_measurement: "timestamp"
+    value_template: >
+      {{ strptime(value, "%Y%m%d %H%M%S") }}
+
+  # Every 15 minute, for server1 we retrieve: Uptime.
+  - platform: command_line
+    scan_interval: 900
+    name: server1 uptime
+    unique_id: server1_uptime
+    command: "/config/scripts/remote_stats.sh pi@192.168.2.30 uptime value"
+    value_template: >
+      {{ strptime(value, "%Y-%m-%d %H:%M:%S") }}
+    
+  # Every 15 minute, for server1 we retrieve: The date end time Uptime was updated (not standard datetime-format).
+  - platform: command_line
+    scan_interval: 900
+    name: server1 uptime datetime
+    unique_id: server1_uptime_datetime
+    command: "/config/scripts/remote_stats.sh pi@192.168.2.30 uptime datetime"
+    value_template: >
+      {{ strptime(value, "%Y%m%d %H%M%S") }}
+
+  # Every hour, for server1 we retrieve: Docker volume size for Influxdb.
+  - platform: command_line
+    scan_interval: 3600
+    name: server1 influxdb size
+    unique_id: server1_influxdb_size
+    command: "/config/scripts/remote_docker_volume_size.sh pi@192.168.2.30 /var/lib/influxdb2 value"
+    unit_of_measurement: "MB"
+    
+  # Every hour, for server1 we retrieve: The date end time Docker volume size for Influxdb was updated (not standard datetime-format).
+  - platform: command_line
+    scan_interval: 3600
+    name: server1 influxdb size datetime
+    unique_id: server1_influxdb_size_datetime
+    command: "/config/scripts/remote_docker_volume_size.sh pi@192.168.2.30 /var/lib/influxdb2 datetime"
     value_template: >
       {{ strptime(value, "%Y%m%d %H%M%S") }}

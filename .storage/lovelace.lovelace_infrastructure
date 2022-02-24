@@ -1,0 +1,82 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.lovelace_infrastructure",
+    "data": {
+        "config": {
+            "views": [
+                {
+                    "title": "Home",
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.home_assistant_restart",
+                                    "name": "Senaste omstart"
+                                },
+                                {
+                                    "entity": "sensor.disk_use_percent",
+                                    "name": "Diskutnyttjande"
+                                },
+                                {
+                                    "entity": "sensor.memory_use_percent",
+                                    "name": "Minnesutnyttjande"
+                                },
+                                {
+                                    "entity": "sensor.swap_use_percent",
+                                    "name": "Swap-utnyttjande"
+                                },
+                                {
+                                    "entity": "sensor.homeassistant_cpu_load_15m",
+                                    "name": "Processorutnyttjande senaste 15 min"
+                                },
+                                {
+                                    "entity": "sensor.processor_temperature",
+                                    "name": "Processortemperatur"
+                                }
+                            ],
+                            "title": "Server - homeassistant"
+                        },
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.server1_uptime",
+                                    "name": "Senaste omstart",
+                                    "icon": "mdi:clock"
+                                },
+                                {
+                                    "entity": "sensor.server1_disk_used_pct",
+                                    "name": "Diskutnyttjande",
+                                    "icon": "mdi:harddisk"
+                                },
+                                {
+                                    "entity": "sensor.server1_mem_used_pct",
+                                    "name": "Minnesutnyttjande",
+                                    "icon": "mdi:memory"
+                                },
+                                {
+                                    "entity": "sensor.server1_swap_used_pct",
+                                    "name": "Swap-utnyttjande",
+                                    "icon": "mdi:harddisk"
+                                },
+                                {
+                                    "entity": "sensor.server1_cpu_used_pct",
+                                    "name": "Processorutnyttjande senaste 15 min",
+                                    "icon": "mdi:cpu-64-bit"
+                                },
+                                {
+                                    "entity": "sensor.server1_cpu_temperature",
+                                    "name": "Processortemperatur",
+                                    "icon": "mdi:thermometer"
+                                }
+                            ],
+                            "title": "Server - server1"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -13,6 +13,11 @@
                 "url": "/hacsfiles/apexcharts-card/apexcharts-card.js?hacstag=3317011521100",
                 "type": "module",
                 "id": "cac652c5a9f044ab8ae01a819bff340b"
+            },
+            {
+                "url": "/hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866231",
+                "type": "module",
+                "id": "8f29d74b4c934a2cb9958af4d0341ecf"
             }
         ]
     }

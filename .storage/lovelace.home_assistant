@@ -7,6 +7,7 @@
             "views": [
                 {
                     "title": "Home",
+                    "badges": [],
                     "cards": [
                         {
                             "type": "entities",
@@ -23,9 +24,6 @@
                                     "entity": "sensor.home_assistant_file_github_push_log",
                                     "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
                                     "icon": "mdi:github"
-                                },
-                                {
-                                    "entity": "input_button.test_command"
                                 }
                             ],
                             "title": "Push till Github"
@@ -54,9 +52,20 @@
                                     "name": "Tabell - statistics_short_term"
                                 }
                             ],
-                            "hours_to_show": 168,
+                            "hours_to_show": 720,
                             "refresh_interval": 0,
                             "title": "Storlek p\u00e5 Recorder-databas och tabeller"
+                        },
+                        {
+                            "type": "history-graph",
+                            "entities": [
+                                {
+                                    "entity": "sensor.server1_influxdb_size"
+                                }
+                            ],
+                            "hours_to_show": 720,
+                            "refresh_interval": 0,
+                            "title": "Storlek p\u00e5 Influx-databas"
                         },
                         {
                             "type": "entities",

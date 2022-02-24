@@ -113,3 +113,31 @@ template:
           {% endif %}
           {% set total_cost = (consumption * cost) | round(2)  %}
           {{ total_cost }}
+      # We set the cost for the  circulation pump and heater.
+      # We will therefore not capture the last second for the hour.
+      # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      - name: balboa_spa_circulationpump_heater_cost_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
+          {% set consumption2 = states('sensor.balboa_spa_heater_consumption_hour') %}
+          {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+          {% if (consumption == 'unknown' or consumption == 'unavailable') %}
+          {%   set consumption = 0 %}
+          {% else %}
+          {%   set consumption = float(consumption) %}
+          {% endif %}
+          {% if (consumption2 == 'unknown' or consumption2 == 'unavailable') %}
+          {%   set consumption2 = 0 %}
+          {% else %}
+          {%   set consumption2 = float(consumption2) %}
+          {% endif %}
+          {% if (cost == 'unknown' or cost == 'unavailable') %}
+          {%   set cost = 0 %}
+          {% else %}
+          {%   set cost = float(cost) %}
+          {% endif %}
+          {% set total_cost = ((consumption + consumption2) * cost) | round(2)  %}
+          {{ total_cost }}

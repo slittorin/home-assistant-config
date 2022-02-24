@@ -19,15 +19,26 @@
                 "title": "V\u00e4der",
                 "url_path": "lovelace-weather",
                 "mode": "storage",
-                "id": "lovelace_weather"
+                "id": "lovelace_weather",
+                "icon": "mdi:weather-cloudy"
             },
             {
                 "require_admin": false,
                 "show_in_sidebar": true,
-                "title": "Energiuppf\u00f6ljning",
+                "title": "Energikostnad",
                 "url_path": "lovelace-energy",
                 "mode": "storage",
-                "id": "lovelace_energy"
+                "id": "lovelace_energy",
+                "icon": "mdi:cash"
+            },
+            {
+                "require_admin": false,
+                "show_in_sidebar": true,
+                "title": "Infrastruktur",
+                "url_path": "lovelace-infrastructure",
+                "mode": "storage",
+                "id": "lovelace_infrastructure",
+                "icon": "mdi:server"
             }
         ]
     }

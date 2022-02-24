@@ -6,72 +6,124 @@
         "config": {
             "views": [
                 {
-                    "title": "Energiuppf\u00f6ljning",
+                    "title": "Energikostnad",
                     "badges": [],
                     "cards": [
                         {
-                            "type": "entities",
-                            "entities": [
+                            "type": "vertical-stack",
+                            "cards": [
                                 {
-                                    "entity": "sensor.electrical_consumption_total_hour",
-                                    "name": "Total energianv\u00e4ndning"
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.electrical_consumption_total_hour",
+                                            "name": "Total energianv\u00e4ndning",
+                                            "card_mod": {
+                                                "style": "ha-svg-icon {\n  color: red;\n}    \n"
+                                            }
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_consumption_intake_hour",
+                                            "name": "Intag av energi till huset"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_consumption_intake_cost_hour",
+                                            "name": "Kostnad f\u00f6r intag av energi till huset"
+                                        }
+                                    ],
+                                    "title": "Uppgifter f\u00f6r senaste hel timme"
                                 },
                                 {
-                                    "entity": "sensor.electrical_consumption_intake_hour",
-                                    "name": "Intag av energi till huset"
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.balboa_spa_heater_cost_hour",
+                                            "name": "Varav kostnad f\u00f6r v\u00e4rmare spabad"
+                                        },
+                                        {
+                                            "entity": "sensor.balboa_spa_circulationpump_cost_hour",
+                                            "name": "Varav kostnad f\u00f6r cirkulationspump spabad"
+                                        }
+                                    ]
                                 },
                                 {
-                                    "entity": "sensor.electrical_consumption_intake_cost_hour",
-                                    "name": "Kostnad f\u00f6r intag av energi till huset"
-                                },
-                                {
-                                    "entity": "sensor.electrical_solar_production_hour",
-                                    "name": "Solelsproduktion"
-                                },
-                                {
-                                    "entity": "sensor.electrical_solar_production_reduction_hour",
-                                    "name": "Kostnadsreduktion av solelsproduktion"
-                                },
-                                {
-                                    "entity": "sensor.electrical_solar_yield_hour",
-                                    "name": "Utmatning av solelsproduktion"
-                                },
-                                {
-                                    "entity": "sensor.electrical_solar_yield_return_hour",
-                                    "name": "Int\u00e4kt av utmatning av solelsproduktion"
-                                },
-                                {
-                                    "entity": "sensor.electrical_solar_total_return_hour",
-                                    "name": "Totalt insparande (reduktion + int\u00e4kt) f\u00f6r solelsproduktion"
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.electrical_solar_production_hour",
+                                            "name": "Solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_production_reduction_hour",
+                                            "name": "Kostnadsreduktion av solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_yield_hour",
+                                            "name": "Utmatning av solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_yield_return_hour",
+                                            "name": "Int\u00e4kt av utmatning av solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_total_return_hour",
+                                            "name": "Totalt insparande (reduktion + int\u00e4kt) f\u00f6r solelsproduktion"
+                                        }
+                                    ]
                                 }
-                            ],
-                            "title": "Uppgifter f\u00f6r senaste hel timme"
-                        },
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Dag",
+                    "path": "energiuppfoljning-dag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
                         {
-                            "type": "statistics-graph",
-                            "entities": [
-                                "sensor.electrical_consumption_intake_cost_hour",
-                                "sensor.electrical_solar_total_return_hour"
-                            ],
-                            "days_to_show": 1,
-                            "stat_types": [
-                                "mean"
-                            ],
-                            "chart_type": "line"
-                        },
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/5OFTMBB7k/energiuppfoljning-dag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "M\u00e5nad",
+                    "path": "energiuppfoljning-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
                         {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.balboa_spa_heater_cost_hour",
-                                    "name": "Spabad - V\u00e4rmare"
-                                },
-                                {
-                                    "entity": "sensor.balboa_spa_circulationpump_cost_hour",
-                                    "name": "Spabad - Circulationspump"
-                                }
-                            ],
-                            "title": "Kostnad senaste hel timme f\u00f6r"
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/m2XBgEB7k/energiuppfoljning-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / Dag",
+                    "path": "energiuppfoljning-ar-per-vecka",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/r9GfsPfnz/energiuppfoljning-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / M\u00e5nad",
+                    "path": "ar-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/_UmfEEBnk/energiuppfoljning-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
                         }
                     ]
                 },
@@ -309,7 +361,8 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "title": "Energikostnad"
         }
     }
 }

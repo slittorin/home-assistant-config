@@ -9,6 +9,8 @@
                 {
                     "path": "default_view",
                     "title": "Home",
+                    "type": "sidebar",
+                    "badges": [],
                     "cards": [
                         {
                             "type": "entities",

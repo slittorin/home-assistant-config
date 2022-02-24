@@ -1,24 +1,18 @@
 #!/bin/bash
 #
 # Purpose:
-# Retrieve statistics from remote server.
+# Retrieve docker volume size information from remote server.
 #
 # Usage:
-# ./remote_command.sh SERVER STAT TYPE
+# ./remote_docker_volume_size.sh SERVER VOLUME TYPE
 #
-# Example: ./remote_command.sh pi@192.168.2.30 cpu_temp value
+# Example: ./remote_docker_volume_size.sh pi@192.168.2.30 /var/lib/influxdb2 value
 #
 # SERVER    - Mandatory. Is the remote server in format: user@NAME/IP.
 #             Remember that the server must be able to run commands without password (such as key based login).
-# STAT      - Default will be used if not given or not recognized. The statistics to retrieve, one of the following:
-#             cpu_used_pct      - CPU utilization in percentage over 15 minutes [default].
-#             cpu_temp          - CPU temperature in degrees celcius.
-#             disk_used_pct     - Disk utilization in percent.
-#             mem_used_pct      - RAM utilization in percent.
-#             swap_used_pct     - Swap utilization in percent.
-#             uptime            - Uptime (last reboot).
+# VOLUME    - Mandatory. The docker volume name. Does not need to match the entire volume-name, but give only one result.
 # TYPE      - Default will be used if not given or not recognized. The measure, one of the following:
-#             value             - The value [default].
+#             value             - The size of the volume in MB [default].
 #             datetime          - The datetime, in format YYYYMMDD HHMMSS.
 
 # Load environment variables (mainly secrets).
@@ -30,8 +24,8 @@ fi
 config_dir="/config"
 base_dir="/config/scripts"
 log_dir="/config/logs"
-logfile="${log_dir}/remote_stats.log"
-logfile_tmp="${log_dir}/remote_stats.tmp"
+logfile="${log_dir}/remote_docker_volume_size.log"
+logfile_tmp="${log_dir}/remote_docker_volume_size.tmp"
 rsa_file="/config/.ssh/id_rsa"
 known_hosts_file="/config/.ssh/known_hosts"
 
@@ -46,11 +40,13 @@ else
     SERVER="$1"
 fi
 
-# Check statistics to retrieve.
+# Check volume.
 if [ -z "$2" ]; then
-    STATISTICS="cpu_used_pct"
+    echo "ERROR. Volume must be given."
+    echo "$(date +%Y%m%d_%H%M%S): ERROR. Volume must be given." >> ${logfile}
+    exit 1
 else
-    STATISTICS="$2"
+    VOLUME="$2"
 fi
 
 # Check type to retrieve.
@@ -60,23 +56,11 @@ else
     TYPE="$3"
 fi
 
-# Different type of statistics
-if [ "${STATISTICS}" == "cpu_temp" ] ;then
-    FILE="/srv/stats/cpu_temp.txt "
-elif [ "${STATISTICS}" == "disk_used_pct" ] ;then
-    FILE="/srv/stats/disk_used_pct.txt"
-elif [ "${STATISTICS}" == "mem_used_pct" ] ;then
-    FILE="/srv/stats/mem_used_pct.txt"
-elif [ "${STATISTICS}" == "swap_used_pct" ] ;then
-    FILE="/srv/stats/swap_used_pct.txt"
-elif [ "${STATISTICS}" == "uptime" ] ;then
-    FILE="/srv/stats/uptime.txt"
-else
-    FILE="/srv/stats/cpu_used_pct.txt"
-fi
+# Set the file to look into.
+FILE="/srv/stats/docker_volume_sizes.txt"
 
 # Run command.
-RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_file} ${SERVER} "cat ${FILE}" 2>> ${logfile}`
+RESULT=$(ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_file} ${SERVER} "cat ${FILE} | grep ${VOLUME}" 2>> ${logfile})
 RESULT_CODE=$?
 if [ ${RESULT_CODE} -ne 0 ] 
 then
@@ -85,9 +69,17 @@ then
     exit 1
 fi
 
+# We should only get one line.
+LINES=$(echo "${RESULT}" | wc -l)
+if [ ${LINES} -ne 1 ]; then
+    echo "ERROR. Volume name too ambigous, several volumes found."
+    echo "$(date +%Y%m%d_%H%M%S): ERROR. Volume name too ambigous, several volumes found." >> ${logfile}
+    exit 1
+fi
+
 # Get the values.
 DATETIME=`echo ${RESULT} | awk -F, '{ print $1 }'i | sed 's/_/ /'`
-VALUE=`echo ${RESULT} | awk -F, '{ print $2 }'`
+VALUE=`echo ${RESULT} | awk -F, '{ print $4 }'`
 
 # Show the result
 if [ "${TYPE}" == "datetime" ] ;then

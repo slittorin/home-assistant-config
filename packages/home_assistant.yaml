@@ -4,8 +4,9 @@ sensor:
   # We want to keep track on when Home Assistant was restarted.
   - platform: uptime
     name: home_assistant_restart
-  # We wamt to keep track of basic OS/HW data.
+  # We wamt to keep track of basic OS/HW data, scan every 15 minute.
   - platform: systemmonitor
+    scan_interval: 900
     resources:
       - type: disk_use_percent
         arg: /
@@ -14,16 +15,17 @@ sensor:
       - type: load_15m
       - type: processor_temperature
 
-#template:
-#  - sensor:
-#      # As we cannot use more reliable data, such as 'sar' and 'processor_use' is a snapshot.
-#      # We need to convert the load_15m dependent on cores.
-#      # On my system I have 4 cores (and no multi-threading).
-#      # Command 'nproc gives the number of cores.
-#      # Note that the load can be more than 100%.
-#      # https://scoutapm.com/blog/understanding-load-averages
-#      - name: Home assistant load 15m
-#        unique_id: homeassistant_load_15m
-#        unit_of_measurement: '%'
-#        state_class: measurement
-#        state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2) }}"
+template:
+  - sensor:
+      # As we cannot use more reliable data, such as 'sar' and 'processor_use' is a snapshot.
+      # We need to convert the load_15m dependent on cores.
+      # On my system I have 4 cores (and no multi-threading).
+      # Command 'nproc gives the number of cores.
+      # Note that the load can be more than 100%.
+      # https://scoutapm.com/blog/understanding-load-averages
+      - name: Homeassistant cpu load 15m
+        unique_id: homeassistant_cpu_load_15m
+        icon: mdi:cpu-64-bit
+        unit_of_measurement: '%'
+        state_class: measurement
+        state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2) }}"
