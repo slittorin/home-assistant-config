@@ -1,0 +1,126 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.lovelace_ampere",
+    "data": {
+        "config": {
+            "views": [
+                {
+                    "title": "Nu",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.metering_current_l1",
+                                    "name": "Fas 1"
+                                },
+                                {
+                                    "entity": "sensor.metering_current_l2",
+                                    "name": "Fas 2"
+                                },
+                                {
+                                    "entity": "sensor.metering_current_l3",
+                                    "name": "Fas 3"
+                                }
+                            ],
+                            "title": "Nuvarande str\u00f6mstyrka"
+                        }
+                    ]
+                },
+                {
+                    "title": "6 timmar",
+                    "path": "6-timmar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/Yz6EdHYnk/stromstyrka-senaste-6-timmarna?orgId=1&from=now-6h&to=now&refresh=1m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/IpKs_5L7z/stromstyrka-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Idag",
+                    "path": "idag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/cTx-ftY7z/stromstyrka-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "F\u00f6rra m\u00e5naden",
+                    "path": "forra-manaden",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/9znlBtL7z/stromstyrka-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Denna M\u00e5nad",
+                    "path": "manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/z9z7LtLnz/stromstyrka-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / Dag",
+                    "path": "ar-dag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/LoFvYpY7k/stromstyrka-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / M\u00e5nad",
+                    "path": "ar-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/XVT2YtL7z/stromstyrka-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

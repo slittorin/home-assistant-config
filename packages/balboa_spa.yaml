@@ -62,6 +62,17 @@ template:
         state_class: total_increasing
         state: "{{ float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3 }}"
 
+  - sensor:
+      # We want to keep track of accumulated (hourly) consumption for the circulation pump and heater.
+      # Sometimes HA seems to not add entities when the name and unique_id is not the same, and this 'sticks' in the system.
+      # Therefore we split circulation and pump.
+      - name: Balboa Spa circulation pump heater consumption hour
+        unique_id: balboa_spa_circulation_pump_heater_consumption_hour
+        unit_of_measurement: 'kWh'
+        device_class: energy
+        state_class: total_increasing
+        state: "{{ float((float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3) + (float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3.0)) }}"
+
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       - platform: time_pattern

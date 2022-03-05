@@ -340,7 +340,7 @@ template:
           {% else %}
           {%   set value = float(input) %}
           {% endif %}
-          {{ value }}'
+          {{ value }}
       # We save sma_metering_current_l3_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
       - name:  sma_metering_current_l3_max_hour

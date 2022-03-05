@@ -1,0 +1,126 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.lovelace_effect",
+    "data": {
+        "config": {
+            "views": [
+                {
+                    "title": "Nu",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.metering_power_absorbed",
+                                    "name": "Effekt intag till huset"
+                                },
+                                {
+                                    "entity": "sensor.grid_power",
+                                    "name": "Effekt solelsproduktion"
+                                },
+                                {
+                                    "entity": "sensor.metering_power_supplied",
+                                    "name": "Effekt utmatning av solelsproduktion till n\u00e4t"
+                                }
+                            ],
+                            "title": "Nuvarande effekt"
+                        }
+                    ]
+                },
+                {
+                    "title": "6 timmar",
+                    "path": "timme",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/m6URONLnk/effekt-senaste-6-timmarna?orgId=1&from=now-6h&to=now&refresh=1m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/mtpwJZY7k/effekt-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Idag",
+                    "path": "idag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/jCkxNHY7z/effekt-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "F\u00f6rra m\u00e5naden",
+                    "path": "forra-manaden",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/e8BwHHY7z/effekt-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Denna M\u00e5nad",
+                    "path": "manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/xAkVDHL7k/effekt-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / Dag",
+                    "path": "ar-dag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/zPhDDHL7z/effekt-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / M\u00e5nad",
+                    "path": "ar-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/GiztvNYnk/effekt-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

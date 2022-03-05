@@ -39,6 +39,32 @@
                 "mode": "storage",
                 "id": "lovelace_infrastructure",
                 "icon": "mdi:server"
+            },
+            {
+                "require_admin": false,
+                "show_in_sidebar": true,
+                "icon": "mdi:home-lightning-bolt-outline",
+                "title": "Energim\u00e4ngd",
+                "url_path": "lovelace-energy-amount",
+                "mode": "storage",
+                "id": "lovelace_energy_amount"
+            },
+            {
+                "require_admin": false,
+                "show_in_sidebar": true,
+                "icon": "mdi:home-lightning-bolt",
+                "title": "Effekt",
+                "url_path": "lovelace-effect",
+                "mode": "storage",
+                "id": "lovelace_effect"
+            },
+            {
+                "require_admin": false,
+                "show_in_sidebar": true,
+                "title": "Ampere",
+                "url_path": "lovelace-ampere",
+                "mode": "storage",
+                "id": "lovelace_ampere"
             }
         ]
     }

@@ -103,61 +103,6 @@
                                     }
                                 }
                             ]
-                        },
-                        {
-                            "type": "custom:apexcharts-card",
-                            "graph_span": "30d",
-                            "header": {
-                                "show": true,
-                                "title": "SMHI:Vindhastighet \u00f6ver 30 dagar"
-                            },
-                            "series": [
-                                {
-                                    "entity": "sensor.weather_wind_speed_ms",
-                                    "curve": "smooth",
-                                    "name": "Max",
-                                    "type": "line",
-                                    "stroke_width": 2,
-                                    "color": "#44739e",
-                                    "opacity": 0.3,
-                                    "group_by": {
-                                        "duration": "30min",
-                                        "func": "max"
-                                    },
-                                    "show": {
-                                        "legend_value": false
-                                    }
-                                },
-                                {
-                                    "entity": "sensor.weather_wind_speed_ms",
-                                    "curve": "smooth",
-                                    "name": "Min",
-                                    "type": "line",
-                                    "stroke_width": 2,
-                                    "color": "#44739e",
-                                    "opacity": 0.3,
-                                    "group_by": {
-                                        "duration": "60min",
-                                        "func": "min"
-                                    }
-                                },
-                                {
-                                    "entity": "sensor.weather_wind_speed_ms",
-                                    "curve": "smooth",
-                                    "name": "Median",
-                                    "type": "line",
-                                    "stroke_width": 2,
-                                    "color": "#44739e",
-                                    "group_by": {
-                                        "duration": "60min",
-                                        "func": "median"
-                                    }
-                                },
-                                {
-                                    "entity": "sensor.weather_wind_gust_speed_ms",
-                                    "color": "#984ea3"
-                                }
-                            ]
                         }
                     ]
                 }

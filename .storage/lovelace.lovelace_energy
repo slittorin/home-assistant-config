@@ -6,7 +6,7 @@
         "config": {
             "views": [
                 {
-                    "title": "Energikostnad",
+                    "title": "Nu",
                     "badges": [],
                     "cards": [
                         {
@@ -17,14 +17,14 @@
                                     "entities": [
                                         {
                                             "entity": "sensor.electrical_consumption_total_hour",
-                                            "name": "Total energianv\u00e4ndning",
+                                            "name": "Energim\u00e4ngd anv\u00e4nd f\u00f6r huset",
                                             "card_mod": {
                                                 "style": "ha-svg-icon {\n  color: red;\n}    \n"
                                             }
                                         },
                                         {
                                             "entity": "sensor.electrical_consumption_intake_hour",
-                                            "name": "Intag av energi till huset"
+                                            "name": "Energim\u00e4ngd intag till huset"
                                         },
                                         {
                                             "entity": "sensor.electrical_consumption_intake_cost_hour",
@@ -76,53 +76,79 @@
                     ]
                 },
                 {
-                    "title": "Dag",
-                    "path": "energiuppfoljning-dag",
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
                     "type": "panel",
                     "badges": [],
                     "cards": [
                         {
                             "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/5OFTMBB7k/energiuppfoljning-dag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "url": "http://192.168.2.30:3000/d/_xWi28Bnk/energikostnad-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]
                 },
                 {
-                    "title": "M\u00e5nad",
-                    "path": "energiuppfoljning-manad",
+                    "title": "Idag",
+                    "path": "energikostnad-idag",
                     "type": "panel",
                     "badges": [],
                     "cards": [
                         {
                             "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/m2XBgEB7k/energiuppfoljning-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "url": "http://192.168.2.30:3000/d/5OFTMBB7k/energikostnad-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "F\u00f6rra m\u00e5naden",
+                    "path": "forra-manaden",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/0zUPhUfnz/energikostnad-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Denna M\u00e5nad",
+                    "path": "energikostnad-denna-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/m2XBgEB7k/energikostnad-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]
                 },
                 {
                     "title": "\u00c5r / Dag",
-                    "path": "energiuppfoljning-ar-per-vecka",
+                    "path": "energikostnad-detta-ar-per-dag",
                     "type": "panel",
                     "badges": [],
                     "cards": [
                         {
                             "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/r9GfsPfnz/energiuppfoljning-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "url": "http://192.168.2.30:3000/d/r9GfsPfnz/energikostnad-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]
                 },
                 {
                     "title": "\u00c5r / M\u00e5nad",
-                    "path": "ar-manad",
+                    "path": "energikostnad-detta-ar-per-manad",
                     "type": "panel",
                     "badges": [],
                     "cards": [
                         {
                             "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/_UmfEEBnk/energiuppfoljning-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "url": "http://192.168.2.30:3000/d/_UmfEEBnk/energikostnad-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]
@@ -240,7 +266,7 @@
                             "type": "entities",
                             "entities": [
                                 {
-                                    "entity": "sensor.electrical_distribution_consumption_rate_summary",
+                                    "entity": "sensor.electrical_distribution_consumption_rate_summary_sek",
                                     "name": "Total elintagsavgift"
                                 }
                             ],

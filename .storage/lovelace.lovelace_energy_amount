@@ -1,0 +1,161 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.lovelace_energy_amount",
+    "data": {
+        "config": {
+            "title": "Home",
+            "views": [
+                {
+                    "path": "default_view",
+                    "title": "Nu",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "vertical-stack",
+                            "cards": [
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.electrical_consumption_total_hour",
+                                            "name": "Energim\u00e4ngd anv\u00e4nd f\u00f6r huset",
+                                            "card_mod": {
+                                                "style": "ha-svg-icon {\n  color: red;\n}    \n"
+                                            }
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_consumption_intake_hour",
+                                            "name": "Energim\u00e4ngd intag till huset"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_consumption_intake_cost_hour",
+                                            "name": "Kostnad f\u00f6r intag av energi till huset"
+                                        }
+                                    ],
+                                    "title": "Uppgifter f\u00f6r senaste hel timme"
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.balboa_spa_heater_cost_hour",
+                                            "name": "Varav kostnad f\u00f6r v\u00e4rmare spabad"
+                                        },
+                                        {
+                                            "entity": "sensor.balboa_spa_circulationpump_cost_hour",
+                                            "name": "Varav kostnad f\u00f6r cirkulationspump spabad"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.electrical_solar_production_hour",
+                                            "name": "Solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_production_reduction_hour",
+                                            "name": "Kostnadsreduktion av solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_yield_hour",
+                                            "name": "Utmatning av solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_yield_return_hour",
+                                            "name": "Int\u00e4kt av utmatning av solelsproduktion"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_solar_total_return_hour",
+                                            "name": "Totalt insparande (reduktion + int\u00e4kt) f\u00f6r solelsproduktion"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/hk3PBUBnk/energimangd-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Idag",
+                    "path": "idag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/uXvXc8B7z/energimangd-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "F\u00f6rra m\u00e5naden",
+                    "path": "forra-manaden",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/NcTTP8fnz/energimangd-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Denna M\u00e5nad",
+                    "path": "manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/6F5jEUfnk/energimangd-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / Dag",
+                    "path": "ar-dag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/ExJo88fnk/energimangd-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / M\u00e5nad",
+                    "path": "ar-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/zja-8UBnz/energimangd-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
