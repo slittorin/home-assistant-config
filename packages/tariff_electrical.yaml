@@ -423,9 +423,9 @@ template:
           {% endif %}
           {% set total = (consumption_intake + solar_production - solar_yield) | round (2) %}
           {{ total }}
+
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
-      # https://www.home-assistant.io/docs/automation/trigger/
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
@@ -635,6 +635,37 @@ template:
         state_class: measurement
         state: >
           {{ states(states('input_text.electrical_yield_sensor')) }}
+
+  - trigger:
+      # Trigger at the near end of every hour, since we want to keep hourly states for energy costs.
+      - platform: time_pattern
+        hours: "/1"
+        minutes: "59"
+    sensor:
+      # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
+      - name: electrical_distribution_consumption_rate_summary_sek_hour2
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        state: >
+          {% set snapshot = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+          {% if (snapshot == 'unknown' or snapshot == 'unavailable') %}
+          {%   set result = 0 %}
+          {% else %}
+          {%   set result = float(snapshot) %}
+          {% endif %}
+          {{ result }}
+      # We set the hourly state for: electrical_yield_rate_summary
+      - name: electrical_yield_rate_summary_hour
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        state: >
+          {% set snapshot = states('sensor.electrical_yield_rate_summary') %}
+          {% if (snapshot == 'unknown' or snapshot == 'unavailable') %}
+          {%   set result = 0 %}
+          {% else %}
+          {%   set result = float(snapshot)/100  %}
+          {% endif %}
+          {{ result | round(2) }}
 
 automation:
   # For persistence, On every state change for electrical_consumption_intake_hour_snapshot, set input_number sensor.

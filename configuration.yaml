@@ -19,7 +19,7 @@ history:
   exclude:
     domains:
       # Updater: Is not required in history data.
-      - updater
+      #- updater. Depreceated in 2022.3.3?
     entity_globs:
       # We do not include any of the test_-sensors.
       - binary_sensor.test_*
@@ -38,7 +38,7 @@ influxdb:
   exclude:
     domains:
       # Updater: Is not required in history data.
-      - updater
+      #- updater. Depreceated in 2022.3.3?
     entity_globs:
       # We do not include any of the test_-sensors.
       - binary_sensor.test_*
