@@ -64,7 +64,17 @@
                 "title": "Ampere",
                 "url_path": "lovelace-ampere",
                 "mode": "storage",
-                "id": "lovelace_ampere"
+                "id": "lovelace_ampere",
+                "icon": "mdi:lightning-bolt-outline"
+            },
+            {
+                "require_admin": false,
+                "show_in_sidebar": true,
+                "title": "Energipris",
+                "url_path": "lovelace-energyrate",
+                "mode": "storage",
+                "id": "lovelace_energyrate",
+                "icon": "mdi:cash-100"
             }
         ]
     }

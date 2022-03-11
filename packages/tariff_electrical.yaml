@@ -641,19 +641,8 @@ template:
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
+        seconds: "0"
     sensor:
-      # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
-      - name: electrical_distribution_consumption_rate_summary_sek_hour2
-        unit_of_measurement: 'SEK/kWh'
-        state_class: measurement
-        state: >
-          {% set snapshot = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
-          {% if (snapshot == 'unknown' or snapshot == 'unavailable') %}
-          {%   set result = 0 %}
-          {% else %}
-          {%   set result = float(snapshot) %}
-          {% endif %}
-          {{ result }}
       # We set the hourly state for: electrical_yield_rate_summary
       - name: electrical_yield_rate_summary_hour
         unit_of_measurement: 'SEK/kWh'
@@ -664,6 +653,18 @@ template:
           {%   set result = 0 %}
           {% else %}
           {%   set result = float(snapshot)/100  %}
+          {% endif %}
+          {{ result | round(2) }}
+      # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
+      - name: electrical_distribution_consumption_rate_summary_sek_hour
+        unit_of_measurement: 'SEK/kWh'
+        state_class: measurement
+        state: >
+          {% set snapshot = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+          {% if (snapshot == 'unknown' or snapshot == 'unavailable') %}
+          {%   set result = 0 %}
+          {% else %}
+          {%   set result = float(snapshot) %}
           {% endif %}
           {{ result | round(2) }}
 

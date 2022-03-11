@@ -1,0 +1,64 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "lovelace.lovelace_energyrate",
+    "data": {
+        "config": {
+            "views": [
+                {
+                    "title": "Nu",
+                    "type": "panel",
+                    "badges": []
+                },
+                {
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": []
+                },
+                {
+                    "title": "Idag",
+                    "path": "idag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": []
+                },
+                {
+                    "title": "F\u00f6rra m\u00e5naden",
+                    "path": "forra-manaden",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": []
+                },
+                {
+                    "title": "Denna m\u00e5nad",
+                    "path": "denna-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/Li7PZ6L7z/energipris-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "\u00c5r / Dag",
+                    "path": "ar-dag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": []
+                },
+                {
+                    "title": "\u00c5r / M\u00e5nad",
+                    "path": "ar-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": []
+                }
+            ]
+        }
+    }
+}

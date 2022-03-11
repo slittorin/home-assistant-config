@@ -95,6 +95,7 @@ homeassistant:
     database_table_sizes: !include packages/database_table_sizes.yaml
     domains_entities: !include packages/domains_entities.yaml
     github_push: !include packages/github_push.yaml
+    grafana_github_push: !include packages/grafana_github_push.yaml
     server1: !include packages/server1.yaml
     weather: !include packages/weather.yaml
     sma: !include packages/sma.yaml
@@ -103,4 +104,4 @@ homeassistant:
 
 shell_command:
   github_push: /config/scripts/github_push.sh "{{ value }}"
-  test_command: /config/scripts/remote_stats.sh pi@192.168.2.30 cpu_temp value
+  grafana_github_push: /config/scripts/grafana_github_push.sh "{{ value }}"

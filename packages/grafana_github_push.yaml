@@ -1,0 +1,30 @@
+# This file includes all the entities for the Grafana Github push.
+
+# See also configuration.yaml that holds the shell_command.
+
+input_text:
+  grafana_git_push_comment:
+    name: Comment to add for grafana git push
+    icon: mdi:github
+    mode: text
+
+input_button:
+  grafana_github_push:
+    name: Press to perform GrafanaGithub push
+    icon: mdi:github
+
+automation:
+- alias: "Grafana Github push"
+  trigger:
+    - platform: state
+      entity_id: input_button.grafana_github_push
+  action:
+    - service: shell_command.grafana_github_push
+      data:
+        value: "{{ states('input_text.grafana_git_push_comment') }}"
+
+sensor:
+    # Get the last line in the grafana git_push-logfile
+  - platform: file
+    name: grafana_file_github_push_log
+    file_path: /config/logs/grafana_github_push.log
