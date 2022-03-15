@@ -53,15 +53,21 @@ echo "$(date +%Y%m%d_%H%M%S): Starting copy of backup." >> ${logfile}
 
 # We can run this script in differect context, either in shell add-on, or as shell command.
 # Therefore we need to check this before we start to copy.
-if [ ! -f "${backup_dir}" ]; then
+backup_dir="/backup"
+if [ ! -d "${backup_dir}" ]; then
     backup_dir="/mnt/data/supervisor/backup"
     echo "$(date +%Y%m%d_%H%M%S): Script triggered as shell_command, mounting ${backup_dir}" >> ${logfile}
     umount /mnt/data 2> /dev/null
     mkdir -p /mnt/data 2>> ${logfile}
     mount /dev/sda8 /mnt/data 2>> ${logfile}
+    RESULT_CODE=$?
+    if [ ${RESULT_CODE} -ne 0 ]; then
+        echo "ERROR. Mount error. Exit code: ${RESULT_CODE}"
+        echo "$(date +%Y%m%d_%H%M%S): ERROR. Mount error. Exit code: ${RESULT_CODE}" >> ${logfile}
+        exit 1
+    fi 
 else
-    backup_dir="/backup"
-    echo "$(date +%Y%m%d_%H%M%S): Script triggered as shell add-on." >> ${logfile}
+    echo "$(date +%Y%m%d_%H%M%S): Script triggered through shell add-on." >> ${logfile}
 fi
 
 echo "$(date +%Y%m%d_%H%M%S): Local directory: ${backup_dir}" >> ${logfile}
