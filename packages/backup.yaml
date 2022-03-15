@@ -54,18 +54,21 @@ automation:
     action:
       service: shell_command.copy_backup
 
+  - id: copy_backup_manually
+    alias: "Copy backup to server1"
+    trigger:
+      platform: state
+      entity_id: input_button.copy_backup
+    action:
+      service: shell_command.copy_backup
+
 input_button:
   copy_backup:
     name: Press to copy backup files to server1
     icon: mdi:cloud-upload
-
-automation:
-- alias: "Copy backup to server1"
-  trigger:
-    - platform: state
-      entity_id: input_button.copy_backup
-  action:
-    - service: shell_command.copy_backup
+  copy_backup2:
+    name: Press to copy backup files to server1 - v2
+    icon: mdi:cloud-upload
 
 sensor:
     # Get the last line in the copy_backup-logfile
