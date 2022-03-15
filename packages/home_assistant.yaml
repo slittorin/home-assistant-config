@@ -29,3 +29,16 @@ template:
         unit_of_measurement: '%'
         state_class: measurement
         state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2) }}"
+
+automation:
+  # https://community.home-assistant.io/t/recorder-purge-and-repack/110552
+  - alias: Purge Database
+    initial_state: True
+    trigger:
+      platform: time
+      at: '03:00:00'
+    action:
+      service: recorder.purge
+      data:
+        keep_days: 30
+        repack: true

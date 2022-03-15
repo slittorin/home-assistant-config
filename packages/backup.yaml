@@ -1,0 +1,74 @@
+# This file includes all the entitites for backup pf home assistant.
+
+automation:
+  - id: snapshot_daily
+    alias: 'Daily snapshot each monday through saturday of the week, kept 7 days'
+    trigger:
+      platform: time
+      at: '00:01:00'
+    condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+    action:
+      service: auto_backup.backup_full
+      data:
+        name: ha_snapshot_daily_{{now().strftime('%Y%m%d_%H%M%S')}}
+        keep_days: 7
+
+  - id: snapshot_weekly
+    alias: 'Weekly snapshot each sunday, kept 57 days'
+    trigger:
+      platform: time
+      at: '00:01:00'
+    condition:
+    - condition: time
+      weekday:
+        - sun
+    action:
+      service: auto_backup.backup_full
+      data:
+        name: ha_snapshot_weekly_{{now().strftime('%Y%m%d_%H%M%S')}}
+        keep_days: 57
+
+  - id: copy_backup
+    alias: 'Copy backup files to server1 each night'
+    trigger:
+      platform: time
+      at: '03:00:00'
+    condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+    action:
+      service: shell_command.copy_backup
+
+input_button:
+  copy_backup:
+    name: Press to copy backup files to server1
+    icon: mdi:cloud-upload
+
+automation:
+- alias: "Copy backup to server1"
+  trigger:
+    - platform: state
+      entity_id: input_button.copy_backup
+  action:
+    - service: shell_command.copy_backup
+
+sensor:
+    # Get the last line in the copy_backup-logfile
+  - platform: file
+    name: home_assistant_copy_backup_log
+    file_path: /config/logs/copy_backup.log

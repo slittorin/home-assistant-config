@@ -1,14 +1,20 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+# https://github.com/jcwillox/hass-auto-backup/issues/9
 logger:
   default: warn
+  logs:
+    supervisor.snapshots: info
+    homeassistant.components.recorder: info
+    homeassistant.components.sensor.sql: info
+    custom_components.auto_backup: debug
 
 # Recorder is enabled by default.
 recorder:
   db_url: !secret recorder_db_url
   purge_keep_days: 30
-  auto_purge: true
+  #auto_purge: true
   commit_interval: 30
 
 # Logbook is enabled by default.
@@ -92,6 +98,7 @@ homeassistant:
     - '/config/logs'
   packages:
     home_assistant: !include packages/home_assistant.yaml
+    backup: !include packages/backup.yaml
     database_table_sizes: !include packages/database_table_sizes.yaml
     domains_entities: !include packages/domains_entities.yaml
     github_push: !include packages/github_push.yaml
@@ -103,5 +110,6 @@ homeassistant:
     balboa_spa: !include packages/balboa_spa.yaml
 
 shell_command:
+  copy_backup: /config/scripts/copy_backup.sh pi@192.168.2.30 /srv/ha/backup
   github_push: /config/scripts/github_push.sh "{{ value }}"
   grafana_github_push: /config/scripts/grafana_github_push.sh "{{ value }}"

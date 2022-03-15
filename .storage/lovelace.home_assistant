@@ -29,6 +29,32 @@
                             "title": "Push till Github"
                         },
                         {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "input_button.copy_backup",
+                                    "name": "Tryck f\u00f6r att kopiera backupfiler till server1"
+                                },
+                                {
+                                    "entity": "sensor.home_assistant_copy_backup_log",
+                                    "name": "Status p\u00e5 senaste kopiering",
+                                    "icon": "mdi:cloud-upload"
+                                }
+                            ],
+                            "title": "Kopiera backupfiler till server1"
+                        },
+                        {
+                            "type": "history-graph",
+                            "entities": [
+                                {
+                                    "entity": "sensor.server1_influxdb_size"
+                                }
+                            ],
+                            "hours_to_show": 720,
+                            "refresh_interval": 0,
+                            "title": "Storlek p\u00e5 Influx-databas"
+                        },
+                        {
                             "type": "history-graph",
                             "entities": [
                                 {
@@ -55,17 +81,6 @@
                             "hours_to_show": 720,
                             "refresh_interval": 0,
                             "title": "Storlek p\u00e5 Recorder-databas och tabeller"
-                        },
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.server1_influxdb_size"
-                                }
-                            ],
-                            "hours_to_show": 720,
-                            "refresh_interval": 0,
-                            "title": "Storlek p\u00e5 Influx-databas"
                         },
                         {
                             "type": "entities",
