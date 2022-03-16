@@ -10,7 +10,7 @@ input_text:
 
 input_button:
   grafana_github_push:
-    name: Press to perform GrafanaGithub push
+    name: Press to perform Grafana Github push
     icon: mdi:github
 
 automation:

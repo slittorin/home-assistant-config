@@ -111,6 +111,6 @@ homeassistant:
 
 shell_command:
   # We run copy_backup as background process, since otherwise HA will terminate the process after 60 seconds.
-  copy_backup: /bin/bash /config/scripts/copy_backup.sh pi@192.168.2.30 /srv/ha/backup &
+  copy_backup: /config/scripts/copy_backup.sh pi@192.168.2.30 /srv/ha/backup &
   github_push: /config/scripts/github_push.sh "{{ value }}"
-  grafana_github_push: /config/scripts/grafana_github_push.sh "{{ value }}"
+  grafana_github_push: /config/scripts/grafana_github_push.sh pi@192.168.2.30 192.168.2.30:3000 "{{ value }}"

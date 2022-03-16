@@ -44,15 +44,23 @@
                             "title": "Kopiera backupfiler till server1"
                         },
                         {
-                            "type": "history-graph",
+                            "type": "entities",
                             "entities": [
                                 {
-                                    "entity": "sensor.server1_influxdb_size"
+                                    "entity": "input_text.grafana_git_push_comment",
+                                    "name": "Git push kommentar"
+                                },
+                                {
+                                    "entity": "input_button.grafana_github_push",
+                                    "name": "Tryck f\u00f6r att utf\u00f6ra Git push"
+                                },
+                                {
+                                    "entity": "sensor.grafana_file_github_push_log",
+                                    "name": "Sista git push status",
+                                    "icon": "mdi:github"
                                 }
                             ],
-                            "hours_to_show": 720,
-                            "refresh_interval": 0,
-                            "title": "Storlek p\u00e5 Influx-databas"
+                            "title": "Grafana config push till Github"
                         },
                         {
                             "type": "history-graph",
@@ -81,6 +89,17 @@
                             "hours_to_show": 720,
                             "refresh_interval": 0,
                             "title": "Storlek p\u00e5 Recorder-databas och tabeller"
+                        },
+                        {
+                            "type": "history-graph",
+                            "entities": [
+                                {
+                                    "entity": "sensor.server1_influxdb_size"
+                                }
+                            ],
+                            "hours_to_show": 720,
+                            "refresh_interval": 0,
+                            "title": "Storlek p\u00e5 Influx-databas"
                         },
                         {
                             "type": "entities",

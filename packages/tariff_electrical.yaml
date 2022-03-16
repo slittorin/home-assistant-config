@@ -661,13 +661,13 @@ template:
         state: >
           {{ states(states('input_text.electrical_yield_sensor')) }}
 
-  - trigger:
-      # Trigger at the near end of every hour, since we want to keep hourly states for energy costs.
-      - platform: time_pattern
-        hours: "/1"
-        minutes: "59"
-        seconds: "0"
-    sensor:
+#  - trigger:
+#      # Trigger at the near end of every hour, since we want to keep hourly states for energy costs.
+#      - platform: time_pattern
+#        hours: "/1"
+#        minutes: "59"
+#        seconds: "0"
+#    sensor:
       # We set the hourly state for: electrical_yield_rate_summary
       - name: electrical_yield_rate_summary_hour
         unit_of_measurement: 'SEK/kWh'
