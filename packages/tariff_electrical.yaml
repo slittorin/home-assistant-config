@@ -174,6 +174,7 @@ template:
           {% endif %}
           {% set total_rate = rate | round(4) %}
           {{ total_rate }}
+
   - sensor:
       # We want to keep track of the distribution rate rate.
       - name: Electrical yield rate spot
@@ -190,6 +191,7 @@ template:
           {% endif %}
           {% set total_rate = rate | round(4) %}
           {{ total_rate }}
+
   - sensor:
       # We want to keep track of total electrical distribution rate.
       - name: Electrical distribution rate summary
@@ -218,6 +220,7 @@ template:
           {% endif %}
           {% set total_rate = ((rate + tax) * ((1+(vat/100)))) | round(4) %}
           {{ total_rate }}
+
   - sensor:
       # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
@@ -233,6 +236,7 @@ template:
           {%   set spot = 0 %}
           {% endif %}
           {{ spot }}
+
   - sensor:
       # We want to keep track of total electrical consumption rate.
       - name: Electrical consumption rate summary
@@ -277,6 +281,7 @@ template:
           {% endif %}
           {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4) %}
           {{ total_rate }}
+
   - sensor:
       # We want to keep track of total electrical distribution plus consumption rate.
       - name: Electrical distribution consumption rate summary
@@ -299,6 +304,7 @@ template:
           {% endif %}
           {% set total_rate = ((rate_distribution + rate_consumption)) | round(2) %}
           {{ total_rate }}
+
   - sensor:
       # We want to keep track of total electrical distribution plus consumption rate, in SEK/kWh.
       - name: Electrical distribution consumption rate summary SEK
@@ -314,6 +320,7 @@ template:
           {%   set total_rate = (float(rate)/100) | round(3) %}
           {% endif %}
           {{ total_rate }}
+
   - sensor:
       # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_yield_spot_sensor
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_rate_summary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
@@ -329,6 +336,7 @@ template:
           {%   set spot = float(value) * 100 %}
           {% endif %}
           {{ spot }}
+
   - sensor:
       # We want to keep track of total electrical yield rate.
       - name: Electrical yield rate summary
@@ -379,6 +387,7 @@ template:
           {% endif %}
           {% set total_rate = (((compensated_rate + tax) * ((1+(vat/100)))) + tax_reduction) | round(3) %}
           {{ total_rate }}
+
   - sensor:
       # We want to keep track of total electrical yield rate., in SEK/kWh.
       - name: Electrical yield rate summary SEK
@@ -394,6 +403,7 @@ template:
           {%   set total_rate = (float(rate)/100) | round(3) %}
           {% endif %}
           {{ total_rate }}
+
   - sensor:
       # We want to keep track of the consumption of the house: consumption_intake + solar_production - solar_yield
       # We know that this already exists elsewhere in other integrations.
@@ -462,6 +472,7 @@ template:
           {%  set result = (new_snapshot - old_snapshot) | round(2) %}
           {% endif %}
           {{ result }}
+
       # Then we calculate the consumption and distribution cost for the hour.
       - name:  electrical_consumption_intake_cost_hour
         device_class: 'monetary'
@@ -488,63 +499,7 @@ template:
           {% endif %}
           {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(2) %}
           {{ cost }}
-      # Then we get the solar production from the last snapshot (delta) to set the solar consumption for the hour.
-      # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
-      # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
-      - name:  electrical_solar_production_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-        state_class: measurement
-        state: >
-          {% set persistent_snapshot = states('input_number.electrical_solar_production_hour_snapshot_persistent') %}
-          {% set old_snapshot = states('sensor.electrical_solar_production_hour_snapshot') %}
-          {% set new_snapshot = states(states('input_text.electrical_production_sensor')) %}
-          {% set snapshots_valid = true %}
-          {% set result = 0 %}
-          {% if (old_snapshot == 'unknown' or old_snapshot == 'unavailable') %}
-          {%   if (persistent_snapshot == 'unknown' or persistent_snapshot == 'unavailable' or persistent_snapshot == 0) %}
-          {%     set snapshots_valid = false %}
-          {%   else %}
-          {%      set old_snapshot = float(persistent_snapshot) %}
-          {%   endif %}
-          {% else %}
-          {%   set old_snapshot = float(old_snapshot) %}
-          {% endif %}
-          {% if (new_snapshot == 'unknown' or new_snapshot == 'unavailable') %}
-          {%   set snapshots_valid = false %}
-          {% else %}
-          {%   set new_snapshot = float(new_snapshot) %}
-          {% endif %}
-          {% if (snapshots_valid == true) %}
-          {%  set result = (new_snapshot - old_snapshot) | round(2) %}
-          {% endif %}
-          {{ result }}
-      # Then we calculate the reduction from solar production (i.e. that we do not need to buy the electricity).
-      - name:  electrical_solar_production_reduction_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-        state_class: measurement
-        state: >
-          {% set delta = states('sensor.electrical_solar_production_hour') %}
-          {% if (delta == 'unknown' or delta == 'unavailable') %}
-          {%   set delta = 0 %}
-          {% else %}
-          {%   set delta = float(delta) %}
-          {% endif %}
-          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
-          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
-          {%   set rate_distribution = 0 %}
-          {% else %}
-          {%   set rate_distribution = float(rate_distribution) %}
-          {% endif %}
-          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
-          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
-          {%   set rate_consumption = 0 %}
-          {% else %}
-          {%   set rate_consumption = float(rate_consumption) %}
-          {% endif %}
-          {% set cost = float((delta * ((rate_distribution + rate_consumption)))/100) | round(2) %}
-          {{ cost }}
+
       # Then we get the solar yield from the last snapshot (delta) to set the yield for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
@@ -576,6 +531,7 @@ template:
           {%  set result = (new_snapshot - old_snapshot) | round(2) %}
           {% endif %}
           {{ result }}
+
       # Then we calculate the yield-return for solar production.
       - name:  electrical_solar_yield_return_hour
         device_class: 'monetary'
@@ -596,6 +552,74 @@ template:
           {% endif %}
           {% set yield = (delta * (yield_summary)/100) | round(2) %}
           {{ yield }}
+
+      # Then we get the solar production from the last snapshot (delta) to set the solar consumption for the hour.
+      # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
+      # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      - name:  electrical_solar_production_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {% set persistent_snapshot = states('input_number.electrical_solar_production_hour_snapshot_persistent') %}
+          {% set old_snapshot = states('sensor.electrical_solar_production_hour_snapshot') %}
+          {% set new_snapshot = states(states('input_text.electrical_production_sensor')) %}
+          {% set snapshots_valid = true %}
+          {% set result = 0 %}
+          {% if (old_snapshot == 'unknown' or old_snapshot == 'unavailable') %}
+          {%   if (persistent_snapshot == 'unknown' or persistent_snapshot == 'unavailable' or persistent_snapshot == 0) %}
+          {%     set snapshots_valid = false %}
+          {%   else %}
+          {%      set old_snapshot = float(persistent_snapshot) %}
+          {%   endif %}
+          {% else %}
+          {%   set old_snapshot = float(old_snapshot) %}
+          {% endif %}
+          {% if (new_snapshot == 'unknown' or new_snapshot == 'unavailable') %}
+          {%   set snapshots_valid = false %}
+          {% else %}
+          {%   set new_snapshot = float(new_snapshot) %}
+          {% endif %}
+          {% if (snapshots_valid == true) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(2) %}
+          {% endif %}
+          {{ result }}
+
+      # Then we calculate the reduction from solar production (i.e. that we do not need to buy the electricity).
+      # Update 20220316. We need to compensate for yield back to the grid, as we do not get monetary value for all that is produced.
+      # So prior to this date, the total monetary value was too large.
+      - name:  electrical_solar_production_reduction_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set production_delta = states('sensor.electrical_solar_production_hour') %}
+          {% if (production_delta == 'unknown' or production_delta == 'unavailable') %}
+          {%   set production_delta = 0 %}
+          {% else %}
+          {%   set production_delta = float(production_delta) %}
+          {% endif %}
+          {% set yield_delta = states('sensor.electrical_solar_yield_hour') %}
+          {% if (yield_delta == 'unknown' or yield_delta == 'unavailable') %}
+          {%   set yield_delta = 0 %}
+          {% else %}
+          {%   set yield_delta = float(yield_delta) %}
+          {% endif %}
+          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+          {%   set rate_distribution = 0 %}
+          {% else %}
+          {%   set rate_distribution = float(rate_distribution) %}
+          {% endif %}
+          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+          {%   set rate_consumption = 0 %}
+          {% else %}
+          {%   set rate_consumption = float(rate_consumption) %}
+          {% endif %}
+          {% set cost = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100) | round(2) %}
+          {{ cost }}
+
       # Then we calculate the total reduction, plus yield income for solar production).
       - name:  electrical_solar_total_return_hour
         device_class: 'monetary'
@@ -616,6 +640,7 @@ template:
           {% endif %}
           {% set total_reduction = (reduction + yield_payment) | round(2) %}
           {{ total_reduction }}
+
       # Last we set the snapshots.
       - name:  electrical_consumption_intake_hour_snapshot
         device_class: 'energy'
