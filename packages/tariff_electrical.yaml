@@ -222,7 +222,7 @@ template:
           {{ total_rate }}
 
   - sensor:
-      # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
+      # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh].
       - name: Electrical consumption spot sensor intermediary
@@ -322,7 +322,7 @@ template:
           {{ total_rate }}
 
   - sensor:
-      # Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_yield_spot_sensor
+      # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_yield_spot_sensor
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_rate_summary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh].
       - name: Electrical yield spot sensor intermediary
@@ -661,14 +661,15 @@ template:
         state: >
           {{ states(states('input_text.electrical_yield_sensor')) }}
 
-#  - trigger:
-#      # Trigger at the near end of every hour, since we want to keep hourly states for energy costs.
-#      - platform: time_pattern
-#        hours: "/1"
-#        minutes: "59"
-#        seconds: "0"
-#    sensor:
+  - trigger:
+      # Trigger at the near end of every hour, since we want to keep hourly states for energy costs.
+      - platform: time_pattern
+        hours: "/1"
+        minutes: "59"
+        seconds: "0"
+    sensor:
       # We set the hourly state for: electrical_yield_rate_summary
+      # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_yield_rate_summary_hour
         unit_of_measurement: 'SEK/kWh'
         state_class: measurement
@@ -680,7 +681,11 @@ template:
           {%   set result = float(snapshot)/100  %}
           {% endif %}
           {{ result | round(2) }}
+        attributes:
+          updated: >
+            {{ now() }}
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
+      # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_distribution_consumption_rate_summary_sek_hour
         unit_of_measurement: 'SEK/kWh'
         state_class: measurement
@@ -692,6 +697,9 @@ template:
           {%   set result = float(snapshot) %}
           {% endif %}
           {{ result | round(2) }}
+        attributes:
+          updated: >
+            {{ now() }}
 
 automation:
   # For persistence, On every state change for electrical_consumption_intake_hour_snapshot, set input_number sensor.

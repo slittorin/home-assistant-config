@@ -37,7 +37,7 @@
                                 },
                                 {
                                     "entity": "sensor.home_assistant_copy_backup_log",
-                                    "name": "Status p\u00e5 senaste kopiering",
+                                    "name": "Sista status (kan ta 1-2 minuter innan det uppdateras)",
                                     "icon": "mdi:cloud-upload"
                                 }
                             ],
@@ -56,7 +56,7 @@
                                 },
                                 {
                                     "entity": "sensor.grafana_file_github_push_log",
-                                    "name": "Sista git push status",
+                                    "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
                                     "icon": "mdi:github"
                                 }
                             ],
