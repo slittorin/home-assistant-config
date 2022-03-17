@@ -25,6 +25,8 @@ base_dir="/config/scripts"
 log_dir="/config/logs"
 logfile="${log_dir}/grafana_github_push.log"
 logfile_tmp="${log_dir}/grafana_github_push.tmp"
+rsa_file="/config/.ssh/id_rsa"
+known_hosts_file="/config/.ssh/known_hosts"
 
 touch ${logfile}
 
@@ -56,13 +58,15 @@ else
 fi
 
 echo "$(date +%Y%m%d_%H%M%S): Starting Grafana Github push." >> ${logfile}
+echo "$(date +%Y%m%d_%H%M%S): Server: ${SERVER}" >> ${logfile}
+echo "$(date +%Y%m%d_%H%M%S): Host: ${HOST}" >> ${logfile}
 
 if [ ${NO_COMMENT} -eq 1 ]; then
-    echo "$(date +%Y%m%d_%H%M%S): No input given, setting comment to default." >> ${logfile}
+    echo "$(date +%Y%m%d_%H%M%S): No comment given, setting comment to default." >> ${logfile}
 fi
 
 # Initialize the remote script.
-RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_file} ${SERVER} "/srv/grafana-git.sh ${HOST} ${COMMENT}" 2>> ${logfile}`
+RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_file} ${SERVER} "sudo /srv/grafana-git.sh ${HOST} '${COMMENT}'" 2>> ${logfile}`
 RESULT_CODE=$?
 if [ ${RESULT_CODE} -ne 0 ]; then
     echo "ERROR. SSH command error. Exit code: ${RESULT_CODE}: ${RESULT}"

@@ -4,8 +4,8 @@ sensor:
     # Get the MariaDB database size.
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every hour.
-    scan_interval: 3600
+    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+    scan_interval: 21600
     queries:
       # We keep track of the MariaDB database size.
       - name: home_assistant_db_size
@@ -14,8 +14,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every hour.
-    scan_interval: 3600
+    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+    scan_interval: 21600
     queries:
       # We keep track of the size for table: events
       - name: home_assistant_table_size_events
@@ -24,8 +24,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every hour.
-    scan_interval: 3600
+    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+    scan_interval: 21600
     queries:
       # We keep track of the size for table: states
       - name: home_assistant_table_size_states
@@ -34,8 +34,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every hour.
-    scan_interval: 3600
+    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+    scan_interval: 21600
     queries:
       # We keep track of the size for table: statistics
       - name: home_assistant_table_size_statistics
@@ -44,8 +44,8 @@ sensor:
         unit_of_measurement: 'MB'
   - platform: sql
     db_url: !secret recorder_db_url
-    # Scan every hour.
-    scan_interval: 3600
+    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+    scan_interval: 21600
     queries:
       # We keep track of the size for table: statistics_short_term
       - name: home_assistant_table_size_statistics_short_term
@@ -88,16 +88,3 @@ sensor:
       - name: home_assistant_min_created_statistics_short_term
         query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics_short_term;'
         column: "value"
-
-# This one failed as the result cannot be more than 256 characters. We most likely need a python-script for this.
-#  - platform: sql
-#    db_url: !secret recorder_db_url
-#    # Scan once every day.
-#    scan_interval: 86400
-#    queries:
-#      # We keep track of 30 entities with most rows in the database.
-#      # Inspiration from: https://stackoverflow.com/questions/276927/can-i-concatenate-multiple-mysql-rows-into-one-field?rq=1
-#      # The output is in one row, separated by colon ",".
-#      - name: home_assistant_entities_with_most_rows
-#        query: 'select group_concat(value separator ",") as "value" from (select concat(entity_id, ": ", count(distinct state_id)) as "value" from homeassistant.states group by entity_id order by COUNT(*) desc limit 0,30) t limit 0,30;'
-#        column: "value"
