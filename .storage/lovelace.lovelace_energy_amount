@@ -154,6 +154,37 @@
                             "aspect_ratio": "100%"
                         }
                     ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "Energiinst\u00e4llningar",
+                    "path": "energiinstallningar",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "input_text.electrical_consumption_sensor",
+                                    "name": "F\u00f6r elkonsumption in i huset"
+                                },
+                                {
+                                    "entity": "input_text.electrical_production_sensor",
+                                    "name": "F\u00f6r elproduktion av panelerna"
+                                },
+                                {
+                                    "entity": "input_text.electrical_yield_sensor",
+                                    "name": "F\u00f6r elproduktion ut ur huset"
+                                }
+                            ],
+                            "title": "Sensornamn f\u00f6r energim\u00e4ngder"
+                        },
+                        {
+                            "type": "markdown",
+                            "content": "For [Tariff settings and information](http://192.168.2.20:8123/lovelace-energyrate/energiinstallningar).\nFor [Energy cost and information](http://192.168.2.20:8123/lovelace-energy/energiinstallningar).\n\n#### Sensor data is taken from:\n- For consumtion into the house: `input_text.electrical_consumption_sensor`.\n- For production by the solar panels: `input_text.electrical_production_sensor`.\n- For production that is pushed to the electrical grid (yield): `input_text.electrical_yield_sensor`.\n",
+                            "title": "Information"
+                        }
+                    ]
                 }
             ]
         }

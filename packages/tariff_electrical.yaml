@@ -503,7 +503,7 @@ template:
       # Then we get the solar yield from the last snapshot (delta) to set the yield for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
-      - name:  electrical_solar_yield_hour
+      - name: electrical_solar_yield_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
         state_class: measurement
@@ -617,8 +617,8 @@ template:
           {% else %}
           {%   set rate_consumption = float(rate_consumption) %}
           {% endif %}
-          {% set cost = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100) | round(2) %}
-          {{ cost }}
+          {% set reduction = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100) | round(2) %}
+          {{ reduction }}
 
       # Then we calculate the total reduction, plus yield income for solar production).
       - name:  electrical_solar_total_return_hour
@@ -632,13 +632,13 @@ template:
           {% else %}
           {%   set reduction = float(reduction) %}
           {% endif %}
-          {% set yield_payment = states('sensor.electrical_solar_yield_return_hour') %}
-          {% if (yield_payment == 'unknown' or yield_payment == 'unavailable') %}
-          {%   set yield_payment = 0 %}
+          {% set yield_reduction = states('sensor.electrical_solar_yield_return_hour') %}
+          {% if (yield_reduction == 'unknown' or yield_reduction == 'unavailable') %}
+          {%   set yield_reduction = 0 %}
           {% else %}
-          {%   set yield_payment = float(yield_payment) %}
+          {%   set yield_reduction = float(yield_reduction) %}
           {% endif %}
-          {% set total_reduction = (reduction + yield_payment) | round(2) %}
+          {% set total_reduction = (reduction + yield_reduction) | round(2) %}
           {{ total_reduction }}
 
       # Last we set the snapshots.
