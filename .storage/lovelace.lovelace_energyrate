@@ -39,22 +39,18 @@
                                             "name": "Total elproduktionsbidrag"
                                         }
                                     ],
-                                    "title": "Nuvarande pris f\u00f6r produktion till eln\u00e4t"
+                                    "title": "Nuvarande bidrag f\u00f6r produktion till eln\u00e4t"
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
+                                            "entity": "sensor.nordpool_kwh_se3_sek_3_10_0"
+                                        }
+                                    ],
+                                    "title": "Nuvarande spotpris (Nordpool SE3)"
                                 }
                             ]
-                        }
-                    ]
-                },
-                {
-                    "title": "Ig\u00e5r",
-                    "path": "igar",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/UVA2K1P7z/energipris-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
                         }
                     ]
                 },
@@ -67,6 +63,19 @@
                         {
                             "type": "iframe",
                             "url": "http://192.168.2.30:3000/d/xZyMF1P7z/energipris-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/UVA2K1P7z/energipris-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]

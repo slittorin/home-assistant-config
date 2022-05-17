@@ -5,17 +5,17 @@
     "data": {
         "items": [
             {
-                "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524312",
+                "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524314",
                 "type": "module",
                 "id": "8b2378e041bd447ca943137b268b68eb"
             },
             {
-                "url": "/hacsfiles/apexcharts-card/apexcharts-card.js?hacstag=3317011521100",
+                "url": "/hacsfiles/apexcharts-card/apexcharts-card.js?hacstag=331701152201",
                 "type": "module",
                 "id": "cac652c5a9f044ab8ae01a819bff340b"
             },
             {
-                "url": "/hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866231",
+                "url": "/hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866242",
                 "type": "module",
                 "id": "8f29d74b4c934a2cb9958af4d0341ecf"
             }

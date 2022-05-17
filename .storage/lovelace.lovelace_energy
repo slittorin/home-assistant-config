@@ -76,19 +76,6 @@
                     ]
                 },
                 {
-                    "title": "Ig\u00e5r",
-                    "path": "igar",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/_xWi28Bnk/energikostnad-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
                     "title": "Idag",
                     "path": "energikostnad-idag",
                     "type": "panel",
@@ -97,6 +84,19 @@
                         {
                             "type": "iframe",
                             "url": "http://192.168.2.30:3000/d/5OFTMBB7k/energikostnad-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/_xWi28Bnk/energikostnad-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]

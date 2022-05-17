@@ -700,6 +700,22 @@ template:
         attributes:
           updated: >
             {{ now() }}
+      # We set the hourly state for: electrical_consumption_rate_summary_sek
+      # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has changed: https://github.com/home-assistant/core/pull/41147
+      - name: electrical_consumption_rate_summary_hour
+        unit_of_measurement: 'öre/kWh'
+        state_class: measurement
+        state: >
+          {% set snapshot = states('sensor.electrical_consumption_rate_summary') %}
+          {% if (snapshot == 'unknown' or snapshot == 'unavailable') %}
+          {%   set result = 0 %}
+          {% else %}
+          {%   set result = float(snapshot) %}
+          {% endif %}
+          {{ result | round(2) }}
+        attributes:
+          updated: >
+            {{ now() }}
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_distribution_consumption_rate_summary_hour
