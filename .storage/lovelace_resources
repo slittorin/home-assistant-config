@@ -5,7 +5,7 @@
     "data": {
         "items": [
             {
-                "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524314",
+                "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524315",
                 "type": "module",
                 "id": "8b2378e041bd447ca943137b268b68eb"
             },
@@ -18,6 +18,11 @@
                 "url": "/hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866242",
                 "type": "module",
                 "id": "8f29d74b4c934a2cb9958af4d0341ecf"
+            },
+            {
+                "url": "/hacsfiles/charger-card/charger-card.js?hacstag=3087524090014",
+                "type": "module",
+                "id": "c1bd9a7c7cb844a58832acb7dc001659"
             }
         ]
     }

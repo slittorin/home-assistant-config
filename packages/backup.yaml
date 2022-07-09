@@ -1,4 +1,4 @@
-# This file includes all the entitites for backup pf home assistant.
+# This file includes all the entitites for backup of home assistant.
 
 automation:
   - id: snapshot_daily

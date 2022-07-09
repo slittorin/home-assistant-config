@@ -1,90 +1,125 @@
 # This file includes all the entities for tracking database and table sizes.
 
-sensor:
-    # Get the MariaDB database size.
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
-    scan_interval: 21600
-    queries:
-      # We keep track of the MariaDB database size.
-      - name: home_assistant_db_size
-        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="homeassistant" GROUP BY table_schema;'
-        column: "value"
-        unit_of_measurement: 'MB'
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
-    scan_interval: 21600
-    queries:
-      # We keep track of the size for table: events
-      - name: home_assistant_table_size_events
-        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="events";'
-        column: "value"
-        unit_of_measurement: 'MB'
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
-    scan_interval: 21600
-    queries:
-      # We keep track of the size for table: states
-      - name: home_assistant_table_size_states
-        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="states";'
-        column: "value"
-        unit_of_measurement: 'MB'
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
-    scan_interval: 21600
-    queries:
-      # We keep track of the size for table: statistics
-      - name: home_assistant_table_size_statistics
-        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="statistics";'
-        column: "value"
-        unit_of_measurement: 'MB'
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
-    scan_interval: 21600
-    queries:
-      # We keep track of the size for table: statistics_short_term
-      - name: home_assistant_table_size_statistics_short_term
-        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="statistics_short_term";'
-        column: "value"
-        unit_of_measurement: 'MB'
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan once every day.
-    scan_interval: 86400
-    queries:
-      # We keep track of the min(created date) for table: events
-      - name: home_assistant_min_created_events
-        query: 'select convert(min(created), DATE) as "value" from homeassistant.events;'
-        column: "value"
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan once every day.
-    scan_interval: 86400
-    queries:
-      # We keep track of the min(created date) for table: states
-      - name: home_assistant_min_created_states
-        query: 'select convert(min(created), DATE) as "value" from homeassistant.states;'
-        column: "value"
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan once every day.
-    scan_interval: 86400
-    queries:
-      # We keep track of the min(created date) for table: statistics
-      - name: home_assistant_min_created_statistics
-        query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics;'
-        column: "value"
-  - platform: sql
-    db_url: !secret recorder_db_url
-    # Scan once every day.
-    scan_interval: 86400
-    queries:
-      # We keep track of the min(created date) for table: statistics_short_term
-      - name: home_assistant_min_created_statistics_short_term
-        query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics_short_term;'
-        column: "value"
+# Since 2022.5 all SQL entities are managed trough GUI. Therefore the below commented rows have been imported.
+
+automation:
+  # However, the import to the integration do not take scan_interval into consideration, and triggers every 30 second.
+  # https://github.com/home-assistant/core/issues/71563
+  # Therefore we have disabled polling for the SQL-integration (in system options).
+  # And we have added the below triggers to allow the sensors to be updated regurlarly.
+  - id: sql_integration_regular_update
+    alias: 'SQL Integration regular update'
+    trigger:
+      - platform: time_pattern
+        hours: "/6"
+        minutes: "00"
+        seconds: "00"
+    action:
+      service: homeassistant.update_entity
+      target:
+        entity_id:
+        - sensor.home_assistant_db_size
+        - sensor.home_assistant_table_size_events
+        - sensor.home_assistant_table_size_states
+        - sensor.home_assistant_table_size_statistics
+        - sensor.home_assistant_table_size_statistics_short_term
+
+#sensor:
+#    # Get the MariaDB database size.
+#  - platform: sql
+#    db_url: !secret recorder_db_url
+#    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+#    scan_interval: 21600
+#    queries:
+#      # We keep track of the MariaDB database size.
+#      - name: home_assistant_db_size
+#        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="homeassistant" GROUP BY table_schema;'
+#        column: "value"
+#        unit_of_measurement: 'MB'
+#  - platform: sql
+#    db_url: !secret recorder_db_url
+#    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+#    scan_interval: 21600
+#    queries:
+#      # We keep track of the size for table: events
+#      - name: home_assistant_table_size_events
+#        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="events";'
+#        column: "value"
+#        unit_of_measurement: 'MB'
+#  - platform: sql
+#    db_url: !secret recorder_db_url
+#    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+#    scan_interval: 21600
+#    queries:
+#      # We keep track of the size for table: states
+#      - name: home_assistant_table_size_states
+#        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="states";'
+#        column: "value"
+#        unit_of_measurement: 'MB'
+#  - platform: sql
+#    db_url: !secret recorder_db_url
+#    # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+#    scan_interval: 21600
+#    queries:
+#      # We keep track of the size for table: statistics
+#      - name: home_assistant_table_size_statistics
+#        query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="statistics";'
+#        column: "value"
+#        unit_of_measurement: 'MB'
+#  # This sensor is removed as of 9/7-2022 as it takes too long time to gather the data, and it is not necessary anymore.
+#  # Also, the 'created' column is not used anymore.
+#  #- platform: sql
+#  #  db_url: !secret recorder_db_url
+#  #  # Scan every 6:th hour (updated 20210317 from 1 to 6 hours).
+#  #  scan_interval: 21600
+#  #  queries:
+#  #    # We keep track of the size for table: statistics_short_term
+#  #    - name: home_assistant_table_size_statistics_short_term
+#  #      query: 'SELECT table_schema as "database", table_name as "table", Round(Sum(data_length + index_length) / 1024 / 1024, 1) as "value" FROM information_schema.tables WHERE table_schema="homeassistant" and table_name="statistics_short_term";'
+#  #      column: "value"
+#  #      unit_of_measurement: 'MB'
+#  # This sensor is removed as of 9/7-2022 as it takes too long time to gather the data, and it is not necessary anymore.
+#  # Also, the 'created' column is not used anymore.
+#  # - platform: sql
+#  #  db_url: !secret recorder_db_url
+#  #  # Scan once every day.
+#  #  scan_interval: 86400
+#  #  queries:
+#  #    # We keep track of the min(created date) for table: events
+#  #    # As of 2022.5 the column is not named 'created' instead it is 'time_fired'.
+#  #    - name: home_assistant_min_created_events
+#  #      query: 'select convert(min(time_fired), DATE) as "value" from homeassistant.events;'
+#  #      column: "value"
+#  # This sensor is removed as of 9/7-2022 as it takes too long time to gather the data, and it is not necessary anymore.
+#  # Also, the 'created' column is not used anymore.
+#  #- platform: sql
+#  #  db_url: !secret recorder_db_url
+#  #  # Scan once every day.
+#  #  scan_interval: 86400
+#  #  queries:
+#  #    # We keep track of the min(created date) for table: states
+#  #    - name: home_assistant_min_created_states
+#  #      query: 'select convert(min(created), DATE) as "value" from homeassistant.states;'
+#  #      column: "value"
+#  # This sensor is removed as of 9/7-2022 as it takes too long time to gather the data, and it is not necessary anymore.
+#  # Also, the 'created' column is not used anymore.
+#  #- platform: sql
+#  #  db_url: !secret recorder_db_url
+#  #  # Scan once every day.
+#  #  scan_interval: 86400
+#  #  queries:
+#  #    # We keep track of the min(created date) for table: statistics
+#  #    - name: home_assistant_min_created_statistics
+#  #      query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics;'
+#  #      column: "value"
+#  # This sensor is removed as of 9/7-2022 as it takes too long time to gather the data, and it is not necessary anymore.
+#  # Also, the 'created' column is not used anymore.
+#  #- platform: sql
+#  #  db_url: !secret recorder_db_url
+#  #  # Scan once every day.
+#  #  scan_interval: 86400
+#  #  queries:
+#  #    # We keep track of the min(created date) for table: statistics_short_term
+#  #    - name: home_assistant_min_created_statistics_short_term
+#  #      query: 'select convert(min(created), DATE) as "value" from homeassistant.statistics_short_term;'
+#  #      column: "value"

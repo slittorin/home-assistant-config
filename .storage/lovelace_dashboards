@@ -75,6 +75,15 @@
                 "mode": "storage",
                 "id": "lovelace_energyrate",
                 "icon": "mdi:cash-100"
+            },
+            {
+                "show_in_sidebar": true,
+                "icon": "mdi:ev-station",
+                "title": "Elbilsladdning",
+                "require_admin": false,
+                "mode": "storage",
+                "url_path": "lovelace-elbilsladdning",
+                "id": "lovelace_elbilsladdning"
             }
         ]
     }

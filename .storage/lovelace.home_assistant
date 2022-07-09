@@ -102,32 +102,6 @@
                             "title": "Storlek p\u00e5 Influx-databas"
                         },
                         {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.home_assistant_min_created_events",
-                                    "name": "Tabell: events",
-                                    "icon": "mdi:database"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_min_created_states",
-                                    "name": "Tabell: states",
-                                    "icon": "mdi:database"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_min_created_statistics",
-                                    "name": "Tabell: statistics",
-                                    "icon": "mdi:database"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_min_created_statistics_short_term",
-                                    "name": "Tabell: statistics_short_term",
-                                    "icon": "mdi:database"
-                                }
-                            ],
-                            "title": "Tabeller: Fr\u00e5n n\u00e4r finns data"
-                        },
-                        {
                             "type": "markdown",
                             "content": "{% set rows = states('sensor.home_assistant_domains_in_use').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
                             "title": "Dom\u00e4ner som anv\u00e4nds"

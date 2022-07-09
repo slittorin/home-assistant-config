@@ -22,6 +22,18 @@
                             "type": "thermostat",
                             "entity": "climate.nbp6013h_climate",
                             "name": "Spabad - Temperatur"
+                        },
+                        {
+                            "type": "custom:charger-card",
+                            "entity": "sensor.ehs4plem_status",
+                            "image": "default"
+                        },
+                        {
+                            "type": "button",
+                            "tap_action": {
+                                "action": "toggle"
+                            },
+                            "entity": "switch.ehs4plem_smart_charging"
                         }
                     ]
                 }
