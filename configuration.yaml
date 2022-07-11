@@ -83,12 +83,10 @@ influxdb:
       - sensor.sma_metering_frequency_mean
       - sensor.sma_metering_frequency_max
       # We exclude specific Charger related sensors, as these are not important, and would drive increase in database storage.
-      - sensor.charger_load_limiting_l1
-      - sensor.charger_load_limiting_l2
-      - sensor.charger_load_limiting_l3
       - sensor.evcharger_available_charge_l1
       - sensor.evcharger_available_charge_l2
       - sensor.evcharger_available_charge_l3
+      - sensor.evcharger_possible_charge
 
 # Text to speech
 tts:
