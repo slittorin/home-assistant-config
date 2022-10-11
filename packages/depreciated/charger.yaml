@@ -1,0 +1,327 @@
+# This file includes all the entitites for EV Charger.
+
+# Note that use of this code/data is at own risk, the author takes no responsibility for any hardware or electrical installation/equipment.
+
+# All logic is based on Easee Home EV Charger, but can be adapted to other chargers as well:
+# ------------------------------------------------------------------------------------------
+# - Logic only applies to an installation with one (1) Easee Home EV Charger.
+# - Updates each 10 seconds (also dependent on update from current (A)-sensor.
+# - Status for the charger is found here: https://github.com/fondberg/pyeasee/blob/master/pyeasee/charger.py:
+#   offline (0) - No charging to be performed.
+#   disconnected (1) - No charging to be performed.
+#   awaiting_start (2) - Charging can be performed.
+#   charging (3) - Charging can be performed.
+#   completed (4) - No charging to be performed.
+#   error (5) - No charging to be performed.
+#   ready_to_charge (6) - Charging can be performed.
+
+# The following governing principles are utilized:
+# ------------------------------------------------
+# - Fail safe. For instance if there is incorrect input.
+# - Minimum charging current is 6 Ampere (As defined in IEC 61851), can be set over this level. Note that for instance Renaule Zoe requires a minimum of 7.
+# - 3-phase operation (Easee goes down to 1-phase if charge is set to zero for one or more phases, however, the load is then spread over three phases, so in reality it is 1/3 on each phase).
+#   The current (A) is to be even on all 3 phases, i.e. we do not use 1-phase operation.
+# - Utilize input-sensors for allowed current (A) and sensor-names to read values from.
+
+# The following logic applies:
+# ----------------------------
+# 1. Template sensor for available charge level, updated when charge (load) levels are changed (state changes).
+# 2. Template trigger to calculate possible charge, updated on interval.
+
+input_number:
+  evcharger_maximum_installation_current:
+    name: "Maximum current for installation (available for house/installation)"
+    icon: mdi:current-ac
+    mode: box
+    min: 0
+    step: 0.5
+    max: 64
+    unit_of_measurement: "A"
+  evcharger_maximum_circuit_current:
+    name: "Maximum current for circuit (available for charger(s))"
+    icon: mdi:current-ac
+    mode: box
+    min: 0
+    step: 0.5
+    max: 20
+    unit_of_measurement: "A"
+  evcharger_minimum_circuit_current:
+    name: "Minimum current for circuit (available for charger(s))"
+    icon: mdi:current-ac
+    mode: box
+    min: 6
+    step: 0.5
+    max: 16
+    unit_of_measurement: "A"
+  evcharger_fallback_circuit_current:
+    name: "Fallback current for circuit (available for charger(s) when offline)"
+    icon: mdi:current-ac
+    mode: box
+    min: 6
+    step: 0.5
+    max: 10
+    unit_of_measurement: "A"
+  evcharger_circuit_potential:
+    name: "One phase potential (voltage) for installation"
+    icon: mdi:lightning-bolt
+    mode: box
+    min: 100
+    step: 10
+    max: 240
+    unit_of_measurement: "V"
+
+input_text:
+  evcharger_sensor_current_l1:
+    name: "L1: Full name of the sensor entity that tracks the current. Such as sensor.metering_current_l1"
+    icon: mdi:current-ac
+    mode: text
+  evcharger_sensor_current_l2:
+    name: "L2: Full name of the sensor entity that tracks the current. Such as sensor.metering_current_l2"
+    icon: mdi:current-ac
+    mode: text
+  evcharger_sensor_current_l3:
+    name: "L3: Full name of the sensor entity that tracks the current. Such as sensor.metering_current_l3"
+    icon: mdi:current-ac
+    mode: text
+  evcharger_sensor_online:
+    name: "Full name of the sensor entity that tracks when charger is online (on/off). Such as switch.ehs4plem_is_enabled"
+    icon: mdi:ev-station
+    mode: text
+  evcharger_sensor_car_connected:
+    name: "Full name of the sensor entity that tracks when car is connected to charger (easee status-name). Such as sensor.ehs4plem_status"
+    icon: mdi:ev-station
+    mode: text
+
+input_boolean:
+  evcharger_charging_allowed:
+    name: "On when charging is allowed (allowed to charge). Not to be edited by users"
+    icon: mdi:ev-station
+
+template:
+  - sensor:
+      # This is the logic for available charge.
+      # Logic for the possible charge sensor:
+      # -------------------------------------
+      # 1. Available charge is installation charge minus current charge.
+      # 2. If available charge is above maximum conduit charge, then limit to maximum conduit charge.
+      - name: EVCharger Available Charge L1
+        unique_id: evcharger_available_charge_l1
+        unit_of_measurement: 'A'
+        state_class: measurement
+        icon: mdi:current-ac
+        state: >
+          {% set fail = false %}
+          {% set charge_current = states(states('input_text.evcharger_sensor_current_l1')) %}
+          {% if (charge_current in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_current = float(charge_current) %}
+          {% endif %}
+          {% set charge_installation = states('input_number.evcharger_maximum_installation_current') %}
+          {% if (charge_installation in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_installation = float(charge_installation) %}
+          {% endif %}
+          {% set charge_conduit = states('input_number.evcharger_maximum_circuit_current') %}
+          {% if (charge_conduit in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_conduit = float(charge_conduit) %}
+          {% endif %}
+          {% if (fail == false) %}
+          {%   set available_charge = charge_installation - charge_current %}
+          {%   if (available_charge > charge_conduit) %}
+          {%     set available_charge = charge_conduit %}
+          {%   endif %}
+          {%   set available_charge = available_charge | round(1) %}
+          {% else %}
+          {%   set available_charge = 0 %}
+          {% endif %}
+          {{ available_charge }}
+      - name: EVCharger Available Charge L2
+        unique_id: evcharger_available_charge_l2
+        unit_of_measurement: 'A'
+        state_class: measurement
+        icon: mdi:current-ac
+        state: >
+          {% set fail = false %}
+          {% set charge_current = states(states('input_text.evcharger_sensor_current_l2')) %}
+          {% if (charge_current in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_current = float(charge_current) %}
+          {% endif %}
+          {% set charge_installation = states('input_number.evcharger_maximum_installation_current') %}
+          {% if (charge_installation in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_installation = float(charge_installation) %}
+          {% endif %}
+          {% set charge_conduit = states('input_number.evcharger_maximum_circuit_current') %}
+          {% if (charge_conduit in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_conduit = float(charge_conduit) %}
+          {% endif %}
+          {% if (fail == false) %}
+          {%   set available_charge = charge_installation - charge_current %}
+          {%   if (available_charge > charge_conduit) %}
+          {%     set available_charge = charge_conduit %}
+          {%   endif %}
+          {%   set available_charge = available_charge | round(1) %}
+          {% else %}
+          {%   set available_charge = 0 %}
+          {% endif %}
+          {{ available_charge }}
+      - name: EVCharger Available Charge L3
+        unique_id: evcharger_available_charge_l3
+        unit_of_measurement: 'A'
+        state_class: measurement
+        icon: mdi:current-ac
+        state: >
+          {% set fail = false %}
+          {% set charge_current = states(states('input_text.evcharger_sensor_current_l3')) %}
+          {% if (charge_current in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_current = float(charge_current) %}
+          {% endif %}
+          {% set charge_installation = states('input_number.evcharger_maximum_installation_current') %}
+          {% if (charge_installation in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_installation = float(charge_installation) %}
+          {% endif %}
+          {% set charge_conduit = states('input_number.evcharger_maximum_circuit_current') %}
+          {% if (charge_conduit in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_conduit = float(charge_conduit) %}
+          {% endif %}
+          {% if (fail == false) %}
+          {%   set available_charge = charge_installation - charge_current %}
+          {%   if (available_charge > charge_conduit) %}
+          {%     set available_charge = charge_conduit %}
+          {%   endif %}
+          {%   set available_charge = available_charge | round(1) %}
+          {% else %}
+          {%   set available_charge = 0 %}
+          {% endif %}
+          {{ available_charge }}
+
+  - trigger:
+      # We could not create a template sensor for this, as we got ' Template loop detected while processing event', therefore we we utilize trigger style.
+      # Logic for the possible charge sensor:
+      # -------------------------------------
+      # 0. We start with setting possible charge to zero (0), headroom set to 0.5, increase set to 0.5.
+      # 1. Get current value for sensor (set the previus cycle).
+      # 2. Get the current available value for current (A) for the three phases.
+      # 3. Set the minimum available current (A) from the current level of current for the three phases.
+      # 4. If current value is zero (0), then are not charging.
+      #    4.1. If there is room for minimum charge level (incl. headroom), set minimum charge level, otherwise leave at zero (0).
+      # 5. If the current value is over zero (0), then we have started to ramp up charging.
+      #    5.1. If available charge is below zero (0) (incl. headroom).
+      #        5.1.1. Then we adjust current value down based on available charge (see minimum available current in step 3).
+      #               5.1.1.1. If we are below minimum charge level, we set to zero (0).
+      #    5.2. If available charge (incl. headroom) allows increase, then we increase.
+      # 6. We cannot go over level set for circuit (incl. headroom).
+      # 7. Charger must be online, and charger must be in correct state, and charging must be enabled, then possible charge is set.
+      - platform: time_pattern
+        seconds: "/10"
+    sensor:
+      - name: evcharger_possible_charge
+        device_class: 'current'
+        unit_of_measurement: 'A'
+        state_class: measurement
+        icon: mdi:current-ac
+        state: >
+          {% set fail = false %}
+          {% set possible_charge = float(0) %}
+          {% set headroom = float(0.5) %}
+          {% set charge_increase = float(0.5) %}
+          {% set charge_self = states('sensor.evcharger_possible_charge') %}
+          {% if (charge_self == 'unknown' or charge_self == 'unavailable' or charge_self == '') %}
+          {%   set charge_self = float(0) %}
+          {% else %}
+          {%   set charge_self = float(charge_self) %}
+          {% endif %}
+          {% set charger_online = states(states('input_text.evcharger_sensor_online')) %}
+          {% if (charger_online in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% endif %}
+          {% set charger_connected = states(states('input_text.evcharger_sensor_car_connected')) %}
+          {% if (charger_connected in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% endif %}
+          {% set charge_enabled = states('input_boolean.evcharger_charging_allowed') %}
+          {% if (charge_enabled in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% endif %}
+          {% set charge_minimum = states('input_number.evcharger_minimum_circuit_current') %}
+          {% if (charge_minimum in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_minimum = float(charge_minimum) %}
+          {% endif %}
+          {% set charge_conduit = states('input_number.evcharger_maximum_circuit_current') %}
+          {% if (charge_conduit in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_conduit = float(charge_conduit) %}
+          {% endif %}
+          {% set charge_available_l1 = states('sensor.evcharger_available_charge_l1') %}
+          {% if (charge_available_l1 in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_available_l1 = float(charge_available_l1) %}
+          {% endif %}
+          {% set charge_available_l2 = states('sensor.evcharger_available_charge_l2') %}
+          {% if (charge_available_l2 in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_available_l2 = float(charge_available_l2) %}
+          {% endif %}
+          {% set charge_available_l3 = states('sensor.evcharger_available_charge_l3') %}
+          {% if (charge_available_l3 in ['unknown', 'unavailable', '']) %}
+          {%   set fail = true %}
+          {% else %}
+          {%   set charge_available_l3 = float(charge_available_l3) %}
+          {% endif %}
+          {% set charge_available = charge_available_l1 %}
+          {% if (charge_available > charge_available_l2) %}
+          {%   set charge_available = charge_available_l2 %}
+          {% endif %}
+          {% if (charge_available > charge_available_l3) %}
+          {%   set charge_available = charge_available_l3 %}
+          {% endif %}
+          {% if (fail == false) %}
+          {%   if (charge_self == 0) %}
+          {%     if ((charge_available - headroom) >= charge_minimum) %}
+          {%       set calculated_charge = charge_minimum %}
+          {%     endif %}
+          {%   endif %}
+          {%   if (charge_self > 0) %}
+          {%     set delta_charge = charge_available - headroom %}
+          {%     if (delta_charge <= 0) %}
+          {%       set calculated_charge = charge_self + delta_charge %}
+          {%       if (calculated_charge < charge_minimum) %}
+          {%          set calculated_charge = 0 %}
+          {%       endif %}
+          {%     endif %}
+          {%     if (delta_charge > charge_increase) %}
+          {%       set calculated_charge = charge_self + charge_increase %}
+          {%     endif %}
+          {%   endif %}
+          {%   if (calculated_charge > (charge_conduit - headroom)) %}
+          {%       set calculated_charge = (charge_conduit - headroom) %}
+          {%   endif %}
+          {%   if (charger_online == 'on') %}
+          {%     if (charger_connected in ['disconnected', 'awaiting_start', 'charging', 'ready_to_charge']) %}
+          {%       if (charge_enabled == 'on') %}
+          {%         set possible_charge = float(calculated_charge) | round(1) %}
+          {%       endif %}
+          {%     endif %}
+          {%   endif %}
+          {% endif %}
+          {{ possible_charge }}

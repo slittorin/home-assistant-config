@@ -10,71 +10,6 @@
                 },
                 {
                     "theme": "Backend-selected",
-                    "title": "Tillg\u00e4nglig laddstr\u00f6m",
-                    "path": "tillganglig-laddstrom",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.metering_current_l1"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_available_charge_l1"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_possible_charge_l1"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_possible_charge"
-                                }
-                            ],
-                            "title": "Tillg\u00e4nglig laddstr\u00f6m L1",
-                            "hours_to_show": 6
-                        },
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.metering_current_l2"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_available_charge_l2"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_possible_charge_l2"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_possible_charge"
-                                }
-                            ],
-                            "title": "Tillg\u00e4nglig laddstr\u00f6m L2",
-                            "hours_to_show": 6
-                        },
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.metering_current_l3"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_available_charge_l3"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_possible_charge_l3"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_possible_charge"
-                                }
-                            ],
-                            "title": "Tillg\u00e4nglig laddstr\u00f6m L3",
-                            "hours_to_show": 6
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
                     "title": "Inst\u00e4llningar",
                     "path": "installningar",
                     "badges": [],
@@ -83,64 +18,7 @@
                             "type": "entities",
                             "entities": [
                                 {
-                                    "entity": "input_number.evcharger_maximum_installation_current",
-                                    "name": "Maximal str\u00f6mstyrka f\u00f6r huset"
-                                },
-                                {
-                                    "entity": "input_number.evcharger_maximum_circuit_current",
-                                    "name": "Maximal str\u00f6mstyrka f\u00f6r laddare"
-                                },
-                                {
-                                    "entity": "input_number.evcharger_minimum_circuit_current"
-                                },
-                                {
-                                    "entity": "input_number.evcharger_fallback_circuit_current"
-                                }
-                            ],
-                            "title": "Str\u00f6mstyrkor"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_number.evcharger_circuit_potential",
-                                    "name": "Sp\u00e4nning \u00f6ver en fas"
-                                }
-                            ],
-                            "title": "Sp\u00e4nning"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.evcharger_sensor_current_l1",
-                                    "name": "L1: Namn p\u00e5 sensor som monitorerar nuvarande str\u00f6mstyrka"
-                                },
-                                {
-                                    "entity": "input_text.evcharger_sensor_current_l2",
-                                    "name": "L1: Namn p\u00e5 sensor som monitorerar nuvarande str\u00f6mstyrka"
-                                },
-                                {
-                                    "entity": "input_text.evcharger_sensor_current_l3",
-                                    "name": "L1: Namn p\u00e5 sensor som monitorerar nuvarande str\u00f6mstyrka"
-                                }
-                            ],
-                            "title": "Sensorer"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.evcharger_sensor_online",
-                                    "name": "Namn p\u00e5 sensor f\u00f6r n\u00e4r elbilsladdare \u00e4r uppkopplad "
-                                },
-                                {
-                                    "entity": "input_text.evcharger_sensor_car_connected",
-                                    "name": "Namn p\u00e5 sensor f\u00f6r n\u00e4r bil \u00e4r kopplad till elbilsladdare"
-                                },
-                                {
-                                    "entity": "input_boolean.evcharger_charging_allowed",
-                                    "name": "P\u00e5slagen n\u00e4r eilbilsladdning \u00e4r till\u00e5ten. Skall inte \u00e4ndras av anv\u00e4ndare."
+                                    "entity": "input_text.evcharger_consumption_sensor"
                                 }
                             ],
                             "title": "Elbilsladdare"
