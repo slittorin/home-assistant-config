@@ -1,7 +1,7 @@
 # This file includes all the entitites for EV Charger.
 # Old depreceated code exists as: depreceated/charger.yaml
 
-# Note that use of this code/data is at own risk, the author takes no responsibility for any hardware or electrical installation/equipment.
+# We keep track of basic data for consumption and cost (without any reducation from Tibber and electrical distribution-reduction).
 
 input_number:
   evcharger_consumption_hour_snapshot_persistent:
