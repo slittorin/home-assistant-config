@@ -6,7 +6,81 @@
         "config": {
             "views": [
                 {
-                    "title": "Home"
+                    "theme": "Backend-selected",
+                    "title": "Nu",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "entities": [
+                                {
+                                    "entity": "sensor.evcharger_consumption_hour",
+                                    "name": "Energim\u00e4ngd f\u00f6r elbilsladdare"
+                                },
+                                {
+                                    "entity": "sensor.evcharger_consumption_cost_hour",
+                                    "name": "Kostnad f\u00f6r elbilsladdning (utan Tibber-reduktion)"
+                                }
+                            ],
+                            "title": "Uppgifter f\u00f6r senaste hel timme"
+                        }
+                    ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "Idag",
+                    "path": "idag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/MParoDIVz/elbilsladdning-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "Ig\u00e5r",
+                    "path": "igar",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/8NGXicSVk/elbilsladdning-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "F\u00f6rra m\u00e5naden",
+                    "path": "forra-manaden",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/4L0XW5I4k/elbilsladdning-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "Denna m\u00e5nad",
+                    "path": "denna-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/-rsFZ5I4z/elbilsladdning-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
                 },
                 {
                     "theme": "Backend-selected",
@@ -18,7 +92,8 @@
                             "type": "entities",
                             "entities": [
                                 {
-                                    "entity": "input_text.evcharger_consumption_sensor"
+                                    "entity": "input_text.evcharger_consumption_sensor",
+                                    "name": "Namn p\u00e5 sensor f\u00f6r elbilsladdning (fullst\u00e4ndigt namn)"
                                 }
                             ],
                             "title": "Elbilsladdare"

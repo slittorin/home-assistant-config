@@ -39,12 +39,16 @@
                                     "type": "entities",
                                     "entities": [
                                         {
-                                            "entity": "sensor.balboa_spa_heater_cost_hour",
-                                            "name": "Varav kostnad f\u00f6r v\u00e4rmare spabad"
+                                            "entity": "sensor.balboa_spa_heater_consumption_hour",
+                                            "name": "Varav energim\u00e4ngd f\u00f6r v\u00e4rmare spabad"
                                         },
                                         {
-                                            "entity": "sensor.balboa_spa_circulationpump_cost_hour",
-                                            "name": "Varav kostnad f\u00f6r cirkulationspump spabad"
+                                            "entity": "sensor.balboa_spa_circulationpump_consumption_hour",
+                                            "name": "Varav energim\u00e4ngd f\u00f6r cirkulationspump spabad"
+                                        },
+                                        {
+                                            "entity": "sensor.evcharger_consumption_hour",
+                                            "name": "Varav energim\u00e4ngd f\u00f6r elbilsladdare"
                                         }
                                     ]
                                 },
