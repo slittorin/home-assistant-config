@@ -15,7 +15,8 @@
                             "entities": [
                                 {
                                     "entity": "sensor.evcharger_consumption_hour",
-                                    "name": "Energim\u00e4ngd f\u00f6r elbilsladdare"
+                                    "name": "Energim\u00e4ngd f\u00f6r elbilsladdare",
+                                    "icon": "mdi:metronome"
                                 },
                                 {
                                     "entity": "sensor.evcharger_consumption_cost_hour",
@@ -23,6 +24,11 @@
                                 }
                             ],
                             "title": "Uppgifter f\u00f6r senaste hel timme"
+                        },
+                        {
+                            "type": "custom:charger-card",
+                            "entity": "sensor.ehs4plem_status",
+                            "image": "default"
                         }
                     ]
                 },
@@ -78,6 +84,34 @@
                         {
                             "type": "iframe",
                             "url": "http://192.168.2.30:3000/d/-rsFZ5I4z/elbilsladdning-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "\u00c5r / Dag",
+                    "path": "ar-dag",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/9z98c-IVz/elbilsladdning-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+                            "aspect_ratio": "100%"
+                        }
+                    ]
+                },
+                {
+                    "theme": "Backend-selected",
+                    "title": "\u00c5r / M\u00e5nad",
+                    "path": "ar-manad",
+                    "type": "panel",
+                    "badges": [],
+                    "cards": [
+                        {
+                            "type": "iframe",
+                            "url": "http://192.168.2.30:3000/d/2pUWt-IVz/elbilsladdning-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
                             "aspect_ratio": "100%"
                         }
                     ]

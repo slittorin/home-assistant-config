@@ -17,6 +17,20 @@
                                     "type": "entities",
                                     "entities": [
                                         {
+                                            "entity": "sensor.electrical_average_consumption_rate_summary",
+                                            "name": "Medel elkonsumptionsavgift"
+                                        },
+                                        {
+                                            "entity": "sensor.electrical_distribution_average_consumption_rate_summary",
+                                            "name": "Distributions plus medel elkonsumptionsavgift"
+                                        }
+                                    ],
+                                    "title": "Nuvarande medel avgift \u00f6ver dagen"
+                                },
+                                {
+                                    "type": "entities",
+                                    "entities": [
+                                        {
                                             "entity": "sensor.electrical_distribution_rate_summary",
                                             "name": "Total distributionsavgift"
                                         },
@@ -29,7 +43,7 @@
                                             "name": "Total elintagsavgift"
                                         }
                                     ],
-                                    "title": "Nuvarande pris f\u00f6r intag av el"
+                                    "title": "Nuvarande avgift f\u00f6r intag av el"
                                 },
                                 {
                                     "type": "entities",

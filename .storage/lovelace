@@ -24,16 +24,16 @@
                             "name": "Spabad - Temperatur"
                         },
                         {
-                            "type": "custom:charger-card",
-                            "entity": "sensor.ehs4plem_status",
-                            "image": "default"
-                        },
-                        {
-                            "type": "button",
-                            "tap_action": {
-                                "action": "toggle"
-                            },
-                            "entity": "switch.ehs4plem_smart_charging"
+                            "type": "history-graph",
+                            "entities": [
+                                {
+                                    "entity": "sensor.electrical_daily_sum_consumption_intake_cost_hour"
+                                },
+                                {
+                                    "entity": "sensor.electrical_daily_sum_consumption_intake_hour"
+                                }
+                            ],
+                            "hours_to_show": 8760
                         }
                     ]
                 }

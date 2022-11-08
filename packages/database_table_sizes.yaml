@@ -1,12 +1,15 @@
 # This file includes all the entities for tracking database and table sizes.
 
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
 # Since 2022.5 all SQL entities are managed trough GUI. Therefore the below commented rows have been imported.
+# 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
 
 automation:
   # However, the import to the integration do not take scan_interval into consideration, and triggers every 30 second.
   # https://github.com/home-assistant/core/issues/71563
   # Therefore we have disabled polling for the SQL-integration (in system options).
-  # And we have added the below triggers to allow the sensors to be updated regurlarly.
+  # TWEAK. And we have added the below triggers to allow the sensors to be updated regurlarly.
   - id: sql_integration_regular_update
     alias: 'SQL Integration regular update'
     trigger:

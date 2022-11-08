@@ -1,5 +1,9 @@
 # This file includes all the entities for tracking domains and sensors.
 
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+# 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
+
 template:
     # Get the domains currently in use.
     # https://community.home-assistant.io/t/where-can-i-find-a-list-of-domains/62654/20

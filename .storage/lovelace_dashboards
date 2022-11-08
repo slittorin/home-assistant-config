@@ -84,6 +84,15 @@
                 "mode": "storage",
                 "url_path": "lovelace-elbilsladdning",
                 "id": "lovelace_elbilsladdning"
+            },
+            {
+                "show_in_sidebar": true,
+                "title": "Spabad",
+                "require_admin": false,
+                "mode": "storage",
+                "url_path": "lovelace-spabad",
+                "id": "lovelace_spabad",
+                "icon": "mdi:spa"
             }
         ]
     }

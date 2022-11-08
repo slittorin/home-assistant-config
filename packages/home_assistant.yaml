@@ -1,5 +1,9 @@
 # This file includes all the entitites for tracking Home Assistant.
 
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+# 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
+
 sensor:
   # We want to keep track on when Home Assistant was restarted.
   - platform: uptime
@@ -28,7 +32,7 @@ template:
         icon: mdi:cpu-64-bit
         unit_of_measurement: '%'
         state_class: measurement
-        state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2) }}"
+        state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2, default=0) }}"
 
 automation:
   # https://community.home-assistant.io/t/recorder-purge-and-repack/110552

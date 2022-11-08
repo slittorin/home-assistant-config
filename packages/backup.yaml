@@ -1,5 +1,9 @@
 # This file includes all the entitites for backup of home assistant.
 
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+# 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
+
 automation:
   - id: snapshot_daily
     alias: 'Daily snapshot each monday through saturday of the week, kept 7 days'
