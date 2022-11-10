@@ -363,13 +363,13 @@ automation:
 #          {{ result }}
 
   # For persistence, and spa temperature
-  - id: automation_test_balboa_spa_temperature
-    alias: 'Automation for persistance of test_balboa_spa_temperature_change'
-    trigger:
-      - platform: state
-        entity_id: sensor.test_balboa_spa_temperature
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.test_balboa_spa_temperature_persistent
-        value: "{{ states('sensor.test_balboa_spa_temperature') }}"
+#  - id: automation_test_balboa_spa_temperature
+#    alias: 'Automation for persistance of test_balboa_spa_temperature_change'
+#    trigger:
+#      - platform: state
+#        entity_id: sensor.test_balboa_spa_temperature
+#    action:
+#      service: input_number.set_value
+#      data_template:
+#        entity_id: input_number.test_balboa_spa_temperature_persistent
+#        value: "{{ states('sensor.test_balboa_spa_temperature') }}"

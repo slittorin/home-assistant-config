@@ -2550,426 +2550,23 @@ LitElement.render = render;
 /** @nocollapse */
 LitElement.shadowRootOptions = { mode: 'open' };
 
-var token = /d{1,4}|M{1,4}|YY(?:YY)?|S{1,3}|Do|ZZ|Z|([HhMsDm])\1?|[aA]|"[^"]*"|'[^']*'/g;
-var twoDigitsOptional = "[1-9]\\d?";
-var twoDigits = "\\d\\d";
-var threeDigits = "\\d{3}";
-var fourDigits = "\\d{4}";
-var word = "[^\\s]+";
-var literal = /\[([^]*?)\]/gm;
-function shorten(arr, sLen) {
-    var newArr = [];
-    for (var i = 0, len = arr.length; i < len; i++) {
-        newArr.push(arr[i].substr(0, sLen));
-    }
-    return newArr;
-}
-var monthUpdate = function (arrName) { return function (v, i18n) {
-    var lowerCaseArr = i18n[arrName].map(function (v) { return v.toLowerCase(); });
-    var index = lowerCaseArr.indexOf(v.toLowerCase());
-    if (index > -1) {
-        return index;
-    }
-    return null;
-}; };
-function assign(origObj) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-    }
-    for (var _a = 0, args_1 = args; _a < args_1.length; _a++) {
-        var obj = args_1[_a];
-        for (var key in obj) {
-            // @ts-ignore ex
-            origObj[key] = obj[key];
-        }
-    }
-    return origObj;
-}
-var dayNames = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-];
-var monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-];
-var monthNamesShort = shorten(monthNames, 3);
-var dayNamesShort = shorten(dayNames, 3);
-var defaultI18n = {
-    dayNamesShort: dayNamesShort,
-    dayNames: dayNames,
-    monthNamesShort: monthNamesShort,
-    monthNames: monthNames,
-    amPm: ["am", "pm"],
-    DoFn: function (dayOfMonth) {
-        return (dayOfMonth +
-            ["th", "st", "nd", "rd"][dayOfMonth % 10 > 3
-                ? 0
-                : ((dayOfMonth - (dayOfMonth % 10) !== 10 ? 1 : 0) * dayOfMonth) % 10]);
-    }
-};
-var globalI18n = assign({}, defaultI18n);
-var setGlobalDateI18n = function (i18n) {
-    return (globalI18n = assign(globalI18n, i18n));
-};
-var regexEscape = function (str) {
-    return str.replace(/[|\\{()[^$+*?.-]/g, "\\$&");
-};
-var pad = function (val, len) {
-    if (len === void 0) { len = 2; }
-    val = String(val);
-    while (val.length < len) {
-        val = "0" + val;
-    }
-    return val;
-};
-var formatFlags = {
-    D: function (dateObj) { return String(dateObj.getDate()); },
-    DD: function (dateObj) { return pad(dateObj.getDate()); },
-    Do: function (dateObj, i18n) {
-        return i18n.DoFn(dateObj.getDate());
-    },
-    d: function (dateObj) { return String(dateObj.getDay()); },
-    dd: function (dateObj) { return pad(dateObj.getDay()); },
-    ddd: function (dateObj, i18n) {
-        return i18n.dayNamesShort[dateObj.getDay()];
-    },
-    dddd: function (dateObj, i18n) {
-        return i18n.dayNames[dateObj.getDay()];
-    },
-    M: function (dateObj) { return String(dateObj.getMonth() + 1); },
-    MM: function (dateObj) { return pad(dateObj.getMonth() + 1); },
-    MMM: function (dateObj, i18n) {
-        return i18n.monthNamesShort[dateObj.getMonth()];
-    },
-    MMMM: function (dateObj, i18n) {
-        return i18n.monthNames[dateObj.getMonth()];
-    },
-    YY: function (dateObj) {
-        return pad(String(dateObj.getFullYear()), 4).substr(2);
-    },
-    YYYY: function (dateObj) { return pad(dateObj.getFullYear(), 4); },
-    h: function (dateObj) { return String(dateObj.getHours() % 12 || 12); },
-    hh: function (dateObj) { return pad(dateObj.getHours() % 12 || 12); },
-    H: function (dateObj) { return String(dateObj.getHours()); },
-    HH: function (dateObj) { return pad(dateObj.getHours()); },
-    m: function (dateObj) { return String(dateObj.getMinutes()); },
-    mm: function (dateObj) { return pad(dateObj.getMinutes()); },
-    s: function (dateObj) { return String(dateObj.getSeconds()); },
-    ss: function (dateObj) { return pad(dateObj.getSeconds()); },
-    S: function (dateObj) {
-        return String(Math.round(dateObj.getMilliseconds() / 100));
-    },
-    SS: function (dateObj) {
-        return pad(Math.round(dateObj.getMilliseconds() / 10), 2);
-    },
-    SSS: function (dateObj) { return pad(dateObj.getMilliseconds(), 3); },
-    a: function (dateObj, i18n) {
-        return dateObj.getHours() < 12 ? i18n.amPm[0] : i18n.amPm[1];
-    },
-    A: function (dateObj, i18n) {
-        return dateObj.getHours() < 12
-            ? i18n.amPm[0].toUpperCase()
-            : i18n.amPm[1].toUpperCase();
-    },
-    ZZ: function (dateObj) {
-        var offset = dateObj.getTimezoneOffset();
-        return ((offset > 0 ? "-" : "+") +
-            pad(Math.floor(Math.abs(offset) / 60) * 100 + (Math.abs(offset) % 60), 4));
-    },
-    Z: function (dateObj) {
-        var offset = dateObj.getTimezoneOffset();
-        return ((offset > 0 ? "-" : "+") +
-            pad(Math.floor(Math.abs(offset) / 60), 2) +
-            ":" +
-            pad(Math.abs(offset) % 60, 2));
-    }
-};
-var monthParse = function (v) { return +v - 1; };
-var emptyDigits = [null, twoDigitsOptional];
-var emptyWord = [null, word];
-var amPm = [
-    "isPm",
-    word,
-    function (v, i18n) {
-        var val = v.toLowerCase();
-        if (val === i18n.amPm[0]) {
-            return 0;
-        }
-        else if (val === i18n.amPm[1]) {
-            return 1;
-        }
-        return null;
-    }
-];
-var timezoneOffset = [
-    "timezoneOffset",
-    "[^\\s]*?[\\+\\-]\\d\\d:?\\d\\d|[^\\s]*?Z?",
-    function (v) {
-        var parts = (v + "").match(/([+-]|\d\d)/gi);
-        if (parts) {
-            var minutes = +parts[1] * 60 + parseInt(parts[2], 10);
-            return parts[0] === "+" ? minutes : -minutes;
-        }
-        return 0;
-    }
-];
-var parseFlags = {
-    D: ["day", twoDigitsOptional],
-    DD: ["day", twoDigits],
-    Do: ["day", twoDigitsOptional + word, function (v) { return parseInt(v, 10); }],
-    M: ["month", twoDigitsOptional, monthParse],
-    MM: ["month", twoDigits, monthParse],
-    YY: [
-        "year",
-        twoDigits,
-        function (v) {
-            var now = new Date();
-            var cent = +("" + now.getFullYear()).substr(0, 2);
-            return +("" + (+v > 68 ? cent - 1 : cent) + v);
-        }
-    ],
-    h: ["hour", twoDigitsOptional, undefined, "isPm"],
-    hh: ["hour", twoDigits, undefined, "isPm"],
-    H: ["hour", twoDigitsOptional],
-    HH: ["hour", twoDigits],
-    m: ["minute", twoDigitsOptional],
-    mm: ["minute", twoDigits],
-    s: ["second", twoDigitsOptional],
-    ss: ["second", twoDigits],
-    YYYY: ["year", fourDigits],
-    S: ["millisecond", "\\d", function (v) { return +v * 100; }],
-    SS: ["millisecond", twoDigits, function (v) { return +v * 10; }],
-    SSS: ["millisecond", threeDigits],
-    d: emptyDigits,
-    dd: emptyDigits,
-    ddd: emptyWord,
-    dddd: emptyWord,
-    MMM: ["month", word, monthUpdate("monthNamesShort")],
-    MMMM: ["month", word, monthUpdate("monthNames")],
-    a: amPm,
-    A: amPm,
-    ZZ: timezoneOffset,
-    Z: timezoneOffset
-};
-// Some common format strings
-var globalMasks = {
-    default: "ddd MMM DD YYYY HH:mm:ss",
-    shortDate: "M/D/YY",
-    mediumDate: "MMM D, YYYY",
-    longDate: "MMMM D, YYYY",
-    fullDate: "dddd, MMMM D, YYYY",
-    isoDate: "YYYY-MM-DD",
-    isoDateTime: "YYYY-MM-DDTHH:mm:ssZ",
-    shortTime: "HH:mm",
-    mediumTime: "HH:mm:ss",
-    longTime: "HH:mm:ss.SSS"
-};
-var setGlobalDateMasks = function (masks) { return assign(globalMasks, masks); };
-/***
- * Format a date
- * @method format
- * @param {Date|number} dateObj
- * @param {string} mask Format of the date, i.e. 'mm-dd-yy' or 'shortDate'
- * @returns {string} Formatted date string
- */
-var format = function (dateObj, mask, i18n) {
-    if (mask === void 0) { mask = globalMasks["default"]; }
-    if (i18n === void 0) { i18n = {}; }
-    if (typeof dateObj === "number") {
-        dateObj = new Date(dateObj);
-    }
-    if (Object.prototype.toString.call(dateObj) !== "[object Date]" ||
-        isNaN(dateObj.getTime())) {
-        throw new Error("Invalid Date pass to format");
-    }
-    mask = globalMasks[mask] || mask;
-    var literals = [];
-    // Make literals inactive by replacing them with @@@
-    mask = mask.replace(literal, function ($0, $1) {
-        literals.push($1);
-        return "@@@";
-    });
-    var combinedI18nSettings = assign(assign({}, globalI18n), i18n);
-    // Apply formatting rules
-    mask = mask.replace(token, function ($0) {
-        return formatFlags[$0](dateObj, combinedI18nSettings);
-    });
-    // Inline literal values back into the formatted value
-    return mask.replace(/@@@/g, function () { return literals.shift(); });
-};
-/**
- * Parse a date string into a Javascript Date object /
- * @method parse
- * @param {string} dateStr Date string
- * @param {string} format Date parse format
- * @param {i18n} I18nSettingsOptional Full or subset of I18N settings
- * @returns {Date|null} Returns Date object. Returns null what date string is invalid or doesn't match format
- */
-function parse(dateStr, format, i18n) {
-    if (i18n === void 0) { i18n = {}; }
-    if (typeof format !== "string") {
-        throw new Error("Invalid format in fecha parse");
-    }
-    // Check to see if the format is actually a mask
-    format = globalMasks[format] || format;
-    // Avoid regular expression denial of service, fail early for really long strings
-    // https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS
-    if (dateStr.length > 1000) {
-        return null;
-    }
-    // Default to the beginning of the year.
-    var today = new Date();
-    var dateInfo = {
-        year: today.getFullYear(),
-        month: 0,
-        day: 1,
-        hour: 0,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-        isPm: null,
-        timezoneOffset: null
-    };
-    var parseInfo = [];
-    var literals = [];
-    // Replace all the literals with @@@. Hopefully a string that won't exist in the format
-    var newFormat = format.replace(literal, function ($0, $1) {
-        literals.push(regexEscape($1));
-        return "@@@";
-    });
-    var specifiedFields = {};
-    var requiredFields = {};
-    // Change every token that we find into the correct regex
-    newFormat = regexEscape(newFormat).replace(token, function ($0) {
-        var info = parseFlags[$0];
-        var field = info[0], regex = info[1], requiredField = info[3];
-        // Check if the person has specified the same field twice. This will lead to confusing results.
-        if (specifiedFields[field]) {
-            throw new Error("Invalid format. " + field + " specified twice in format");
-        }
-        specifiedFields[field] = true;
-        // Check if there are any required fields. For instance, 12 hour time requires AM/PM specified
-        if (requiredField) {
-            requiredFields[requiredField] = true;
-        }
-        parseInfo.push(info);
-        return "(" + regex + ")";
-    });
-    // Check all the required fields are present
-    Object.keys(requiredFields).forEach(function (field) {
-        if (!specifiedFields[field]) {
-            throw new Error("Invalid format. " + field + " is required in specified format");
-        }
-    });
-    // Add back all the literals after
-    newFormat = newFormat.replace(/@@@/g, function () { return literals.shift(); });
-    // Check if the date string matches the format. If it doesn't return null
-    var matches = dateStr.match(new RegExp(newFormat, "i"));
-    if (!matches) {
-        return null;
-    }
-    var combinedI18nSettings = assign(assign({}, globalI18n), i18n);
-    // For each match, call the parser function for that date part
-    for (var i = 1; i < matches.length; i++) {
-        var _a = parseInfo[i - 1], field = _a[0], parser = _a[2];
-        var value = parser
-            ? parser(matches[i], combinedI18nSettings)
-            : +matches[i];
-        // If the parser can't make sense of the value, return null
-        if (value == null) {
-            return null;
-        }
-        dateInfo[field] = value;
-    }
-    if (dateInfo.isPm === 1 && dateInfo.hour != null && +dateInfo.hour !== 12) {
-        dateInfo.hour = +dateInfo.hour + 12;
-    }
-    else if (dateInfo.isPm === 0 && +dateInfo.hour === 12) {
-        dateInfo.hour = 0;
-    }
-    var dateWithoutTZ = new Date(dateInfo.year, dateInfo.month, dateInfo.day, dateInfo.hour, dateInfo.minute, dateInfo.second, dateInfo.millisecond);
-    var validateFields = [
-        ["month", "getMonth"],
-        ["day", "getDate"],
-        ["hour", "getHours"],
-        ["minute", "getMinutes"],
-        ["second", "getSeconds"]
-    ];
-    for (var i = 0, len = validateFields.length; i < len; i++) {
-        // Check to make sure the date field is within the allowed range. Javascript dates allows values
-        // outside the allowed range. If the values don't match the value was invalid
-        if (specifiedFields[validateFields[i][0]] &&
-            dateInfo[validateFields[i][0]] !== dateWithoutTZ[validateFields[i][1]]()) {
-            return null;
-        }
-    }
-    if (dateInfo.timezoneOffset == null) {
-        return dateWithoutTZ;
-    }
-    return new Date(Date.UTC(dateInfo.year, dateInfo.month, dateInfo.day, dateInfo.hour, dateInfo.minute - dateInfo.timezoneOffset, dateInfo.second, dateInfo.millisecond));
-}
-var fecha = {
-    format: format,
-    parse: parse,
-    defaultI18n: defaultI18n,
-    setGlobalDateI18n: setGlobalDateI18n,
-    setGlobalDateMasks: setGlobalDateMasks
-};
+var t,r;!function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none";}(t||(t={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24";}(r||(r={}));var ne=function(e,t,r,n){n=n||{},r=null==r?{}:r;var i=new Event(t,{bubbles:void 0===n.bubbles||n.bubbles,cancelable:Boolean(n.cancelable),composed:void 0===n.composed||n.composed});return i.detail=r,e.dispatchEvent(i),i};function _e(e,t,r){if(t.has("config")||r)return !0;if(e.config.entity){var n=t.get("hass");return !n||n.states[e.config.entity]!==e.hass.states[e.config.entity]}return !1}
 
-(function(){try{(new Date).toLocaleDateString("i");}catch(e){return "RangeError"===e.name}return !1})()?function(e,t){return e.toLocaleDateString(t.language,{year:"numeric",month:"long",day:"numeric"})}:function(t){return fecha.format(t,"mediumDate")};(function(){try{(new Date).toLocaleString("i");}catch(e){return "RangeError"===e.name}return !1})()?function(e,t){return e.toLocaleString(t.language,{year:"numeric",month:"long",day:"numeric",hour:"numeric",minute:"2-digit"})}:function(t){return fecha.format(t,"haDateTime")};(function(){try{(new Date).toLocaleTimeString("i");}catch(e){return "RangeError"===e.name}return !1})()?function(e,t){return e.toLocaleTimeString(t.language,{hour:"numeric",minute:"2-digit"})}:function(t){return fecha.format(t,"shortTime")};var m,f;!function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none";}(m||(m={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24";}(f||(f={}));var A=function(e,t,a,r){r=r||{},a=null==a?{}:a;var n=new Event(t,{bubbles:void 0===r.bubbles||r.bubbles,cancelable:Boolean(r.cancelable),composed:void 0===r.composed||r.composed});return n.detail=a,e.dispatchEvent(n),n};function X(e,t,a){if(t.has("config")||a)return !0;if(e.config.entity){var r=t.get("hass");return !r||r.states[e.config.entity]!==e.hass.states[e.config.entity]}return !1}
-
-var status$5 = {
-	disconnected: "Disconnected",
-	awaiting_start: "Paused or awaiting start",
-	charging: "Charging",
-	completed: "Completed or awaiting car",
-	error: "Error",
-	ready_to_charge: "Ready to charge"
-};
 var common$5 = {
 	name: "Charger Card",
-	description: "Charger card allows you to control your charging robot.",
-	start: "Start",
-	"continue": "Resume",
-	pause: "Pause",
-	stop: "Stop",
-	override: "Override schedule",
-	reboot: "Reboot charger",
-	not_available: "Charger not available",
-	click_for_info: "Click for Info",
-	click_for_config: "Click for Config",
-	click_for_limits: "Click for Limits",
-	online: "Online",
-	voltage: "Voltage",
-	power: "Power",
-	charger_current: "Changer Current",
-	energy_per_hour: "Energy per Hour",
-	lifetime_energy: "Lifetime Energy",
-	circuit_current: "Circuit Energy"
+	description: "Charger card allows you to control your EV homecharger (or something else)."
 };
 var error$5 = {
-	missing_entity: "Specifying entity is required!"
+	missing_entity: "Specifying entity is required!",
+	not_available: "Not available",
+	missing_config: "Error in config!",
+	missing_group: "No entities defined in group!"
 };
 var editor$5 = {
-	entity: "Entity (Required)",
-	chargerImage: "Charger image and color",
+	instruction: "Select your main entity and type/brand. The card will automatically try to detect the other sensors. If you have a brand which is not supported by default, you can choose «Other» and do mapping of entities manually. If anything fails, please verify the YAML configuration (click «Show code editor»).",
+	brand: "Brand (Required)",
+	entity: "Main Entity (Required)",
+	chargerImage: "Built-in images and color",
 	customImage: "Custom image (Optional - overrides charger image)",
 	theme: "Color theme",
 	compact_view: "Compact View",
@@ -2993,166 +2590,334 @@ var editor$5 = {
 	show_toolbar: "Show Toolbar",
 	show_toolbar_aria_label_on: "Toggle display toolbar on",
 	show_toolbar_aria_label_off: "Toggle display toolbar off",
-	code_only_note: "Note: Custom actions and data table (stats) options are available exclusively using Code Editor manually."
+	code_only_note: "Note: Advanced config such as toolbar and datatable (stats) are only in YAML-mode."
 };
-var charger_status$5 = {
-	sessionEnergy: "Session Energy"
+var easee$5 = {
+	status: {
+		disconnected: "Disconnected",
+		awaiting_start: "Paused/awaiting start",
+		charging: "Charging",
+		completed: "Completed/awaiting car",
+		error: "Error",
+		ready_to_charge: "Ready to charge"
+	},
+	substatus: {
+		ok: "Ok",
+		pending_schedule: "Pending schedule",
+		none: "None",
+		max_circuit_current_too_low: "Max circuit current too low",
+		max_dynamic_circuit_current_too_low: "Max dynamic circuit current too low",
+		max_dynamic_charger_current_too_low: "Max dynamic charger current too low",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Max dynamic offline circuit current too low",
+		max_charger_current_too_low: "Max charger current too low",
+		circuit_fuse_too_low: "Circuit fuse too low",
+		waiting_in_queue: "Waiting in queue",
+		waiting_in_fully: "Waiting in fully",
+		illegal_grid_type: "Illegal grid type",
+		no_current_request: "No current request",
+		not_requesting_current: "Not requesting current",
+		charger_disabled: "Charger Disabled",
+		pending_authorization: "Pending Authorization",
+		charger_in_error_state: "Charger in error state",
+		"undefined": "Undefined"
+	},
+	common: {
+		click_for_group1: "Click for Limits",
+		click_for_group2: "Click for Info",
+		click_for_group3: "Click for Config",
+		start: "Start",
+		"continue": "Resume",
+		pause: "Pause",
+		stop: "Stop",
+		resume: "Resume",
+		override: "Override schedule",
+		update: "Update firmware",
+		reboot: "Reboot charger",
+		not_available: "Charger not available",
+		online: "Online",
+		voltage: "Voltage",
+		power: "Power",
+		current: "Current",
+		charger_current: "Charger Current",
+		energy_per_hour: "Energy per Hour",
+		session_energy: "Session energy",
+		lifetime_energy: "Lifetime Energy",
+		circuit_current: "Circuit Current",
+		dyn_charger_limit: "Dyn Charger Limit",
+		dyn_circuit_limit: "Dyn Circuit Limit",
+		max_charger_limit: "Max Charger Limit",
+		max_circuit_limit: "Max Circuit Limit",
+		output_limit: "Allowed current",
+		used_limit: "Used limit",
+		offline_circuit_limit: "Offline Circuit Limit",
+		enabled: "Enabled",
+		idle_current: "Idle current",
+		cable_locked: "Cable locked",
+		perm_cable_locked: "Cable locked permanently",
+		smart_charging: "Smart charging",
+		cost_per_kwh: "Cost per kWh",
+		update_available: "Update available",
+		schedule: "Schedule"
+	}
 };
-var charger_substatus$5 = {
-	not_requesting_current: "Not requesting current",
-	ok: "Ok",
-	pending_schedule: "Pending Schedule",
-	none: "None",
-	max_circuit_current_too_low: "Max circuit current too low",
-	max_dynamic_circuit_current_too_low: "Max dynamic circuit current too low",
-	max_dynamic_offline_fallback_circuit_current_too_low: "Max dynamic offline circuit current too low",
-	circuit_fuse_too_low: "Circuit fuse too low",
-	waiting_in_queue: "Waiting in queue",
-	waiting_in_fully: "Waiting in fully",
-	illegal_grid_type: "Illegal grid type",
-	no_current_request: "No current request",
-	max_charger_current_too_low: "Max charger current too low",
-	max_dynamic_charger_current_too_low: "Max dynamic charger current too low",
-	charger_disabled: "Charger Disabled",
-	pending_authorization: "Pending Authorization",
-	charger_in_error_state: "Charger in error state",
-	"undefined": "Undefined"
+var vwegolf = {
+	status: {
+		home: "Home",
+		away: "Away"
+	},
+	substatus: {
+		ok: "Ok"
+	},
+	common: {
+		click_for_group1: "Click for Locks",
+		click_for_group2: "Click for Info",
+		click_for_group3: "Click for Config",
+		soc: "%SOC"
+	}
+};
+var test$1 = {
+	status: {
+		disconnected: "Disconnected",
+		awaiting_start: "Paused or awaiting start",
+		charging: "Charging",
+		completed: "Completed or awaiting car",
+		error: "Error",
+		ready_to_charge: "Ready to charge"
+	},
+	substatus: {
+		ok: "Ok",
+		pending_schedule: "Pending schedule",
+		none: "None",
+		max_circuit_current_too_low: "Max circuit current too low",
+		max_dynamic_circuit_current_too_low: "Max dynamic circuit current too low",
+		max_dynamic_charger_current_too_low: "Max dynamic charger current too low",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Max dynamic offline circuit current too low",
+		max_charger_current_too_low: "Max charger current too low",
+		circuit_fuse_too_low: "Circuit fuse too low",
+		waiting_in_queue: "Waiting in queue",
+		waiting_in_fully: "Waiting in fully",
+		illegal_grid_type: "Illegal grid type",
+		no_current_request: "No current request",
+		not_requesting_current: "Not requesting current",
+		charger_disabled: "Charger Disabled",
+		pending_authorization: "Pending Authorization",
+		charger_in_error_state: "Charger in error state",
+		"undefined": "Undefined"
+	},
+	common: {
+		start: "Start",
+		"continue": "Resume",
+		pause: "Pause",
+		stop: "Stop",
+		override: "Override schedule",
+		reboot: "Reboot charger",
+		not_available: "Charger not available",
+		online: "Online",
+		voltage: "Voltage",
+		power: "Power",
+		charger_current: "Charger Current",
+		energy_per_hour: "Energy per Hour",
+		lifetime_energy: "Lifetime Energy",
+		circuit_current: "Circuit Energy",
+		schedule: "Schedule"
+	}
 };
 var en = {
-	status: status$5,
 	common: common$5,
 	error: error$5,
 	editor: editor$5,
-	charger_status: charger_status$5,
-	charger_substatus: charger_substatus$5
+	easee: easee$5,
+	vwegolf: vwegolf,
+	test: test$1
 };
 
 var en$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    status: status$5,
     common: common$5,
     error: error$5,
     editor: editor$5,
-    charger_status: charger_status$5,
-    charger_substatus: charger_substatus$5,
+    easee: easee$5,
+    vwegolf: vwegolf,
+    test: test$1,
     'default': en
 });
 
-var status$4 = {
-	disconnected: "Frakoblet",
-	awaiting_start: "Pauset eller venter start",
-	charging: "Lader",
-	completed: "Fullført eller venter på bil",
-	error: "Feil",
-	ready_to_charge: "Klar til lading"
-};
 var common$4 = {
 	name: "Charger Card",
-	description: "Charger card gir deg mulighet for å styre din laderobot.",
-	start: "Start",
-	"continue": "Fortsett",
-	pause: "Pause",
-	stop: "Stopp",
-	override: "Overstyr plan",
-	reboot: "Reboot lader",
-	not_available: "Lader utilgjengelig",
-	click_for_info: "Klikk for info",
-	click_for_config: "Klikk for konfigurasjon",
-	click_for_limits: "Klikk for limiteringer",
-	online: "Online",
-	voltage: "Spenning",
-	power: "Effekt",
-	charger_current: "Ladestrøm",
-	energy_per_hour: "Energi per time",
-	lifetime_energy: "Energi totalt",
-	circuit_current: "Kursstrøm"
+	description: "Charger card gir deg mulighet for å styre din elbil hjemmelader (eller noe annet)."
 };
 var error$4 = {
-	missing_entity: "Du må angi en entity!"
+	missing_entity: "Du må angi en hovedentitet!",
+	not_available: "Utilgjengelig",
+	missing_config: "Feil i konfigurasjon!",
+	missing_group: "No entities defined in grou.!"
 };
 var editor$4 = {
-	entity: "Entity (Påkrevd)",
-	chargerImage: "Laderbilde og -farge",
+	instruction: "Velg din hovedentitet og ladertype/merke. Kortet vil automatisk forsøke å finne øvrige sensorer. Hvis du har ett merke som ikke er støttet kan du velge «Template» og gjøre mappingen manuelt selv. Hvis noe feiler, verifiser konfigurasjonen i YAML-editoren (trykk «Vis koderedigering»).",
+	brand: "Type/merke (Påkrevd)",
+	entity: "Hovedentitet (Påkrevd)",
+	chargerImage: "Innebygde bilder og -farger",
 	customImage: "Eget bilde (opsjon - overstyrer laderbilde)",
-	theme: "Fargemal",
+	theme: "Tema",
 	compact_view: "Kompakt",
-	compact_view_aria_label_on: "Toggle compact view on",
-	compact_view_aria_label_off: "Toggle compact view off",
+	compact_view_aria_label_on: "Slå på kompakt visning",
+	compact_view_aria_label_off: "Slå av kompakt visning",
 	show_name: "Vis navn",
-	show_name_aria_label_on: "Toggle display name on",
-	show_name_aria_label_off: "Toggle display name off",
+	show_name_aria_label_on: "Slå på visning av navn",
+	show_name_aria_label_off: "Slå av visning av navn",
 	show_leds: "Vis led",
-	show_leds_aria_label_on: "Toggle animated leds (overlay on image) on",
-	show_leds_aria_label_off: "Toggle animated leds (overlay on image) off",
+	show_leds_aria_label_on: "Slå på visning av led (over bilde)",
+	show_leds_aria_label_off: "Slå av visning av led (over bilde)",
 	show_status: "Vis status",
-	show_status_aria_label_on: "Toggle display status on",
-	show_status_aria_label_off: "Toggle display status off",
-	show_stats: "Vis Data Tabell (stats)",
-	show_stats_aria_label_on: "Toggle display data table on",
-	show_stats_aria_label_off: "Toggle display data table off",
+	show_status_aria_label_on: "Slå på visning av status",
+	show_status_aria_label_off: "Slå av visning av status",
+	show_stats: "Vis datatabell (stats)",
+	show_stats_aria_label_on: "Slå på visning av datatabell (stats)",
+	show_stats_aria_label_off: "Slå av visning av datatabell (stats)",
 	show_collapsibles: "Vis sammenslåbare menyvalg",
-	show_collapsibles_aria_label_on: "Toggle display collapsible menus on",
-	show_collapsibles_aria_label_off: "Toggle display collapsible menus off",
+	show_collapsibles_aria_label_on: "Slå på visning av sammenslåbare menyer",
+	show_collapsibles_aria_label_off: "Slå av visning av sammenslåbare menyer",
 	show_toolbar: "Vis verktøylinje",
-	show_toolbar_aria_label_on: "Toggle display toolbar on",
-	show_toolbar_aria_label_off: "Toggle display toolbar off",
+	show_toolbar_aria_label_on: "Slå på visning av verktøylinje",
+	show_toolbar_aria_label_off: "Slå av visning av verktøylinje",
 	code_only_note: "Merk: Egendefinerte actions og data tabell (stats) er kun tilgjengelig ved å benytte Code Editor manuelt."
 };
-var charger_status$4 = {
-	sessionEnergy: "Energi ladeøkt"
+var easee$4 = {
+	status: {
+		disconnected: "Frakoblet",
+		awaiting_start: "Pause (avventer start)",
+		charging: "Lader",
+		completed: "Fullført eller venter på bil",
+		error: "Feil",
+		ready_to_charge: "Klar til lading"
+	},
+	substatus: {
+		ok: "Ok",
+		none: "Ingen",
+		max_circuit_current_too_low: "Maks kursstrøm for lav",
+		max_dynamic_circuit_current_too_low: "Maks dynamisk kursstrøm for lav",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Maks dynamisk offline kursstrøm for lav",
+		max_charger_current_too_low: "Maks laderstrøm for lav",
+		max_dynamic_charger_current_too_low: "Maks dynamisk laderstrøm for lav",
+		circuit_fuse_too_low: "Kurssikring for lav",
+		waiting_in_queue: "Venter i kø",
+		waiting_in_fully: "Venter i full kø",
+		illegal_grid_type: "Ugyldig type nett",
+		no_current_request: "Ingen forespørsel om strøm",
+		not_requesting_current: "Ingen forespørsel om strøm",
+		charger_disabled: "Lader er deaktivert",
+		pending_schedule: "Avventer tidsplan",
+		pending_authorization: "Avventer autorisasjon",
+		charger_in_error_state: "Feil i lader",
+		"undefined": "Udefinert"
+	},
+	common: {
+		click_for_group1: "Klikk for limiteringer",
+		click_for_group2: "Klikk for info",
+		click_for_group3: "Klikk for konfigurasjoner",
+		start: "Start",
+		"continue": "Fortsett",
+		pause: "Pause",
+		stop: "Stopp",
+		resume: "Fortsett",
+		override: "Overstyr tidsplan",
+		update: "Oppdater firmware",
+		reboot: "Reboot lader",
+		not_available: "Lader utilgjengelig",
+		online: "Online",
+		voltage: "Spenning",
+		power: "Effekt",
+		current: "Strøm",
+		charger_current: "Laderstrøm",
+		circuit_current: "Kursstrøm",
+		energy_per_hour: "Energi per time",
+		session_energy: "Ladeøkt energi",
+		lifetime_energy: "Total energi",
+		dyn_charger_limit: "Dyn laderstrøm",
+		dyn_circuit_limit: "Dyn kursstrøm",
+		max_charger_limit: "Maks laderstrøm",
+		max_circuit_limit: "Maks kursstrøm",
+		output_limit: "Tillatt strøm",
+		offline_circuit_limit: "Offline kursstrøm",
+		used_limit: "Brukt limitering",
+		enabled: "Aktivert",
+		idle_current: "Tomgangsstrøm",
+		cable_locked: "Kabel låst",
+		perm_cable_locked: "Kabel låst permanent",
+		smart_charging: "Smart lading",
+		cost_per_kwh: "Kostnad per kWh",
+		update_available: "Oppdatering tilgjengelig",
+		schedule: "Tidsplan"
+	}
 };
-var charger_substatus$4 = {
-	not_requesting_current: "Bilen ber ikke om strøm",
-	ok: "Ok"
+var test = {
+	status: {
+		disconnected: "Frakoblet",
+		awaiting_start: "Pause (avventer start)",
+		charging: "Lader",
+		completed: "Fullført eller venter på bil",
+		error: "Feil",
+		ready_to_charge: "Klar til lading"
+	},
+	substatus: {
+		ok: "Ok",
+		none: "Ingen",
+		max_circuit_current_too_low: "Maks kursstrøm for lav",
+		max_dynamic_circuit_current_too_low: "Maks dynamisk kursstrøm for lav",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Maks dynamisk offline kursstrøm for lav",
+		max_charger_current_too_low: "Maks laderstrøm for lav",
+		max_dynamic_charger_current_too_low: "Maks dynamisk laderstrøm for lav",
+		circuit_fuse_too_low: "Kurssikring for lav",
+		waiting_in_queue: "Venter i kø",
+		waiting_in_fully: "Venter i full kø",
+		illegal_grid_type: "Ugyldig type nett",
+		no_current_request: "Ingen forespørsel om strøm",
+		not_requesting_current: "Ingen forespørsel om strøm",
+		charger_disabled: "Lader er deaktivert",
+		pending_schedule: "Avventer tidsplan",
+		pending_authorization: "Avventer autorisasjon",
+		charger_in_error_state: "Feil i lader",
+		"undefined": "Udefinert"
+	},
+	common: {
+		start: "Start",
+		"continue": "Fortsett",
+		pause: "Pause",
+		stop: "Stopp",
+		override: "Overstyr tidsplan",
+		reboot: "Reboot lader",
+		not_available: "Lader utilgjengelig",
+		online: "Online",
+		voltage: "Spenning",
+		power: "Effekt",
+		charger_current: "Laderstrøm",
+		circuit_current: "Kursstrøm",
+		energy_per_hour: "Energi per time",
+		lifetime_energy: "Total energi",
+		schedule: "Tidsplan"
+	}
 };
 var nb = {
-	status: status$4,
 	common: common$4,
 	error: error$4,
 	editor: editor$4,
-	charger_status: charger_status$4,
-	charger_substatus: charger_substatus$4
+	easee: easee$4,
+	test: test
 };
 
 var nb$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    status: status$4,
     common: common$4,
     error: error$4,
     editor: editor$4,
-    charger_status: charger_status$4,
-    charger_substatus: charger_substatus$4,
+    easee: easee$4,
+    test: test,
     'default': nb
 });
 
-var status$3 = {
-	disconnected: "Frånkopplad",
-	awaiting_start: "Pausad eller inväntar start",
-	charging: "Laddar",
-	completed: "Färdig eller inväntar bil",
-	error: "Error",
-	ready_to_charge: "Klar att ladda"
-};
 var common$3 = {
 	name: "Charger Card",
-	description: "Charger card ger dig möjlighet att styra din laddningsrobot.",
-	start: "Starta",
-	"continue": "Återuppta",
-	pause: "Pausa",
-	stop: "Stopp",
-	override: "Åsidosätt schema",
-	reboot: "Starta om laddared",
-	not_available: "Laddaren inte tillgänglig",
-	click_for_info: "Klicka för info",
-	click_for_config: "Klicka för konfigurering",
-	click_for_limits: "Klicka för begränsningar",
-	online: "Uppkopplad",
-	voltage: "Spänning",
-	power: "Kraft",
-	charger_current: "Laddningsenergi",
-	energy_per_hour: "Energi per timme",
-	lifetime_energy: "Livstids energi",
-	circuit_current: "Kretsenergi"
+	description: "Charger card ger dig möjlighet att styra din laddningsrobot."
 };
 var error$3 = {
 	missing_entity: "Entiteten måsta anges!"
@@ -3185,66 +2950,103 @@ var editor$3 = {
 	show_toolbar_aria_label_off: "Toggle display toolbar off",
 	code_only_note: "Notera: Egendefinierade Custom actions och data tabell (stats) är bara tillgängligt när Code Editorn används manuellt."
 };
-var charger_status$3 = {
-	sessionEnergy: "Sessionsenergi"
-};
-var charger_substatus$3 = {
-	not_requesting_current: "Ingen bil ansluten",
-	ok: "Klar"
+var easee$3 = {
+	status: {
+		disconnected: "Frånkopplad",
+		awaiting_start: "Pausad eller inväntar start",
+		charging: "Laddar",
+		completed: "Färdig eller inväntar bil",
+		error: "Error",
+		ready_to_charge: "Klar att ladda"
+	},
+	substatus: {
+		ok: "Klar",
+		pending_schedule: "Avvaktar schema",
+		none: "Ingen",
+		max_circuit_current_too_low: "Max circuit current too low",
+		max_dynamic_circuit_current_too_low: "Max dynamic circuit current too low",
+		max_dynamic_charger_current_too_low: "Max dynamic charger current too low",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Max dynamic offline circuit current too low",
+		max_charger_current_too_low: "Max charger current too low",
+		circuit_fuse_too_low: "Kretssäkringen är för liten",
+		waiting_in_queue: "Väntar i kö",
+		waiting_in_fully: "Waiting in fully",
+		illegal_grid_type: "Ogiltig nättyp",
+		no_current_request: "Ingen strömförfrågan",
+		not_requesting_current: "Ingen bil ansluten",
+		charger_disabled: "Laddaren avvaktad",
+		pending_authorization: "Avvaktar autentisering",
+		charger_in_error_state: "Laddaren är i felläge",
+		"undefined": "Odefinierat"
+	},
+	common: {
+		click_for_group1: "Klicka för begränsningar",
+		click_for_group2: "Klicka för info",
+		click_for_group3: "Klicka för konfigurering",
+		start: "Starta",
+		"continue": "Återuppta",
+		pause: "Pausa",
+		stop: "Stopp",
+		resume: "Resume",
+		override: "Åsidosätt schema",
+		update: "Update firmware",
+		reboot: "Starta om laddared",
+		not_available: "Laddaren inte tillgänglig",
+		online: "Uppkopplad",
+		voltage: "Spänning",
+		power: "Kraft",
+		current: "Current",
+		charger_current: "Charger Current",
+		energy_per_hour: "Energi per timme",
+		session_energy: "Session energy",
+		lifetime_energy: "Livstids energi",
+		circuit_current: "Circuit Current",
+		dyn_charger_limit: "Dyn Charger Limit",
+		dyn_circuit_limit: "Dyn Circuit Limit",
+		max_charger_limit: "Max Charger Limit",
+		max_circuit_limit: "Max Circuit Limit",
+		output_limit: "Tillåten ström",
+		used_limit: "Använd begränsning",
+		offline_circuit_limit: "Offline Circuit Limit",
+		enabled: "Aktiverad",
+		idle_current: "Idle current",
+		cable_locked: "Kabel låst",
+		perm_cable_locked: "Kabel permanent låst",
+		smart_charging: "Smart laddning",
+		cost_per_kwh: "Pris per kWh",
+		update_available: "Uppdatering tillgänglig",
+		schedule: "Schema"
+	}
 };
 var sv = {
-	status: status$3,
 	common: common$3,
 	error: error$3,
 	editor: editor$3,
-	charger_status: charger_status$3,
-	charger_substatus: charger_substatus$3
+	easee: easee$3
 };
 
 var sv$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    status: status$3,
     common: common$3,
     error: error$3,
     editor: editor$3,
-    charger_status: charger_status$3,
-    charger_substatus: charger_substatus$3,
+    easee: easee$3,
     'default': sv
 });
 
-var status$2 = {
-	disconnected: "Getrennt",
-	awaiting_start: "Pausiert oder warte auf Start",
-	charging: "Laden",
-	completed: "Fertig oder warte auf Auto",
-	error: "Fehler",
-	ready_to_charge: "Bereit zum Laden"
-};
 var common$2 = {
 	name: "Charger Card",
-	description: "Charger card ermöglicht es dir, deinen Laderoboter zu steuern.",
-	start: "Start",
-	"continue": "Weiter",
-	pause: "Pause",
-	stop: "Stopp",
-	override: "Zeitplan überschreiben",
-	reboot: "Ladegerät neu starten",
-	not_available: "Ladegerät nicht verfügbar",
-	click_for_info: "Klicken für Infos",
-	click_for_config: "Klicken für Konfiguration",
-	click_for_limits: "Klicken für Limits",
-	online: "Online",
-	voltage: "Spannung",
-	power: "Leistung",
-	charger_current: "Ladestrom",
-	energy_per_hour: "Energie pro Stunde",
-	lifetime_energy: "Energie gesamt",
-	circuit_current: "Aktueller Strom"
+	description: "Charger card ermöglicht es dir, deinen Laderoboter zu steuern."
 };
 var error$2 = {
-	missing_entity: "Die Angabe der Entität ist erforderlich!"
+	missing_entity: "Die Angabe der Entität ist erforderlich!",
+	not_available: "Not available",
+	missing_config: "Error in config!",
+	missing_group: "No entities defined in group!"
 };
 var editor$2 = {
+	instruction: "Select your main entity and type/brand. The card will automatically try to detect the other sensors. If you have a brand which is not supported by default, you can choose «Other» and do mapping of entities manually. If anything fails, please verify the YAML configuration (click «Show code editor»).",
+	brand: "Brand (Required)",
 	entity: "Entity (Erforderlich)",
 	chargerImage: "Bild und Farbe des Ladegeräts",
 	customImage: "Benutzerdefiniertes Bild (Optional - überschreibt das Bild des Ladegeräts)",
@@ -3272,82 +3074,103 @@ var editor$2 = {
 	show_toolbar_aria_label_off: "Symbolleiste ausschalten",
 	code_only_note: "Hinweis: Die Optionen für benutzerdefinierte Aktionen und Datentabellen (Statistiken) sind ausschließlich über den manuellen Code-Editor verfügbar."
 };
-var charger_status$2 = {
-	sessionEnergy: "Energieaufladung"
-};
-var charger_substatus$2 = {
-	not_requesting_current: "Keine Nachfrage nach Strom",
-	ok: "Ok",
-	pending_schedule: "Ausstehender Zeitplan",
-	none: "None",
-	max_circuit_current_too_low: "Maximalstrom zu niedrig",
-	max_dynamic_circuit_current_too_low: "Dynamischer Maximalstrom zu niedrig",
-	max_dynamic_offline_fallback_circuit_current_too_low: "Dynamischer offline Maximalstrom zu niedrig",
-	circuit_fuse_too_low: "Stromkreissicherung zu niedrig",
-	waiting_in_queue: "Warten in der Warteschlange",
-	waiting_in_fully: "Warten in vollem Umfang",
-	illegal_grid_type: "Unzulässiger Grid Typ",
-	no_current_request: "Keine aktuelle Anfrage",
-	max_charger_current_too_low: "Maximaler Ladestrom zu niedrig",
-	max_dynamic_charger_current_too_low: "Maximaler dynamischer Ladestrom zu niedrig",
-	charger_disabled: "Ladegerät Deaktiviert",
-	pending_authorization: "Ausstehende Autorisierung",
-	charger_in_error_state: "Ladegerät im Fehlerzustand",
-	"undefined": "Undefiniert"
+var easee$2 = {
+	status: {
+		disconnected: "Getrennt",
+		awaiting_start: "Pausiert oder warte auf Start",
+		charging: "Laden",
+		completed: "Fertig oder warte auf Auto",
+		error: "Fehler",
+		ready_to_charge: "Bereit zum Laden"
+	},
+	substatus: {
+		not_requesting_current: "Keine Nachfrage nach Strom",
+		ok: "Ok",
+		pending_schedule: "Ausstehender Zeitplan",
+		none: "None",
+		max_circuit_current_too_low: "Maximalstrom zu niedrig",
+		max_dynamic_circuit_current_too_low: "Dynamischer Maximalstrom zu niedrig",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Dynamischer offline Maximalstrom zu niedrig",
+		circuit_fuse_too_low: "Stromkreissicherung zu niedrig",
+		waiting_in_queue: "Warten in der Warteschlange",
+		waiting_in_fully: "Warten in vollem Umfang",
+		illegal_grid_type: "Unzulässiger Grid Typ",
+		no_current_request: "Keine aktuelle Anfrage",
+		max_charger_current_too_low: "Maximaler Ladestrom zu niedrig",
+		max_dynamic_charger_current_too_low: "Maximaler dynamischer Ladestrom zu niedrig",
+		charger_disabled: "Ladegerät Deaktiviert",
+		pending_authorization: "Ausstehende Autorisierung",
+		charger_in_error_state: "Ladegerät im Fehlerzustand",
+		"undefined": "Undefiniert"
+	},
+	common: {
+		click_for_group1: "Klicken für Limits",
+		click_for_group2: "Klicken für Infos",
+		click_for_group3: "Klicken für Konfiguration",
+		start: "Start",
+		"continue": "Weiter",
+		pause: "Pause",
+		stop: "Stopp",
+		resume: "Resume",
+		override: "Zeitplan überschreiben",
+		update: "Update firmware",
+		reboot: "Ladegerät neu starten",
+		not_available: "Ladegerät nicht verfügbar",
+		online: "Online",
+		voltage: "Spannung",
+		power: "Leistung",
+		current: "Strom",
+		charger_current: "Ladestrom",
+		energy_per_hour: "Energie pro Stunde",
+		session_energy: "Session energy",
+		lifetime_energy: "Energie gesamt",
+		circuit_current: "Aktueller Strom",
+		dyn_charger_limit: "Dyn Charger Limit",
+		dyn_circuit_limit: "Dyn Circuit Limit",
+		max_charger_limit: "Max Charger Limit",
+		max_circuit_limit: "Max Circuit Limit",
+		output_limit: "Allowed current",
+		used_limit: "Used limit",
+		offline_circuit_limit: "Offline Circuit Limit",
+		enabled: "Enabled",
+		idle_current: "Idle current",
+		cable_locked: "Cable locked",
+		perm_cable_locked: "Cable locked permanently",
+		smart_charging: "Smart charging",
+		cost_per_kwh: "Cost per kWh",
+		update_available: "Update available",
+		schedule: "Schedule"
+	}
 };
 var de = {
-	status: status$2,
 	common: common$2,
 	error: error$2,
 	editor: editor$2,
-	charger_status: charger_status$2,
-	charger_substatus: charger_substatus$2
+	easee: easee$2
 };
 
 var de$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    status: status$2,
     common: common$2,
     error: error$2,
     editor: editor$2,
-    charger_status: charger_status$2,
-    charger_substatus: charger_substatus$2,
+    easee: easee$2,
     'default': de
 });
 
-var status$1 = {
-	disconnected: "Frakoblet",
-	awaiting_start: "Afventer start",
-	charging: "Oplader",
-	completed: "Gennemført",
-	error: "Fejl",
-	ready_to_charge: "Klar til opladning"
-};
 var common$1 = {
 	name: "Charger Card",
-	description: "Charger card gir dig mulighed for at styre din ladeboks.",
-	start: "Start",
-	"continue": "Fortsæt",
-	pause: "Pause",
-	stop: "Stop",
-	override: "Overstyr plan",
-	reboot: "Genstart ladeboks",
-	not_available: "Lader utilgængelig",
-	click_for_info: "Klik for info",
-	click_for_config: "Klik for konfiguration",
-	click_for_limits: "Klik for limiteringer",
-	online: "Online",
-	voltage: "Spænding",
-	power: "Effekt",
-	charger_current: "Ladestrøm",
-	energy_per_hour: "Energi per time",
-	lifetime_energy: "Energi totalt",
-	circuit_current: "Kredsløbstrøm"
+	description: "Charger card gir dig mulighed for at styre din ladeboks."
 };
 var error$1 = {
-	missing_entity: "Du skal angive en entitet!"
+	missing_entity: "Du skal angive en entitet!",
+	not_available: "Not available",
+	missing_config: "Error in config!",
+	missing_group: "No entities defined in group!"
 };
 var editor$1 = {
+	instruction: "Select your main entity and type/brand. The card will automatically try to detect the other sensors. If you have a brand which is not supported by default, you can choose «Other» and do mapping of entities manually. If anything fails, please verify the YAML configuration (click «Show code editor»).",
+	brand: "Brand (Required)",
 	entity: "Entitet (obligatorisk)",
 	chargerImage: "Billede og -farvevalg",
 	customImage: "Valgfrit billede (erstatter billede af laderobot)",
@@ -3375,66 +3198,103 @@ var editor$1 = {
 	show_toolbar_aria_label_off: "Vis ikke værktøjslinje",
 	code_only_note: "Bemærk: Brugerdefinerede actions og data tabel (statistik) funktioner kan kun benyttes ved manuelt at redigere via Code Editor."
 };
-var charger_status$1 = {
-	sessionEnergy: "Energi session"
-};
-var charger_substatus$1 = {
-	not_requesting_current: "Bilen anmoder ikke om strøm",
-	ok: "Ok"
+var easee$1 = {
+	status: {
+		disconnected: "Frakoblet",
+		awaiting_start: "Afventer start",
+		charging: "Oplader",
+		completed: "Gennemført",
+		error: "Fejl",
+		ready_to_charge: "Klar til opladning"
+	},
+	substatus: {
+		ok: "Ok",
+		pending_schedule: "Pending schedule",
+		none: "None",
+		max_circuit_current_too_low: "Max circuit current too low",
+		max_dynamic_circuit_current_too_low: "Max dynamic circuit current too low",
+		max_dynamic_charger_current_too_low: "Max dynamic charger current too low",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Max dynamic offline circuit current too low",
+		max_charger_current_too_low: "Max charger current too low",
+		circuit_fuse_too_low: "Circuit fuse too low",
+		waiting_in_queue: "Waiting in queue",
+		waiting_in_fully: "Waiting in fully",
+		illegal_grid_type: "Illegal grid type",
+		no_current_request: "No current request",
+		not_requesting_current: "Bilen anmoder ikke om strøm",
+		charger_disabled: "Charger Disabled",
+		pending_authorization: "Pending Authorization",
+		charger_in_error_state: "Charger in error state",
+		"undefined": "Undefined"
+	},
+	common: {
+		click_for_group1: "Klik for limiteringer",
+		click_for_group2: "Klik for info",
+		click_for_group3: "Klik for konfiguration",
+		start: "Start",
+		"continue": "Fortsæt",
+		pause: "Pause",
+		stop: "Stop",
+		resume: "Resume",
+		override: "Overstyr plan",
+		update: "Update firmware",
+		reboot: "Genstart ladeboks",
+		not_available: "Lader utilgængelig",
+		online: "Online",
+		voltage: "Spænding",
+		power: "Effekt",
+		current: "Current",
+		charger_current: "Ladestrøm",
+		energy_per_hour: "Energi per time",
+		session_energy: "Session energy",
+		lifetime_energy: "Energi totalt",
+		circuit_current: "Kredsløbstrøm",
+		dyn_charger_limit: "Dyn Charger Limit",
+		dyn_circuit_limit: "Dyn Circuit Limit",
+		max_charger_limit: "Max Charger Limit",
+		max_circuit_limit: "Max Circuit Limit",
+		output_limit: "Allowed current",
+		used_limit: "Used limit",
+		offline_circuit_limit: "Offline Circuit Limit",
+		enabled: "Enabled",
+		idle_current: "Idle current",
+		cable_locked: "Cable locked",
+		perm_cable_locked: "Cable locked permanently",
+		smart_charging: "Smart charging",
+		cost_per_kwh: "Cost per kWh",
+		update_available: "Update available",
+		schedule: "Schedule"
+	}
 };
 var da = {
-	status: status$1,
 	common: common$1,
 	error: error$1,
 	editor: editor$1,
-	charger_status: charger_status$1,
-	charger_substatus: charger_substatus$1
+	easee: easee$1
 };
 
 var da$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    status: status$1,
     common: common$1,
     error: error$1,
     editor: editor$1,
-    charger_status: charger_status$1,
-    charger_substatus: charger_substatus$1,
+    easee: easee$1,
     'default': da
 });
 
-var status = {
-	disconnected: "Desconnectat",
-	awaiting_start: "Esperant per començar",
-	charging: "Carregant",
-	completed: "Completat",
-	error: "Error",
-	ready_to_charge: "A punt per carregar"
-};
 var common = {
 	name: "Charger Card",
-	description: "La Charger Card et permet controlar el teu robot de càrrega.",
-	start: "Començar",
-	"continue": "Continuar",
-	pause: "Pausar",
-	stop: "Parar",
-	override: "Sobrreescriure la programació",
-	reboot: "Reiniciar el carregador",
-	not_available: "Carregador no disponible",
-	click_for_info: "Fes click per més informació",
-	click_for_config: "Fes click per configurar",
-	click_for_limits: "Fes click per els límits",
-	online: "Disponible",
-	voltage: "Voltatge",
-	power: "Potència",
-	charger_current: "Corrent del carregador",
-	energy_per_hour: "Energia per hora",
-	lifetime_energy: "Energia de per vida",
-	circuit_current: "Circuit d'energia"
+	description: "La Charger Card et permet controlar el teu robot de càrrega."
 };
 var error = {
-	missing_entity: "És necessari especificar una entitat!"
+	missing_entity: "És necessari especificar una entitat!",
+	not_available: "Not available",
+	missing_config: "Error in config!",
+	missing_group: "No entities defined in group!"
 };
 var editor = {
+	instruction: "Select your main entity and type/brand. The card will automatically try to detect the other sensors. If you have a brand which is not supported by default, you can choose «Other» and do mapping of entities manually. If anything fails, please verify the YAML configuration (click «Show code editor»).",
+	brand: "Brand (Required)",
 	entity: "Entitat (Obligatori)",
 	chargerImage: "Imatge del carregador",
 	customImage: "Imatge personalitzada (Opcional - sobreesciu la imatge del carregador)",
@@ -3462,46 +3322,87 @@ var editor = {
 	show_toolbar_aria_label_off: "Ocultar la barra d'eines",
 	code_only_note: "Nota: Les opcions per les acciones personalitzades i els estats només estan disponibles manualment utilitzant la vista d'Edició de Codi."
 };
-var charger_status = {
-	sessionEnergy: "Energia de la sessió"
-};
-var charger_substatus = {
-	not_requesting_current: "No s'està consumint corrent",
-	ok: "Ok",
-	pending_schedule: "Esperant programa",
-	none: "Cap",
-	max_circuit_current_too_low: "Corrent màxima del circuit insuficient",
-	max_dynamic_circuit_current_too_low: "Corrent dinàmica màxima del circuit insuficient",
-	max_dynamic_offline_fallback_circuit_current_too_low: "Corrent dinàmica màxima de reserva insuficient",
-	circuit_fuse_too_low: "Circuit de fusible insuficient",
-	waiting_in_queue: "En cua esperant",
-	waiting_in_fully: "Esperant completat",
-	illegal_grid_type: "Xarxa il·legal",
-	no_current_request: "No hi ha demanda de corrent",
-	max_charger_current_too_low: "Corrent màxima del carregador insuficient",
-	max_dynamic_charger_current_too_low: "Corrent dinàmica màxima del carregador insuficient",
-	charger_disabled: "Carregador deshabilitat",
-	pending_authorization: "Esperant Autorització",
-	charger_in_error_state: "Error del carregador",
-	"undefined": "No definit"
+var easee = {
+	status: {
+		disconnected: "Desconnectat",
+		awaiting_start: "Esperant per començar",
+		charging: "Carregant",
+		completed: "Completat",
+		error: "Error",
+		ready_to_charge: "A punt per carregar"
+	},
+	substatus: {
+		not_requesting_current: "No s'està consumint corrent",
+		ok: "Ok",
+		pending_schedule: "Esperant programa",
+		none: "Cap",
+		max_circuit_current_too_low: "Corrent màxima del circuit insuficient",
+		max_dynamic_circuit_current_too_low: "Corrent dinàmica màxima del circuit insuficient",
+		max_dynamic_offline_fallback_circuit_current_too_low: "Corrent dinàmica màxima de reserva insuficient",
+		circuit_fuse_too_low: "Circuit de fusible insuficient",
+		waiting_in_queue: "En cua esperant",
+		waiting_in_fully: "Esperant completat",
+		illegal_grid_type: "Xarxa il·legal",
+		no_current_request: "No hi ha demanda de corrent",
+		max_charger_current_too_low: "Corrent màxima del carregador insuficient",
+		max_dynamic_charger_current_too_low: "Corrent dinàmica màxima del carregador insuficient",
+		charger_disabled: "Carregador deshabilitat",
+		pending_authorization: "Esperant Autorització",
+		charger_in_error_state: "Error del carregador",
+		"undefined": "No definit"
+	},
+	common: {
+		click_for_group1: "Fes click per els límits",
+		click_for_group2: "Fes click per més informació",
+		click_for_group3: "Fes click per configurar",
+		start: "Començar",
+		"continue": "Continuar",
+		pause: "Pausar",
+		stop: "Parar",
+		resume: "Continuar",
+		override: "Sobrreescriure la programació",
+		update: "Update firmware",
+		reboot: "Reiniciar el carregador",
+		not_available: "Carregador no disponible",
+		online: "Disponible",
+		voltage: "Voltatge",
+		power: "Potència",
+		current: "Current",
+		charger_current: "Corrent del carregador",
+		energy_per_hour: "Energia per hora",
+		session_energy: "Session energy",
+		lifetime_energy: "Energia de per vida",
+		circuit_current: "Corrent del circuit",
+		dyn_charger_limit: "Dyn Charger Limit",
+		dyn_circuit_limit: "Dyn Circuit Limit",
+		max_charger_limit: "Max Charger Limit",
+		max_circuit_limit: "Max Circuit Limit",
+		output_limit: "Allowed current",
+		used_limit: "Used limit",
+		offline_circuit_limit: "Offline Circuit Limit",
+		enabled: "Enabled",
+		idle_current: "Idle current",
+		cable_locked: "Cable locked",
+		perm_cable_locked: "Cable locked permanently",
+		smart_charging: "Smart charging",
+		cost_per_kwh: "Cost per kWh",
+		update_available: "Update available",
+		schedule: "Schedule"
+	}
 };
 var ca = {
-	status: status,
 	common: common,
 	error: error,
 	editor: editor,
-	charger_status: charger_status,
-	charger_substatus: charger_substatus
+	easee: easee
 };
 
 var ca$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    status: status,
     common: common,
     error: error,
     editor: editor,
-    charger_status: charger_status,
-    charger_substatus: charger_substatus,
+    easee: easee,
     'default': ca
 });
 
@@ -3514,40 +3415,1449 @@ var languages = {
   da: da$1,
   ca: ca$1
 };
-const DEFAULT_LANG = 'en';
-function localize(string, search, replace) {
-  const [section, key] = string.split('.');
-  let langStored;
-
-  try {
-    langStored = JSON.parse(localStorage.getItem('selectedLanguage'));
-  } catch (e) {
-    langStored = localStorage.getItem('selectedLanguage');
-  }
-
-  const lang = (langStored || navigator.language.split('-')[0] || DEFAULT_LANG).replace(/['"]+/g, '').replace('-', '_');
+function localize(string, brand = null, search = '', replace = '', debug = false) {
+  const lang = (localStorage.getItem('selectedLanguage') || 'en').replace(/['"]+/g, '').replace('-', '_');
   let translated;
-
+  let brandstr = brand === undefined || brand === null ? string : brand + "." + string;
   try {
-    translated = languages[lang][section][key];
+    // Try to translate, add brand if valid
+    translated = brandstr.split('.').reduce((o, i) => o[i], languages[lang]);
+    if (debug) console.log("Translating 1 -> " + lang + ": " + string + " --> " + brandstr + " --> " + translated);
+    if (translated === undefined) {
+      translated = brandstr.toLowerCase().split('.').reduce((o, i) => o[i], languages[lang]);
+      if (debug) console.log("Translating 2 -> " + lang + " lowercase: " + string + " --> " + brandstr + " --> " + translated);
+    }
+    if (translated === undefined) {
+      translated = brandstr.split('.').reduce((o, i) => o[i], languages['en']);
+      if (debug) console.log("Translating 3 -> en  : " + string + " --> " + brandstr + " --> " + translated);
+    }
+    if (translated === undefined) {
+      translated = brandstr.toLowerCase().split('.').reduce((o, i) => o[i], languages['en']);
+      if (debug) console.log("Translating 4 -> en lowercase: " + string + " --> " + brandstr + " --> " + translated);
+    }
   } catch (e) {
-    translated = languages[DEFAULT_LANG][section][key];
+    // Give up, do nothing
   }
-
   if (translated === undefined) {
-    translated = languages[DEFAULT_LANG][section][key];
+    // If translation failed, return last item of array
+    var strArray = string.split(".");
+    translated = strArray.length > 0 ? strArray[strArray.length - 1] : strArray;
+    if (debug) console.log("Gave up translating: " + string + " --> " + strArray + " --> " + translated);
   }
 
-  if (translated === undefined) {
-    return;
-  }
-
+  //Search and replace
   if (search !== '' && replace !== '') {
     translated = translated.replace(search, replace);
   }
 
-  return translated;
+  //Return
+  return translated || string;
 }
+
+/** EASEE CHARGING ROBOT */
+
+//Defines what should be replaced from main entity name to use as template for other entities
+const MAIN_ENTITY_BASE$3 = '_status';
+
+//OVERRIDE CARD CONFIG WHEN BRAND TEMPLATE SELECTED (for instance turn off leds if they don't make any sense)
+const DEFAULT_CONFIG$3 = {
+  show_leds: true
+};
+
+// CONFIG DETAILS
+const DEFAULT_DETAILS$3 = {
+  //NAME, LOCATION, STATUS ETC
+  name: {
+    entity_id: 'sensor.#ENTITYPREFIX#_status',
+    attribute: 'name'
+  },
+  location: {
+    entity_id: 'sensor.#ENTITYPREFIX#_status',
+    attribute: 'site_name'
+  },
+  status: {
+    entity_id: 'sensor.#ENTITYPREFIX#_status'
+  },
+  substatus: {
+    entity_id: 'sensor.#ENTITYPREFIX#_reason_for_no_current'
+  },
+  smartcharging: {
+    //controls white or blue leds
+    entity_id: 'switch.#ENTITYPREFIX#_smart_charging'
+  },
+  // OVERRIDE CURRENTLIMITS
+  currentlimits: [0, 6, 10, 16, 20, 25, 32],
+  // OVERRIDE STATE TEXT - also overrides translation
+  statetext: {
+    disconnected: 'disconnected',
+    awaiting_start: 'awaiting_start',
+    charging: 'charging',
+    completed: 'completed',
+    error: 'error',
+    ready_to_charge: 'ready_to_charge'
+  },
+  // OVERRIDE COLLAPSIBLE BUTTON ICONS AND TOOLTIP TEXT
+  collapsiblebuttons: {
+    group1: {
+      text: 'click_for_group1',
+      icon: 'mdi:speedometer'
+    },
+    group2: {
+      text: 'click_for_group2',
+      icon: 'mdi:information'
+    },
+    group3: {
+      text: 'click_for_group3',
+      icon: 'mdi:cog'
+    }
+  },
+  //ICONS LEFT AND RIGHT
+  info_left: [{
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_online',
+    text: 'online'
+  }],
+  info_right: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_voltage',
+    text: 'voltage',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_power',
+    text: 'power',
+    unit_show: true
+  }],
+  //LIMITS
+  group1: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit',
+    text: 'dyn_charger_limit',
+    service: 'easee.set_charger_dynamic_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      current: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit',
+    text: 'dyn_circuit_limit',
+    service: 'easee.set_charger_circuit_dynamic_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      currentP1: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit',
+    text: 'max_charger_limit',
+    service: 'easee.set_charger_max_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      current: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit',
+    text: 'max_circuit_limit',
+    service: 'easee.set_circuit_max_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      currentP1: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit',
+    text: 'offline_circuit_limit',
+    service: 'easee.set_charger_circuit_offline_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      currentP1: '#SERVICEVAL#'
+    }
+  }],
+  //INFO
+  group2: [{
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_online',
+    text: 'online'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_voltage',
+    text: 'voltage',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_power',
+    text: 'power',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_current',
+    text: 'charger_current',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_circuit_current',
+    text: 'circuit_current',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_energy_per_hour',
+    text: 'energy_per_hour',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+    text: 'session_energy',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_lifetime_energy',
+    text: 'lifetime_energy',
+    unit_show: true
+  }],
+  //CONFIG
+  group3: [{
+    entity_id: 'switch.#ENTITYPREFIX#_is_enabled',
+    text: 'enabled'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_enable_idle_current',
+    text: 'idle_current'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_cable_locked',
+    text: 'cable_locked'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+    text: 'perm_cable_locked'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_smart_charging',
+    text: 'smart_charging'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_cost_per_kwh',
+    text: 'cost_per_kwh'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_update_available',
+    text: 'update_available'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+    text: 'schedule'
+  }],
+  //STATS - based on state of main entity, default if state not found
+  stats: {
+    default: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+      text: 'cable_locked'
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }],
+    disconnected: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+      text: 'cable_locked'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }],
+    awaiting_start: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }, {
+      entity_id: 'switch.#ENTITYPREFIX#_smart_charging',
+      text: 'smart_charging'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }],
+    charging: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_energy_per_hour',
+      text: 'energy_per_hour',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_circuit_current',
+      text: 'circuit_current',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_output_limit',
+      text: 'output_limit',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_current',
+      text: 'current',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_power',
+      text: 'power',
+      unit_show: true
+    }],
+    completed: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }],
+    error: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }],
+    ready_to_charge: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }]
+  },
+  // TOOLBAR
+  toolbar_left: {
+    default: [{}],
+    disconnected: [{}],
+    awaiting_start: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.resume',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'resume',
+      icon: 'hass:play'
+    }, {
+      service: 'easee.override_schedule',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'override',
+      icon: 'hass:motion-play'
+    }],
+    charging: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.pause',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'pause',
+      icon: 'hass:pause'
+    }],
+    completed: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.override_schedule',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'override',
+      icon: 'hass:motion-play'
+    }],
+    error: [{
+      service: 'easee.reboot',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'reboot',
+      icon: 'hass:restart'
+    }],
+    ready_to_charge: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.override_schedule',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'override',
+      icon: 'hass:motion-play'
+    }]
+  },
+  toolbar_right: {
+    default: [{
+      service: 'persistent_notification.create',
+      service_data: {
+        message: 'Firmware update is available, but only possible when disconnected!',
+        title: 'Update'
+      },
+      text: 'update',
+      icon: 'mdi:file-download',
+      conditional_entity: 'binary_sensor.#ENTITYPREFIX#_update_available'
+    }],
+    disconnected: [{
+      service: 'easee.update_firmware',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'update',
+      icon: 'mdi:file-download',
+      conditional_entity: 'binary_sensor.#ENTITYPREFIX#_update_available'
+    }]
+  }
+};
+
+/** TEMPLATE - replace with your brand name */
+
+//Defines what should be replaced from main entity name to use as template for other entities
+const MAIN_ENTITY_BASE$2 = '_status';
+
+//OVERRIDE CARD CONFIG WHEN BRAND TEMPLATE SELECTED (for instance turn off leds if they don't make any sense)
+const DEFAULT_CONFIG$2 = {
+  show_leds: false
+};
+
+// CONFIG DETAILS
+const DEFAULT_DETAILS$2 = {
+  // DETAILS ITEMS (APPLY THE ONES YOU NEED)
+  // name                             // A plain text or an entity item
+  // location                         // A plain text or an entity item
+  // status                           // A plain text or an entity item
+  // substatus                        // A plain text or an entity item
+  // smartcharging                    // An entity item (bool) defining smart charging (used for blue leds)
+  // currentlimits                    // A list of allowed values for current limits, for instance used in dropdowns
+  // statetext                        // Mapping states to custom statetexts, for instance {charging: 'Charging fine'} and so on
+  // collapsiblebuttons               // Replaces default text and icon for collapsible buttons, for instance group1: { text: 'click_for_group1', icon: 'mdi:speedometer' }
+  // info_left                        // A list of entity items used on top left of the card
+  // info_right                       // A list of entity items used on top right of the card
+  // group1                           // A list of entity items used on on the collapsible group1 (limits)
+  // group2                           // A list of entity items used on on the collapsible group2 (info)
+  // group3                           // A list of entity items used on on the collapsible group3 (config)
+  // stats                            // Mapping of states where each state has a list of entity items which will appear for corresponding state above toolbar (datatable/stats)
+  // toolbar_left                     // Mapping of states where each state has a list of entity items which will appear for corresponding state at left side of toolbar at bottom of card
+  // toolbar_right                    // Mapping of states where each state has a list of entity items which will appear for corresponding state at right side of toolbar at bottom of card
+
+  // ENTITY ITEMS (APPLY THE ONES YOU NEED)
+  //     entity_id: '',                  // entity id
+  //     attribute: '',                  // attribute is used as value if specified
+  //     unit: '',                       // unit if you want to override entity unit
+  //     unit_show: true,                // show unit next to value
+  //     unit_showontext: true,          // show unit next to value in tooltip text
+  //     text: '',                       // text to be used instead of entity friendly-name (do not use dots '.' and apply translation key to achieve translation)
+  //     service: '',                    // service on format 'domain.service'
+  //     service_data: {'test','test'},  // service data for the service call
+  //     icon: '',                       // icon to be used instead of entity icon
+  //     round: 0,                       // round to specified number of decimals (integer)
+  //     type: '',                       // type
+  //     calc_function: ''               // define entity_id as 'calculated' and specify min,max,mean,sum here to calculate
+  //     calc_entities: ''               // entities to calculate from above feature
+  //     conditional_entity: ''          // if you want the entity_id to be shown conditionally, specify a on/off or true/false sensor here
+  //     conditional_attribute: ''       // if you prefer the conditional showing of entity to be based on an attribute, define it here
+  //     conditional_invert: ''          // if you prefer to invert the conditional showing of an entity to show when false, invert by true
+
+  // SPECIAL TOKENS
+  // #ENTITYPREFIX#                      // This will be replaced with what is found from main sensor entity after removing MAIN_ENTITY_BASE
+  // #SERVICEID#                         // A replacement used in the service call, typically for a chargerid or something that must be part of the data when calling service of a specific charger.
+  // #SERVICEVAL#                        // A replacement used in the service call, typically for the value from a dropdown or similar. Use this in the template where for instance a current limit is supposed to be sent to a charger.
+
+  //NAME, LOCATION, STATUS ETC
+  name: {
+    entity_id: 'sensor.#ENTITYPREFIX#_status',
+    attribute: 'name'
+  },
+  location: {
+    entity_id: 'sensor.#ENTITYPREFIX#_status',
+    attribute: 'site_name'
+  },
+  status: {
+    entity_id: 'sensor.#ENTITYPREFIX#_status'
+  },
+  substatus: {
+    entity_id: 'sensor.#ENTITYPREFIX#_reason_for_no_current'
+  },
+  smartcharging: {
+    //controls white or blue leds
+    entity_id: 'switch.#ENTITYPREFIX#_smart_charging'
+  },
+  // OVERRIDE CURRENTLIMITS
+  currentlimits: [0, 6, 10, 16, 20, 25, 32],
+  // OVERRIDE STATE TEXT - also overrides translation
+  statetext: {
+    disconnected: 'disconnected',
+    awaiting_start: 'awaiting_start',
+    charging: 'charging',
+    completed: 'completed',
+    error: 'error',
+    ready_to_charge: 'ready_to_charge'
+  },
+  // OVERRIDE COLLAPSIBLE BUTTON ICONS AND TOOLTIP TEXT
+  collapsiblebuttons: {
+    group1: {
+      text: 'click_for_group1',
+      icon: 'mdi:speedometer'
+    },
+    group2: {
+      text: 'click_for_group2',
+      icon: 'mdi:information'
+    },
+    group3: {
+      text: 'click_for_group3',
+      icon: 'mdi:cog'
+    }
+  },
+  //ICONS LEFT AND RIGHT
+  info_left: [{
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_online',
+    text: 'online'
+  }],
+  info_right: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_voltage',
+    text: 'voltage',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_power',
+    text: 'power',
+    unit_show: true
+  }],
+  //LIMITS
+  group1: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit',
+    text: 'dyn_charger_limit',
+    service: 'easee.set_charger_dynamic_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      current: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit',
+    text: 'dyn_circuit_limit',
+    service: 'easee.set_charger_circuit_dynamic_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      currentP1: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit',
+    text: 'max_charger_limit',
+    service: 'easee.set_charger_max_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      current: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit',
+    text: 'max_circuit_limit',
+    service: 'easee.set_circuit_max_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      currentP1: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit',
+    text: 'offline_circuit_limit',
+    service: 'easee.set_charger_circuit_offline_limit',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      currentP1: '#SERVICEVAL#'
+    }
+  }],
+  //INFO
+  group2: [{
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_online',
+    text: 'online'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_voltage',
+    text: 'voltage',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_power',
+    text: 'power',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_current',
+    text: 'charger_current',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_circuit_current',
+    text: 'circuit_current',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_energy_per_hour',
+    text: 'energy_per_hour',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+    text: 'session_energy',
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_lifetime_energy',
+    text: 'lifetime_energy',
+    unit_show: true
+  }],
+  //CONFIG
+  group3: [{
+    entity_id: 'switch.#ENTITYPREFIX#_is_enabled',
+    text: 'enabled'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_enable_idle_current',
+    text: 'idle_current'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_cable_locked',
+    text: 'cable_locked'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+    text: 'perm_cable_locked'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_smart_charging',
+    text: 'smart_charging'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_cost_per_kwh',
+    text: 'cost_per_kwh'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_update_available',
+    text: 'update_available'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+    text: 'schedule'
+  }],
+  //STATS - based on state of main entity, default if state not found
+  stats: {
+    default: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+      text: 'cable_locked'
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }],
+    disconnected: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+      text: 'cable_locked'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }],
+    awaiting_start: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }, {
+      entity_id: 'switch.#ENTITYPREFIX#_smart_charging',
+      text: 'smart_charging'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }],
+    charging: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_energy_per_hour',
+      text: 'energy_per_hour',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_circuit_current',
+      text: 'circuit_current',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_output_limit',
+      text: 'output_limit',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_current',
+      text: 'current',
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_power',
+      text: 'power',
+      unit_show: true
+    }],
+    completed: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }],
+    error: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }],
+    ready_to_charge: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+      text: 'session_energy',
+      unit_show: true
+    }, {
+      entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+      text: 'schedule'
+    }, {
+      entity_id: 'calculated',
+      text: 'used_limit',
+      unit: 'A',
+      unit_show: true,
+      calc_function: 'min',
+      calc_entities: [{
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_dynamic_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_charger_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_max_circuit_limit'
+      }, {
+        entity_id: 'sensor.#ENTITYPREFIX#_offline_circuit_limit'
+      }]
+    }]
+  },
+  // TOOLBAR
+  toolbar_left: {
+    default: [{}],
+    disconnected: [{}],
+    awaiting_start: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.resume',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'resume',
+      icon: 'hass:play'
+    }, {
+      service: 'easee.override_schedule',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'override',
+      icon: 'hass:motion-play'
+    }],
+    charging: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.pause',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'pause',
+      icon: 'hass:pause'
+    }],
+    completed: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.override_schedule',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'override',
+      icon: 'hass:motion-play'
+    }],
+    error: [{
+      service: 'easee.reboot',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'reboot',
+      icon: 'hass:restart'
+    }],
+    ready_to_charge: [{
+      service: 'easee.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'easee.override_schedule',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'override',
+      icon: 'hass:motion-play'
+    }]
+  },
+  toolbar_right: {
+    default: [{
+      service: 'persistent_notification.create',
+      service_data: {
+        message: 'Firmware update is available, but only possible when disconnected!',
+        title: 'Update'
+      },
+      text: 'update',
+      icon: 'mdi:file-download',
+      conditional_entity: 'binary_sensor.#ENTITYPREFIX#_update_available'
+    }],
+    disconnected: [{
+      service: 'easee.update_firmware',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'update',
+      icon: 'mdi:file-download',
+      conditional_entity: 'binary_sensor.#ENTITYPREFIX#_update_available'
+    }]
+  }
+};
+
+/** VOLKSWAGEN e-GOLF */
+
+const MAIN_ENTITY_BASE$1 = '_position'; //Defines what should be replaced from main entity name to use as template for other entities
+const DEFAULT_CONFIG$1 = {
+  show_leds: false
+};
+const DEFAULT_DETAILS$1 = {
+  //NAME, LOCATION, STATUS ETC
+  name: 'e-Golf',
+  status: {
+    entity_id: 'device_tracker.#ENTITYPREFIX#_position'
+  },
+  location: {
+    entity_id: 'sensor.#ENTITYPREFIX#_electric_range',
+    unit_show: true
+  },
+  substatus: {
+    entity_id: 'sensor.#ENTITYPREFIX#_last_connected'
+  },
+  // OVERRIDE STATE TEXT - also overrides translation
+  statetext: {
+    home: 'home',
+    away: 'away'
+  },
+  // OVERRIDE COLLAPSIBLE BUTTON ICONS AND TOOLTIP TEXT
+  collapsiblebuttons: {
+    group1: {
+      text: 'click_for_group1',
+      icon: 'mdi:lock'
+    },
+    group2: {
+      text: 'click_for_group2',
+      icon: 'mdi:information'
+    },
+    group3: {
+      text: 'click_for_group3',
+      icon: 'mdi:cog'
+    }
+  },
+  //ICONS LEFT AND RIGHT
+  info_left: [{
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_charging_cable_connected',
+    text: 'connected'
+  }],
+  info_right: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_battery_level',
+    text: 'soc',
+    unit_show: true
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_charging',
+    text: 'charging',
+    icon: 'mdi:ev-station'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_charging_time_left',
+    text: 'charging_time_left',
+    unit_show: true
+  }],
+  //LIMITS
+  group1: [{
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_charging_cable_locked',
+    text: 'cable_locked',
+    type: 'info'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_doors_locked',
+    text: 'doors_locked',
+    type: 'info'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_hood_closed',
+    text: 'hood_closed',
+    type: 'info'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_trunk_closed',
+    text: 'trunk_closed',
+    type: 'info'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_windows_closed',
+    text: 'windows_closed',
+    type: 'info'
+  }],
+  //INFO
+  group2: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_battery_level',
+    text: 'soc'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_charging_cable_connected',
+    text: 'connected'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_electric_range',
+    text: 'range'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_energy_flow',
+    text: 'energy_flow'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_external_power',
+    text: 'external_power'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_last_trip_average_electric_engine_consumption',
+    text: 'avg_consumption'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_last_trip_average_speed',
+    text: 'avg_speed'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_outside_temperature',
+    text: 'outside_temperature'
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_climatisation_target_temperature',
+    text: 'climate_target_temp'
+  }, {
+    entity_id: 'binary_sensor.#ENTITYPREFIX#_parking_light',
+    text: 'parking_light'
+  }],
+  //CONFIG
+  group3: [{
+    entity_id: 'switch.#ENTITYPREFIX#_charging',
+    text: 'charging'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_climatisation_from_battery',
+    text: 'clima_from_battery'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_electric_climatisation',
+    text: 'electric_climatisation'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_window_heater',
+    text: 'window_heater'
+  }, {
+    entity_id: 'switch.#ENTITYPREFIX#_force_data_refresh',
+    text: 'force_data_refresh'
+  }, {
+    entity_id: 'lock.#ENTITYPREFIX#_door_locked',
+    text: 'door_locked'
+  }, {
+    entity_id: 'lock.#ENTITYPREFIX#_trunk_locked',
+    text: 'trunk_locked'
+  }],
+  //STATS - based on state of main entity, default if state not found
+  stats: {
+    default: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_odometer',
+      text: 'odometer'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_electric_range',
+      text: 'range'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_last_trip_average_electric_engine_consumption',
+      text: 'avg_consumption'
+    }],
+    home: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_odometer',
+      text: 'odometer'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_electric_range',
+      text: 'range'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_last_trip_average_electric_engine_consumption',
+      text: 'avg_consumption'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_charging_time_left',
+      text: 'charging_time_left'
+    }],
+    away: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_odometer',
+      text: 'odometer'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_last_connected',
+      text: 'last_connected'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_electric_range',
+      text: 'range'
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_last_trip_average_electric_engine_consumption',
+      text: 'avg_consumption'
+    }]
+  },
+  // TOOLBAR
+  toolbar_left: {
+    default: [{}],
+    home: [{
+      service: 'switch.toggle',
+      service_data: {
+        entity_id: 'switch.#ENTITYPREFIX#_charging'
+      },
+      text: 'toggle_charging',
+      icon: 'mdi:ev-station'
+    }],
+    away: [{
+      service: 'switch.toggle',
+      service_data: {
+        entity_id: 'switch.#ENTITYPREFIX#_charging'
+      },
+      text: 'toggle_charging',
+      icon: 'mdi:ev-station'
+    }, {
+      service: 'switch.toggle',
+      service_data: {
+        entity_id: 'switch.#ENTITYPREFIX#_electric_climatisation'
+      },
+      text: 'toggle_clima',
+      icon: 'mdi:radiator'
+    }, {
+      service: 'switch.toggle',
+      service_data: {
+        entity_id: 'switch.#ENTITYPREFIX#_window_heater'
+      },
+      text: 'toggle_window_heater',
+      icon: 'mdi:car-defrost-rear'
+    }]
+  },
+  toolbar_right: {
+    default: [{
+      service: 'switch.toggle',
+      service_data: {
+        entity_id: 'switch.#ENTITYPREFIX#_force_data_refresh'
+      },
+      text: 'force_refresh',
+      icon: 'mdi:car-connected'
+    }]
+  }
+};
+
+/** OpenEVSE */
+
+//Defines what should be replaced from main entity name to use as template for other entities
+const MAIN_ENTITY_BASE = '_charging_status';
+
+//OVERRIDE CARD CONFIG WHEN BRAND TEMPLATE SELECTED (for instance turn off leds if they don't make any sense)
+const DEFAULT_CONFIG = {
+  show_leds: false
+};
+
+// CONFIG DETAILS
+const DEFAULT_DETAILS = {
+  // DETAILS ITEMS (APPLY THE ONES YOU NEED)
+  // name                             // A plain text or an entity item
+  // location                         // A plain text or an entity item
+  // status                           // A plain text or an entity item
+  // substatus                        // A plain text or an entity item
+  // smartcharging                    // An entity item (bool) defining smart charging (used for blue leds)
+  // currentlimits                    // A list of allowed values for current limits, for instance used in dropdowns
+  // statetext                        // Mapping states to custom statetexts, for instance {charging: 'Charging fine'} and so on
+  // collapsiblebuttons               // Replaces default text and icon for collapsible buttons, for instance group1: { text: 'click_for_group1', icon: 'mdi:speedometer' }
+  // info_left                        // A list of entity items used on top left of the card
+  // info_right                       // A list of entity items used on top right of the card
+  // group1                           // A list of entity items used on on the collapsible group1 (limits)
+  // group2                           // A list of entity items used on on the collapsible group2 (info)
+  // group3                           // A list of entity items used on on the collapsible group3 (config)
+  // stats                            // Mapping of states where each state has a list of entity items which will appear for corresponding state above toolbar (datatable/stats)
+  // toolbar_left                     // Mapping of states where each state has a list of entity items which will appear for corresponding state at left side of toolbar at bottom of card
+  // toolbar_right                    // Mapping of states where each state has a list of entity items which will appear for corresponding state at right side of toolbar at bottom of card
+
+  // ENTITY ITEMS (APPLY THE ONES YOU NEED)
+  //     entity_id: '',                  // entity id
+  //     attribute: '',                  // attribute is used as value if specified
+  //     unit: '',                       // unit if you want to override entity unit
+  //     unit_show: true,                // show unit next to value
+  //     unit_showontext: true,          // show unit next to value in tooltip text
+  //     text: '',                       // text to be used instead of entity friendly-name (do not use dots '.' and apply translation key to achieve translation)
+  //     service: '',                    // service on format 'domain.service'
+  //     service_data: {'test','test'},  // service data for the service call
+  //     icon: '',                       // icon to be used instead of entity icon
+  //     round: 0,                       // round to specified number of decimals (integer)
+  //     type: '',                       // type
+  //     calc_function: ''               // define entity_id as 'calculated' and specify min,max,mean,sum here to calculate
+  //     calc_entities: ''               // entities to calculate from above feature
+  //     conditional_entity: ''          // if you want the entity_id to be shown conditionally, specify a on/off or true/false sensor here
+  //     conditional_attribute: ''       // if you prefer the conditional showing of entity to be based on an attribute, define it here
+  //     conditional_invert: ''          // if you prefer to invert the conditional showing of an entity to show when false, invert by true
+
+  // SPECIAL TOKENS
+  // #ENTITYPREFIX#                      // This will be replaced with what is found from main sensor entity after removing MAIN_ENTITY_BASE
+  // #SERVICEID#                         // A replacement used in the service call, typically for a chargerid or something that must be part of the data when calling service of a specific charger.
+  // #SERVICEVAL#                        // A replacement used in the service call, typically for the value from a dropdown or similar. Use this in the template where for instance a current limit is supposed to be sent to a charger.
+
+  //NAME, LOCATION, STATUS ETC
+  name: 'Charger',
+  location: 'Home',
+  status: {
+    entity_id: 'sensor.#ENTITYPREFIX#_charging_status'
+  },
+  // OVERRIDE CURRENTLIMITS
+  currentlimits: [0, 6, 10, 16, 20, 25, 32],
+  // OVERRIDE STATE TEXT - also overrides translation
+  statetext: {
+    disabled: 'Disconnected',
+    active: 'Charging'
+  },
+  // OVERRIDE COLLAPSIBLE BUTTON ICONS AND TOOLTIP TEXT
+  collapsiblebuttons: {
+    group1: {
+      text: 'click_for_group1',
+      icon: 'mdi:speedometer'
+    },
+    group2: {
+      text: 'click_for_group2',
+      icon: 'mdi:information'
+    },
+    group3: {
+      text: 'click_for_group3',
+      icon: 'mdi:cog'
+    }
+  },
+  //ICONS LEFT AND RIGHT
+  info_left: [
+    // {
+    //     entity_id: 'sensor.#ENTITYPREFIX#_charging_voltage',
+    //     text: 'voltage',
+    //     unit_show: true,
+    // },{
+    //     entity_id: 'sensor.#ENTITYPREFIX#_charging_current',
+    //     text: 'current',
+    //     unit_show: true,
+    // }
+  ],
+  info_right: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_charging_voltage',
+    text: 'Voltage',
+    //TODO: should be replaced with translation tag
+    unit_show: true
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_charging_current',
+    text: 'Current',
+    //TODO: should be replaced with translation tag
+    unit_show: true
+  }],
+  //LIMITS
+  group1: [{
+    entity_id: 'sensor.#ENTITYPREFIX#_max_current',
+    text: 'Max current',
+    //TODO: should be replaced with translation tag
+    service: 'openevse.set_max_current',
+    service_data: {
+      charger_id: '#SERVICEID#',
+      current: '#SERVICEVAL#'
+    }
+  }, {
+    entity_id: 'sensor.#ENTITYPREFIX#_max_amps',
+    text: 'Max amps' //TODO: should be replaced with translation tag
+  }],
+
+  //INFO
+  // group2: [
+  //     {
+  //         entity_id: 'binary_sensor.#ENTITYPREFIX#_online',
+  //         text: 'online',
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_voltage',
+  //         text: 'voltage',
+  //         unit_show: true,
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_power',
+  //         text: 'power',
+  //         unit_show: true,
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_current',
+  //         text: 'charger_current',
+  //         unit_show: true,
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_circuit_current',
+  //         text: 'circuit_current',
+  //         unit_show: true,
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_energy_per_hour',
+  //         text: 'energy_per_hour',
+  //         unit_show: true,
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_session_energy',
+  //         text: 'session_energy',
+  //         unit_show: true,
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_lifetime_energy',
+  //         text: 'lifetime_energy',
+  //         unit_show: true,
+  //     },
+  // ],
+
+  //CONFIG
+  // group3: [
+  //     {
+  //         entity_id: 'switch.#ENTITYPREFIX#_is_enabled',
+  //         text: 'enabled',
+  //     },
+  //     {
+  //         entity_id: 'switch.#ENTITYPREFIX#_enable_idle_current',
+  //         text: 'idle_current',
+  //     },
+  //     {
+  //         entity_id: 'binary_sensor.#ENTITYPREFIX#_cable_locked',
+  //         text: 'cable_locked',
+  //     },
+  //     {
+  //         entity_id: 'switch.#ENTITYPREFIX#_cable_locked_permanently',
+  //         text: 'perm_cable_locked',
+  //     },
+  //     {
+  //         entity_id: 'switch.#ENTITYPREFIX#_smart_charging',
+  //         text: 'smart_charging',
+  //     },
+  //     {
+  //         entity_id: 'sensor.#ENTITYPREFIX#_cost_per_kwh',
+  //         text: 'cost_per_kwh',
+  //     },
+  //     {
+  //         entity_id: 'binary_sensor.#ENTITYPREFIX#_update_available',
+  //         text: 'update_available',
+  //     },
+  //     {
+  //         entity_id: 'binary_sensor.#ENTITYPREFIX#_basic_schedule',
+  //         text: 'schedule',
+  //     }
+  // ],
+
+  //STATS - based on state of main entity, default if state not found
+  stats: {
+    default: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_ambient_temperature',
+      text: 'Ambient temperature',
+      //TODO: should be replaced with translation tag
+      unit_show: true
+    }],
+    disabled: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_total_usage',
+      text: 'Total usage',
+      //TODO: should be replaced with translation tag
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_current_power_usage',
+      text: 'Power' //TODO: should be replaced with translation tag
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_max_amps',
+      text: 'Max amps' //TODO: should be replaced with translation tag
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_usage_this_session',
+      text: 'Session energy' //TODO: should be replaced with translation tag
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_ambient_temperature',
+      text: 'Temperature' //TODO: should be replaced with translation tag
+    }],
+
+    active: [{
+      entity_id: 'sensor.#ENTITYPREFIX#_current_power_usage',
+      text: 'Power',
+      //TODO: should be replaced with translation tag
+      unit_show: true
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_current_capacity',
+      text: 'Current' //TODO: should be replaced with translation tag
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_usage_this_session',
+      text: 'Session energy' //TODO: should be replaced with translation tag
+    }, {
+      entity_id: 'sensor.#ENTITYPREFIX#_ambient_temperature',
+      text: 'Temperature' //TODO: should be replaced with translation tag
+    }]
+  },
+
+  // TOOLBAR
+  toolbar_left: {
+    disabled: [{
+      service: 'persistent_notification.create',
+      //TODO: remove test
+      service_data: {
+        message: 'This is a test!',
+        title: 'TEST'
+      },
+      text: 'Test button',
+      icon: 'mdi:alert'
+    }],
+    active: [
+    //TODO: need to know available service calls and what data needs to be sent
+    {
+      service: 'openevse.stop',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'stop',
+      icon: 'hass:stop'
+    }, {
+      service: 'openevse.pause',
+      service_data: {
+        charger_id: '#SERVICEID#'
+      },
+      text: 'pause',
+      icon: 'hass:pause'
+    }]
+  }
+  // toolbar_right: {
+  //     default: [
+  //         {
+  //             service: 'persistent_notification.create',
+  //             service_data: {message: 'Firmware update is available, but only possible when disconnected!', title: 'Update'},
+  //             text: 'update',
+  //             icon: 'mdi:file-download',
+  //             conditional_entity: 'binary_sensor.#ENTITYPREFIX#_update_available',
+  //         },
+  //         ],
+
+  //     disconnected: [
+  //         {
+  //             service: 'easee.update_firmware',
+  //             service_data: {charger_id: '#SERVICEID#'},
+  //             text: 'update',
+  //             icon: 'mdi:file-download',
+  //             conditional_entity: 'binary_sensor.#ENTITYPREFIX#_update_available',
+  //         },
+  //     ],
+  // },
+};
 
 var img$d = "data:image/png;base64,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";
 
@@ -3577,17 +4887,124 @@ var img$1 = "data:image/gif;base64,R0lGODlhAwBIAIAAAAAAAAAm/yH/C05FVFNDQVBFMi4wA
 
 var img = "data:image/gif;base64,R0lGODlhAwBIAIEAAAAAAGBgYP8AAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hZDcmVhdGVkIHdpdGggUGFpbnQuTkVUACH5BAkZAAAALAAAAAADAEgAAAINjI+py+0Po5y02otVAQAh+QQJGQAAACwAAAEAAwBGAAACF5SPecCtn5qDVDJaLYYW7Nd9SigiZGkUADs=";
 
-const VERSION = '0.0.14';
-const CHARGERDOMAIN = 'easee';
-const STATUS_ENTITY_BASE = '_status';
-const CHARGERSTATUS = {
-  STANDBY_1: 'disconnected',
-  PAUSED_2: 'awaiting_start',
-  CHARGING_3: 'charging',
-  READY_4: 'completed',
-  ERROR_5: 'error',
-  CONNECTED_6: 'ready_to_charge'
+const VERSION = '0.1.2';
+
+//Replacement tags
+const ENTITYPREFIX = '#ENTITYPREFIX#';
+const SERVICEID = '#SERVICEID#';
+const SERVICEID_ENTITY = '#SERVICEID_MAIN_ENTITY#';
+const SERVICEID_STATE = '#SERVICEID_MAIN_STATE#';
+const SERVICEID_ATTR = '#SERVICEID_MAIN_ATTR#';
+const SERVICEVAL = '#SERVICEVAL#';
+const CARDCONFIGTYPES = [{
+  'domain': 'easee',
+  'name': 'Easee charger',
+  'defaults': DEFAULT_CONFIG$3,
+  'domainconfig': DEFAULT_DETAILS$3,
+  'domainbase': MAIN_ENTITY_BASE$3,
+  'serviceid': SERVICEID_ATTR,
+  'serviceid_data': {
+    entity: null,
+    attr: 'id'
+  }
+}, {
+  'domain': 'vwegolf',
+  'name': 'VW e-golf',
+  'defaults': DEFAULT_CONFIG$1,
+  'domainconfig': DEFAULT_DETAILS$1,
+  'domainbase': MAIN_ENTITY_BASE$1,
+  'serviceid': SERVICEID_ATTR,
+  'serviceid_data': {
+    entity: null,
+    attr: null
+  }
+}, {
+  'domain': 'test',
+  'name': 'Test',
+  'defaults': DEFAULT_CONFIG$3,
+  'domainconfig': DEFAULT_DETAILS$3,
+  'domainbase': MAIN_ENTITY_BASE$3,
+  'serviceid': SERVICEID_STATE,
+  'serviceid_data': {
+    entity: null,
+    attr: null
+  }
+}, {
+  'domain': 'template',
+  'name': 'Template',
+  'defaults': DEFAULT_CONFIG$2,
+  'domainconfig': DEFAULT_DETAILS$2,
+  'domainbase': MAIN_ENTITY_BASE$2,
+  'serviceid': SERVICEID_STATE,
+  'serviceid_data': {
+    entity: null,
+    attr: 'id'
+  }
+}, {
+  'domain': 'openevse',
+  'name': 'OpenEVSE',
+  'defaults': DEFAULT_CONFIG,
+  'domainconfig': DEFAULT_DETAILS,
+  'domainbase': MAIN_ENTITY_BASE,
+  'serviceid': SERVICEID_STATE,
+  'serviceid_data': {
+    entity: null,
+    attr: 'id'
+  }
+}];
+
+// TODO: Find a way to read device_class icons instead of this
+const DEVICECLASS_ICONS = {
+  voltage: 'mdi:sine-wave',
+  lock: 'mdi:lock',
+  connectivity: 'mdi:wifi',
+  current: 'mdi:sine-wave',
+  energy: 'mdi:flash',
+  power: 'mdi:flash',
+  plug: 'mdi:power-plug'
 };
+const DEFAULT_ICON = 'mdi:crosshairs-question';
+const DEFAULT_IMAGE = 'Generic';
+const CHARGER_IMAGES = [{
+  name: 'Generic',
+  img: img$d
+}, {
+  name: 'Anthracite',
+  img: img$c
+}, {
+  name: 'Red',
+  img: img$b
+}, {
+  name: 'Black',
+  img: img$a
+}, {
+  name: 'White',
+  img: img$9
+}, {
+  name: 'Darkblue',
+  img: img$8
+}];
+const DEFAULT_CURRENTLIMITS = [8.0, 10.0, 16.0, 20.0, 25.0, 32.0];
+const DEFAULT_CUSTOMCARDTHEME = 'theme_default';
+const CARD_THEMES = [{
+  name: 'theme_default',
+  desc: 'Default HA colors'
+}, {
+  name: 'theme_custom',
+  desc: 'Use custom theme'
+}, {
+  name: 'theme_transp_blue',
+  desc: 'Transparent Blue'
+}, {
+  name: 'theme_transp_black',
+  desc: 'Transparent Black'
+}, {
+  name: 'theme_transp_white',
+  desc: 'Transparent White'
+}, {
+  name: 'theme_lightgrey_blue',
+  desc: 'LightGrey Blue'
+}];
 const LEDIMAGES = {
   normal: {
     DEFAULT: img$7,
@@ -3608,104 +5025,6 @@ const LEDIMAGES = {
     ready_to_charge: img$2
   }
 };
-const ENTITIES = {
-  cableLocked: 'binary_sensor.cable_locked',
-  cableLockedPermanently: 'switch.cable_locked_permanently',
-  basicSchedule: 'binary_sensor.basic_schedule',
-  circuitCurrent: 'sensor.circuit_current',
-  costPerKwh: 'sensor.cost_per_kwh',
-  dynamicChargerCurrent: 'sensor.dynamic_charger_limit',
-  dynamicCircuitCurrent: 'sensor.dynamic_circuit_limit',
-  enableIdleCurrent: 'switch.enable_idle_current',
-  inCurrent: 'sensor.current',
-  isEnabled: 'switch.is_enabled',
-  maxChargerCurrent: 'sensor.max_charger_limit',
-  maxCircuitCurrent: 'sensor.max_circuit_limit',
-  offlineCircuitCurrent: 'sensor.offline_circuit_limit',
-  isOnline: 'binary_sensor.online',
-  outputCurrent: 'sensor.output_limit',
-  reasonForNoCurrent: 'sensor.reason_for_no_current',
-  sessionEnergy: 'sensor.session_energy',
-  energyPerHour: 'sensor.energy_per_hour',
-  energyLifetime: 'sensor.lifetime_energy',
-  smartCharging: 'switch.smart_charging',
-  totalPower: 'sensor.power',
-  updateAvailable: 'binary_sensor.update_available',
-  voltage: 'sensor.voltage'
-};
-const SERVICES = {
-  chargerMaxCurrent: 'set_charger_max_limit',
-  chargerDynCurrent: 'set_charger_dynamic_limit',
-  circuitMaxCurrent: 'set_charger_circuit_max_limit',
-  circuitDynCurrent: 'set_charger_circuit_dynamic_limit',
-  circuitOfflineCurrent: 'set_charger_circuit_offline_limit'
-};
-const DEFAULTIMAGE = 'Generic';
-const CHARGER_IMAGES = [{
-  name: 'Generic',
-  img: img$d
-}, {
-  name: 'Anthracite',
-  img: img$c
-}, {
-  name: 'Red',
-  img: img$b
-}, {
-  name: 'Black',
-  img: img$a
-}, {
-  name: 'White',
-  img: img$9
-}, {
-  name: 'Darkblue',
-  img: img$8
-}];
-const ICONS = {
-  'binary_sensor.cable_locked': 'mdi:lock',
-  'switch.cable_locked_permanently': 'mdi:lock',
-  'binary_sensor.basic_schedule': 'mdi:clock-check',
-  'sensor.circuit_current': 'mdi:sine-wave',
-  'sensor.cost_per_kwh': 'mdi:currency-usd',
-  'sensor.dynamic_charger_limit': 'mdi:sine-wave',
-  'sensor.dynamic_circuit_limit': 'mdi:sine-wave',
-  'switch.enable_idle_current': 'mdi:current-dc',
-  'sensor.offline_circuit_limit': 'mdi:sine-wave',
-  'sensor.current': 'mdi:sine-wave',
-  'switch.is_enabled': 'mdi:power',
-  'sensor.max_charger_limit': 'mdi:sine-wave',
-  'sensor.max_circuit_limit': 'mdi:sine-wave',
-  'binary_sensor.online': 'mdi:wifi',
-  'sensor.output_limit': 'mdi:sine-wave',
-  'sensor.reason_for_no_current': 'mdi:alert-circle',
-  'sensor.session_energy': 'mdi:flash',
-  'sensor.energy_per_hour': 'mdi:flash',
-  'sensor.lifetime_energy': 'mdi:flash',
-  'switch.smart_charging': 'mdi:auto-fix',
-  'sensor.power': 'mdi:flash',
-  'binary_sensor.update_available': 'mdi:file-download',
-  'sensor.voltage': 'mdi:sine-wave'
-};
-const CURRENTLIMITS = [8.0, 10.0, 16.0, 20.0, 25.0, 32.0];
-const DEFAULT_CUSTOMCARDTHEME = 'theme_default';
-const CUSTOM_CARD_THEMES = [{
-  name: 'theme_default',
-  desc: 'Default HA colors'
-}, {
-  name: 'theme_custom',
-  desc: 'Use custom theme'
-}, {
-  name: 'theme_transp_blue',
-  desc: 'Transparent Blue'
-}, {
-  name: 'theme_transp_black',
-  desc: 'Transparent Black'
-}, {
-  name: 'theme_transp_white',
-  desc: 'Transparent White'
-}, {
-  name: 'theme_lightgrey_blue',
-  desc: 'LightGrey Blue'
-}];
 
 class ChargerCardEditor extends LitElement {
   static get properties() {
@@ -3715,135 +5034,135 @@ class ChargerCardEditor extends LitElement {
       _toggle: Boolean
     };
   }
-
-  setConfig(config) {
-    this._config = config;
-
-    if (!this._config.entity) {
-      this._config.entity = this.getEntitiesByType('sensor')[0] || '';
-      A(this, 'config-changed', {
-        config: this._config
-      });
-    }
-  }
-
-  get _entity() {
-    if (this._config) {
-      return this._config.entity || '';
-    }
-
-    return '';
-  }
-
-  get _customImage() {
-    if (this._config) {
-      return this._config.customImage || '';
-    }
-
-    return '';
-  }
-
   get _chargerImage() {
     if (this._config) {
-      return this._config.chargerImage || DEFAULTIMAGE;
+      return this._config.chargerImage || DEFAULT_IMAGE;
     }
-
-    return DEFAULTIMAGE;
+    return DEFAULT_IMAGE;
   }
-
   get _customCardTheme() {
     if (this._config) {
       return this._config.customCardTheme || '';
     }
-
     return DEFAULT_CUSTOMCARDTHEME;
   }
-
   get _show_name() {
     if (this._config) {
       return this._config.show_name !== undefined ? this._config.show_name : true;
     }
-
     return true;
   }
-
   get _show_leds() {
     if (this._config) {
       return this._config.show_leds !== undefined ? this._config.show_leds : true;
     }
-
     return true;
   }
-
   get _show_status() {
     if (this._config) {
       return this._config.show_status !== undefined ? this._config.show_status : true;
     }
-
     return true;
   }
-
   get _show_toolbar() {
     if (this._config) {
       return this._config.show_toolbar !== undefined ? this._config.show_toolbar : true;
     }
-
     return true;
   }
-
   get _show_stats() {
     if (this._config) {
       return this._config.show_stats !== undefined ? this._config.show_stats : true;
     }
-
     return true;
   }
-
   get _show_collapsibles() {
     if (this._config) {
       return this._config.show_collapsibles !== undefined ? this._config.show_collapsibles : true;
     }
-
     return true;
   }
-
   get _compact_view() {
     if (this._config) {
       return this._config.compact_view !== undefined ? this._config.compact_view : false;
     }
-
     return false;
   }
-
-  getEntitiesByType(type) {
-    return Object.keys(this.hass.states).filter(eid => eid.substr(0, eid.indexOf('.')) === type);
+  get debug() {
+    if (this._config) {
+      return this._config.debug !== undefined ? this._config.debug : false;
+    }
+    return false;
+  }
+  setConfig(config) {
+    this._config = config;
+    if (!this._config.entity) {
+      this._config.entity = this.getAllEntitiesByType('sensor')[0] || '';
+      ne(this, 'config-changed', {
+        config: this._config
+      });
+    }
+  }
+  get_config(item) {
+    if (this._config) {
+      return this._config[`${item}`] || '';
+    }
+    return '';
+  }
+  log(debug) {
+    if (this.debug !== undefined && this.debug === true) {
+      console.log(debug);
+    }
   }
 
+  // get_sensors(sensor) {
+  //   if (this._config) {
+  //     return this._config[`${sensor}`] || '';
+  //   }
+  //   return '';
+  // }
+
+  getAllEntities() {
+    return Object.keys(this.hass.states);
+  }
+  getAllEntitiesByType(type) {
+    return Object.keys(this.hass.states).filter(eid => eid.substr(0, eid.indexOf('.')) === type);
+  }
   render() {
     if (!this.hass) {
       return html``;
     }
-
-    const chargerEntities = this.getEntitiesByType('sensor');
+    const allEntities = this.getAllEntities();
     return html`
       <div class="card-config">
-      
+
+      <strong>
+      ${localize('editor.instruction')}
+      </strong>
+
         <paper-dropdown-menu label="${localize('editor.entity')}" @value-changed=${this._valueChanged} .configValue=${'entity'}>
-          <paper-listbox slot="dropdown-content" .selected=${chargerEntities.indexOf(this._entity)}>
-            ${chargerEntities.map(entity => {
+          <paper-listbox slot="dropdown-content" .selected=${allEntities.indexOf(this.get_config("entity"))}>
+            ${allEntities.map(entity => {
       return html` <paper-item>${entity}</paper-item> `;
+    })}
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <paper-dropdown-menu label="${localize('editor.brand')}" @value-changed=${this.setConfigDetails} .configValue=${'brand'}>
+          <paper-listbox slot="dropdown-content" .selected=${CARDCONFIGTYPES.findIndex(brand => brand.domain === this.get_config("brand"))}>
+            ${Object.values(CARDCONFIGTYPES).map(brand => {
+      return html` <paper-item>${brand.domain}</paper-item> `;
     })}
           </paper-listbox>
         </paper-dropdown-menu>
 
         <paper-dropdown-menu label="${localize('editor.theme')}" @value-changed=${this._valueChanged} .configValue=${'customCardTheme'}>
           <paper-listbox slot="dropdown-content" selected="${this._customCardTheme}" attr-for-selected="value">
-            ${CUSTOM_CARD_THEMES.map(customCardTheme => {
+            ${CARD_THEMES.map(customCardTheme => {
       return html` <paper-item value="${customCardTheme.name}">${customCardTheme.name}</paper-item> `;
     })}
           </paper-listbox>
         </paper-dropdown-menu>
-
 
         <paper-dropdown-menu label="${localize('editor.chargerImage')}" @value-changed=${this._valueChanged} .configValue=${'chargerImage'}>
           <paper-listbox slot="dropdown-content" selected="${this._chargerImage}" attr-for-selected="value">
@@ -3853,9 +5172,7 @@ class ChargerCardEditor extends LitElement {
           </paper-listbox>
         </paper-dropdown-menu>
 
-
-        <paper-input label="${localize('editor.customImage')}" .value=${this._customImage} .configValue=${'customImage'} @value-changed=${this._valueChanged}"></paper-input>
-
+        <paper-input label="${localize('editor.customImage')}" .value=${this.get_config("customImage")} .configValue=${'customImage'} @value-changed=${this._valueChanged}"></paper-input>
         <p class="option">
           <ha-switch
             aria-label=${localize(this._compact_view ? 'editor.compact_view_aria_label_off' : 'editor.compact_view_aria_label_on')}
@@ -3923,9 +5240,6 @@ class ChargerCardEditor extends LitElement {
           ${localize('editor.show_stats')}
         </p>
 
-
-
-
         <p class="option">
           <ha-switch
             aria-label=${localize(this._show_toolbar ? 'editor.show_toolbar_aria_label_off' : 'editor.show_toolbar_aria_label_on')}
@@ -3943,34 +5257,99 @@ class ChargerCardEditor extends LitElement {
       </div>
     `;
   }
+  setConfigDetails(ev) {
+    // SKIP EQUAL OR EMPTY BRAND CONFIG
+    if (this._config["brand"] == ev.target.value || ev.target.value == '') return;
 
+    // SKIP EMPTY ENTITY, MUST BE SELECTED FIRST
+    if (this._config["entity"] === undefined || this._config["entity"] == '') return;
+    this._valueChanged(ev);
+    let brand = ev.target.value;
+    let domainconfig, domainbase, entityprefix, serviceid, defaults;
+    let carddetails = CARDCONFIGTYPES[CARDCONFIGTYPES.findIndex(brandObj => brandObj.domain === brand)];
+    domainconfig = carddetails.domainconfig;
+    domainbase = carddetails.domainbase;
+    defaults = carddetails.defaults;
+
+    // Use main entity as default unless given otherwise in template
+    if (carddetails.serviceid_data.entity === null) carddetails.serviceid_data.entity = this._config.entity;
+
+    // Get which data to use for service calls
+    switch (carddetails.serviceid) {
+      case SERVICEID_ENTITY:
+        serviceid = carddetails.serviceid_data.entity;
+        break;
+      case SERVICEID_STATE:
+        serviceid = this.hass.states[carddetails.serviceid_data.entity].state;
+        break;
+      case SERVICEID_ATTR:
+        serviceid = this.hass.states[carddetails.serviceid_data.entity].attributes[carddetails.serviceid_data.attr];
+        break;
+    }
+
+    // Set prefix by domain
+    entityprefix = this._config.entity.split('.')[1].replace(domainbase, '');
+
+    // Replace template with actual data
+    try {
+      var domainconfig_str = JSON.stringify(domainconfig);
+      domainconfig_str = this.replaceAll(domainconfig_str, ENTITYPREFIX, entityprefix);
+      domainconfig_str = this.replaceAll(domainconfig_str, SERVICEID, serviceid);
+      domainconfig = JSON.parse(domainconfig_str);
+    } catch (err) {
+      console.error("Something went wrong with the default setup, please check your YAML configuration or enable debugging to see details.");
+    }
+    this.log("domain: " + brand + ", entityprefix: " + entityprefix + ", serviceid: " + serviceid);
+    this.log(domainconfig);
+
+    // Set config
+    let details = {};
+    for (let data in domainconfig) {
+      details[`${data}`] = domainconfig[data];
+    }
+    this._config = {
+      ...this._config,
+      ...defaults
+    };
+    this._config = {
+      ...this._config,
+      details
+    };
+    ne(this, 'config-changed', {
+      config: this._config
+    });
+    return;
+  }
+  replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+  }
   _valueChanged(ev) {
     if (!this._config || !this.hass) {
       console.log("C: no config");
       return;
     }
-
     const target = ev.target;
-
     if (this[`_${target.configValue}`] === target.value) {
       return;
     }
-
     if (target.configValue) {
       if (target.value === '') {
-        delete this._config[target.configValue];
+        const tmpConfig = {
+          ...this._config
+        };
+        delete tmpConfig[target.configValue];
+        this._config = tmpConfig;
       } else {
-        this._config = { ...this._config,
+        this._config = {
+          ...this._config,
           [target.configValue]: target.checked !== undefined ? target.checked : target.value
         };
       }
     }
-
-    A(this, 'config-changed', {
+    ne(this, 'config-changed', {
       config: this._config
     });
   }
-
   static get styles() {
     return css`
       .card-config paper-dropdown-menu {
@@ -3987,7 +5366,6 @@ class ChargerCardEditor extends LitElement {
       }
     `;
   }
-
 }
 customElements.define('charger-card-editor', ChargerCardEditor);
 
@@ -4015,8 +5393,10 @@ var styles = css`
       --custom-card-background-color
     ); //var(--custom-primary-color);
     cursor: pointer;
-    overflow: hidden;
+    // overflow: hidden;  // Removed to show tooltips outside of card
     position: relative;
+    // height: auto;
+    height: 100%;
 
     // border-color: yellow;
     // border-style: solid;
@@ -4031,92 +5411,37 @@ var styles = css`
     position: relative;
     height: 220px;
 
-    // border-color: yellow;
-    // border-style: solid;
+    // // border-color: yellow;
+    // // border-style: solid;
   }
 
   .preview.not-available {
     filter: grayscale(1);
   }
 
-  @keyframes cleaning {
-    0% {
-      transform: rotate(0) translate(0);
-    }
-    5% {
-      transform: rotate(0) translate(0, -10px);
-    }
-    10% {
-      transform: rotate(0) translate(0, 5px);
-    }
-    15% {
-      transform: rotate(0) translate(0);
-    }
-    /* Turn left */
-    20% {
-      transform: rotate(30deg) translate(0);
-    }
-    25% {
-      transform: rotate(30deg) translate(0, -10px);
-    }
-    30% {
-      transform: rotate(30deg) translate(0, 5px);
-    }
-    35% {
-      transform: rotate(30deg) translate(0);
-    }
-    40% {
-      transform: rotate(0) translate(0);
-    }
-    /* Turn right */
-    45% {
-      transform: rotate(-30deg) translate(0);
-    }
-    50% {
-      transform: rotate(-30deg) translate(0, -10px);
-    }
-    55% {
-      transform: rotate(-30deg) translate(0, 5px);
-    }
-    60% {
-      transform: rotate(-30deg) translate(0);
-    }
-    70% {
-      transform: rotate(0deg) translate(0);
-    }
-    /* Staying still */
-    100% {
-      transform: rotate(0deg);
-    }
-  }
+  .image{
+    display: block;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 
-  @keyframes returning {
-    0% {
-      transform: rotate(0);
-    }
-    25% {
-      transform: rotate(10deg);
-    }
-    50% {
-      transform: rotate(0);
-    }
-    75% {
-      transform: rotate(-10deg);
-    }
-    100% {
-      transform: rotate(0);
-    }
+
+
+    // border-color: yellow;
+    // border-style: dashed;
+
+
   }
 
   .charger {
-    display: block;
+    // display: block;
     max-width: 90%;
     max-height: 200px;
     image-rendering: crisp-edges;
     margin: 30px auto 20px auto;
 
-    // border-color: red;
-    // border-style: dashed;
+    // // border-color: red;
+    // // border-style: dashed;
   }
 
   .charger-compact {
@@ -4133,21 +5458,39 @@ var styles = css`
     left: 10px;
     top: 0px;
 
-    // border-color: red;
-    // border-style: dashed;
+    // // border-color: red;
+    // // border-style: dashed;
   }
 
   .charger.led {
+    visibility: visible;
+    display: block;
+    width: 2px;
+    position: relative;
+    top: -200px;
+
+    // display: block;
+    // position: relative;
+    // top: -175px;
+    // position: absolute;
+    // // top: 95px;
+    // // left: 245px;
+    // width: 2px;
+
+    // // border-color: red;
+    // // border-style: dashed;
+
+  }
+
+  .charger.led-hidden {
+    visibility: hidden;
+    display: block;
+    width: 2px;
     position: relative;
     top: -175px;
-    // position: absolute;
-    // top: 95px;
-    // left: 245px;
-    width: 2px;
 
-    // border-color: red;
-    // border-style: dashed;
   }
+
 
   .charger.led-compact {
     // position: relative;
@@ -4160,8 +5503,8 @@ var styles = css`
     top: 22px;
     width: 1.4px;
 
-    // border-color: red;
-    // border-style: dashed;
+    // // border-color: red;
+    // // border-style: dashed;
   }
 
   .charger.charging,
@@ -4186,7 +5529,7 @@ var styles = css`
   }
 
   .header {
-    height: 0px;
+    height: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -4205,7 +5548,7 @@ var styles = css`
     // transform: translate(-10px, 50%);
     color: var(--custom-text-color);
     top: 30px;
-    right: 20px;
+    right: 10px;
     position: absolute;
 
     // border-color: darkblue;
@@ -4213,30 +5556,58 @@ var styles = css`
   }
 
   .infoitems-left {
-    text-align: center;
-    color: var(--custom-text-color);
-
+    // display: flex;
     height: 250px;
     text-align: right;
+    // font-weight: bold;
     // transform: translate(10px, 50%);
+    color: var(--custom-text-color);
     top: 30px;
-    left: 20px;
+    left: 10px;
     position: absolute;
 
     // border-color: darkgreen;
     // border-style: dashed;
   }
 
-  .infoitems-item {
-    // display: flex;
+  .infoitems-item-info_right {
+    display: flex;
     // spacing: 0px 0 40
     // text-align: right;
+    justify-content: right;
     padding: 5px;
     font-weight: bold;
     color: var(--custom-text-color);
 
-    // border: 1px;
+    border: 1px;
     // border-style: dotted;
+  }
+
+  .infoitems-item-info_left {
+    display: flex;
+    // spacing: 0px 0 40
+    // text-align: right;
+    justify-content: left;
+    padding: 5px;
+    font-weight: bold;
+    color: var(--custom-text-color);
+
+    border: 1px;
+    // border-style: dotted;
+  }
+
+  .metadata {
+    display: block;
+    // margin: 20px auto;
+    // position: relative;
+    // top: -50px;
+    position: absolute;
+    justify-content: centre;
+    top: 270px;
+    width: 100%;
+
+    // border-color: pink;
+    // border-style: dashed;
   }
 
   .status {
@@ -4244,9 +5615,11 @@ var styles = css`
     align-items: center;
     justify-content: center;
     text-align: center;
+    // position: absolute;
 
-    // border-color: pink;
-    // border-style: dashed;
+
+    // // border-color: pink;
+    // // border-style: dashed;
   }
 
   .status-compact {
@@ -4269,8 +5642,8 @@ var styles = css`
     left: 160px;
     top: 65px;
 
-    // border-color: pink;
-    // border-style: dashed;
+    // // border-color: pink;
+    // // border-style: dashed;
   }
 
   .status-text {
@@ -4329,8 +5702,8 @@ var styles = css`
     color: var(--custom-text-color);
     font-size: 16px;
 
-    // border-color: grey;
-    // border-style: dashed;
+    // // border-color: grey;
+    // // border-style: dashed;
   }
 
   .charger-name-compact {
@@ -4345,8 +5718,8 @@ var styles = css`
     position: absolute;
     left: 160px;
     top: 55px;
-    // border-color: grey;
-    // border-style: dashed;
+    // // border-color: grey;
+    // // border-style: dashed;
   }
 
   .not-available {
@@ -4355,23 +5728,20 @@ var styles = css`
     font-size: 16px;
   }
 
-  .metadata {
-    display: block;
-    margin: 20px auto;
-    position: relative;
-    top: -50px;
-
-    // border-color: pink;
-    // border-style: dashed;
-  }
-
   .stats {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     color: var(--custom-text-color);
+    width: 100%;
 
+    // position: relative;
+    // top: 100px;
+    // top: 450px;
+    // top: 450px;
+
+    z-index: 1;
     // border-color: black;
     // border-style: dashed;
   }
@@ -4388,8 +5758,8 @@ var styles = css`
     left: 0px;
     top: 160px;
 
-    // border-color: black;
-    // border-style: dashed;
+    // // border-color: black;
+    // // border-style: dashed;
   }
 
   .stats-block {
@@ -4419,11 +5789,12 @@ var styles = css`
     // background: var(--lovelace-background, var(--primary-background-color));
     min-height: 30px;
     display: flex;
+    margin: 0 20px 0 20px;
     flex-direction: row;
     justify-content: space-evenly;
 
-    // border-color: black;
-    // border-style: dashed;
+    // // border-color: black;
+    // // border-style: dashed;
   }
 
   .toolbar ha-icon-button {
@@ -4434,8 +5805,8 @@ var styles = css`
     --mdc-icon-button-size: 44px;
     margin: 5px 0;
 
-    // border-color: red;
-    // border-style: dashed;
+    // // border-color: red;
+    // // border-style: dashed;
   }
 
   .toolbar ha-icon-button:first-child {
@@ -4446,24 +5817,24 @@ var styles = css`
     margin-right: 5px;
   }
 
-  .toolbar paper-button {
+  .toolbar mmp-icon-button {
     color: var(--custom-primary-color);
     flex-direction: column;
     margin-right: 10px;
     padding: 10px;
     cursor: pointer;
 
-    // border-color: blue;
-    // border-style: dashed;
+    // // border-color: blue;
+    // // border-style: dashed;
   }
 
   .toolbar ha-icon-button:active,
-  .toolbar paper-button:active {
+  .toolbar mmp-icon-button:active {
     opacity: 0.4;
     background: rgba(0, 0, 0, 0.1);
   }
 
-  .toolbar paper-button {
+  .toolbar mmp-icon-button {
     color: var(--custom-primary-color);
     flex-direction: row;
   }
@@ -4482,11 +5853,23 @@ var styles = css`
   }
 
   /* Tooltip text */
-  .tooltip {
-    position: relative;
-    display: inline-block;
+  .tooltip .tooltiptext-right {
+    visibility: hidden;
+    width: 160px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 1px 0;
+    position: absolute;
+    top: 110%;
+    right: -60px;
+    z-index: 1;
+    margin-left: -80px;
   }
 
+
+  /* Tooltip text */
   .tooltip .tooltiptext {
     visibility: hidden;
     width: 160px;
@@ -4496,22 +5879,23 @@ var styles = css`
     border-radius: 6px;
     padding: 1px 0;
     position: absolute;
-    z-index: 1;
     top: 110%;
-    left: 50%;
+    left: 20px;
+    z-index: 1;
     margin-left: -80px;
   }
 
-  .tooltip .tooltiptext::after {
+  .tooltip .tooltiptext::after, .tooltip-right .tooltiptext-right::after, .tooltip .tooltiptext-right::after {
     content: '';
     position: absolute;
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
     border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent black transparent;
+    // border-style: solid;
+    // border-color: transparent transparent black transparent;
   }
+
 
   .tooltip-right .tooltiptext-right {
     visibility: hidden;
@@ -4528,22 +5912,8 @@ var styles = css`
     right: 105%;
   }
 
-  .tooltip-right .tooltiptext-right::after {
-    content: ' ';
-    position: absolute;
-    top: 50%;
-    left: 100%; /* To the right of the tooltip */
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent transparent black;
-  }
 
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-  }
-
-  .tooltip-right:hover .tooltiptext-right {
+  .tooltip:hover .tooltiptext, .tooltip-right:hover .tooltiptext-right, .tooltip:hover .tooltiptext-right {
     visibility: visible;
   }
 
@@ -4606,8 +5976,8 @@ var styles = css`
     justify-content: space-evenly;
     color: var(--custom-text-color);
 
-    // border-style: solid;
-    // border-color: red;
+    // // border-style: solid;
+    // // border-color: red;
   }
 
   .collapsible-content .content-inner {
@@ -4626,8 +5996,9 @@ var styles = css`
     margin-left: auto;
     margin-right: auto;
 
-    // border-style: dashed;
-    // border-color: white;
+    // // border-style: dashed;
+    // // border-color: white;
+    z-index: 999;
   }
 
   .collapsible-item {
@@ -4637,9 +6008,51 @@ var styles = css`
     padding: 5px;
     // font-weight: bold;
     // border: 1px;
-    // border-style: dotted;
+    // // border-style: dotted;
     justify-content: center;
     vertical-align: middle;
+    z-index: 999;
+  }
+
+  mmp-dropdown{
+    padding: 0;
+    display: block;
+  }
+
+  mwc-list {
+    width: auto;
+    min-width: 75px;
+    // margin: 0px 0px 0px 0px;
+    // padding: 0px 0px 0px 0px;
+    padding: 0px;
+    border: 1px dotted var(--custom-text-color);
+    background: var(--custom-card-background-color);
+    color: var(--custom-text-color);
+    // overflow-y: auto; /* vertical scrollbar */
+    // overflow-x: hidden; /* horizontal scrollbar */
+    // position: absolute;
+    bottom: 100%;
+    z-index: 999;
+  }
+
+  mwc-list-item {
+    margin: 0px 0px 0px 5px;
+    padding: 0px 0px 0px 5px;
+    // min-height: 75px;
+    height: auto;
+    width: auto;
+    // color: var(--custom-text-color);
+    cursor: pointer;
+    background: transparent;
+    font-size: 14px;
+
+    border-bottom: 1px dotted var(--custom-text-color);
+    z-index: 999;
+
+  }
+
+  mwc-list-item:hover {
+    font-size: 18px;
   }
 
   /* collapsible info */
@@ -4658,8 +6071,8 @@ var styles = css`
     height: 30px;
     z-index: 1;
 
-    // border-style: dotted;
-    // border-color: darkblue;
+    // // border-style: dotted;
+    // // border-color: darkblue;
   }
 
   .toggle-info:checked + .lbl-toggle-info + .collapsible-content-info {
@@ -4681,8 +6094,8 @@ var styles = css`
     justify-content: space-evenly;
     color: var(--custom-text-color);
 
-    // border-style: solid;
-    // border-color: red;
+    // // border-style: solid;
+    // // border-color: red;
   }
 
   .collapsible-content-info .content-inner-info {
@@ -4701,14 +6114,14 @@ var styles = css`
     margin-left: auto;
     margin-right: auto;
 
-    // border-style: dashed;
-    // border-color: white;
+    // // border-style: dashed;
+    // // border-color: white;
   }
 
   // .wrap-collabsible-info {
   //   // display: flex;
   //   // margin-bottom: 1.2rem 0;
-  //   // border-style: solid;
+  //   // // border-style: solid;
   //   // min-height:0px;
   //   // max-height:300px;
   //   height: 50px;
@@ -4728,15 +6141,15 @@ var styles = css`
   //   // color: var(--custom-text-color);
   //   margin: auto;
 
-  //   border-color: black;
-  //   border-style: solid;
+  //   // border-color: black;
+  //   // border-style: solid;
 
   // }
 
   // .wrap-collabsible {
   //   // display: flex;
   //   // margin-bottom: 1.2rem 0;
-  //   // border-style: solid;
+  //   // // border-style: solid;
   //   // min-height:0px;
   //   // max-height:300px;
   //   height: 50px;
@@ -4756,8 +6169,8 @@ var styles = css`
   //   // color: var(--custom-text-color);
   //   margin: auto;
 
-  //   border-color: red;
-  //   border-style: solid;
+  //   // border-color: red;
+  //   // border-style: solid;
 
   // }
 
@@ -4807,8 +6220,10 @@ var styles = css`
     justify-content: space-evenly;
     color: var(--custom-text-color);
 
-    // border-style: solid;
-    // border-color: red;
+    // // border-style: solid;
+    // // border-color: red;
+    z-index: 999;
+
   }
 
   .collapsible-content-lim .content-inner-lim {
@@ -4830,12 +6245,14 @@ var styles = css`
 
     // border-style: dashed;
     // border-color: white;
+    z-index: 999;
+
   }
 
   // .wrap-collabsible-lim {
   //   // display: flex;
   //   // margin-bottom: 1.2rem 0;
-  //   // border-style: solid;
+  //   // // border-style: solid;
   //   // min-height:0px;
   //   // max-height:300px;
   //   height: 50px;
@@ -4854,23 +6271,21 @@ var styles = css`
   //   // justify-content: space-evenly;
   //   // color: var(--custom-text-color);
   //   margin: auto;
+  //   // z-index: 999;
 
-  //   border-color: black;
-  //   border-style: solid;
+  //   // border-color: black;
+  //   // border-style: solid;
 
   // }
 
   .collapsible-content-lim {
     max-height: 0px;
     overflow: hidden;
+    z-index: 999;
 
     // transition: max-height .25s ease-in-out;
   }
 `;
-
-if (!customElements.get('ha-icon-button')) {
-  customElements.define('ha-icon-button', class extends customElements.get('paper-icon-button') {});
-}
 
 class ChargerCard extends LitElement {
   static get properties() {
@@ -4880,15 +6295,9 @@ class ChargerCard extends LitElement {
       requestInProgress: Boolean
     };
   }
-
-  static get styles() {
-    return styles;
-  }
-
   static async getConfigElement() {
     return document.createElement('charger-card-editor');
   }
-
   static getStubConfig(hass, entities) {
     const [chargerEntity] = entities.filter(eid => eid.substr(0, eid.indexOf('.')) === 'sensor');
     return {
@@ -4896,362 +6305,332 @@ class ChargerCard extends LitElement {
       image: 'default'
     };
   }
-
+  static get styles() {
+    return styles;
+  }
+  get brand() {
+    return this.config.brand;
+  }
   get entity() {
     return this.hass.states[this.config.entity];
   }
-
-  get chargerId() {
-    return this.hass.states[this.config.entity].attributes['id'];
-  }
-
-  get chargerDomain() {
-    // if (this.config.domain === undefined) {
-    return CHARGERDOMAIN; // }
-  }
-
-  get usedChargerLimit() {
-    const {
-      dynamicChargerCurrent,
-      dynamicCircuitCurrent,
-      maxChargerCurrent,
-      maxCircuitCurrent
-    } = this.getEntities();
-    const circuitRatedCurrent = this.hass.states[this.config.entity].attributes['circuit_ratedCurrent'];
-    const usedChargerLimit = Math.min(this.getEntityState(dynamicChargerCurrent), this.getEntityState(dynamicCircuitCurrent), this.getEntityState(maxChargerCurrent), this.getEntityState(maxCircuitCurrent), circuitRatedCurrent);
-    return usedChargerLimit;
-  }
-
   get image() {
-    let imgselected = this.config.chargerImage || DEFAULTIMAGE;
-    const chargerImage = CHARGER_IMAGES.find(({
-      name
-    }) => {
-      if (name === imgselected) {
-        return name;
-      }
-    });
-
-    if (this.config.customImage === undefined || this.config.customImage === '') {
-      try {
-        return chargerImage.img;
-      } catch (err) {
-        return null;
-      }
+    var image;
+    if (this.config.customImage !== undefined && this.config.customImage !== null && this.config.customImage !== '') {
+      // For images in www try path \local\image.png
+      image = this.config.customImage;
+    } else {
+      var imageSel = this.config.chargerImage || DEFAULT_IMAGE;
+      image = CHARGER_IMAGES.find(({
+        name
+      }) => {
+        if (name === imageSel) {
+          return name;
+        }
+      }).img;
     }
-
-    return this.config.customImage;
+    return image;
   }
-
   get customCardTheme() {
     if (this.config.customCardTheme === undefined) {
       return DEFAULT_CUSTOMCARDTHEME;
     }
-
     return this.config.customCardTheme;
   }
-
   get showLeds() {
     if (this.config.show_leds === undefined) {
       return true;
     }
-
     return this.config.show_leds;
   }
-
   get showName() {
     if (this.config.show_name === undefined) {
       return true;
     }
-
     return this.config.show_name;
   }
-
   get showStatus() {
     if (this.config.show_status === undefined) {
       return true;
     }
-
     return this.config.show_status;
   }
-
   get showStats() {
     if (this.config.show_stats === undefined) {
       return true;
     }
-
     return this.config.show_stats;
   }
-
   get showCollapsibles() {
     if (this.config.show_collapsibles === undefined) {
       return true;
     }
-
     return this.config.show_collapsibles;
   }
-
   get showToolbar() {
     if (this.config.show_toolbar === undefined) {
       return true;
     }
-
     return this.config.show_toolbar;
   }
-
   get compactView() {
     if (this.config.compact_view === undefined) {
       return false;
     }
-
     return this.config.compact_view;
   }
-
-  get useStatsDefault() {
-    if (this.config.stats === undefined) {
-      return true;
+  get currentlimits() {
+    if (this.config.details !== undefined && this.config.details.currentlimits !== undefined && Array.isArray(this.config.details.currentlimits)) {
+      return this.config.details.currentlimits;
     }
-
+    // console.log(Array.isArray(this.config.details.currentlimits))
+    return DEFAULT_CURRENTLIMITS;
+  }
+  get statetext() {
+    if (this.config.details !== undefined && this.config.details.statetext !== undefined && typeof this.config.details.statetext == 'object') {
+      return this.config.details.statetext;
+    }
+    return [{}];
+  }
+  get debug() {
+    if (this.config) {
+      return this.config.debug !== undefined ? this.config.debug : false;
+    }
     return false;
   }
-
-  get entityBasename() {
-    return this.config.entity.split('.')[1].replace(STATUS_ENTITY_BASE, '');
+  getCardData(data) {
+    var entities = {};
+    if (data === undefined || data === null) {
+      return null;
+    } else if (typeof data == 'object' && Array.isArray(data)) {
+      // ARRAYS OF ENTITY DATA
+      for (let [key, val] of Object.entries(data)) {
+        if (typeof val == 'object' && 'entity_id' in val) {
+          entities[key] = this.getCardCheckData(val);
+        }
+      }
+      return entities;
+    } else if (typeof data == 'object' && 'entity_id' in data) {
+      // SINGLE ENTITY DATA
+      entities = this.getCardCheckData(data);
+      return entities;
+    } else if (typeof data == 'object') {
+      // STATES DEPENDANT STUFF (STATS AND TOOLBAR)
+      var stateobj = {};
+      for (let [statekey, stateval] of Object.entries(data)) {
+        var stateentities = {};
+        if (stateval !== null || stateval != undefined) {
+          for (let [key, val] of Object.entries(stateval)) {
+            if (typeof val == 'object') {
+              stateentities[key] = this.getCardCheckData(val);
+            }
+            stateobj[statekey] = stateentities;
+          }
+        }
+      }
+      return stateobj;
+    } else {
+      // STRINGS AND NON-OBJECTS
+      entities = data;
+    }
+    // console.log(entities);
+    return entities;
   }
+  getCardCheckData(val) {
+    var data = {};
 
-  getEntityId(entity_base) {
+    //Set defaults if not given in config
+    data['entity_id'] = val.entity_id !== undefined ? val.entity_id : null;
+    data['unit'] = val.unit !== undefined ? val.unit : this.getEntityAttr(data.entity_id, 'unit_of_measurement');
+    data['text'] = val.text !== undefined ? val.text : this.getEntityAttr(data.entity_id, 'friendly_name');
+    data['icon'] = val.icon !== undefined ? val.icon : this.getEntityIcon(data.entity_id);
+    data['unit_show'] = val.unit_show !== undefined ? val.unit_show : false;
+    data['unit_showontext'] = val.unit_showontext !== undefined ? val.unit_showontext : false;
+    data['round'] = val.round !== undefined ? val.round : false;
+    data['type'] = val.type !== undefined ? val.type : 'info';
+    data['attribute'] = val.attribute !== undefined ? val.attribute : null;
+    data['useval'] = this.getEntityState(data.entity_id);
+    data['service'] = val.service !== undefined ? val.service : null;
+    data['service_data'] = val.service_data !== undefined ? val.service_data : null;
+    data['type'] = val.type !== undefined ? val.type : null;
+    data['conditional_entity'] = val.conditional_entity !== undefined ? val.conditional_entity : null;
+    data['conditional_attribute'] = val.conditional_attribute !== undefined ? val.conditional_attribute : null;
+    data['conditional_invert'] = val.conditional_invert !== undefined ? val.conditional_invert : null;
+
+    // Get entity
+    data['entity'] = this.getEntity(data.entity_id);
+
+    // Use attribute if given in config
+    if (data.entity !== null && data.attribute != null && data.attribute in data.entity.attributes) {
+      data['useval'] = this.getEntityAttr(data.entity_id, data.attribute);
+    }
+
+    // Calculated entities
+    if (data.entity_id == 'calculated') {
+      data['calc_function'] = val.calc_function !== undefined ? val.calc_function : null;
+      data['calc_entities'] = val.calc_entities !== undefined ? val.calc_entities : null;
+      if (data.calc_function !== null && data.calc_entities !== null) {
+        try {
+          data.useval = this.getEntityCalcVal(data.calc_function, data.calc_entities);
+        } catch (err) {
+          console.error("The calculation you asked for didn't work, check your config (" + err + ")");
+        }
+      }
+    }
+
+    //Apply rounding of number if specified, round to zero decimals if other than integer given (for instance true)
+    if (data.round) {
+      var decimals = Number.isInteger(data.round) ? data.round : 0;
+      data.useval = this.round(data.useval, decimals);
+    }
+
+    // Conditional entities
+    if (data.conditional_entity !== undefined && data.conditional_entity !== null) {
+      data['hide'] = false;
+      var cond_state, cond_attr;
+      cond_state = this.getEntityState(data.conditional_entity);
+      data['hide'] = cond_state !== null && (cond_state == 'off' || cond_state == 'false' || cond_state === false) ? true : data['hide'];
+      if (data.conditional_attribute !== undefined && data.conditional_attribute !== null) {
+        cond_attr = this.getEntityAttr(data.conditional_entity, data.conditional_attribute);
+        data['hide'] = cond_attr !== null && (cond_attr == 'off' || cond_attr == 'false' || cond_attr === false) ? true : data['hide'];
+      }
+      if (data.conditional_invert === true) {
+        data['hide'] = !data.hide;
+      }
+    }
+    return data;
+  }
+  loc(string, group = '', brand = null, search = '', replace = '') {
+    if (this.config.localize === undefined || this.config.localize == true) {
+      group = group != '' ? group + "." : group;
+      let debug = this.debug;
+      return localize(group + string, brand, search, replace, debug);
+    } else {
+      return string;
+    }
+  }
+  getEntityCalcVal(calcfunc, entities) {
+    var calc;
+    var calc_array = [];
+    for (let [key, val] of Object.entries(entities)) {
+      let useval = val.attribute !== undefined ? this.getEntityAttr(val.entity_id, val.attribute) : this.getEntityState(val.entity_id);
+      calc_array.push(Number(useval));
+    }
+    switch (calcfunc) {
+      case "max":
+        calc = Math.max(...calc_array);
+        break;
+      case "min":
+        calc = Math.min(...calc_array);
+        break;
+      case "mean":
+        calc = this.math_mean(calc_array);
+        break;
+      case "sum":
+        calc = this.math_sum(calc_array);
+        break;
+    }
+    return calc;
+  }
+  log(debug) {
+    if (this.debug !== undefined && this.debug === true) {
+      console.log(debug);
+    }
+  }
+  getEntityIcon(entity_id) {
+    var entity = this.getEntity(entity_id);
+    if (entity === undefined || entity === null || typeof entity !== 'object') {
+      return DEFAULT_ICON;
+    } else if ('icon' in entity.attributes && entity.attributes.icon !== '') {
+      return entity.attributes['icon'];
+    } else if ('device_class' in entity.attributes) {
+      //TODO: Find better way to get deviceclass icons
+      return DEVICECLASS_ICONS[entity.attributes['device_class']] || null;
+    } else {
+      return DEFAULT_ICON;
+    }
+  }
+  getCollapsibleButton(button, deftext, deficon) {
     try {
-      return entity_base.split('.')[0] + '.' + this.entityBasename + '_' + entity_base.split('.')[1];
+      var btns = this.getConfig("details.collapsiblebuttons");
+      return {
+        text: this.loc(btns[button].text, 'common', this.brand),
+        icon: btns[button].icon
+      };
+    } catch (err) {
+      return {
+        text: deftext,
+        icon: deficon
+      };
+    }
+  }
+  round(value, decimals) {
+    try {
+      return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    } catch (err) {
+      return value;
+    }
+  }
+  math_sum(array) {
+    var total = 0;
+    for (var i = 0; i < array.length; i++) {
+      total += array[i];
+    }
+    return total;
+  }
+  math_mean(array) {
+    return this.math_sum(array) / array.length;
+  }
+  getEntity(entity_id) {
+    try {
+      var entity = this.hass.states[entity_id];
+      return entity !== undefined ? entity : null;
     } catch (err) {
       return null;
     }
   }
-
-  getEntityBase(entity_id) {
+  getEntityState(entity_id) {
     try {
-      return entity_id.split('.')[0] + '.' + entity_id.split('.')[1].replace(this.entityBasename + '_', '');
+      var attr = this.hass.states[entity_id].state;
+      return attr !== undefined ? attr : null;
     } catch (err) {
       return null;
     }
   }
-
-  getEntities() {
-    const cableLocked = this.getEntity(ENTITIES.cableLocked);
-    const cableLockedPermanently = this.getEntity(ENTITIES.cableLockedPermanently);
-    const basicSchedule = this.getEntity(ENTITIES.basicSchedule);
-    const circuitCurrent = this.getEntity(ENTITIES.circuitCurrent);
-    const costPerKwh = this.getEntity(ENTITIES.costPerKwh);
-    const dynamicChargerCurrent = this.getEntity(ENTITIES.dynamicChargerCurrent);
-    const dynamicCircuitCurrent = this.getEntity(ENTITIES.dynamicCircuitCurrent);
-    const enableIdleCurrent = this.getEntity(ENTITIES.enableIdleCurrent);
-    const offlineCircuitCurrent = this.getEntity(ENTITIES.offlineCircuitCurrent);
-    const inCurrent = this.getEntity(ENTITIES.inCurrent);
-    const isEnabled = this.getEntity(ENTITIES.isEnabled);
-    const maxChargerCurrent = this.getEntity(ENTITIES.maxChargerCurrent);
-    const maxCircuitCurrent = this.getEntity(ENTITIES.maxCircuitCurrent);
-    const isOnline = this.getEntity(ENTITIES.isOnline);
-    const outputCurrent = this.getEntity(ENTITIES.outputCurrent);
-    const reasonForNoCurrent = this.getEntity(ENTITIES.reasonForNoCurrent);
-    const sessionEnergy = this.getEntity(ENTITIES.sessionEnergy);
-    const energyPerHour = this.getEntity(ENTITIES.energyPerHour);
-    const energyLifetime = this.getEntity(ENTITIES.energyLifetime);
-    const smartCharging = this.getEntity(ENTITIES.smartCharging);
-    const totalPower = this.getEntity(ENTITIES.totalPower);
-    const updateAvailable = this.getEntity(ENTITIES.updateAvailable);
-    const voltage = this.getEntity(ENTITIES.voltage);
-    const status = this.entity;
-    return {
-      cableLocked,
-      cableLockedPermanently,
-      basicSchedule,
-      circuitCurrent,
-      costPerKwh,
-      dynamicChargerCurrent,
-      dynamicCircuitCurrent,
-      enableIdleCurrent,
-      offlineCircuitCurrent,
-      inCurrent,
-      isEnabled,
-      maxChargerCurrent,
-      maxCircuitCurrent,
-      isOnline,
-      outputCurrent,
-      reasonForNoCurrent,
-      sessionEnergy,
-      energyPerHour,
-      energyLifetime,
-      smartCharging,
-      totalPower,
-      updateAvailable,
-      voltage,
-      status
-    };
-  }
-
-  getEntity(entity_base) {
+  getEntityAttr(entity_id, attribute = null) {
     try {
-      return this.hass.states[this.getEntityId(entity_base)];
+      var attr = attribute === null ? this.hass.states[entity_id].attributes : this.hass.states[entity_id].attributes[attribute];
+      return attr !== undefined ? attr : null;
     } catch (err) {
       return null;
     }
   }
-
-  getEntityState(entity) {
+  getConfig(cvar) {
     try {
-      return entity.state;
+      var cvararray = cvar.split(".");
+      var val;
+      if (cvararray.length > 1 && cvararray[0] == "details") {
+        val = this.config.details[cvararray[1]];
+      } else {
+        val = this.config[cvar];
+      }
+      this.log(cvar + " --> " + val);
+      return val;
     } catch (err) {
       return null;
     }
   }
-
-  getEntityAttribute(entity_base, attribute) {
-    try {
-      return this.getEntityAttributes(entity_base).attributes[attribute];
-    } catch (err) {
-      return null;
-    }
-  }
-
-  getEntityAttributes(entity_base) {
-    try {
-      return this.hass.states[this.getEntityId(entity_base)].attributes;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  getStatsDefault(state) {
-    switch (state) {
-      case CHARGERSTATUS.STANDBY_1:
-        {
-          return [{
-            entity_id: this.getEntityId(ENTITIES.sessionEnergy),
-            unit: 'kWh',
-            subtitle: localize('charger_status.sessionEnergy')
-          }, {
-            calcValue: this.usedChargerLimit,
-            unit: 'A',
-            subtitle: 'Current Limit'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.cableLockedPermanently),
-            unit: '',
-            subtitle: 'Permanently Locked'
-          }];
-        }
-
-      case CHARGERSTATUS.PAUSED_2:
-        {
-          return [{
-            calcValue: this.usedChargerLimit,
-            unit: 'A',
-            subtitle: 'Current Limit'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.sessionEnergy),
-            unit: 'kWh',
-            subtitle: localize('charger_status.sessionEnergy')
-          }, {
-            entity_id: this.getEntityId(ENTITIES.basicSchedule),
-            unit: '',
-            subtitle: 'Schedule'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.smartCharging),
-            unit: '',
-            subtitle: 'Smart Charging'
-          }];
-        }
-
-      case CHARGERSTATUS.CHARGING_3:
-        {
-          return [{
-            entity_id: this.getEntityId(ENTITIES.sessionEnergy),
-            unit: 'kWh',
-            subtitle: 'Energy'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.energyPerHour),
-            unit: 'kWh/h',
-            subtitle: 'Rate'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.circuitCurrent),
-            unit: 'A',
-            subtitle: 'Circuit'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.outputCurrent),
-            unit: 'A',
-            subtitle: 'Allowed'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.inCurrent),
-            unit: 'A',
-            subtitle: 'Actual'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.totalPower),
-            unit: 'kW',
-            subtitle: 'Power'
-          }];
-        }
-
-      case CHARGERSTATUS.READY_4:
-        {
-          return [{
-            entity_id: this.getEntityId(ENTITIES.sessionEnergy),
-            unit: 'kWh',
-            subtitle: localize('charger_status.sessionEnergy')
-          }, {
-            calcValue: this.usedChargerLimit,
-            unit: 'A',
-            subtitle: 'Current Limit'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.basicSchedule),
-            unit: '',
-            subtitle: 'Schedule'
-          }];
-        }
-
-      case CHARGERSTATUS.ERROR_5:
-        {
-          return [{
-            entity_id: this.getEntityId(ENTITIES.sessionEnergy),
-            unit: 'kWh',
-            subtitle: localize('charger_status.sessionEnergy')
-          }, {
-            calcValue: this.usedChargerLimit,
-            unit: 'A',
-            subtitle: 'Current Limit'
-          }];
-        }
-
-      case CHARGERSTATUS.CONNECTED_6:
-        {
-          return [{
-            entity_id: this.getEntityId(ENTITIES.sessionEnergy),
-            unit: 'kWh',
-            subtitle: localize('charger_status.sessionEnergy')
-          }, {
-            calcValue: this.usedChargerLimit,
-            unit: 'A',
-            subtitle: 'Current Limit'
-          }, {
-            entity_id: this.getEntityId(ENTITIES.basicSchedule),
-            unit: '',
-            subtitle: 'Schedule'
-          }];
-        }
-    }
-  }
-
   setConfig(config) {
     if (!config.entity) {
       throw new Error(localize('error.missing_entity'));
     }
-
     this.config = config;
   }
-
   getCardSize() {
     return 2;
   }
-
   shouldUpdate(changedProps) {
-    return X(this, changedProps, true); //TODO: Probably not efficient to force update here?
+    return _e(this, changedProps, true); //TODO: Probably not efficient to force update here?
   }
 
   updated(changedProps) {
@@ -5259,711 +6638,394 @@ class ChargerCard extends LitElement {
       this.requestInProgress = false;
     }
   }
-
   handleMore(entity = this.entity) {
-    A(this, 'hass-more-info', {
+    ne(this, 'hass-more-info', {
       entityId: entity.entity_id
     }, {
       bubbles: true,
       composed: true
     });
   }
-
-  setServiceData(service, isRequest, e) {
-    switch (service) {
-      case SERVICES.chargerMaxCurrent:
-        {
-          const current = e.target.getAttribute('value');
-          return this.callService(service, isRequest, {
-            current
-          });
-        }
-
-      case SERVICES.chargerDynCurrent:
-        {
-          const current = e.target.getAttribute('value');
-          return this.callService(service, isRequest, {
-            current
-          });
-        }
-
-      case SERVICES.circuitOfflineCurrent:
-        {
-          const currentP1 = e.target.getAttribute('value');
-          return this.callService(service, isRequest, {
-            currentP1
-          });
-        }
-
-      case SERVICES.circuitMaxCurrent:
-        {
-          const currentP1 = e.target.getAttribute('value');
-          return this.callService(service, isRequest, {
-            currentP1
-          });
-        }
-
-      case SERVICES.circuitDynCurrent:
-        {
-          const currentP1 = e.target.getAttribute('value');
-          return this.callService(service, isRequest, {
-            currentP1
-          });
-        }
+  createServiceData(service, isRequest, service_data, event) {
+    if (service === undefined || service === null || service_data === undefined || service_data === null) {
+      console.error("Trying to call an empty service or without service data - please check your card configuration.");
+      this.hass.callService("persistent_notification", "create", {
+        title: "No service",
+        message: "No service defined for this action or no service data given."
+      });
+      return;
+    }
+    var event_val = event.target.getAttribute('value');
+    // event_val = Number.isNaN(Number(event_val)) ? event_val : Number(event_val); //TODO is this neccessary?
+    var service_data_mod = {};
+    for (let [key, val] of Object.entries(service_data)) {
+      service_data_mod[key] = val.replace(SERVICEVAL, event_val);
+    }
+    return this.callService(service, isRequest, service_data_mod);
+  }
+  callService(service, isRequest = true, service_data = {}) {
+    this.log("CALLING SERVICE");
+    this.log(service);
+    this.log(service_data);
+    if (service === undefined || service === null) {
+      console.error("Trying to call an empty service - please check your card configuration.");
+      this.hass.callService("persistent_notification", "create", {
+        title: "No service",
+        message: "No service defined for this action."
+      });
+    } else {
+      service = service.split(".");
+      this.hass.callService(service[0], service[1], service_data);
+      if (isRequest) {
+        // this.requestInProgress = true; //TODO: Removed, must be improved to check all sensors
+        this.requestUpdate();
+      }
     }
   }
-
-  callService(service, isRequest = true, options = {}) {
-    this.hass.callService(this.chargerDomain, service, {
-      charger_id: this.chargerId,
-      ...options
-    });
-
-    if (isRequest) {
-      // this.requestInProgress = true; //TODO: Removed, must be improved to check all sensors
-      this.requestUpdate();
-    }
-  }
-
-  getAttributes(entity) {
-    const {
-      status,
-      state,
-      friendly_name,
-      name,
-      site_name,
-      icon
-    } = entity.attributes;
-    return {
-      status: status || state,
-      friendly_name,
-      name,
-      site_name,
-      icon
-    };
-  }
-
-  imageLed(state, smartCharging) {
-    let chargingMode = 'normal';
-
-    if (smartCharging == 'on') {
-      chargingMode = 'smart';
-    }
-
-    return LEDIMAGES[chargingMode][state] || LEDIMAGES[chargingMode]['DEFAULT'];
-  }
-
   renderImage(state) {
-    let compactview = '';
-
+    var compactview = '';
     if (this.compactView) {
       compactview = '-compact';
     }
-
     if (!this.image) {
       return html``;
     }
-
-    return html` <img
+    return html`<div class='image'> <img
         class="charger${compactview}"
         src="${this.image}"
         @click="${() => this.handleMore()}"
         ?more-info="true"
-      />${this.renderLeds(state)}`;
+      />${this.renderLeds(state)}
+      </div>`;
   }
-
   renderLeds(state) {
-    if (this.showLeds) {
-      let compactview = '';
-
-      if (this.compactView) {
-        compactview = '-compact';
-      }
-
-      const smartCharging = this.getEntityState(this.getEntity(ENTITIES.smartCharging));
-      return html`<img
-        class="charger led${compactview}"
-        src="${this.imageLed(state, smartCharging)}"
-        @click="${() => this.handleMore()}"
-        ?more-info="true"
-      /> `;
+    // if (!this.showLeds) {
+    //   return html``;
+    // }
+    var hide = this.showLeds === true ? '' : '-hidden';
+    var carddatas = this.getCardData(this.getConfig("details.smartcharging"));
+    var chargingmode = 'normal';
+    if (carddatas !== null && carddatas !== undefined && typeof carddatas === 'object' && carddatas.entity !== null) {
+      chargingmode = carddatas.entity.state == 'on' ? 'smart' : 'normal';
     }
-
-    return html``;
+    var imageled = LEDIMAGES[chargingmode][state] || LEDIMAGES[chargingmode]['DEFAULT'];
+    var compactview = this.compactView ? '-compact' : '';
+    return html`<img class="charger led${hide}${compactview}" src="${imageled}" @click="${() => this.handleMore(carddatas.entity)}"?more-info="true"/> `;
   }
-
   renderStats(state) {
     /* SHOW DATATABLE */
     if (!this.showStats) {
       return html``;
     }
-
-    let compactview = '';
-
-    if (this.compactView) {
-      compactview = '-compact';
-    }
-    /* DEFAULT DATATABLE */
-
-
-    if (this.useStatsDefault) {
-      const statsList = this.getStatsDefault(state) || [];
-      return html`<div class="stats${compactview}">
-        ${this.renderStatsList(state, statsList)}
-      </div>`;
-      /* CUSTOM DATATABLE */
+    // var compactview = this.compactView ? '-compact' : '';
+    var stats;
+    if (this.getConfig("details.stats") !== null) {
+      stats = this.getCardData(this.getConfig("details.stats"));
+      stats = stats !== undefined && stats !== null ? stats[state] || stats['default'] : [];
     } else {
-      const {
-        stats = {}
-      } = this.config;
-      const statsList = stats[state] || stats.default || [];
-      return html`<div class="stats${compactview}">
-        ${this.renderStatsList(state, statsList)}
-      </div>`;
+      console.info("Stats is turned on but no stats given in config.");
+      stats = {};
     }
-  }
-
-  renderStatsList(state, statsList) {
-    return statsList.map(({
-      entity_id,
-      attribute,
-      calcValue,
-      unit,
-      subtitle
-    }) => {
-      if (!entity_id && !attribute && !calcValue) {
-        return html``;
-      } else if (calcValue) {
-        return this.renderStatsHtml(calcValue, unit, subtitle);
-      }
-
-      this.getEntity();
-
-      try {
-        const value = attribute ? this.hass.states[entity_id].attributes[attribute] : this.hass.states[entity_id].state;
-        return this.renderStatsHtml(value, unit, subtitle, this.hass.states[entity_id]);
-      } catch (err) {
-        return null;
-      }
-    });
-  }
-
-  renderStatsHtml(value, unit, subtitle, entity = this.entity) {
     return html`
-      <div
-        class="stats-block"
-        @click="${() => this.handleMore(entity)}"
-        ?more-info="true"
-      >
-        <span class="stats-value">${value}</span>
-        ${unit}
-        <div class="stats-subtitle">${subtitle}</div>
-      </div>
-    `;
+      ${Object.values(stats).map(stat => {
+      return html`
+            <div
+              class="stats-block"
+              @click="${() => this.handleMore(stat.entity)}"
+              ?more-info="true"
+            >
+              <span class="stats-value">${stat.useval}</span>
+              ${stat.unit_show ? stat.unit : ''}
+              <div class="stats-subtitle">${this.loc(stat.text, 'common', this.brand)}</div>
+            </div>
+          `;
+    })}
+      `;
   }
-
   renderName() {
-    const {
-      name,
-      site_name
-    } = this.getAttributes(this.entity);
-
     if (!this.showName) {
       return html``;
     }
-
-    let compactview = '';
-
-    if (this.compactView) {
-      compactview = '-compact';
+    var carddata_name = this.getCardData(this.getConfig("details.name"));
+    var carddata_location = this.getCardData(this.getConfig("details.location"));
+    var name;
+    var location;
+    var moreEntity = null;
+    var compactview = this.compactView ? '-compact' : '';
+    var nameunit, locationunit;
+    if (carddata_name !== null && carddata_name !== undefined) {
+      name = typeof carddata_name == 'object' ? carddata_name.useval : carddata_name;
+      moreEntity = typeof carddata_name == 'object' ? carddata_name.entity : null;
+      nameunit = carddata_name.unit_show ? carddata_name.unit : '';
     }
-
+    if (carddata_location !== null && carddata_location !== undefined) {
+      location = typeof carddata_location == 'object' ? carddata_location.useval : carddata_location;
+      locationunit = carddata_location.unit_show ? carddata_location.unit : '';
+    }
+    var combinator = "";
+    if (name !== undefined && location !== undefined) {
+      combinator = " - ";
+    }
     return html`
       <div
         class="charger-name${compactview}"
-        @click="${() => this.handleMore()}"
+        @click="${() => this.handleMore(moreEntity)}"
         ?more-info="true"
       >
-        ${site_name} - ${name}
+        ${name}${nameunit}${combinator}${location}${locationunit}
       </div>
     `;
   }
-
   renderStatus() {
     if (!this.showStatus) {
       return html``;
     }
-
-    let compactview = '';
-
-    if (this.compactView) {
-      compactview = '-compact';
+    var carddata_status = this.getCardData(this.getConfig("details.status"));
+    var carddata_substatus = this.getCardData(this.getConfig("details.substatus"));
+    var status = null,
+      substatus = null;
+    var compactview = this.compactView ? '-compact' : '';
+    var statusunit, substatusunit;
+    if (carddata_status !== null && carddata_status !== undefined) {
+      status = typeof carddata_status == 'object' ? carddata_status.useval : carddata_status;
+      statusunit = carddata_status.unit_show ? carddata_status.unit : '';
+    } else {
+      status = this.entity.state;
     }
 
-    const {
-      state
-    } = this.entity;
-    const {
-      reasonForNoCurrent
-    } = this.getEntities();
-    const localizedStatus = localize(`status.${state}`) || state;
-    let subStatusText = localize(`charger_substatus.${this.getEntityState(reasonForNoCurrent)}`) || this.getEntityState(reasonForNoCurrent);
+    // console.log(carddata_substatus.useval)
+    if (carddata_substatus !== null && carddata_substatus !== undefined) {
+      substatus = typeof carddata_substatus == 'object' ? carddata_substatus.useval : carddata_substatus;
+      substatusunit = carddata_substatus.unit_show ? carddata_substatus.unit : '';
+    }
+
+    //Localize and choose
+    if (this.statetext !== null && this.statetext !== undefined && typeof this.statetext === 'object' && status in this.statetext) {
+      // console.info("status: " + status + " loc_status: " + (this.loc(status, "status", this.brand) || status) + " statetext: " + this.statetext[status] + " loc_statetext: " + (this.loc(this.statetext[status], "status", this.brand) || this.statetext[status]));
+      if (this.statetext[status].substring(0, 1) == "_") {
+        //Do not translate if leading _
+        status = this.statetext[status].substring(1);
+      } else {
+        status = this.loc(this.statetext[status], "status", this.brand) || this.statetext[status];
+      }
+    } else {
+      status = status !== null ? this.loc(status, "status", this.brand) || status : '';
+    }
+    substatus = substatus !== null ? this.loc(substatus, "substatus", this.brand) || substatus : '';
     return html`
-      <div
-        class="status${compactview}"
-        @click="${() => this.handleMore()}"
-        ?more-info="true"
-      >
-        <span class="status-text${compactview}" alt=${localizedStatus}>
-          ${localizedStatus}
-        </span>
-        <ha-circular-progress
-          .active=${this.requestInProgress}
-          size="small"
-        ></ha-circular-progress>
-        <div
-          class="status-detail-text${compactview}"
-          alt=${subStatusText}
-          @click="${() => this.handleMore(reasonForNoCurrent)}"
+      <div class="status${compactview}" @click="${() => this.handleMore(carddata_status.entity || null)}"?more-info="true">
+        <span class="status-text${compactview}" alt=${status}>${status}${statusunit}</span>
+        <ha-circular-progress .active=${this.requestInProgress} size="small"></ha-circular-progress>
+        <div class="status-detail-text${compactview}" alt=${substatus} @click="${() => this.handleMore(carddata_substatus.entity || null)}"?more-info="true">
+          ${substatus}${substatusunit}
+        </div>
+      </div>
+    `;
+  }
+  renderCollapsible(group, icon, tooltip, style, itemtype) {
+    /* SHOW COLLAPSIBLES */
+    if (!this.showCollapsibles) {
+      return html``;
+    }
+    var carddatas = this.getCardData(this.getConfig("details." + group));
+    return html`
+      <div class="wrap-collabsible${style}">
+        <input id="collapsible${style}" class="toggle${style}" type="checkbox" />
+        <label for="collapsible${style}" class="lbl-toggle${style}">
+          <div class="tooltip-right">
+            <ha-icon icon="${icon}"></ha-icon>
+            <span class="tooltiptext-right">${this.loc(tooltip)}</span>
+          </div>
+        </label>
+        <div class="collapsible-content${style}">
+          <div class="content-inner${style}">
+            ${carddatas !== null ? Object.values(carddatas).map(carddata => {
+      return this.renderCollapsibleItems(carddata, carddata.type || itemtype);
+    }) : localize('error.missing_group')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  renderCollapsibleItems(carddata, itemtype = '') {
+    if (carddata === null || carddata === undefined || typeof carddata !== 'object' || carddata.hide === true) {
+      return html``;
+    }
+    if (itemtype === 'info' || itemtype === '' || itemtype === null) {
+      return html`
+        <div class="collapsible-item"
+          @click="${() => this.handleMore(carddata.entity)}"
           ?more-info="true"
         >
-          ${subStatusText}
-        </div>
-      </div>
-    `;
-  }
-
-  renderCollapsibleConfig() {
-    /* SHOW COLLAPSIBLES */
-    if (!this.showCollapsibles) {
-      return html``;
-    }
-
-    const {
-      cableLocked,
-      cableLockedPermanently,
-      enableIdleCurrent,
-      isEnabled,
-      smartCharging,
-      updateAvailable,
-      costPerKwh
-    } = this.getEntities();
-    let updateAvailableState = this.getEntityState(updateAvailable) || 'off';
-    let localizedClickForConfig = localize('common.click_for_config');
-    return html`
-      <div class="wrap-collabsible">
-        <input id="collapsible" class="toggle" type="checkbox" />
-        <label for="collapsible" class="lbl-toggle">
-          <div class="tooltip-right">
-            <ha-icon icon="mdi:cog"></ha-icon>
-            <span class="tooltiptext-right">${localizedClickForConfig}</span>
-          </div>
-        </label>
-        <div class="collapsible-content">
-          <div class="content-inner">
-            ${this.renderCollapsibleItems(isEnabled, 'Enabled')}
-            ${this.renderCollapsibleItems(enableIdleCurrent, 'Idle Current')}
-            ${this.renderCollapsibleItems(cableLockedPermanently, 'Permanently Locked')}
-            ${this.renderCollapsibleItems(cableLocked, 'Locked')}
-            ${this.renderCollapsibleItems(smartCharging, 'Smart Charging')}
-            ${this.renderCollapsibleItems(costPerKwh, 'Energy cost')}
-            ${this.renderCollapsibleItems(updateAvailable, 'Update Available')}
-            ${updateAvailableState === 'on' && this.entity.state === CHARGERSTATUS.STANDBY_1 ? this.renderCollapsibleServiceItems(undefined, 'update_firmware', 'Update', 'mdi:file-download', 'Update Firmware') : ''}
-            ${updateAvailableState === 'on' && this.entity.state === CHARGERSTATUS.STANDBY_1 ? this.renderCollapsibleServiceItems(undefined, 'reboot', 'Reboot', 'mdi:restart', 'Reboot') : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  renderCollapsibleInfo() {
-    /* SHOW COLLAPSIBLES */
-    if (!this.showCollapsibles) {
-      return html``;
-    }
-
-    const {
-      isOnline,
-      voltage,
-      totalPower,
-      circuitCurrent,
-      inCurrent,
-      sessionEnergy,
-      energyPerHour,
-      energyLifetime
-    } = this.getEntities();
-    let localizedClickForStatus = localize('common.click_for_info');
-    return html`
-      <div class="wrap-collabsible-info">
-        <input id="collapsible-info" class="toggle-info" type="checkbox" />
-        <label for="collapsible-info" class="lbl-toggle-info">
-          <div class="tooltip-right">
-            <ha-icon icon="mdi:information"></ha-icon>
-            <span class="tooltiptext-right">${localizedClickForStatus}</span>
-          </div>
-        </label>
-        <div class="collapsible-content-info">
-          <div class="content-inner-info">
-            ${this.renderCollapsibleItems(isOnline, localize('common.online'))}
-            ${this.renderCollapsibleItems(voltage, localize('common.voltage'), true)}
-            ${this.renderCollapsibleItems(totalPower, localize('common.power'))}
-            ${this.renderCollapsibleItems(inCurrent, localize('common.charger_current'), true)}
-            ${this.renderCollapsibleItems(circuitCurrent, localize('common.circuit_current'), true)}
-            ${this.renderCollapsibleItems(energyPerHour, localize('common.energy_per_hour'))}
-            ${this.renderCollapsibleItems(sessionEnergy, localize('charger_status.sessionEnergy'))}
-            ${this.renderCollapsibleItems(energyLifetime, localize('common.lifetime_energy'), true)}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  renderCollapsibleLimits() {
-    /* SHOW COLLAPSIBLES */
-    if (!this.showCollapsibles) {
-      return html``;
-    }
-
-    const {
-      maxChargerCurrent,
-      maxCircuitCurrent,
-      dynamicChargerCurrent,
-      dynamicCircuitCurrent,
-      offlineCircuitCurrent
-    } = this.getEntities();
-    let localizedClickForLimits = localize('common.click_for_limits');
-    return html`
-      <div class="wrap-collabsible-lim">
-        <input id="collapsible-lim" class="toggle-lim" type="checkbox" />
-        <label for="collapsible-lim" class="lbl-toggle-lim">
-          <div class="tooltip-right">
-            <ha-icon icon="mdi:speedometer"></ha-icon>
-            <span class="tooltiptext-right">${localizedClickForLimits}</span>
-          </div>
-        </label>
-        <div class="collapsible-content-lim">
-          <div class="content-inner-lim">
-            ${this.renderCollapsibleDropDownItems(maxChargerCurrent, SERVICES.chargerMaxCurrent, 'Max Charger', undefined, 'Max Charger Limit', true)}
-            ${this.renderCollapsibleDropDownItems(dynamicChargerCurrent, SERVICES.chargerDynCurrent, 'Dyn Charger', undefined, 'Dyn Charger Limit', true)}
-            ${this.renderCollapsibleDropDownItems(maxCircuitCurrent, SERVICES.circuitMaxCurrent, 'Max Circuit', undefined, 'Max Circuit Limit', true)}
-            ${this.renderCollapsibleDropDownItems(dynamicCircuitCurrent, SERVICES.circuitDynCurrent, 'Dyn Circuit', undefined, 'Dyn Circuit Limit', true)}
-            ${this.renderCollapsibleDropDownItems(offlineCircuitCurrent, SERVICES.circuitOfflineCurrent, 'Off Lim', undefined, 'Offline Limit', true)}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  renderCollapsibleItems(entity, tooltip, round = false) {
-    if (entity === null || entity === undefined) {
-      return html``;
-    }
-
-    let value = this.getEntityState(entity);
-    let icon = this.renderIcon(entity);
-    let useUnit = this.getEntityAttribute(entity, 'unit_of_measurement');
-
-    if (round) {
-      value = Math.round(value);
-    }
-
-    return html`
-      <div
-        class="collapsible-item"
-        @click="${() => this.handleMore(entity)}"
-        ?more-info="true"
-      >
-        <div class="tooltip">
-          <ha-icon icon="${icon}"></ha-icon>
-          <br />${value} ${useUnit}
-          <span class="tooltiptext">${tooltip}</span>
-        </div>
-      </div>
-    `;
-  }
-
-  renderCollapsibleServiceItems(entity, service, text, icon, tooltip, isRequest = true, options = {}) {
-    let useIcon = icon;
-
-    if (icon === null || icon === undefined) {
-      useIcon = this.renderIcon(entity);
-    }
-
-    return html`
-      <div
-        class="collapsible-item"
-        @click="${() => this.callService(service, isRequest, options)}"
-      >
-        <div class="tooltip">
-          <ha-icon icon="${useIcon}"></ha-icon>
-          <br />${text}
-          <span class="tooltiptext">${tooltip}</span>
-        </div>
-      </div>
-    `;
-  }
-
-  renderCollapsibleDropDownItems(entity, service, text, icon, tooltip, isRequest = true) {
-    if (entity === null || entity === undefined) {
-      return html``;
-    }
-
-    const sources = CURRENTLIMITS;
-    let value = this.getEntityState(entity);
-    let selected = sources.indexOf(value);
-    let useUnit = this.getEntityAttribute(entity, 'unit_of_measurement');
-    let useIcon = icon === undefined ? this.renderIcon(entity) : icon;
-    return html`
-      <paper-menu-button
-        slot="dropdown-trigger"
-        .noAnimations=${true}
-        @click="${e => e.stopPropagation()}"
-      >
-        <paper-button slot="dropdown-trigger">
           <div class="tooltip">
-            <ha-icon icon="${useIcon}"></ha-icon>
-            <br />${value}${useUnit}
-            <span class="tooltiptext">${tooltip}</span>
+            <ha-icon icon="${carddata.icon}"></ha-icon>
+            <br />${carddata.useval} ${carddata.unit_show ? carddata.unit : ''}
+            <span class="tooltiptext">${this.loc(carddata.text, "common", this.brand)} ${carddata.unit_showontext ? "(" + carddata.unit + ")" : ''}</span>
           </div>
-        </paper-button>
-        <paper-listbox
-          slot="dropdown-content"
-          selected=${selected}
-          @click="${e => this.setServiceData(service, isRequest, e)}"
-        >
-          ${sources.map(item => html`<paper-item value=${item}>${item}</paper-item>`)}
-        </paper-listbox>
-      </paper-menu-button>
-    `;
-  }
+        </div>
+      `;
+    } else if (itemtype === 'service') {
+      return html`
+          <div class="collapsible-item"
+            @click="${() => this.callService(carddata.service, true, carddata.service_data)}"
+            ?more-info="true"
+          >
+            <div class="tooltip">
+              <ha-icon icon="${carddata.icon}"></ha-icon>
+              <br />${carddata.useval} ${carddata.unit_show ? carddata.unit : ''}
+              <span class="tooltiptext">${this.loc(carddata.text, "common", this.brand)} ${carddata.unit_showontext ? "(" + carddata.unit + ")" : ''}</span>
+            </div>
+          </div>
+        `;
+    } else if (itemtype === 'dropdown') {
+      const sources = this.currentlimits;
+      var selected = sources.indexOf(carddata.useval);
+      return html`
+          <div class="collapsible-item">
+          <ha-button-menu @click="${e => e.stopPropagation()}">
+            <mmp-icon-button slot="trigger">
+                <div class="tooltip">
+                  <ha-icon icon="${carddata.icon}"></ha-icon>
+                  <br />${carddata.useval} ${carddata.unit_show ? carddata.unit : ''}
+                  <span class="tooltiptext">${this.loc(carddata.text, "common", this.brand)} ${carddata.unit_showontext ? "(" + carddata.unit + ")" : ''}</span>
+                </div>
+              </mmp-icon-button>
 
-  renderInfoItemsLeft() {
-    const {
-      isOnline
-    } = this.getEntities();
-    return html` ${this.renderInfoItem(isOnline, localize('common.online'))} `;
-  }
+              ${sources.map((item, index) => html`<mwc-list-item
+                    ?activated=${selected === index}
+                    value=${item}
+                    @click=${event => this.createServiceData(carddata.service, true, carddata.service_data, event)}
+                  >
+                    ${item}
+                  </mwc-list-item>`)}
 
-  renderInfoItemsRight() {
-    const {
-      totalPower,
-      voltage
-    } = this.getEntities();
-    return html`
-      ${this.renderInfoItem(voltage, localize('common.voltage'), true)}
-      ${this.renderInfoItem(totalPower, localize('common.power'))}
-    `;
-  }
-
-  renderInfoItemsCompact() {
-    const {
-      totalPower,
-      voltage
-    } = this.getEntities();
-    return html`
-      ${this.renderInfoItem(voltage, localize('common.voltage'), true)}
-      ${this.renderInfoItem(totalPower, localize('common.power'), true)}
-    `;
-  }
-
-  renderInfoItem(entity, tooltip, round = false) {
-    if (entity === null || entity === undefined) {
+            </ha-button-menu>
+          </div>
+        `;
+    } else {
       return html``;
     }
-
-    let value = this.getEntityState(entity);
-    let useUnit = this.getEntityAttribute(entity, 'unit_of_measurement');
-    let icon = this.renderIcon(entity);
-
-    if (round) {
-      value = Math.round(value);
+  }
+  renderMainInfoLeftRight(data) {
+    var carddatas = this.getCardData(this.getConfig("details." + data));
+    if (carddatas === null || carddatas === undefined || typeof carddatas !== 'object') {
+      return html``;
     }
-
+    var tooltip = data == 'info_right' ? '-right' : '';
     return html`
-      <div
-        class="infoitems-item"
-        @click="${() => this.handleMore(entity)}"
-        ?more-info="true"
+      ${carddatas !== null ? Object.values(carddatas).map(carddata => {
+      return html`
+        <div
+        class='infoitems-item-${data}'
+        @click='${() => this.handleMore(carddata.entity)}'
+        ?more-info='true'
       >
-        <div class="tooltip">
-          <ha-icon icon="${icon}"></ha-icon>
-          ${value} ${useUnit}
-          <span class="tooltiptext">${tooltip}</span>
+        <div class='tooltip'>
+          <ha-icon icon=${data == 'info_left' ? carddata.icon : ''}></ha-icon>
+          ${carddata.useval} ${carddata.unit_show ? carddata.unit : ''}
+          <ha-icon icon=${data == 'info_right' ? carddata.icon : ''}></ha-icon>
+          <span class='tooltiptext${tooltip}'>${this.loc(carddata.text, "common", this.brand)} ${carddata.unit_showontext ? '(' + carddata.unit + ')' : ''}</span>
         </div>
       </div>
+      `;
+    }) : ''}
     `;
   }
-
-  renderIcon(entity) {
-    let entity_id = entity.entity_id;
-    let icon = this.getEntityAttribute(entity, 'icon') == !null ? this.getEntityAttribute(entity, 'icon') : ICONS[this.getEntityBase(entity_id)] || 'mdi:cancel';
-    let domainIcon = this.getEntityAttribute(entity, 'device_class') == !null ? domainIcon(this.getEntityAttribute(entity, 'device_class'), this.getEntityState(entity)) : false;
-    return domainIcon || icon;
-  }
-
   renderToolbar(state) {
     /* SHOW TOOLBAR */
     if (!this.showToolbar) {
       return html``;
     }
-    /* CUSTOM BUTTONS FROM CONFIG */
-
-
-    const {
-      actions = []
-    } = this.config;
-    const customButtons = actions.map(({
-      name,
-      service,
-      icon,
-      service_data
-    }) => {
-      return this.renderToolbarButton(service, icon, name, service_data);
+    var toolbardata_left = this.getCardData(this.getConfig("details.toolbar_left"));
+    var toolbardata_right = this.getCardData(this.getConfig("details.toolbar_right"));
+    toolbardata_left = toolbardata_left !== null ? toolbardata_left[state] || toolbardata_left.default || [] : [];
+    toolbardata_right = toolbardata_right !== null ? toolbardata_right[state] || toolbardata_right.default || [] : [];
+    var toolbar_left = Object.values(toolbardata_left).map(btn => {
+      return btn.hide !== true ? this.renderToolbarButton(btn.service, btn.icon, btn.text, btn.service_data) : '';
     });
-    let stateButtons = html``;
-    /* STATE BUTTONS */
-
-    switch (state) {
-      case CHARGERSTATUS.STANDBY_1:
-        {
-          stateButtons = html``;
-          break;
-        }
-
-      case CHARGERSTATUS.PAUSED_2:
-        {
-          stateButtons = html`
-          ${this.renderToolbarButton('stop', 'hass:stop', 'common.stop')}
-          ${this.renderToolbarButton('resume', 'hass:play-pause', 'common.continue')}
-          ${this.renderToolbarButton('override_schedule', 'hass:motion-play', 'common.override')}
-        `;
-          break;
-        }
-
-      case CHARGERSTATUS.CHARGING_3:
-        {
-          stateButtons = html`
-          ${this.renderToolbarButton('pause', 'hass:pause', 'common.pause')}
-          ${this.renderToolbarButton('stop', 'hass:stop', 'common.stop')}
-        `;
-          break;
-        }
-
-      case CHARGERSTATUS.READY_4:
-        {
-          stateButtons = html`
-          ${this.renderToolbarButton('stop', 'hass:stop', 'common.stop')}
-          ${this.renderToolbarButton('override_schedule', 'hass:motion-play', 'common.override')}
-        `;
-          break;
-        }
-
-      case CHARGERSTATUS.ERROR_5:
-        {
-          stateButtons = html`
-          ${this.renderToolbarButton('reboot', 'hass:restart', 'common.reboot')}
-        `;
-          break;
-        }
-
-      case CHARGERSTATUS.CONNECTED_6:
-        {
-          stateButtons = html`
-          ${this.renderToolbarButton('stop', 'hass:stop', 'common.stop')}
-          ${this.renderToolbarButton('override_schedule', 'hass:motion-play', 'common.override')}
-        `;
-          break;
-        }
-    }
-
+    var toolbar_right = Object.values(toolbardata_right).map(btn => {
+      return btn.hide !== true ? this.renderToolbarButton(btn.service, btn.icon, btn.text, btn.service_data) : '';
+    });
     return html`
       <div class="toolbar">
-        ${stateButtons}
+        ${toolbar_left}
         <div class="fill-gap"></div>
-        ${customButtons}
+        ${toolbar_right}
       </div>
     `;
   }
-
   renderToolbarButton(service, icon, text, service_data = {}, isRequest = true) {
-    let useText = '';
-
-    try {
-      useText = localize(text);
-    } catch (e) {
-      useText = text;
+    var usetext = this.loc(text, this.brand) || text;
+    if (text !== null && text !== undefined) {
+      return html`
+        <div class="tooltip">
+          <ha-icon-button
+            title="${this.loc(usetext, "common", this.brand)}"
+            @click="${() => this.callService(service, isRequest, service_data)}"
+            ><ha-icon icon="${icon}"></ha-icon
+          ></ha-icon-button>
+          <span class="tooltiptext">${this.loc(usetext, "common", this.brand)}</span>
+        </div>
+      `;
+    } else {
+      return;
     }
-
-    return html`
-      <div class="tooltip">
-        <ha-icon-button
-          title="${useText}"
-          @click="${() => this.callService(service, isRequest, service_data)}"
-          ><ha-icon icon="${icon}"></ha-icon
-        ></ha-icon-button>
-        <span class="tooltiptext">${useText}</span>
-      </div>
-    `;
   }
-
   renderCompact() {
-    const {
+    var {
       state
     } = this.entity;
     return html`
       <ha-card>
         <div class="preview-compact">
           ${this.renderImage(state)}
-
           <div class="metadata">
             ${this.renderName()} ${this.renderStatus()}
           </div>
-
-          <div class="infoitems">${this.renderInfoItemsCompact()}</div>
-
-          ${this.renderStats(state)}
+          <div class="infoitems">${this.renderMainInfoLeftRight('info_right')}</div>
+          <div class="stats-compact">
+            ${this.renderStats(state)}
+          </div>
         </div>
-
         ${this.renderToolbar(state)}
       </ha-card>
     `;
   }
-
   renderFull() {
-    const {
+    var {
       state
     } = this.entity;
+    var btn1 = this.getCollapsibleButton('group1', 'click_for_group1', 'mdi:speedometer');
+    var btn2 = this.getCollapsibleButton('group2', 'click_for_group2', 'mdi:information');
+    var btn3 = this.getCollapsibleButton('group3', 'click_for_group3', 'mdi:cog');
     return html`
       <ha-card>
         <div class="preview">
           <div class="header">
-            <div class="infoitems-left">${this.renderInfoItemsLeft()}</div>
-
-            <div class="infoitems">${this.renderInfoItemsRight()}</div>
+            <div class="infoitems-left">${this.renderMainInfoLeftRight('info_left')}</div>
+            <div class="infoitems">${this.renderMainInfoLeftRight('info_right')}</div>
           </div>
-
           ${this.renderImage(state)}
-
           <div class="metadata">
             ${this.renderName()} ${this.renderStatus()}
           </div>
-
-          ${this.renderCollapsibleConfig()} ${this.renderCollapsibleInfo()}
-          ${this.renderCollapsibleLimits()} ${this.renderStats(state)}
+            ${this.renderCollapsible('group1', btn1.icon, btn1.text, '-lim', 'dropdown')}
+            ${this.renderCollapsible('group2', btn2.icon, btn2.text, '-info', 'info')}
+            ${this.renderCollapsible('group3', btn3.icon, btn3.text, '', 'info')}
+            <div class="stats">
+              ${this.renderStats(state)}
+            </div>
         </div>
-
         ${this.renderToolbar(state)}
       </ha-card>
     `;
   }
-
   renderCustomCardTheme() {
     switch (this.customCardTheme) {
       case 'theme_custom':
         {
           break;
         }
-
       case 'theme_default':
         {
           this.style.setProperty('--custom-card-background-color', '#03A9F4');
@@ -5972,7 +7034,6 @@ class ChargerCard extends LitElement {
           this.style.setProperty('--custom-icon-color', '#FFFFFF');
           break;
         }
-
       case 'theme_transp_blue':
         {
           this.style.setProperty('--custom-card-background-color', 'transparent');
@@ -5981,7 +7042,6 @@ class ChargerCard extends LitElement {
           this.style.setProperty('--custom-icon-color', '#03A9F4');
           break;
         }
-
       case 'theme_transp_black':
         {
           this.style.setProperty('--custom-card-background-color', 'transparent');
@@ -5990,7 +7050,6 @@ class ChargerCard extends LitElement {
           this.style.setProperty('--custom-icon-color', 'black');
           break;
         }
-
       case 'theme_transp_white':
         {
           this.style.setProperty('--custom-card-background-color', 'transparent');
@@ -5999,7 +7058,6 @@ class ChargerCard extends LitElement {
           this.style.setProperty('--custom-icon-color', 'white');
           break;
         }
-
       case 'theme_lightgrey_blue':
         {
           this.style.setProperty('--custom-card-background-color', 'lightgrey');
@@ -6008,7 +7066,6 @@ class ChargerCard extends LitElement {
           this.style.setProperty('--custom-icon-color', '#03A9F4');
           break;
         }
-
       default:
         {
           this.style.setProperty('--custom-card-background-color', '#03A9F4');
@@ -6019,33 +7076,28 @@ class ChargerCard extends LitElement {
         }
     }
   }
-
   render() {
     this.renderCustomCardTheme();
-
     if (!this.entity) {
       return html`
         <ha-card>
           <div class="preview not-available">
             <div class="metadata">
               <div class="not-available">
-                ${localize('common.not_available')}
+                ${localize('error.not_available')}
               </div>
             <div>
           </div>
         </ha-card>
       `;
     }
-
     if (this.compactView) {
       return this.renderCompact();
     } else {
       return this.renderFull();
     }
   }
-
 }
-
 customElements.define('charger-card', ChargerCard);
 console.info(`%cCHARGER-CARD ${VERSION} IS INSTALLED`, 'color: green; font-weight: bold', '');
 window.customCards = window.customCards || [];

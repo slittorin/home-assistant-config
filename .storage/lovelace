@@ -1,43 +1,73 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace",
-    "data": {
-        "config": {
-            "title": "Home",
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace",
+  "data": {
+    "config": {
+      "title": "Home",
+      "views": [
+        {
+          "path": "default_view",
+          "title": "Home",
+          "type": "sidebar",
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
+                "person.administrator"
+              ]
+            },
+            {
+              "type": "thermostat",
+              "entity": "climate.nbp6013h_climate",
+              "name": "Spabad - Temperatur"
+            },
+            {
+              "type": "history-graph",
+              "entities": [
                 {
-                    "path": "default_view",
-                    "title": "Home",
-                    "type": "sidebar",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                "person.administrator"
-                            ]
-                        },
-                        {
-                            "type": "thermostat",
-                            "entity": "climate.nbp6013h_climate",
-                            "name": "Spabad - Temperatur"
-                        },
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.electrical_daily_sum_consumption_intake_cost_hour"
-                                },
-                                {
-                                    "entity": "sensor.electrical_daily_sum_consumption_intake_hour"
-                                }
-                            ],
-                            "hours_to_show": 8760
-                        }
-                    ]
+                  "entity": "sensor.electrical_daily_sum_consumption_intake_cost_hour"
+                },
+                {
+                  "entity": "sensor.electrical_daily_sum_consumption_intake_hour"
                 }
-            ]
+              ],
+              "hours_to_show": 8760
+            },
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.electrical_consumption_intake_hour"
+                }
+              ],
+              "hours_to_show": 48
+            },
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.electrical_consumption_intake_cost_hour"
+                }
+              ],
+              "hours_to_show": 48
+            },
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.electrical_daily_calculated_consumption_index"
+                },
+                {
+                  "entity": "sensor.electrical_daily_calculated_consumption_index_sek"
+                }
+              ],
+              "hours_to_show": 336
+            }
+          ]
         }
+      ]
     }
+  }
 }
