@@ -6,6 +6,8 @@
 # --------------------------------------------------------
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
 
+# 20221011 - Added hourly statistics for: grid_power and metering_power_supplied.
+
 sensor:
   # We want to get the min statistics for the current (A) on line 1.
   - platform: statistics
@@ -223,6 +225,61 @@ sensor:
     sampling_size: 720
     max_age:
       hours: 1
+  # We want to get the min statistics for grid_power.
+  - platform: statistics
+    name: SMA grid power min
+    unique_id: sma_grid_power_min
+    entity_id: sensor.grid_power
+    state_characteristic: value_min
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for grid_power.
+  - platform: statistics
+    name: SMA grid power mean
+    unique_id: sma_grid_power_mean
+    entity_id: sensor.grid_power
+    state_characteristic: mean
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the max statistics for grid_power.
+  - platform: statistics
+    name: SMA grid power max
+    unique_id: sma_grid_power_max
+    entity_id: sensor.grid_power
+    state_characteristic: value_max
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the min statistics for metering_power_supplied.
+  - platform: statistics
+    name: SMA metering power supplied min
+    unique_id: sma_metering_power_supplied_min
+    entity_id: sensor.metering_power_supplied
+    state_characteristic: value_min
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for metering_power_supplied.
+  - platform: statistics
+    name: SMA metering power supplied mean
+    unique_id: sma_metering_power_supplied_mean
+    entity_id: sensor.metering_power_supplied
+    state_characteristic: mean
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the max statistics for metering_power_supplied.
+  - platform: statistics
+    name: SMA metering power supplied max
+    unique_id: sma_metering_power_supplied_max
+    entity_id: sensor.metering_power_supplied
+    state_characteristic: value_max
+    sampling_size: 720
+    max_age:
+      hours: 1
+
 
 template:
   - trigger:
@@ -235,7 +292,7 @@ template:
     sensor:
       # We save sma_metering_current_l1_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l1_min_hour
+      - name: sma_metering_current_l1_min_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -249,7 +306,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l1_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l1_mean_hour
+      - name: sma_metering_current_l1_mean_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -263,7 +320,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l1_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l1_max_hour
+      - name: sma_metering_current_l1_max_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -277,7 +334,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l2_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l2_min_hour
+      - name: sma_metering_current_l2_min_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -291,7 +348,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l2_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l2_mean_hour
+      - name: sma_metering_current_l2_mean_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -305,7 +362,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l2_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l2_max_hour
+      - name: sma_metering_current_l2_max_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -319,7 +376,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l3_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l3_min_hour
+      - name: sma_metering_current_l3_min_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -333,7 +390,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l3_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l3_mean_hour
+      - name: sma_metering_current_l3_mean_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -347,7 +404,7 @@ template:
           {{ value }}
       # We save sma_metering_current_l3_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_current_l3_max_hour
+      - name: sma_metering_current_l3_max_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -361,7 +418,7 @@ template:
           {{ value }}
       # We save sma_metering_power_absorbed_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_power_absorbed_min_hour
+      - name: sma_metering_power_absorbed_min_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -375,7 +432,7 @@ template:
           {{ value }}
       # We save sma_metering_power_absorbed_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_power_absorbed_mean_hour
+      - name: sma_metering_power_absorbed_mean_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -389,7 +446,7 @@ template:
           {{ value }}
       # We save sma_metering_power_absorbed_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_power_absorbed_max_hour
+      - name: sma_metering_power_absorbed_max_hour
         device_class: 'current'
         unit_of_measurement: 'A'
         state_class: measurement
@@ -403,7 +460,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l1_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l1_min_hour
+      - name: sma_metering_active_power_draw_l1_min_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -417,7 +474,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l1_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l1_mean_hour
+      - name: sma_metering_active_power_draw_l1_mean_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -431,7 +488,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l1_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l1_max_hour
+      - name: sma_metering_active_power_draw_l1_max_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -445,7 +502,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l2_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l2_min_hour
+      - name: sma_metering_active_power_draw_l2_min_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -459,7 +516,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l2_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l2_mean_hour
+      - name: sma_metering_active_power_draw_l2_mean_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -473,7 +530,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l2_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l2_max_hour
+      - name: sma_metering_active_power_draw_l2_max_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -487,7 +544,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l3_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l3_min_hour
+      - name: sma_metering_active_power_draw_l3_min_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -501,7 +558,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l3_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l3_mean_hour
+      - name: sma_metering_active_power_draw_l3_mean_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -515,7 +572,7 @@ template:
           {{ value }}
       # We save sma_metering_active_power_draw_l3_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_active_power_draw_l3_max_hour
+      - name: sma_metering_active_power_draw_l3_max_hour
         device_class: 'power'
         unit_of_measurement: 'W'
         state_class: measurement
@@ -529,7 +586,7 @@ template:
           {{ value }}
       # We save sma_metering_frequency_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_frequency_min_hour
+      - name: sma_metering_frequency_min_hour
         device_class: 'frequency'
         unit_of_measurement: 'Hz'
         state_class: measurement
@@ -543,7 +600,7 @@ template:
           {{ value }}
       # We save sma_metering_frequency_mean
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_frequency_mean_hour
+      - name: sma_metering_frequency_mean_hour
         device_class: 'frequency'
         unit_of_measurement: 'Hz'
         state_class: measurement
@@ -557,12 +614,96 @@ template:
           {{ value }}
       # We save sma_metering_frequency_max
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name:  sma_metering_frequency_max_hour
+      - name: sma_metering_frequency_max_hour
         device_class: 'frequency'
         unit_of_measurement: 'Hz'
         state_class: measurement
         state: >
           {% set input = states('sensor.sma_metering_frequency_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_grid_power_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_grid_power_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_grid_power_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_grid_power_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_grid_power_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_grid_power_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_grid_power_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_grid_power_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_grid_power_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_power_supplied_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_power_supplied_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_power_supplied_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_power_supplied_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_power_supplied_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_power_supplied_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_power_supplied_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_power_supplied_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_power_supplied_max') %}
           {% if (input == 'unknown' or input == 'unavailable') %}
           {%   set value = 0 %}
           {% else %}

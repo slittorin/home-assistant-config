@@ -57,7 +57,7 @@
               "type": "history-graph",
               "entities": [
                 {
-                  "entity": "sensor.electrical_daily_calculated_consumption_index"
+                  "entity": "sensor.electrical_daily_calculated_consumption_index_pct"
                 },
                 {
                   "entity": "sensor.electrical_daily_calculated_consumption_index_sek"

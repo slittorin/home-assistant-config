@@ -82,11 +82,16 @@ influxdb:
       - sensor.sma_metering_frequency_min
       - sensor.sma_metering_frequency_mean
       - sensor.sma_metering_frequency_max
-      # We exclude specific Charger related sensors, as these are not important, and would drive increase in database storage.
-      - sensor.evcharger_available_charge_l1
-      - sensor.evcharger_available_charge_l2
-      - sensor.evcharger_available_charge_l3
-      - sensor.evcharger_possible_charge
+      # 20221011 exluded since we down-sample these as well.
+      - sensor.grid_power
+      - sensor.sma_grid_power_min
+      - sensor.sma_grid_power_mean
+      - sensor.sma_grid_power_max
+      - sensor.metering_power_supplied
+      - sensor.sma_metering_power_supplied_min
+      - sensor.sma_metering_power_supplied_mean
+      - sensor.sma_metering_power_supplied_max
+
 
 # Text to speech
 tts:

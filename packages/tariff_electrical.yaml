@@ -526,6 +526,7 @@ template:
   - sensor:
       # We want to keep track of the consumption of the house: consumption_intake + solar_production - solar_yield
       # We know that this already exists elsewhere in other integrations.
+      # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical consumption total hour
         unique_id: electrical_consumption_total_hour
         unit_of_measurement: 'kWh'
@@ -550,7 +551,7 @@ template:
           {% else %}
           {%   set solar_yield = float(solar_yield, 0) %}
           {% endif %}
-          {% set total = (consumption_intake + solar_production - solar_yield) | round(2, default=0) %}
+          {% set total = (consumption_intake + solar_production - solar_yield) | round(5, default=0) %}
           {{ total }}
 
   - sensor:
@@ -610,6 +611,7 @@ template:
       # First we get the intake consumption from the last snapshot (delta) to set the consumption for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical_consumption_intake_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
@@ -635,12 +637,13 @@ template:
           {%   set new_snapshot = float(new_snapshot, 0) %}
           {% endif %}
           {% if (snapshots_valid == true) %}
-          {%  set result = (new_snapshot - old_snapshot) | round(2, default=0) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(5, default=0) %}
           {% endif %}
           {{ result }}
 
       # Then we summarize the daily intake consumption and distribution for the hour.
       # We reset the sum at first hour of day.
+      # 20221110: We increase decimals from 4 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical_daily_sum_consumption_intake_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
@@ -670,7 +673,7 @@ template:
           {%   if (current_hour == 0) %}
           {%     set current_sum = 0 %}
           {%   endif %}
-          {%   set result = (current_sum + current_value) | round(4, default=0) %}
+          {%   set result = (current_sum + current_value) | round(5, default=0) %}
           {% endif %}
           {{ result }}
 
@@ -739,6 +742,7 @@ template:
       # Then we get the solar yield from the last snapshot (delta) to set the yield for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical_solar_yield_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
@@ -764,7 +768,7 @@ template:
           {%   set new_snapshot = float(new_snapshot, 0) %}
           {% endif %}
           {% if (snapshots_valid == true) %}
-          {%  set result = (new_snapshot - old_snapshot) | round(2, default=0) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(5, default=0) %}
           {% endif %}
           {{ result }}
 
@@ -792,6 +796,7 @@ template:
       # Then we get the solar production from the last snapshot (delta) to set the solar consumption for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
+      # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name:  electrical_solar_production_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
@@ -817,7 +822,7 @@ template:
           {%   set new_snapshot = float(new_snapshot, 0) %}
           {% endif %}
           {% if (snapshots_valid == true) %}
-          {%  set result = (new_snapshot - old_snapshot) | round(2, default=0) %}
+          {%  set result = (new_snapshot - old_snapshot) | round(5, default=0) %}
           {% endif %}
           {{ result }}
 
