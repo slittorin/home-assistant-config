@@ -82,7 +82,7 @@ influxdb:
       - sensor.sma_metering_frequency_min
       - sensor.sma_metering_frequency_mean
       - sensor.sma_metering_frequency_max
-      # 20221011 exluded since we down-sample these as well.
+      # 20221011. Exluded since we down-sample these as well.
       - sensor.grid_power
       - sensor.sma_grid_power_min
       - sensor.sma_grid_power_mean
@@ -91,7 +91,25 @@ influxdb:
       - sensor.sma_metering_power_supplied_min
       - sensor.sma_metering_power_supplied_mean
       - sensor.sma_metering_power_supplied_max
-
+      # 20221226. Excluded since we down-sample these.
+      - sensor.pv_current_a
+      - sensor.sma_pv_current_a_min
+      - sensor.sma_pv_current_a_mean
+      - sensor.sma_pv_current_a_max
+      - sensor.pv_current_b
+      - sensor.sma_pv_current_b_min
+      - sensor.sma_pv_current_b_mean
+      - sensor.sma_pv_current_b_max
+      - sensor.pv_power_a
+      - sensor.sma_pv_power_a_min
+      - sensor.sma_pv_power_a_mean
+      - sensor.sma_pv_power_a_max
+      - sensor.pv_power_b
+      - sensor.sma_pv_power_b_min
+      - sensor.sma_pv_power_b_mean
+      - sensor.sma_pv_power_b_max
+      # 20221226. Excluded since we do not need to capture these (takes approx 1% or more of events)
+      - sensor.sn_3006917520_current_total
 
 # Text to speech
 tts:

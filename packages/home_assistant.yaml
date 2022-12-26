@@ -6,8 +6,9 @@
 
 sensor:
   # We want to keep track on when Home Assistant was restarted.
-  - platform: uptime
-    name: home_assistant_restart
+  # 20221113. Deprecated. Stops working in 2022.12.0, Configuration uptime using yaml has been removed. Available through Integrations.
+#  - platform: uptime
+#    name: home_assistant_restart
   # We wamt to keep track of basic OS/HW data, scan every 15 minute.
   - platform: systemmonitor
     scan_interval: 900

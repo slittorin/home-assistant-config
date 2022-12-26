@@ -279,6 +279,114 @@ sensor:
     sampling_size: 720
     max_age:
       hours: 1
+  # We want to get the min statistics for pv_current_a
+  - platform: statistics
+    name: SMA pv current a min
+    unique_id: sma_pv_current_a_min
+    entity_id: sensor.pv_current_a
+    state_characteristic: value_min
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for pv_current_a
+  - platform: statistics
+    name: SMA pv current a mean
+    unique_id: sma_pv_current_a_mean
+    entity_id: sensor.pv_current_a
+    state_characteristic: mean
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the max statistics for pv_current_a
+  - platform: statistics
+    name: SMA pv current a max
+    unique_id: sma_pv_current_a_max
+    entity_id: sensor.pv_current_a
+    state_characteristic: value_max
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the min statistics for pv_current_b
+  - platform: statistics
+    name: SMA pv current b min
+    unique_id: sma_pv_current_b_min
+    entity_id: sensor.pv_current_b
+    state_characteristic: value_min
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for pv_current_b
+  - platform: statistics
+    name: SMA pv current b mean
+    unique_id: sma_pv_current_b_mean
+    entity_id: sensor.pv_current_b
+    state_characteristic: mean
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the max statistics for pv_current_b
+  - platform: statistics
+    name: SMA pv current b max
+    unique_id: sma_pv_current_b_max
+    entity_id: sensor.pv_current_b
+    state_characteristic: value_max
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the min statistics for pv_power_a
+  - platform: statistics
+    name: SMA pv power a min
+    unique_id: sma_pv_power_a_min
+    entity_id: sensor.pv_power_a
+    state_characteristic: value_min
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for pv_power_a
+  - platform: statistics
+    name: SMA pv power a mean
+    unique_id: sma_pv_power_a_mean
+    entity_id: sensor.pv_power_a
+    state_characteristic: mean
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the max statistics for pv_power_a
+  - platform: statistics
+    name: SMA pv power a max
+    unique_id: sma_pv_power_a_max
+    entity_id: sensor.pv_power_a
+    state_characteristic: value_max
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the min statistics for pv_power_b
+  - platform: statistics
+    name: SMA pv power b min
+    unique_id: sma_pv_power_b_min
+    entity_id: sensor.pv_power_b
+    state_characteristic: value_min
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for pv_power_b
+  - platform: statistics
+    name: SMA pv power b mean
+    unique_id: sma_pv_power_b_mean
+    entity_id: sensor.pv_power_b
+    state_characteristic: mean
+    sampling_size: 720
+    max_age:
+      hours: 1
+  # We want to get the max statistics for pv_power_b
+  - platform: statistics
+    name: SMA pv power b max
+    unique_id: sma_pv_power_b_max
+    entity_id: sensor.pv_power_b
+    state_characteristic: value_max
+    sampling_size: 720
+    max_age:
+      hours: 1
 
 
 template:
@@ -704,6 +812,174 @@ template:
         state_class: measurement
         state: >
           {% set input = states('sensor.sma_metering_power_supplied_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_current_a_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_current_a_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_current_a_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_current_a_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_current_a_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_current_a_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_current_a_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_current_a_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_current_a_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_current_b_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_current_b_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_current_b_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_current_b_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_current_b_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_current_b_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_current_b_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_current_b_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_current_b_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_power_a_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_power_a_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_power_a_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_power_a_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_power_a_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_power_a_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_power_a_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_power_a_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_power_a_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_power_b_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_power_b_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_power_b_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_power_b_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_power_b_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_power_b_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_pv_power_b_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_pv_power_b_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_pv_power_b_max') %}
           {% if (input == 'unknown' or input == 'unavailable') %}
           {%   set value = 0 %}
           {% else %}
