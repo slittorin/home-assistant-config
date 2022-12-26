@@ -285,7 +285,6 @@ sensor:
     unique_id: sma_pv_current_a_min
     entity_id: sensor.pv_current_a
     state_characteristic: value_min
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the mean statistics for pv_current_a
@@ -294,7 +293,6 @@ sensor:
     unique_id: sma_pv_current_a_mean
     entity_id: sensor.pv_current_a
     state_characteristic: mean
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the max statistics for pv_current_a
@@ -303,7 +301,6 @@ sensor:
     unique_id: sma_pv_current_a_max
     entity_id: sensor.pv_current_a
     state_characteristic: value_max
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the min statistics for pv_current_b
@@ -312,7 +309,6 @@ sensor:
     unique_id: sma_pv_current_b_min
     entity_id: sensor.pv_current_b
     state_characteristic: value_min
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the mean statistics for pv_current_b
@@ -321,7 +317,6 @@ sensor:
     unique_id: sma_pv_current_b_mean
     entity_id: sensor.pv_current_b
     state_characteristic: mean
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the max statistics for pv_current_b
@@ -330,7 +325,6 @@ sensor:
     unique_id: sma_pv_current_b_max
     entity_id: sensor.pv_current_b
     state_characteristic: value_max
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the min statistics for pv_power_a
@@ -339,7 +333,6 @@ sensor:
     unique_id: sma_pv_power_a_min
     entity_id: sensor.pv_power_a
     state_characteristic: value_min
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the mean statistics for pv_power_a
@@ -348,7 +341,6 @@ sensor:
     unique_id: sma_pv_power_a_mean
     entity_id: sensor.pv_power_a
     state_characteristic: mean
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the max statistics for pv_power_a
@@ -357,7 +349,6 @@ sensor:
     unique_id: sma_pv_power_a_max
     entity_id: sensor.pv_power_a
     state_characteristic: value_max
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the min statistics for pv_power_b
@@ -366,7 +357,6 @@ sensor:
     unique_id: sma_pv_power_b_min
     entity_id: sensor.pv_power_b
     state_characteristic: value_min
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the mean statistics for pv_power_b
@@ -375,7 +365,6 @@ sensor:
     unique_id: sma_pv_power_b_mean
     entity_id: sensor.pv_power_b
     state_characteristic: mean
-    sampling_size: 720
     max_age:
       hours: 1
   # We want to get the max statistics for pv_power_b
@@ -384,7 +373,6 @@ sensor:
     unique_id: sma_pv_power_b_max
     entity_id: sensor.pv_power_b
     state_characteristic: value_max
-    sampling_size: 720
     max_age:
       hours: 1
 
