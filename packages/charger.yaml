@@ -14,6 +14,18 @@ input_number:
     mode: box
     min: 0
     max: 10000000
+  evcharger_daily_sum_consumption_hour_persistent:
+    name: 'Persistence for evcharger_daily_sum_consumption_hour_persistent'
+    icon: mdi:database
+    mode: box
+    min: 0
+    max: 10000000
+  evcharger_daily_sum_consumption_cost_hour_persistent:
+    name: 'Persistence for evcharger_daily_sum_consumption_cost_hour'
+    icon: mdi:database
+    mode: box
+    min: 0
+    max: 10000000
 
 input_text:
   evcharger_consumption_sensor:
@@ -24,6 +36,7 @@ template:
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
+      # TWEAAK: We appear to get the data plus one hour, i.e. the timestamp needs to be adjusted in Grafana (it is stored one hour plus also in InfluxDB).
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
@@ -62,6 +75,41 @@ template:
           {% endif %}
           {{ result }}
 
+      # Then we summarize the daily sum for evcharger_consumption_hour.
+      # 20221231: Added.
+      - name: evcharger_daily_sum_consumption_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {% set persistent_sum = states('input_number.evcharger_daily_sum_consumption_hour_persistent') %}
+          {% set current_sum = states('sensor.evcharger_daily_sum_consumption_hour') %}
+          {% set current_value = states('sensor.evcharger_consumption_hour') %}
+          {% set current_hour = now().hour %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (current_sum == 'unknown' or current_sum == 'unavailable') %}
+          {%   if (persistent_sum == 'unknown' or persistent_sum == 'unavailable' or persistent_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_sum = float(persistent_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_sum = float(current_sum, 0) %}
+          {% endif %}
+          {% if (current_value == 'unknown' or current_value == 'unavailable') %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set current_value = float(current_value, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (current_hour == 0) %}
+          {%     set current_sum = 0 %}
+          {%   endif %}
+          {%   set result = (current_sum + current_value)  | round(2, default=0) %}
+          {% endif %}
+          {{ result }}
+
       # Then we calculate the consumption and distribution cost for the hour.
       - name: evcharger_consumption_cost_hour
         device_class: 'monetary'
@@ -88,6 +136,40 @@ template:
           {% endif %}
           {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(2, default=0) %}
           {{ cost }}
+      # Then we summarize the daily sum for evcharger_consumption_cost_hour.
+      # 20221231: Added.
+      - name: evcharger_daily_sum_consumption_cost_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set persistent_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
+          {% set current_sum = states('sensor.evcharger_daily_sum_consumption_cost_hour') %}
+          {% set current_value = states('sensor.evcharger_consumption_cost_hour') %}
+          {% set current_hour = now().hour %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (current_sum == 'unknown' or current_sum == 'unavailable') %}
+          {%   if (persistent_sum == 'unknown' or persistent_sum == 'unavailable' or persistent_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_sum = float(persistent_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_sum = float(current_sum, 0) %}
+          {% endif %}
+          {% if (current_value == 'unknown' or current_value == 'unavailable') %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set current_value = float(current_value, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (current_hour == 0) %}
+          {%     set current_sum = 0 %}
+          {%   endif %}
+          {%   set result = (current_sum + current_value)  | round(2, default=0) %}
+          {% endif %}
+          {{ result }}
 
       # Last we set the snapshots.
       - name: evcharger_consumption_hour_snapshot
@@ -109,3 +191,25 @@ automation:
       data_template:
         entity_id: input_number.evcharger_consumption_hour_snapshot_persistent
         value: "{{ states('sensor.evcharger_consumption_hour_snapshot') }}"
+  # For persistence, On every state change for evcharger_daily_sum_consumption_hour, set input_number sensor.
+  - id: automation_evcharger_daily_sum_consumption_hour
+    alias: 'Automation for persistance of evcharger_daily_sum_consumption_hour'
+    trigger:
+      - platform: state
+        entity_id: sensor.evcharger_daily_sum_consumption_hour
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.evcharger_daily_sum_consumption_hour_persistent
+        value: "{{ states('sensor.evcharger_daily_sum_consumption_hour') }}"
+  # For persistence, On every state change for evcharger_daily_sum_consumption_cost_hour, set input_number sensor.
+  - id: automation_evcharger_daily_sum_consumption_cost_hour
+    alias: 'Automation for persistance of evcharger_daily_sum_consumption_cost_hour'
+    trigger:
+      - platform: state
+        entity_id: sensor.evcharger_daily_sum_consumption_cost_hour
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.evcharger_daily_sum_consumption_cost_hour_persistent
+        value: "{{ states('sensor.evcharger_daily_sum_consumption_cost_hour') }}"

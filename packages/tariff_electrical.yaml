@@ -1040,6 +1040,61 @@ template:
           {%  set result = (((current_cost_sum / (current_consumption_sum * daily_average_rate))-1) * 100) | round(4, default=0) %}
           {% endif %}
           {{ result }}
+      # At the end of the day, get the average daily intake calculated consumption index, without evcharger consumption.
+      # If lower than 1, then we have more intake consumption-cost on lower rate than average hours. I.e. good.
+      # If higher than 1, then we have more intake consumption-cost on higher rate than average hours. I.e. bad.
+      # If equal to 1, then we are at the average for the day. Neither good or bad.
+      # 20221231: Added.
+      - name: electrical_daily_calculated_consumption_index_pct_without_evcharger
+        unit_of_measurement: '%'
+        state_class: measurement
+        state: >
+          {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
+          {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
+          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
+          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
+          {% set daily_average_rate = states('sensor.electrical_distribution_average_consumption_rate_summary') %}
+          {% set persistent_evcharger_cost_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
+          {% set evcharger_cost_sum = states('sensor.evcharger_daily_sum_consumption_cost_hour') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (current_cost_sum == 'unknown' or current_cost_sum == 'unavailable') %}
+          {%   if (persistent_cost_sum == 'unknown' or persistent_cost_sum == 'unavailable' or persistent_cost_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_cost_sum = float(persistent_cost_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_cost_sum = float(current_cost_sum, 0) %}
+          {% endif %}
+          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
+          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
+          {% endif %}
+          {% if (daily_average_rate == 'unknown' or daily_average_rate == 'unavailable') %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set daily_average_rate = float(daily_average_rate, 0)/100 %}
+          {% endif %}
+          {% if (evcharger_cost_sum == 'unknown' or evcharger_cost_sum == 'unavailable') %}
+          {%   if (persistent_evcharger_cost_sum == 'unknown' or persistent_evcharger_cost_sum == 'unavailable' or persistent_evcharger_cost_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set evcharger_cost_sum = float(persistent_evcharger_cost_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set evcharger_cost_sum = float(evcharger_cost_sum, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%  set current_cost_sum = (current_cost_sum - evcharger_cost_sum) %}
+          {%  set result = (((current_cost_sum / (current_consumption_sum * daily_average_rate))-1) * 100) | round(4, default=0) %}
+          {% endif %}
+          {{ result }}
       # At the end of the day, get the average daily calculated intake consumption index in SEK.
       # If lower than 0, then we have more intake consumption-cost on lower rate than average hours. I.e. good, we 'earn' money.
       # If higher than 0, then we have more intake consumption-cost on higher rate than average hours. I.e. bad, we 'loose' money.
@@ -1081,6 +1136,132 @@ template:
           {% endif %}
           {% if (inputs_valid == true) %}
           {%  set result = (current_cost_sum - (current_consumption_sum * daily_average_rate)) | round(2, default=0) %}
+          {% endif %}
+          {{ result }}
+      # At the end of the day, get the average daily calculated intake consumption index in SEK, without evcharger consumption.
+      # If lower than 0, then we have more intake consumption-cost on lower rate than average hours. I.e. good, we 'earn' money.
+      # If higher than 0, then we have more intake consumption-cost on higher rate than average hours. I.e. bad, we 'loose' money.
+      # If equal to 0, then we are at the average for the day. Neither good or bad.
+      # 20221231: Added.
+      - name: electrical_daily_calculated_consumption_index_sek_without_evcharger
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
+          {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
+          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
+          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
+          {% set daily_average_rate = states('sensor.electrical_distribution_average_consumption_rate_summary') %}
+          {% set persistent_evcharger_cost_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
+          {% set evcharger_cost_sum = states('sensor.evcharger_daily_sum_consumption_cost_hour') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (current_cost_sum == 'unknown' or current_cost_sum == 'unavailable') %}
+          {%   if (persistent_cost_sum == 'unknown' or persistent_cost_sum == 'unavailable' or persistent_cost_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_cost_sum = float(persistent_cost_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_cost_sum = float(current_cost_sum, 0) %}
+          {% endif %}
+          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
+          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
+          {% endif %}
+          {% if (daily_average_rate == 'unknown' or daily_average_rate == 'unavailable') %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set daily_average_rate = float(daily_average_rate, 0)/100 %}
+          {% endif %}
+          {% if (evcharger_cost_sum == 'unknown' or evcharger_cost_sum == 'unavailable') %}
+          {%   if (persistent_evcharger_cost_sum == 'unknown' or persistent_evcharger_cost_sum == 'unavailable' or persistent_evcharger_cost_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set evcharger_cost_sum = float(persistent_evcharger_cost_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set evcharger_cost_sum = float(evcharger_cost_sum, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%  set current_cost_sum = (current_cost_sum - evcharger_cost_sum) %}
+          {%  set result = (current_cost_sum - (current_consumption_sum * daily_average_rate)) | round(2, default=0) %}
+          {% endif %}
+          {{ result }}
+      # At the end of the day summarize electrical_daily_sum_consumption_intake_hour, without evcharger consumption.
+      # 20221231: Added.
+      - name: electrical_daily_sum_consumption_intake_hour_sek_without_evcharger
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: measurement
+        state: >
+          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
+          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
+          {% set persistent_evcharger_sum = states('input_number.evcharger_daily_sum_consumption_hour_persistent') %}
+          {% set evcharger_sum = states('sensor.evcharger_daily_sum_consumption_hour') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
+          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
+          {% endif %}
+           {% if (evcharger_sum == 'unknown' or evcharger_sum == 'unavailable') %}
+          {%   if (persistent_evcharger_sum == 'unknown' or persistent_evcharger_sum == 'unavailable' or persistent_evcharger_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set evcharger_sum = float(persistent_evcharger_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set evcharger_sum = float(evcharger_sum, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%  set result = (current_consumption_sum - evcharger_sum) | round(2, default=0) %}
+          {% endif %}
+          {{ result }}
+      # At the end of the day summarize electrical_daily_sum_consumption_intake_cost_hour, without evcharger consumption.
+      # 20221231: Added.
+      - name: electrical_daily_sum_consumption_intake_cost_hour_without_evcharger
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: measurement
+        state: >
+          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
+          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
+          {% set persistent_evcharger_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
+          {% set evcharger_sum = states('sensor.evcharger_daily_sum_consumption_cost_hour') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
+          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
+          {% endif %}
+          {% if (evcharger_sum == 'unknown' or evcharger_sum == 'unavailable') %}
+          {%   if (persistent_evcharger_sum == 'unknown' or persistent_evcharger_sum == 'unavailable' or persistent_evcharger_sum == 0) %}
+          {%     set inputs_valid = false %}
+          {%   else %}
+          {%      set evcharger_sum = float(persistent_evcharger_sum, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set evcharger_sum = float(evcharger_sum, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%  set result = (current_consumption_sum - evcharger_sum) | round(2, default=0) %}
           {% endif %}
           {{ result }}
 
