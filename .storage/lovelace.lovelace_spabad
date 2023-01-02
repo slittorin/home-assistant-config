@@ -1,31 +1,45 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.lovelace_spabad",
-    "data": {
-        "config": {
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_spabad",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Home"
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Idag",
+          "path": "idag",
+          "type": "panel",
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/Mvw60utVz/spabad-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Inställningar",
+          "path": "installningar",
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
                 {
-                    "title": "Home"
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "Inst\u00e4llningar",
-                    "path": "installningar",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.balboa_spa_temperature_sensor"
-                                }
-                            ],
-                            "title": "Namn p\u00e5 spa-temperatursensor (fullst\u00e4ndigt namn)"
-                        }
-                    ]
+                  "entity": "input_text.balboa_spa_temperature_sensor"
                 }
-            ]
+              ],
+              "title": "Namn på spa-temperatursensor (fullständigt namn)"
+            }
+          ]
         }
+      ]
     }
+  }
 }
