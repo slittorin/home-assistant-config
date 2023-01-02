@@ -381,10 +381,11 @@ template:
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour.
       # We trigger this one second before we run other statistics that we need more precise.
+      # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
-        seconds: "58"
+        seconds: "56"
     sensor:
       # We save sma_metering_current_l1_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.

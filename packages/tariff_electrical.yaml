@@ -603,10 +603,11 @@ template:
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
+      # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
-        seconds: "58"
+        seconds: "56"
     sensor:
       # First we get the intake consumption from the last snapshot (delta) to set the consumption for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
@@ -993,8 +994,9 @@ template:
 
   - trigger:
       # Trigger at the  end of every day.
+      # 20230102: Changed from 23.59:59 to 23:59:58 to further add before end of hour.
       - platform: time
-        at: "23:59:59"
+        at: "23:59:58"
     sensor:
       # At the end of the day, get the average daily intake calculated consumption index.
       # If lower than 1, then we have more intake consumption-cost on lower rate than average hours. I.e. good.
@@ -1196,7 +1198,7 @@ template:
           {{ result }}
       # At the end of the day summarize electrical_daily_sum_consumption_intake_hour, without evcharger consumption.
       # 20221231: Added.
-      - name: electrical_daily_sum_consumption_intake_hour_sek_without_evcharger
+      - name: electrical_daily_sum_consumption_intake_hour_without_evcharger
         device_class: 'energy'
         unit_of_measurement: 'kWh'
         state_class: measurement

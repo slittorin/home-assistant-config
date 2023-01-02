@@ -36,11 +36,12 @@ template:
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
-      # TWEAAK: We appear to get the data plus one hour, i.e. the timestamp needs to be adjusted in Grafana (it is stored one hour plus also in InfluxDB).
+      # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
+      # TWEAK: We appear to get the data plus one hour, i.e. the timestamp needs to be adjusted in Grafana (it is stored one hour plus also in InfluxDB).
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
-        seconds: "58"
+        seconds: "56"
     sensor:
       # First we get the EV-charger consumption from the last snapshot (delta) to set the consumption for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
