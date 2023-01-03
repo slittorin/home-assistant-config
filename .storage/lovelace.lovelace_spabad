@@ -6,7 +6,13 @@
     "config": {
       "views": [
         {
-          "title": "Home"
+          "title": "Home",
+          "cards": [
+            {
+              "type": "thermostat",
+              "entity": "climate.nbp6013h_climate"
+            }
+          ]
         },
         {
           "theme": "Backend-selected",

@@ -229,9 +229,9 @@ template:
 automation:
   # This is not really persistence.
   # Since I could not get template sensor to work properly, we instead set an input_number, and from that we can derive to a proper sensor.
-  # Note that we need to have delimiting, as the data from the Spa can give wild results, specifically when data is updated in short timeframes (second and minutes).
-  # - It should be physically impossible to increase the temperature over 3 degrees per hour.
-  # - It should be physically impossible to decrease the temperature over 7 degrees per hour. Only if the spa is uncovered, and in minus celcius.
+  # Note that we need to have delimiting, as the data from the Spa can give wild results, specifically if the delta-time is short:
+  # - It should be (nearly) physically impossible to increase the temperature over 3 degrees per hour.
+  # - It should be (nearly) physically impossible to decrease the temperature over 7 degrees per hour. Only if the spa is uncovered, and in minus celcius.
   - id: automation_test_balboa_spa_temperature_change_per_hour
     alias: 'Automation for test_balboa_spa_temperature_delta_change'
     trigger:
@@ -247,7 +247,7 @@ automation:
           {% set temp_from = states('input_number.test_balboa_spa_temperature_hour_persistent') %}
           {% set temp_now = states('sensor.test_balboa_spa_temperature_hour') %}
           {% set inputs_valid = true %}
-          {% set result = 0 %}
+          {% set result = none %}
           {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
           {%   set inputs_valid = false %}
           {% else %}
@@ -264,16 +264,18 @@ automation:
           {%   set temp_now = float(temp_now, 0) %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set delta_time = ((time_now - time_from) / 3600) %}
-          {%   set delta_temp = temp_now - temp_from %}
-          {%   set result = (delta_temp / delta_time) %}
-          {%   if (result >= 3) %}
-          {%     set result = 0 %}
-          {%   elif (result <= -7) %}
-          {%     set result = 0 %}
-          {%   endif %}
+          {%   if (temp_now != temp_from) %}
+          {%     set delta_time = ((time_now - time_from) / 3600) %}
+          {%     set delta_temp = temp_now - temp_from %}
+          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+          {%     if (result >= 3) %}
+          {%       set result = none %}
+          {%     elif (result <= -7) %}
+          {%       set result = none %}
+          {%     endif %}
+          {%  endif %}
           {% endif %}
-          {{ float(result, 0) }}
+          {{ result }}
 
   # For persistence, and spa temperature
   - id: automation_test_balboa_spa_temperature
@@ -285,7 +287,7 @@ automation:
       service: input_number.set_value
       data_template:
         entity_id: input_number.test_balboa_spa_temperature_persistent
-        value: "{{ states('sensor.test_balboa_spa_temperature') }}"
+        value: "{{ float(states('sensor.test_balboa_spa_temperature'), 0) }}"
 
   # For persistence, and spa hourly temperature
   - id: automation_test_balboa_spa_temperature_hour
@@ -297,4 +299,4 @@ automation:
       service: input_number.set_value
       data_template:
         entity_id: input_number.test_balboa_spa_temperature_hour_persistent
-        value: "{{ states('sensor.test_balboa_spa_temperature_hour') }}"
+        value: "{{ float(states('sensor.test_balboa_spa_temperature_hour'), 0) }}"

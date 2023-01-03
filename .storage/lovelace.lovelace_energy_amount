@@ -1,196 +1,349 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.lovelace_energy_amount",
-    "data": {
-        "config": {
-            "title": "Home",
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_energy_amount",
+  "data": {
+    "config": {
+      "title": "Home",
+      "views": [
+        {
+          "theme": "Backend-selected",
+          "path": "default_view",
+          "title": "Energimängd",
+          "badges": [],
+          "cards": [
+            {
+              "type": "markdown",
+              "content": "### Dag\n- [Idag](http://192.168.2.20:8123/lovelace-energy-amount/idag)\n- [Igår](http://192.168.2.20:8123/lovelace-energy-amount/igar)\n\n### Vecka\n- [Denna vecka](http://192.168.2.20:8123/lovelace-energy-amount/denna-vecka)\n- [Förra veckan](http://192.168.2.20:8123/lovelace-energy-amount/forra-veckan)\n\n### Månad\n- [Denna månad](http://192.168.2.20:8123/lovelace-energy-amount/manad)\n- [Förra månaden](http://192.168.2.20:8123/lovelace-energy-amount/forra-manaden)\n\n### År\n- [Detta år - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/ar-dag)\n- [Detta år - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/ar-vecka)\n- [Detta år - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/ar-manad)\n- [Använt av huset över tid - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-dag)\n- [Använt av huset över tid - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-vecka)\n- [Använt av huset över tid - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-manad)\n- [Intag till huset över tid - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-dag)\n- [Intag till huset över tid - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-vecka)\n- [Intag till huset över tid - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-manad)"
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
                 {
-                    "path": "default_view",
-                    "title": "Nu",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "vertical-stack",
-                            "cards": [
-                                {
-                                    "type": "entities",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.electrical_consumption_total_hour",
-                                            "name": "Energim\u00e4ngd anv\u00e4nd f\u00f6r huset",
-                                            "card_mod": {
-                                                "style": "ha-svg-icon {\n  color: red;\n}    \n"
-                                            }
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_consumption_intake_hour",
-                                            "name": "Energim\u00e4ngd intag till huset"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_consumption_intake_cost_hour",
-                                            "name": "Kostnad f\u00f6r intag av energi till huset"
-                                        }
-                                    ],
-                                    "title": "Uppgifter f\u00f6r senaste hel timme"
-                                },
-                                {
-                                    "type": "entities",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.balboa_spa_heater_consumption_hour",
-                                            "name": "Varav energim\u00e4ngd f\u00f6r v\u00e4rmare spabad"
-                                        },
-                                        {
-                                            "entity": "sensor.balboa_spa_circulationpump_consumption_hour",
-                                            "name": "Varav energim\u00e4ngd f\u00f6r cirkulationspump spabad"
-                                        },
-                                        {
-                                            "entity": "sensor.evcharger_consumption_hour",
-                                            "name": "Varav energim\u00e4ngd f\u00f6r elbilsladdare"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "entities",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.electrical_solar_production_hour",
-                                            "name": "Solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_production_reduction_hour",
-                                            "name": "Kostnadsreduktion av solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_yield_hour",
-                                            "name": "Utmatning av solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_yield_return_hour",
-                                            "name": "Int\u00e4kt av utmatning av solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_total_return_hour",
-                                            "name": "Totalt insparande (reduktion + int\u00e4kt) f\u00f6r solelsproduktion"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.electrical_consumption_total_hour",
+                      "name": "Energimängd använd för huset",
+                      "card_mod": {
+                        "style": "ha-svg-icon {\n  color: red;\n}    \n"
+                      }
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_intake_hour",
+                      "name": "Energimängd intag till huset"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_intake_cost_hour",
+                      "name": "Kostnad för intag av energi till huset"
+                    }
+                  ],
+                  "title": "Uppgifter för senaste hel timme"
                 },
                 {
-                    "title": "Idag",
-                    "path": "idag",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/uXvXc8B7z/energimangd-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.balboa_spa_heater_consumption_hour",
+                      "name": "Varav energimängd för värmare spabad"
+                    },
+                    {
+                      "entity": "sensor.balboa_spa_circulationpump_consumption_hour",
+                      "name": "Varav energimängd för cirkulationspump spabad"
+                    },
+                    {
+                      "entity": "sensor.evcharger_consumption_hour",
+                      "name": "Varav energimängd för elbilsladdare"
+                    }
+                  ]
                 },
                 {
-                    "title": "Ig\u00e5r",
-                    "path": "igar",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/hk3PBUBnk/energimangd-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "F\u00f6rra m\u00e5naden",
-                    "path": "forra-manaden",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/NcTTP8fnz/energimangd-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "Denna M\u00e5nad",
-                    "path": "manad",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/6F5jEUfnk/energimangd-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "\u00c5r / Dag",
-                    "path": "ar-dag",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/ExJo88fnk/energimangd-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "\u00c5r / M\u00e5nad",
-                    "path": "ar-manad",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/zja-8UBnz/energimangd-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "Energiinst\u00e4llningar",
-                    "path": "energiinstallningar",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.electrical_consumption_sensor",
-                                    "name": "F\u00f6r elkonsumption in i huset"
-                                },
-                                {
-                                    "entity": "input_text.electrical_production_sensor",
-                                    "name": "F\u00f6r elproduktion av panelerna"
-                                },
-                                {
-                                    "entity": "input_text.electrical_yield_sensor",
-                                    "name": "F\u00f6r elproduktion ut ur huset"
-                                }
-                            ],
-                            "title": "Sensornamn f\u00f6r energim\u00e4ngder"
-                        },
-                        {
-                            "type": "markdown",
-                            "content": "For [Tariff settings and information](http://192.168.2.20:8123/lovelace-energyrate/energiinstallningar).\nFor [Energy cost and information](http://192.168.2.20:8123/lovelace-energy/energiinstallningar).\n\n#### Sensor data is taken from:\n- For consumtion into the house: `input_text.electrical_consumption_sensor`.\n- For production by the solar panels: `input_text.electrical_production_sensor`.\n- For production that is pushed to the electrical grid (yield): `input_text.electrical_yield_sensor`.\n",
-                            "title": "Information"
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.electrical_solar_production_hour",
+                      "name": "Solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_production_reduction_hour",
+                      "name": "Kostnadsreduktion av solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_yield_hour",
+                      "name": "Utmatning av solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_yield_return_hour",
+                      "name": "Intäkt av utmatning av solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_total_return_hour",
+                      "name": "Totalt insparande (reduktion + intäkt) för solelsproduktion"
+                    }
+                  ]
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Idag",
+          "path": "idag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/uXvXc8B7z/energimangd-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Igår",
+          "path": "igar",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/hk3PBUBnk/energimangd-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Denna vecka",
+          "path": "denna-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/fievYqtVz/energimangd-denna-vecka?orgId=1&from=now/w&to=now/w&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra veckan",
+          "path": "forra-veckan",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/lDEdY3tVk/energimangd-forra-veckan?orgId=1&from=now-1w/w&to=now-1w/w&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra månaden",
+          "path": "forra-manaden",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/NcTTP8fnz/energimangd-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Denna Månad",
+          "path": "manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/6F5jEUfnk/energimangd-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "År / Dag",
+          "path": "ar-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/ExJo88fnk/energimangd-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "År / Vecka",
+          "path": "ar-vecka",
+          "subview": true,
+          "type": "panel",
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/K-QNx3tVz/energimangd-detta-ar-per-vecka?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "År / Månad",
+          "path": "ar-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/zja-8UBnz/energimangd-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Använt av huset - Över tid per dag",
+          "type": "panel",
+          "path": "anvant-av-huset-over-tid-per-dag",
+          "subview": true,
+          "icon": "",
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/ra36z3pVk/energimangd-anvant-av-huset-over-tid-per-dag?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Använt av huset - Över tid per vecka",
+          "path": "anvant-av-huset-over-tid-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/vPQX-3tVz/energimangd-anvant-av-huset-over-tid-per-vecka?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Använt av huset - Över tid per månad",
+          "path": "anvant-av-huset-over-tid-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/kvir-qpVk/energimangd-anvant-av-huset-over-tid-per-manad?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Intag till huset - Över tid per dag",
+          "path": "intag-till-huset-over-tid-per-dag",
+          "subview": true,
+          "type": "panel",
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/MW-5fqp4z/energimangd-intag-till-huset-over-tid-per-dag?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Intag till huset - Över tid per vecka",
+          "path": "intag-till-huset-over-tid-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/8ZBEf3t4k/energimangd-intag-till-huset-over-tid-per-vecka?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Intag till huset - Över tid per månad",
+          "path": "intag-till-huset-over-tid-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/UqN8fqt4z/energimangd-intag-till-huset-over-tid-per-manad?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energiinställningar",
+          "path": "energiinstallningar",
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_text.electrical_consumption_sensor",
+                  "name": "För elkonsumption in i huset"
+                },
+                {
+                  "entity": "input_text.electrical_production_sensor",
+                  "name": "För elproduktion av panelerna"
+                },
+                {
+                  "entity": "input_text.electrical_yield_sensor",
+                  "name": "För elproduktion ut ur huset"
+                }
+              ],
+              "title": "Sensornamn för energimängder"
+            },
+            {
+              "type": "markdown",
+              "content": "For [Tariff settings and information](http://192.168.2.20:8123/lovelace-energyrate/energiinstallningar).\nFor [Energy cost and information](http://192.168.2.20:8123/lovelace-energy/energiinstallningar).\n\n#### Sensor data is taken from:\n- For consumtion into the house: `input_text.electrical_consumption_sensor`.\n- For production by the solar panels: `input_text.electrical_production_sensor`.\n- For production that is pushed to the electrical grid (yield): `input_text.electrical_yield_sensor`.\n",
+              "title": "Information"
+            }
+          ]
         }
+      ]
     }
+  }
 }
