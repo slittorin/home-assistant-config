@@ -8,13 +8,12 @@
       "views": [
         {
           "theme": "Backend-selected",
-          "path": "default_view",
           "title": "Energimängd",
           "badges": [],
           "cards": [
             {
               "type": "markdown",
-              "content": "### Dag\n- [Idag](http://192.168.2.20:8123/lovelace-energy-amount/idag)\n- [Igår](http://192.168.2.20:8123/lovelace-energy-amount/igar)\n\n### Vecka\n- [Denna vecka](http://192.168.2.20:8123/lovelace-energy-amount/denna-vecka)\n- [Förra veckan](http://192.168.2.20:8123/lovelace-energy-amount/forra-veckan)\n\n### Månad\n- [Denna månad](http://192.168.2.20:8123/lovelace-energy-amount/manad)\n- [Förra månaden](http://192.168.2.20:8123/lovelace-energy-amount/forra-manaden)\n\n### År\n- [Detta år - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/ar-dag)\n- [Detta år - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/ar-vecka)\n- [Detta år - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/ar-manad)\n- [Använt av huset över tid - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-dag)\n- [Använt av huset över tid - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-vecka)\n- [Använt av huset över tid - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-manad)\n- [Intag till huset över tid - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-dag)\n- [Intag till huset över tid - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-vecka)\n- [Intag till huset över tid - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-manad)"
+              "content": "### Dag\n- [Idag](http://192.168.2.20:8123/lovelace-energy-amount/idag)\n- [Igår](http://192.168.2.20:8123/lovelace-energy-amount/igar)\n\n### Vecka\n- [Denna vecka](http://192.168.2.20:8123/lovelace-energy-amount/denna-vecka)\n- [Förra veckan](http://192.168.2.20:8123/lovelace-energy-amount/forra-veckan)\n\n### Månad\n- [Denna månad](http://192.168.2.20:8123/lovelace-energy-amount/manad)\n- [Förra månaden](http://192.168.2.20:8123/lovelace-energy-amount/forra-manaden)\n\n### År\n- [Detta år - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/ar-dag)\n- [Detta år - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/ar-vecka)\n- [Detta år - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/ar-manad)\n- [Förra året - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/forra-aret-per-dag)\n- [Förra året - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/forra-aret-per-vecka)\n- [Förra året - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/forra-aret-per-manad)\n\n### Historik\n- [Använt av huset över tid - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-dag)\n- [Använt av huset över tid - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-vecka)\n- [Använt av huset över tid - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-manad)\n- [Intag till huset över tid - Per dag](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-dag)\n- [Intag till huset över tid - Per vecka](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-vecka)\n- [Intag till huset över tid - Per månad](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-manad)"
             },
             {
               "type": "vertical-stack",
@@ -217,6 +216,51 @@
             {
               "type": "iframe",
               "url": "http://192.168.2.30:3000/d/zja-8UBnz/energimangd-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra året - Per dag",
+          "path": "forra-aret-per-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/7JAKQ3tVk/energimangd-forra-aret-per-dag?orgId=1&from=now-1y/y&to=now-1y/y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra året - Per vecka",
+          "path": "forra-aret-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/UW1EQqtVk/energimangd-forra-aret-per-vecka?orgId=1&from=now-1y/y&to=now-1y/y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra året - Per månad",
+          "path": "forra-aret-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/zFF8Qqt4z/energimangd-forra-aret-per-manad?orgId=1&from=now-1y/y&to=now-1y/y&refresh=5m&theme=light&kiosk=tv",
               "aspect_ratio": "100%"
             }
           ]
