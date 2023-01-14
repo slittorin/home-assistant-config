@@ -34,6 +34,21 @@ input_number:
     min: -100
     max: 100
     unit_of_measurement: '°C'
+  test_balboa_spa_temperature_change_persistent:
+    name: 'Persistence for test_balboa_spa_temperature_change'
+    icon: mdi:thermometer-lines
+    mode: box
+    min: -100
+    max: 100
+    unit_of_measurement: '°C'
+  test_balboa_spa_temperature_change_trigger_on_persistent:
+    name: 'Persistence for test_balboa_spa_temperature_change_trigger_on'
+    icon: mdi:thermometer-lines
+    mode: box
+    initial: 0
+    min: -100
+    max: 100
+    unit_of_measurement: '°C'
 
 
 input_text:
@@ -233,7 +248,7 @@ automation:
   # - It should be (nearly) physically impossible to increase the temperature over 3 degrees per hour.
   # - It should be (nearly) physically impossible to decrease the temperature over 7 degrees per hour. Only if the spa is uncovered, and in minus celcius.
   - id: automation_test_balboa_spa_temperature_change_per_hour
-    alias: 'Automation for test_balboa_spa_temperature_delta_change'
+    alias: 'Automation for test_balboa_spa_temperature_change_per_hour'
     trigger:
       - platform: state
         entity_id: sensor.test_balboa_spa_temperature_hour
@@ -246,6 +261,147 @@ automation:
           {% set time_now = now().timestamp() %}
           {% set temp_from = states('input_number.test_balboa_spa_temperature_hour_persistent') %}
           {% set temp_now = states('sensor.test_balboa_spa_temperature_hour') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set time_from = as_timestamp(time_from) %}
+          {% endif %}
+          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+          {%    set inputs_valid = false %}
+          {% else %}
+          {%   set temp_from = float(temp_from, 0) %}
+          {% endif %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (temp_now != temp_from) %}
+          {%     set delta_time = ((time_now - time_from) / 3600) %}
+          {%     set delta_temp = temp_now - temp_from %}
+          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+          {%     if (result >= 3) %}
+          {%       set result = none %}
+          {%     elif (result <= -7) %}
+          {%       set result = none %}
+          {%     endif %}
+          {%  endif %}
+          {% endif %}
+          {{ result }}
+  - id: automation_test_balboa_spa_temperature_change
+    alias: 'Automation for test_balboa_spa_temperature_delta_change'
+    trigger:
+      - platform: state
+        entity_id: sensor.test_balboa_spa_temperature
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.test_balboa_spa_temperature_change_persistent
+        value: >
+          {% set time_from = states.input_number['test_balboa_spa_temperature_persistent'].last_updated %}
+          {% set time_now = now().timestamp() %}
+          {% set temp_from = states('input_number.test_balboa_spa_temperature_persistent') %}
+          {% set temp_now = states('sensor.test_balboa_spa_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set time_from = as_timestamp(time_from) %}
+          {% endif %}
+          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+          {%    set inputs_valid = false %}
+          {% else %}
+          {%   set temp_from = float(temp_from, 0) %}
+          {% endif %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (temp_now != temp_from) %}
+          {%     set delta_time = ((time_now - time_from) / 3600) %}
+          {%     set delta_temp = temp_now - temp_from %}
+          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+          {%     if (result >= 3) %}
+          {%       set result = none %}
+          {%     elif (result <= -7) %}
+          {%       set result = none %}
+          {%     endif %}
+          {%  endif %}
+          {% endif %}
+          {{ result }}
+
+  # We gather the time-delta when heater has been on for 10 minutes.
+  - id: automation_test_balboa_spa_temperature_change_trigger_on
+    alias: 'Automation for test_balboa_spa_temperature_change_trigger_on'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.balboa_spa_heater_on
+        to: "on"
+        for: "00:10:00"
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.test_balboa_spa_temperature_change_trigger_on_persistent
+        value: >
+          {% set time_from = states.input_number['test_balboa_spa_temperature_persistent'].last_updated %}
+          {% set time_now = now().timestamp() %}
+          {% set temp_from = states('input_number.test_balboa_spa_temperature_persistent') %}
+          {% set temp_now = states('sensor.test_balboa_spa_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set time_from = as_timestamp(time_from) %}
+          {% endif %}
+          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+          {%    set inputs_valid = false %}
+          {% else %}
+          {%   set temp_from = float(temp_from, 0) %}
+          {% endif %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (temp_now != temp_from) %}
+          {%     set delta_time = ((time_now - time_from) / 3600) %}
+          {%     set delta_temp = temp_now - temp_from %}
+          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+          {%     if (result >= 3) %}
+          {%       set result = none %}
+          {%     elif (result <= -7) %}
+          {%       set result = none %}
+          {%     endif %}
+          {%  endif %}
+          {% endif %}
+          {{ result }}
+
+
+  # We gather the time-delta when heater has been off for 10 minutes.
+  - id: automation_test_balboa_spa_temperature_change_trigger_off
+    alias: 'Automation for test_balboa_spa_temperature_change_trigger_off'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.balboa_spa_heater_on
+        to: "off"
+        for: "00:10:00"
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.test_balboa_spa_temperature_change_trigger_on_persistent
+        value: >
+          {% set time_from = states.input_number['test_balboa_spa_temperature_persistent'].last_updated %}
+          {% set time_now = now().timestamp() %}
+          {% set temp_from = states('input_number.test_balboa_spa_temperature_persistent') %}
+          {% set temp_now = states('sensor.test_balboa_spa_temperature') %}
           {% set inputs_valid = true %}
           {% set result = none %}
           {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}

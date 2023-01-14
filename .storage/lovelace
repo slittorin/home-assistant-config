@@ -7,11 +7,91 @@
       "title": "Home",
       "views": [
         {
+          "theme": "Backend-selected",
           "path": "default_view",
           "title": "Home",
-          "type": "sidebar",
+          "type": "custom:masonry-layout",
           "badges": [],
           "cards": [
+            {
+              "type": "gauge",
+              "entity": "sensor.metering_power_absorbed",
+              "name": "Effekt intag till huset",
+              "unit": "W",
+              "min": 0,
+              "max": 22000,
+              "needle": true,
+              "severity": {
+                "green": 5000,
+                "yellow": 11000,
+                "red": 17000
+              }
+            },
+            {
+              "type": "gauge",
+              "name": "Effekt solelsproduktion",
+              "unit": "W",
+              "min": 0,
+              "max": 6000,
+              "needle": true,
+              "entity": "sensor.metering_power_supplied"
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.electrical_consumption_rate_summary",
+              "name": "Elkonsumptionsavgift",
+              "unit": "öre/kWh",
+              "min": 1,
+              "needle": true,
+              "severity": {
+                "green": 50,
+                "yellow": 100,
+                "red": 500
+              },
+              "max": 1500
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.metering_current_l2",
+              "name": "Strömstyrka L2",
+              "unit": "A",
+              "min": 0,
+              "max": 30,
+              "severity": {
+                "green": 5,
+                "yellow": 15,
+                "red": 25
+              },
+              "needle": true
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.metering_current_l1",
+              "name": "Strömstyrka L1",
+              "unit": "A",
+              "min": 0,
+              "max": 30,
+              "severity": {
+                "green": 5,
+                "yellow": 15,
+                "red": 25
+              },
+              "needle": true
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.metering_current_l3",
+              "name": "Strömstyrka L3",
+              "unit": "A",
+              "min": 0,
+              "max": 30,
+              "severity": {
+                "green": 5,
+                "yellow": 15,
+                "red": 25
+              },
+              "needle": true
+            },
             {
               "type": "history-graph",
               "entities": [
@@ -23,6 +103,11 @@
                 }
               ],
               "hours_to_show": 336
+            },
+            {
+              "type": "markdown",
+              "content": "### Data är inte korrekt för dessa datum:\n- Spabad innan sommaren (datum XXX-XXX).\n- Spabad efter sommaren (datum XXX-XXX).\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana). Data registrerades dock i HA.",
+              "title": "Inkorrekt data"
             }
           ]
         }

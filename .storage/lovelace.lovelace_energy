@@ -1,177 +1,192 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.lovelace_energy",
-    "data": {
-        "config": {
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_energy",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "theme": "Backend-selected",
+          "title": "Energikostnad",
+          "badges": [],
+          "cards": [
+            {
+              "type": "markdown",
+              "content": "### Dag\n- [Idag](http://192.168.2.20:8123/lovelace-energy/idag)\n- [Igår](http://192.168.2.20:8123/lovelace-energy/igar)\n\n### Vecka\n- [Denna vecka XXX](http://192.168.2.20:8123/lovelace-energy-amount/denna-vecka)\n- [Förra veckan XXX](http://192.168.2.20:8123/lovelace-energy-amount/forra-veckan)\n\n### Månad\n- [Denna månad](http://192.168.2.20:8123/lovelace-energy/denna-manad)\n- [Förra månaden](http://192.168.2.20:8123/lovelace-energy/forra-manaden)\n\n### År\n- [Detta år - Per dag](http://192.168.2.20:8123/lovelace-energy/detta-ar-per-dag)\n- [Detta år - Per vecka XXX](http://192.168.2.20:8123/lovelace-energy-amount/detta-ar-per-vecka)\n- [Detta år - Per månad XXX](http://192.168.2.20:8123/lovelace-energy-amount/detta-ar-per-manad)\n- [Förra året - Per dag XXX](http://192.168.2.20:8123/lovelace-energy-amount/forra-aret-per-dag)\n- [Förra året - Per vecka XXX](http://192.168.2.20:8123/lovelace-energy-amount/forra-aret-per-vecka)\n- [Förra året - Per månad XXX](http://192.168.2.20:8123/lovelace-energy-amount/forra-aret-per-manad)\n\n### Historik\n- [Använt av huset - Över tid - Per dag XXX](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-dag)\n- [Använt av huset - Över tid - Per vecka XXX](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-vecka)\n- [Använt av huset - Över tid - Per månad XXX](http://192.168.2.20:8123/lovelace-energy-amount/anvant-av-huset-over-tid-per-manad)\n- [Intag till huset - Över tid - Per dag XXX](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-dag)\n- [Intag till huset - Över tid - Per vecka XXX](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-vecka)\n- [Intag till huset - Över tid - Per månad XXX](http://192.168.2.20:8123/lovelace-energy-amount/intag-till-huset-over-tid-per-manad)"
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
                 {
-                    "title": "Nu",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "vertical-stack",
-                            "cards": [
-                                {
-                                    "type": "entities",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.electrical_consumption_total_hour",
-                                            "name": "Energim\u00e4ngd anv\u00e4nd f\u00f6r huset",
-                                            "card_mod": {
-                                                "style": "ha-svg-icon {\n  color: red;\n}    \n"
-                                            }
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_consumption_intake_hour",
-                                            "name": "Energim\u00e4ngd intag till huset"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_consumption_intake_cost_hour",
-                                            "name": "Kostnad f\u00f6r intag av energi till huset"
-                                        }
-                                    ],
-                                    "title": "Uppgifter f\u00f6r senaste hel timme"
-                                },
-                                {
-                                    "type": "entities",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.balboa_spa_heater_cost_hour",
-                                            "name": "Varav kostnad f\u00f6r v\u00e4rmare spabad"
-                                        },
-                                        {
-                                            "entity": "sensor.balboa_spa_circulationpump_cost_hour",
-                                            "name": "Varav kostnad f\u00f6r cirkulationspump spabad"
-                                        },
-                                        {
-                                            "entity": "sensor.evcharger_consumption_cost_hour",
-                                            "name": "Varav kostnad f\u00f6r elbilsladdning (utan Tibber-reduktion)"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "entities",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.electrical_solar_production_hour",
-                                            "name": "Solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_production_reduction_hour",
-                                            "name": "Kostnadsreduktion av solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_yield_hour",
-                                            "name": "Utmatning av solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_yield_return_hour",
-                                            "name": "Int\u00e4kt av utmatning av solelsproduktion"
-                                        },
-                                        {
-                                            "entity": "sensor.electrical_solar_total_return_hour",
-                                            "name": "Totalt insparande (reduktion + int\u00e4kt) f\u00f6r solelsproduktion"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.electrical_consumption_total_hour",
+                      "name": "Energimängd använd för huset",
+                      "card_mod": {
+                        "style": "ha-svg-icon {\n  color: red;\n}    \n"
+                      }
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_intake_hour",
+                      "name": "Energimängd intag till huset"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_intake_cost_hour",
+                      "name": "Kostnad för intag av energi till huset"
+                    }
+                  ],
+                  "title": "Uppgifter för senaste hel timme"
                 },
                 {
-                    "title": "Idag",
-                    "path": "energikostnad-idag",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/5OFTMBB7k/energikostnad-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.balboa_spa_heater_cost_hour",
+                      "name": "Varav kostnad för värmare spabad"
+                    },
+                    {
+                      "entity": "sensor.balboa_spa_circulationpump_cost_hour",
+                      "name": "Varav kostnad för cirkulationspump spabad"
+                    },
+                    {
+                      "entity": "sensor.evcharger_consumption_cost_hour",
+                      "name": "Varav kostnad för elbilsladdning (utan Tibber-reduktion)"
+                    }
+                  ]
                 },
                 {
-                    "title": "Ig\u00e5r",
-                    "path": "igar",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/_xWi28Bnk/energikostnad-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "F\u00f6rra m\u00e5naden",
-                    "path": "forra-manaden",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/0zUPhUfnz/energikostnad-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "Denna M\u00e5nad",
-                    "path": "energikostnad-denna-manad",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/m2XBgEB7k/energikostnad-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "\u00c5r / Dag",
-                    "path": "energikostnad-detta-ar-per-dag",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/r9GfsPfnz/energikostnad-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "\u00c5r / M\u00e5nad",
-                    "path": "energikostnad-detta-ar-per-manad",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/_UmfEEBnk/energikostnad-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "title": "Energiinst\u00e4llningar",
-                    "path": "energiinstallningar",
-                    "icon": "",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "markdown",
-                            "content": "For [Tariff settings and information](http://192.168.2.20:8123/lovelace-energyrate/energiinstallningar).\nFor [Energy measure and information](http://192.168.2.20:8123/lovelace-energy-amount/energiinstallningar)\n\n#### Note:\n- Sensors are updated per hour (at the last second of the hour).\n- Sensors are in either the unit `\u00f6re/kWh`, `%` or `text for name of sensor`.\n- The sensor names for consumption, production and yield needs to be of `state_class: total_increasing`, and `unit_of_measurement: kWh`.\n- The sensor names for spot-prices must be unit `kWh` and currency `SEK`.\n\n#### We measure the delta of energy from the last snapshot for intake of electricity:\n- Old snapshot `sensor.electrical_consumption_intake_hour_snapshot` in `kWh`.\n- New snapshot from sensor given by `input_text.electrical_consumption_sensor` in `kWh`.\n- If old snapshot is empty then the code checks if save persistence-value is stored in `input_number.electrical_consumption_intake_hour_snapshot_persistent`.\n- Full sensor name `sensor.electrical_consumption_intake_hour`.\n- Calculation: `result = (new_snapshot - old_snapshot)` in `kWh`.\n\n#### Then we get the cost from the delta of energy for intake of electricity:\n- Delta from `sensor.electrical_consumption_intake_hour`  in `kWh`.\n- Tariff rate for distribution from `sensor.electrical_distribution_rate_summary` in `\u00f6re/kWh`.\n- Tariff rate for consumption from `sensor.electrical_consumption_rate_summary` in `\u00f6re/kWh`.\n- Full sensor name `sensor.electrical_consumption_intake_cost_hour`.\n- Calculation: `cost = (delta * ((rate_distribution + rate_consumption))/100)` in `SEK`.\n\n#### We measure the delta of energy from the last snapshot for production that is output to the grid (yield):\n- Old snapshot `sensor.electrical_solar_yield_hour_snapshot` in `kWh`.\n- New snapshot from sensor given by `input_text.electrical_yield_sensor` in `kWh`.\n- If old snapshot is empty then the code checks if save persistence-value is stored in `input_number.electrical_solar_yield_hour_snapshot_persistent`.\n- Full sensor name `sensor.electrical_solar_yield_hour`.\n- Calculation: `result = (new_snapshot - old_snapshot)` in `kWh`.\n\n#### Then we get the reduction of cost from the delta of energy for production that is output to the grid (yield):\n- Delta from `sensor.electrical_solar_yield_hour`  in `kWh`.\n- Tariff rate for distribution and consumption from `sensor.electrical_yield_rate_summary` in `\u00f6re/kWh`.\n- Full sensor name `sensor.electrical_solar_yield_return_hour`.\n- Calculation: `yield = (delta * (yield_summary)/100)` in `SEK`.\n\n#### We measure the delta of energy from the last snapshot for solar production:\n- Old snapshot `sensor.electrical_solar_production_hour_snapshot` in `kWh`.\n- New snapshot from sensor given by `input_text.electrical_production_sensor` in `kWh`.\n- If old snapshot is empty then the code checks if save persistence-value is stored in `input_number.electrical_solar_production_hour_snapshot_persistent`.\n- Full sensor name `sensor.electrical_solar_production_hour`.\n- Calculation: `result = (new_snapshot - old_snapshot)` in `kWh`.\n\n#### Then we get the reduction of cost from the delta of energy solar production:\n- Solar production delta from `sensor.electrical_solar_production_hour`  in `kWh`.\n- Yield delta from `sensor.electrical_solar_production_hour`  in `kWh`.\n- Tariff rate for distribution from `sensor.electrical_distribution_rate_summary` in `\u00f6re/kWh`.\n- Tariff rate for consumption from `sensor.electrical_consumption_rate_summary` in `\u00f6re/kWh`.\n- Full sensor name `sensor.electrical_solar_production_reduction_hour`.\n- Calculation: `reduction = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100)` in `SEK`.\n\n#### Lastly we summarize the total reduction for solar production:\n- Solar production reduction from `sensor.electrical_solar_production_reduction_hour`.\n- Yield reduction from `sensor.electrical_solar_yield_return_hour`.\n- Full sensor name `sensor.electrical_solar_total_return_hour`.\n- Calculation: `total_reduction = (reduction + yield_reduction)` in `SEK`.\n",
-                            "title": "Information"
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.electrical_solar_production_hour",
+                      "name": "Solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_production_reduction_hour",
+                      "name": "Kostnadsreduktion av solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_yield_hour",
+                      "name": "Utmatning av solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_yield_return_hour",
+                      "name": "Intäkt av utmatning av solelsproduktion"
+                    },
+                    {
+                      "entity": "sensor.electrical_solar_total_return_hour",
+                      "name": "Totalt insparande (reduktion + intäkt) för solelsproduktion"
+                    }
+                  ]
                 }
-            ],
-            "title": "Energikostnad"
+              ]
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Idag",
+          "path": "idag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/5OFTMBB7k/energikostnad-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Igår",
+          "path": "igar",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/_xWi28Bnk/energikostnad-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra månaden",
+          "path": "forra-manaden",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/0zUPhUfnz/energikostnad-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Denna Månad",
+          "path": "denna-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/m2XBgEB7k/energikostnad-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "År / Dag",
+          "path": "detta-ar-per-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/r9GfsPfnz/energikostnad-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "title": "År / Månad",
+          "path": "energikostnad-detta-ar-per-manad",
+          "type": "panel",
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/_UmfEEBnk/energikostnad-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "title": "Energiinställningar",
+          "path": "energiinstallningar",
+          "icon": "",
+          "badges": [],
+          "cards": [
+            {
+              "type": "markdown",
+              "content": "For [Tariff settings and information](http://192.168.2.20:8123/lovelace-energyrate/energiinstallningar).\nFor [Energy measure and information](http://192.168.2.20:8123/lovelace-energy-amount/energiinstallningar)\n\n#### Note:\n- Sensors are updated per hour (at the last second of the hour).\n- Sensors are in either the unit `öre/kWh`, `%` or `text for name of sensor`.\n- The sensor names for consumption, production and yield needs to be of `state_class: total_increasing`, and `unit_of_measurement: kWh`.\n- The sensor names for spot-prices must be unit `kWh` and currency `SEK`.\n\n#### We measure the delta of energy from the last snapshot for intake of electricity:\n- Old snapshot `sensor.electrical_consumption_intake_hour_snapshot` in `kWh`.\n- New snapshot from sensor given by `input_text.electrical_consumption_sensor` in `kWh`.\n- If old snapshot is empty then the code checks if save persistence-value is stored in `input_number.electrical_consumption_intake_hour_snapshot_persistent`.\n- Full sensor name `sensor.electrical_consumption_intake_hour`.\n- Calculation: `result = (new_snapshot - old_snapshot)` in `kWh`.\n\n#### Then we get the cost from the delta of energy for intake of electricity:\n- Delta from `sensor.electrical_consumption_intake_hour`  in `kWh`.\n- Tariff rate for distribution from `sensor.electrical_distribution_rate_summary` in `öre/kWh`.\n- Tariff rate for consumption from `sensor.electrical_consumption_rate_summary` in `öre/kWh`.\n- Full sensor name `sensor.electrical_consumption_intake_cost_hour`.\n- Calculation: `cost = (delta * ((rate_distribution + rate_consumption))/100)` in `SEK`.\n\n#### We measure the delta of energy from the last snapshot for production that is output to the grid (yield):\n- Old snapshot `sensor.electrical_solar_yield_hour_snapshot` in `kWh`.\n- New snapshot from sensor given by `input_text.electrical_yield_sensor` in `kWh`.\n- If old snapshot is empty then the code checks if save persistence-value is stored in `input_number.electrical_solar_yield_hour_snapshot_persistent`.\n- Full sensor name `sensor.electrical_solar_yield_hour`.\n- Calculation: `result = (new_snapshot - old_snapshot)` in `kWh`.\n\n#### Then we get the reduction of cost from the delta of energy for production that is output to the grid (yield):\n- Delta from `sensor.electrical_solar_yield_hour`  in `kWh`.\n- Tariff rate for distribution and consumption from `sensor.electrical_yield_rate_summary` in `öre/kWh`.\n- Full sensor name `sensor.electrical_solar_yield_return_hour`.\n- Calculation: `yield = (delta * (yield_summary)/100)` in `SEK`.\n\n#### We measure the delta of energy from the last snapshot for solar production:\n- Old snapshot `sensor.electrical_solar_production_hour_snapshot` in `kWh`.\n- New snapshot from sensor given by `input_text.electrical_production_sensor` in `kWh`.\n- If old snapshot is empty then the code checks if save persistence-value is stored in `input_number.electrical_solar_production_hour_snapshot_persistent`.\n- Full sensor name `sensor.electrical_solar_production_hour`.\n- Calculation: `result = (new_snapshot - old_snapshot)` in `kWh`.\n\n#### Then we get the reduction of cost from the delta of energy solar production:\n- Solar production delta from `sensor.electrical_solar_production_hour`  in `kWh`.\n- Yield delta from `sensor.electrical_solar_production_hour`  in `kWh`.\n- Tariff rate for distribution from `sensor.electrical_distribution_rate_summary` in `öre/kWh`.\n- Tariff rate for consumption from `sensor.electrical_consumption_rate_summary` in `öre/kWh`.\n- Full sensor name `sensor.electrical_solar_production_reduction_hour`.\n- Calculation: `reduction = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100)` in `SEK`.\n\n#### Lastly we summarize the total reduction for solar production:\n- Solar production reduction from `sensor.electrical_solar_production_reduction_hour`.\n- Yield reduction from `sensor.electrical_solar_yield_return_hour`.\n- Full sensor name `sensor.electrical_solar_total_return_hour`.\n- Calculation: `total_reduction = (reduction + yield_reduction)` in `SEK`.\n",
+              "title": "Information"
+            }
+          ]
         }
+      ],
+      "title": "Energikostnad"
     }
+  }
 }
