@@ -1,180 +1,219 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.home_assistant",
-    "data": {
-        "config": {
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.home_assistant",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Home",
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
                 {
-                    "title": "Home",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.home_assistant_git_push_comment",
-                                    "name": "Git push kommentar"
-                                },
-                                {
-                                    "entity": "input_button.github_push",
-                                    "name": "Tryck f\u00f6r att utf\u00f6ra Git push"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_file_github_push_log",
-                                    "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
-                                    "icon": "mdi:github"
-                                }
-                            ],
-                            "title": "Push till Github"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_button.copy_backup",
-                                    "name": "Tryck f\u00f6r att kopiera backupfiler till server1"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_copy_backup_log",
-                                    "name": "Sista status (kan ta 1-2 minuter innan det uppdateras)",
-                                    "icon": "mdi:cloud-upload"
-                                }
-                            ],
-                            "title": "Kopiera backupfiler till server1"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.grafana_git_push_comment",
-                                    "name": "Git push kommentar"
-                                },
-                                {
-                                    "entity": "input_button.grafana_github_push",
-                                    "name": "Tryck f\u00f6r att utf\u00f6ra Git push"
-                                },
-                                {
-                                    "entity": "sensor.grafana_file_github_push_log",
-                                    "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
-                                    "icon": "mdi:github"
-                                }
-                            ],
-                            "title": "Grafana config push till Github"
-                        },
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.home_assistant_db_size",
-                                    "name": "Full databasstorlek"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_table_size_states",
-                                    "name": "Tabell - states"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_table_size_events",
-                                    "name": "Tabell - events"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_table_size_statistics",
-                                    "name": "Tabell - statistics"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_table_size_statistics_short_term",
-                                    "name": "Tabell - statistics_short_term"
-                                }
-                            ],
-                            "hours_to_show": 720,
-                            "refresh_interval": 0,
-                            "title": "Storlek p\u00e5 Recorder-databas och tabeller"
-                        },
-                        {
-                            "type": "history-graph",
-                            "entities": [
-                                {
-                                    "entity": "sensor.server1_influxdb_size"
-                                }
-                            ],
-                            "hours_to_show": 720,
-                            "refresh_interval": 0,
-                            "title": "Storlek p\u00e5 Influx-databas"
-                        },
-                        {
-                            "type": "markdown",
-                            "content": "{% set rows = states('sensor.home_assistant_domains_in_use').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
-                            "title": "Dom\u00e4ner som anv\u00e4nds"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.home_assistant_number_of_domains_in_use",
-                                    "name": "Dom\u00e4ner"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_number_of_entities",
-                                    "name": "Entiteter"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_automation",
-                                    "name": "Entiteter, dom\u00e4n: automation"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_binary_sensor",
-                                    "name": "Entiteter, dom\u00e4n: binary_sensor"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_climate",
-                                    "name": "Entiteter, dom\u00e4n: climate"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_input_boolean",
-                                    "name": "Entiteter, dom\u00e4n: input_boolean"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_input_button",
-                                    "name": "Entiteter, dom\u00e4n: input_button"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_input_number",
-                                    "name": "Entiteter, dom\u00e4n: input_number"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_input_text",
-                                    "name": "Entiteter, dom\u00e4n: input_text"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_persistent_notification",
-                                    "name": "Entiteter, dom\u00e4n: persistent_notification"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_person",
-                                    "name": "Entiteter, dom\u00e4n: person"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_sensor",
-                                    "name": "Entiteter, dom\u00e4n: sensor"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_sun",
-                                    "name": "Entiteter, dom\u00e4n: sun"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_weather",
-                                    "name": "Entiteter, dom\u00e4n: weather"
-                                },
-                                {
-                                    "entity": "sensor.home_assistant_entities_domain_zone",
-                                    "name": "Entiteter, dom\u00e4n: zone"
-                                }
-                            ],
-                            "title": "Dom\u00e4ner och entiteter som anv\u00e4nds"
-                        }
-                    ]
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_button.copy_backup",
+                      "name": "Tryck för att kopiera backupfiler till server1",
+                      "icon": "mdi:backup-restore"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_backup_to_server1",
+                      "icon": "mdi:backup-restore",
+                      "name": "Sista status (kan ta 1-2 minuter innan det uppdateras)"
+                    }
+                  ],
+                  "title": "Backup från HA till server1"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_grafana_backup_log",
+                      "icon": "mdi:backup-restore",
+                      "name": "Sista status (uppdateras en gång per timme)"
+                    }
+                  ],
+                  "title": "Backup på server1 - InfluxDB"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_influxdb_backup_log",
+                      "icon": "mdi:backup-restore",
+                      "name": "Sista status (uppdateras en gång per timme)"
+                    }
+                  ],
+                  "title": "Backup på server1 - Grafana"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_backup_to_nas_log",
+                      "icon": "mdi:backup-restore",
+                      "name": "Sista status (uppdateras en gång per timme)"
+                    }
+                  ],
+                  "title": "Backup från server1 till NAS"
                 }
-            ]
+              ]
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_text.home_assistant_git_push_comment",
+                  "name": "Git push kommentar"
+                },
+                {
+                  "entity": "input_button.github_push",
+                  "name": "Tryck för att utföra Git push"
+                },
+                {
+                  "entity": "sensor.home_assistant_file_github_push_log",
+                  "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
+                  "icon": "mdi:github"
+                }
+              ],
+              "title": "Push till Github"
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_text.grafana_git_push_comment",
+                  "name": "Git push kommentar"
+                },
+                {
+                  "entity": "input_button.grafana_github_push",
+                  "name": "Tryck för att utföra Git push"
+                },
+                {
+                  "entity": "sensor.grafana_file_github_push_log",
+                  "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
+                  "icon": "mdi:github"
+                }
+              ],
+              "title": "Grafana config push till Github"
+            },
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.home_assistant_db_size",
+                  "name": "Full databasstorlek"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_states",
+                  "name": "Tabell - states"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_events",
+                  "name": "Tabell - events"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_statistics",
+                  "name": "Tabell - statistics"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_statistics_short_term",
+                  "name": "Tabell - statistics_short_term"
+                }
+              ],
+              "hours_to_show": 720,
+              "refresh_interval": 0,
+              "title": "Storlek på Recorder-databas och tabeller"
+            },
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.server1_influxdb_size"
+                }
+              ],
+              "hours_to_show": 720,
+              "refresh_interval": 0,
+              "title": "Storlek på Influx-databas"
+            },
+            {
+              "type": "markdown",
+              "content": "{% set rows = states('sensor.home_assistant_domains_in_use').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
+              "title": "Domäner som används"
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "sensor.home_assistant_number_of_domains_in_use",
+                  "name": "Domäner"
+                },
+                {
+                  "entity": "sensor.home_assistant_number_of_entities",
+                  "name": "Entiteter"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_automation",
+                  "name": "Entiteter, domän: automation"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_binary_sensor",
+                  "name": "Entiteter, domän: binary_sensor"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_climate",
+                  "name": "Entiteter, domän: climate"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_input_boolean",
+                  "name": "Entiteter, domän: input_boolean"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_input_button",
+                  "name": "Entiteter, domän: input_button"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_input_number",
+                  "name": "Entiteter, domän: input_number"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_input_text",
+                  "name": "Entiteter, domän: input_text"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_persistent_notification",
+                  "name": "Entiteter, domän: persistent_notification"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_person",
+                  "name": "Entiteter, domän: person"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_sensor",
+                  "name": "Entiteter, domän: sensor"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_sun",
+                  "name": "Entiteter, domän: sun"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_weather",
+                  "name": "Entiteter, domän: weather"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_zone",
+                  "name": "Entiteter, domän: zone"
+                }
+              ],
+              "title": "Domäner och entiteter som används"
+            }
+          ]
         }
+      ]
     }
+  }
 }

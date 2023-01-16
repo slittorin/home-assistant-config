@@ -9,7 +9,7 @@ automation:
     alias: 'Daily snapshot each monday through saturday of the week, kept 7 days'
     trigger:
       platform: time
-      at: '00:01:00'
+      at: '01:00:00'
     condition:
     - condition: time
       weekday:
@@ -29,7 +29,7 @@ automation:
     alias: 'Weekly snapshot each sunday, kept 57 days'
     trigger:
       platform: time
-      at: '00:01:00'
+      at: '01:00:00'
     condition:
     - condition: time
       weekday:
@@ -44,7 +44,7 @@ automation:
     alias: 'Copy backup files to server1 each night'
     trigger:
       platform: time
-      at: '03:00:00'
+      at: '02:30:00'
     condition:
     - condition: time
       weekday:
