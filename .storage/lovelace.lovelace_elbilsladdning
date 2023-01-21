@@ -1,140 +1,330 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.lovelace_elbilsladdning",
-    "data": {
-        "config": {
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_elbilsladdning",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "theme": "Backend-selected",
+          "title": "Elbilsladdning",
+          "badges": [],
+          "cards": [
+            {
+              "type": "markdown",
+              "content": "### Dag\n- [Idag](http://192.168.2.20:8123/lovelace-elbilsladdning/idag)\n- [Igår](http://192.168.2.20:8123/lovelace-elbilsladdning/igar)\n\n### Vecka\n- [Denna vecka](http://192.168.2.20:8123/lovelace-elbilsladdning/denna-vecka)\n- [Förra veckan](http://192.168.2.20:8123/lovelace-elbilsladdning/forra-veckan)\n\n### Månad\n- [Denna månad](http://192.168.2.20:8123/lovelace-elbilsladdning/denna-manad)\n- [Förra månaden](http://192.168.2.20:8123/lovelace-elbilsladdning/forra-manaden)\n\n### År\n- [Detta år - Per dag](http://192.168.2.20:8123/lovelace-elbilsladdning/detta-ar-per-dag)\n- [Detta år - Per vecka](http://192.168.2.20:8123/lovelace-elbilsladdning/detta-ar-per-vecka?)\n- [Detta år - Per månad](http://192.168.2.20:8123/lovelace-elbilsladdning/detta-ar-per-manad)\n- [Förra året - Per dag](http://192.168.2.20:8123/lovelace-elbilsladdning/forra-aret-per-dag)\n- [Förra året - Per vecka](http://192.168.2.20:8123/lovelace-elbilsladdning/forra-aret-per-vecka)\n- [Förra året - Per månad](http://192.168.2.20:8123/lovelace-elbilsladdning/forra-aret-per-manad)\n\n### Historik\n- [Energimängd - Över tid - Per dag](http://192.168.2.20:8123/lovelace-elbilsladdning/energimangd-over-tid-per-dag)\n- [Energimängd - Över tid - Per vecka](http://192.168.2.20:8123/lovelace-elbilsladdning/energimangd-over-tid-per-vecka)\n- [Energimängd - Över tid - Per månad](http://192.168.2.20:8123/lovelace-elbilsladdning/energimangd-over-tid-per-manad)\n- [Energikostnad - Över tid - Per dag](http://192.168.2.20:8123/lovelace-elbilsladdning/energikostnad-over-tid-per-dag)\n- [Energikostnad - Över tid - Per vecka](http://192.168.2.20:8123/lovelace-elbilsladdning/energikostnad-over-tid-per-vecka)\n- [Energikostnad - Över tid - Per månad](http://192.168.2.20:8123/lovelace-elbilsladdning/energikostnad-over-tid-per-manad)"
+            },
+            {
+              "type": "entities",
+              "entities": [
                 {
-                    "theme": "Backend-selected",
-                    "title": "Nu",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.evcharger_consumption_hour",
-                                    "name": "Energim\u00e4ngd f\u00f6r elbilsladdare",
-                                    "icon": "mdi:metronome"
-                                },
-                                {
-                                    "entity": "sensor.evcharger_consumption_cost_hour",
-                                    "name": "Kostnad f\u00f6r elbilsladdning (utan Tibber-reduktion)"
-                                }
-                            ],
-                            "title": "Uppgifter f\u00f6r senaste hel timme"
-                        },
-                        {
-                            "type": "custom:charger-card",
-                            "entity": "sensor.ehs4plem_status",
-                            "image": "default"
-                        }
-                    ]
+                  "entity": "sensor.evcharger_consumption_hour",
+                  "name": "Energimängd för elbilsladdare",
+                  "icon": "mdi:metronome"
                 },
                 {
-                    "theme": "Backend-selected",
-                    "title": "Idag",
-                    "path": "idag",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/MParoDIVz/elbilsladdning-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "Ig\u00e5r",
-                    "path": "igar",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/8NGXicSVk/elbilsladdning-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "F\u00f6rra m\u00e5naden",
-                    "path": "forra-manaden",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/4L0XW5I4k/elbilsladdning-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "Denna m\u00e5nad",
-                    "path": "denna-manad",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/-rsFZ5I4z/elbilsladdning-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "\u00c5r / Dag",
-                    "path": "ar-dag",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/9z98c-IVz/elbilsladdning-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "\u00c5r / M\u00e5nad",
-                    "path": "ar-manad",
-                    "type": "panel",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "iframe",
-                            "url": "http://192.168.2.30:3000/d/2pUWt-IVz/elbilsladdning-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
-                            "aspect_ratio": "100%"
-                        }
-                    ]
-                },
-                {
-                    "theme": "Backend-selected",
-                    "title": "Inst\u00e4llningar",
-                    "path": "installningar",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "input_text.evcharger_consumption_sensor",
-                                    "name": "Namn p\u00e5 sensor f\u00f6r elbilsladdning (fullst\u00e4ndigt namn)"
-                                }
-                            ],
-                            "title": "Elbilsladdare"
-                        }
-                    ]
+                  "entity": "sensor.evcharger_consumption_cost_hour",
+                  "name": "Kostnad för elbilsladdning (utan Tibber-reduktion)"
                 }
-            ]
+              ],
+              "title": "Uppgifter för senaste hel timme"
+            },
+            {
+              "type": "custom:charger-card",
+              "entity": "sensor.ehs4plem_status",
+              "image": "default"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Idag",
+          "path": "idag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/MParoDIVz/elbilsladdning-idag?orgId=1&from=now/d&to=now/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Igår",
+          "path": "igar",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/8NGXicSVk/elbilsladdning-igar?orgId=1&from=now-1d/d&to=now-1d/d&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Denna vecka",
+          "path": "denna-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/GC-17toVk/elbilsladdning-denna-vecka?orgId=1&from=now/w&to=now/w&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra veckan",
+          "path": "forra-veckan",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/x6W-npo4z/elbilsladdning-forra-veckan?orgId=1&from=now-1w/w&to=now-1w/w&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra månaden",
+          "path": "forra-manaden",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/4L0XW5I4k/elbilsladdning-forra-manaden?orgId=1&from=now-1M/M&to=now-1M/M&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Denna månad",
+          "path": "denna-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/-rsFZ5I4z/elbilsladdning-denna-manad?orgId=1&from=now/M&to=now/M&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Detta år - Per dag",
+          "path": "detta-ar-per-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/9z98c-IVz/elbilsladdning-detta-ar-per-dag?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Detta år - Per månad",
+          "path": "detta-ar-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/2pUWt-IVz/elbilsladdning-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Detta år - Per vecka",
+          "path": "detta-ar-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/vrqjntTVk/elbilsladdning-detta-ar-per-vecka?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra året - Per dag",
+          "path": "forra-aret-per-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/ja_7Vto4z/elbilsladdning-forra-aret-per-dag?orgId=1&from=now-1y/y&to=now-1y/y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra året - Per vecka",
+          "path": "forra-aret-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/ytHN4tT4z/elbilsladdning-forra-aret-per-vecka?orgId=1&from=now-1y/y&to=now-1y/y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Förra året - Per månad",
+          "path": "forra-aret-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/pwrIVtoVz/elbilsladdning-forra-aret-per-manad?orgId=1&from=now-1y/y&to=now-1y/y&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energimängd - Över tid - Per dag",
+          "path": "energimangd-over-tid-per-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/d5i-4toVk/energimangd-over-tid-per-dag?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energimängd - Över tid - Per vecka",
+          "path": "energimangd-over-tid-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/hQJwSpoVk/energimangd-over-tid-per-vecka?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energimängd - Över tid - Per månad",
+          "path": "energimangd-over-tid-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/oSc6StoVk/energimangd-over-tid-per-manad?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energikostnad - Över tid - Per dag",
+          "path": "energikostnad-over-tid-per-dag",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/6DfHNtTVk/energikostnad-over-tid-per-dag?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energikostnad - Över tid - Per vecka",
+          "path": "energikostnad-over-tid-per-vecka",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/TN5XNtT4k/energikostnad-over-tid-per-vecka?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Energikostnad - Över tid - Per månad",
+          "path": "energikostnad-over-tid-per-manad",
+          "type": "panel",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "iframe",
+              "url": "http://192.168.2.30:3000/d/AbwzvpTVk/energikostnad-over-tid-per-manad?orgId=1&from=1640991600000&to=1672527599000&refresh=5m&theme=light&kiosk=tv",
+              "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Inställningar",
+          "path": "installningar",
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_text.evcharger_consumption_sensor",
+                  "name": "Namn på sensor för elbilsladdning (fullständigt namn)"
+                }
+              ],
+              "title": "Elbilsladdare"
+            }
+          ]
         }
+      ]
     }
+  }
 }

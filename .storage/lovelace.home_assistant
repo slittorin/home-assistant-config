@@ -37,7 +37,7 @@
                       "name": "Sista status (uppdateras en gång per timme)"
                     }
                   ],
-                  "title": "Backup på server1 - InfluxDB"
+                  "title": "Backup på server1 - Grafana"
                 },
                 {
                   "type": "entities",
@@ -48,7 +48,7 @@
                       "name": "Sista status (uppdateras en gång per timme)"
                     }
                   ],
-                  "title": "Backup på server1 - Grafana"
+                  "title": "Backup på server1 - InfluxDB"
                 },
                 {
                   "type": "entities",
@@ -76,7 +76,7 @@
                 },
                 {
                   "entity": "sensor.home_assistant_file_github_push_log",
-                  "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
+                  "name": "Sista git push status (kan ta 1-2 minuter innan det uppdateras)",
                   "icon": "mdi:github"
                 }
               ],
@@ -95,7 +95,7 @@
                 },
                 {
                   "entity": "sensor.grafana_file_github_push_log",
-                  "name": "Sista git push status (kan ta 10-20 sekunder innan det uppdateras)",
+                  "name": "Sista git push status (kan ta 1-2 minuter innan det uppdateras)",
                   "icon": "mdi:github"
                 }
               ],

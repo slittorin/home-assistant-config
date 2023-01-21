@@ -113,7 +113,7 @@
             },
             {
               "type": "markdown",
-              "content": "### Data är inte korrekt för dessa datum:\n- Spabad innan sommaren (datum XXX-XXX).\n- Spabad efter sommaren (datum XXX-XXX).\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana). Data registrerades dock i HA.",
+              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana). Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore verkade ge förlust av InfluxDB-data mellan 8/8-2022 till 16/8-2022.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar). Här nollades data för perioden. Se [maintenance]([maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).z).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar). Ingen nollning av data har skett för perioden.",
               "title": "Inkorrekt data"
             }
           ]
