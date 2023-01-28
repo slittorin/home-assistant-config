@@ -110,6 +110,9 @@ influxdb:
       - sensor.sma_pv_power_b_max
       # 20221226. Excluded since we do not need to capture these (takes approx 1% or more of events)
       - sensor.sn_3006917520_current_total
+      # 20230127. Excluded since they update every 5:th second, and we take snapshot each our instead (takes roughly 39% of events each per month).
+      - sensor.metering_total_absorbed
+      - sensor.metering_total_absorbed_cost
 
 # Text to speech
 tts:

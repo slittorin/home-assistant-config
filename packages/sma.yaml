@@ -975,3 +975,33 @@ template:
           {%   set value = float(input, default=0) %}
           {% endif %}
           {{ value }}
+      # We save metering_total_absorbed each hour.
+      # This is an increasing value, so we will capture it in next hour.
+      # Not important to capture at the very end of the hour.
+      - name: sma_metering_total_absorbed_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.metering_total_absorbed') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save metering_total_absorbed_cost each hour.
+      # This is an increasing value, so we will capture it in next hour.
+      # Not important to capture at the very end of the hour.
+      - name: sma_metering_total_absorbed_cost_hour
+        device_class: 'monetary'
+        unit_of_measurement: 'SEK'
+        state_class: total
+        state: >
+          {% set input = states('sensor.metering_total_absorbed_cost') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}

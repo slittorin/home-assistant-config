@@ -31,6 +31,39 @@ input_number:
     name: 'Persistence for balboa_spa_temperature_change_per_hour'
     icon: mdi:thermometer-lines
     mode: box
+    initial: 0
+    min: -100
+    max: 100
+    unit_of_measurement: '°C'
+  balboa_spa_temperature_at_start_of_heating_persistent:
+    name: 'Persistence for balboa_spa_temperature_at_start_of_heating'
+    icon: mdi:thermometer-lines
+    mode: box
+    initial: 0
+    min: -100
+    max: 100
+    unit_of_measurement: '°C'
+  balboa_spa_temperature_at_end_of_heating_persistent:
+    name: 'Persistence for balboa_spa_temperature_at_end_of_heating'
+    icon: mdi:thermometer-lines
+    mode: box
+    initial: 0
+    min: -100
+    max: 100
+    unit_of_measurement: '°C'
+  balboa_spa_temperature_change_at_start_of_heating_persistent:
+    name: 'Persistence for balboa_spa_temperature_change_at_start_of_heating'
+    icon: mdi:thermometer-lines
+    mode: box
+    initial: 0
+    min: -100
+    max: 100
+    unit_of_measurement: '°C'
+  balboa_spa_temperature_change_at_end_of_heating_persistent:
+    name: 'Persistence for balboa_spa_temperature_change_at_end_of_heating_persistent'
+    icon: mdi:thermometer-lines
+    mode: box
+    initial: 0
     min: -100
     max: 100
     unit_of_measurement: '°C'
@@ -121,6 +154,50 @@ template:
           {% endif %}
           {% if (inputs_valid == true) %}
           {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+      # We set the balboa_spa_temperature_change_at_start_of_heating sensor.
+      - name: Balboa Spa temperature change at start of heating
+        unique_id: balboa_spa_temperature_change_at_start_of_heating
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = states('input_number.balboa_spa_temperature_change_at_start_of_heating_persistent') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(2, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+      # We set the balboa_spa_temperature_change_at_end_of_heating.
+      - name: Balboa Spa temperature change at end of heating
+        unique_id: balboa_spa_temperature_change_at_end_of_heating
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = states('input_number.balboa_spa_temperature_change_at_end_of_heating_persistent') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(2, default=0) %}
           {% endif %}
           {{ result }}
 
@@ -269,9 +346,149 @@ automation:
           {%     set delta_temp = temp_now - temp_from %}
           {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
           {%     if (result >= 3) %}
-          {%       set result = none %}
+          {%       set result = 0 %}
           {%     elif (result <= -7) %}
-          {%       set result = none %}
+          {%       set result = 0 %}
+          {%     endif %}
+          {%  endif %}
+          {% endif %}
+          {{ result }}
+
+  - id: automation_balboa_spa_temperature_at_start_of_heating_persistent
+    alias: 'Automation for balboa_spa_temperature_at_start_of_heating_persistent'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.balboa_spa_heater_on
+        to: 'on'
+        for: "00:00:30"
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.balboa_spa_temperature_at_start_of_heating_persistent
+        value: >
+          {% set temp_now = states('sensor.balboa_spa_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temp_now %}
+          {% endif %}
+          {{ result }}
+
+  - id: automation_balboa_spa_temperature_change_at_start_of_heating_persistent
+    alias: 'Automation for balboa_spa_temperature_change_at_start_of_heating_persistent'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.balboa_spa_heater_on
+        to: 'on'
+        for: "00:01:00"
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.balboa_spa_temperature_change_at_start_of_heating_persistent
+        value: >
+          {% set time_from = states.input_number['balboa_spa_temperature_at_end_of_heating_persistent'].last_updated %}
+          {% set time_now = now().timestamp() %}
+          {% set temp_from = states('input_number.balboa_spa_temperature_at_end_of_heating_persistent') %}
+          {% set temp_now = states('input_number.balboa_spa_temperature_at_start_of_heating_persistent') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set time_from = as_timestamp(time_from) %}
+          {% endif %}
+          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+          {%    set inputs_valid = false %}
+          {% else %}
+          {%   set temp_from = float(temp_from, 0) %}
+          {% endif %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (temp_now != temp_from) %}
+          {%     set delta_time = ((time_now - time_from) / 3600) %}
+          {%     set delta_temp = temp_now - temp_from %}
+          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+          {%     if (result >= 5 or result <= -10) %}
+          {%       set result = 0 %}
+          {%     endif %}
+          {%  endif %}
+          {% endif %}
+          {{ result }}
+
+  - id: automation_balboa_spa_temperature_at_end_of_heating_persistent
+    alias: 'Automation for balboa_spa_temperature_at_end_of_heating_persistent'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.balboa_spa_heater_on
+        to: 'off'
+        for: "00:00:30"
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.balboa_spa_temperature_at_end_of_heating_persistent
+        value: >
+          {% set temp_now = states('sensor.balboa_spa_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temp_now %}
+          {% endif %}
+          {{ result }}
+
+  - id: automation_balboa_spa_temperature_change_at_end_of_heating_persistent
+    alias: 'Automation for balboa_spa_temperature_change_at_end_of_heating_persistent'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.balboa_spa_heater_on
+        to: 'off'
+        for: "00:01:00"
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.balboa_spa_temperature_change_at_end_of_heating_persistent
+        value: >
+          {% set time_from = states.input_number['balboa_spa_temperature_at_start_of_heating_persistent'].last_updated %}
+          {% set time_now = now().timestamp() %}
+          {% set temp_from = states('input_number.balboa_spa_temperature_at_start_of_heating_persistent') %}
+          {% set temp_now = states('input_number.balboa_spa_temperature_at_end_of_heating_persistent') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set time_from = as_timestamp(time_from) %}
+          {% endif %}
+          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+          {%    set inputs_valid = false %}
+          {% else %}
+          {%   set temp_from = float(temp_from, 0) %}
+          {% endif %}
+          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temp_now = float(temp_now, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (temp_now != temp_from) %}
+          {%     set delta_time = ((time_now - time_from) / 3600) %}
+          {%     set delta_temp = temp_now - temp_from %}
+          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+          {%     if (result >= 5 or result <= -10) %}
+          {%       set result = 0 %}
           {%     endif %}
           {%  endif %}
           {% endif %}
