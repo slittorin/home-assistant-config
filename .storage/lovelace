@@ -4,12 +4,12 @@
   "key": "lovelace",
   "data": {
     "config": {
-      "title": "Home",
+      "title": "Hemma",
       "views": [
         {
           "theme": "Backend-selected",
           "path": "default_view",
-          "title": "Home",
+          "title": "Översikt",
           "type": "custom:masonry-layout",
           "badges": [],
           "cards": [
@@ -47,15 +47,25 @@
               "unit": "W",
               "needle": true,
               "entity": "sensor.grid_power",
-              "max": 6000
+              "max": 7000,
+              "severity": {
+                "green": 0,
+                "yellow": 7000,
+                "red": 7000
+              }
             },
             {
               "type": "gauge",
               "name": "Effekt utmatning av solelsproduktion till nät",
               "unit": "W",
               "needle": true,
-              "max": 6000,
-              "entity": "sensor.metering_power_supplied"
+              "max": 7000,
+              "entity": "sensor.metering_power_supplied",
+              "severity": {
+                "green": 0,
+                "yellow": 7000,
+                "red": 7000
+              }
             },
             {
               "type": "gauge",
@@ -100,20 +110,38 @@
               "needle": true
             },
             {
-              "type": "history-graph",
-              "entities": [
-                {
-                  "entity": "sensor.electrical_daily_calculated_consumption_index_pct"
-                },
-                {
-                  "entity": "sensor.electrical_daily_calculated_consumption_index_sek"
-                }
-              ],
-              "hours_to_show": 336
+              "type": "gauge",
+              "entity": "sensor.ehs4plem_power",
+              "name": "Elbilsladdning",
+              "unit": "W",
+              "needle": true,
+              "min": 0,
+              "max": 13000
             },
             {
+              "type": "custom:weather-card",
+              "entity": "weather.smhi_home",
+              "name": "Motala",
+              "details": true,
+              "forecast": true,
+              "hourly_forecast": false,
+              "number_of_forecasts": "6"
+            },
+            {
+              "type": "custom:sun-card"
+            }
+          ]
+        },
+        {
+          "theme": "Backend-selected",
+          "title": "Inkorrekt data",
+          "path": "inkorrekt-data",
+          "type": "panel",
+          "badges": [],
+          "cards": [
+            {
               "type": "markdown",
-              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana). Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore verkade ge förlust av InfluxDB-data mellan 8/8-2022 till 16/8-2022.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar). Här nollades data för perioden. Se [maintenance]([maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).z).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar). Ingen nollning av data har skett för perioden.",
+              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana). Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore verkade även ge förlust av all InfluxDB-data mellan 8/8-2022 till 16/8-2022.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar). Här nollades data för perioden. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar). Ingen nollning av data har skett för perioden.",
               "title": "Inkorrekt data"
             }
           ]

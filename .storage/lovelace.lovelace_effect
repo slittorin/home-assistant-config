@@ -6,26 +6,63 @@
     "config": {
       "views": [
         {
-          "title": "Nu",
+          "theme": "Backend-selected",
+          "title": "Effekt",
           "badges": [],
           "cards": [
             {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "sensor.metering_power_absorbed",
-                  "name": "Effekt intag till huset"
-                },
-                {
-                  "entity": "sensor.grid_power",
-                  "name": "Effekt solelsproduktion"
-                },
-                {
-                  "entity": "sensor.metering_power_supplied",
-                  "name": "Effekt utmatning av solelsproduktion till nät"
-                }
-              ],
-              "title": "Nuvarande effekt"
+              "type": "markdown",
+              "content": "### Dag\n- [Idag XXX]()\n- [Igår XXX])\n\n### Vecka\n- [Denna vecka XXX]()\n- [Förra veckan XXX]()\n\n### Månad\n- [Denna månad XXX]()\n- [Förra månaden XXX]()\n\n### År\n- [Detta år - Per dag XXX]()\n- [Detta år - Per vecka xxx]()\n- [Detta år - Per månad XXX]()\n- [Förra året - Per dag XXX]()\n- [Förra året - Per vecka XXX]()\n- [Förra året - Per månad XXX]()\n\n### Historik\n- [Energimängd - Över tid - Per dag]()\n- [Energimängd - Över tid - Per vecka]()\n- [Energimängd - Över tid - Per månad]()\n- [Energikostnad - Över tid - Per dag]()\n- [Energikostnad - Över tid - Per vecka]()\n- [Energikostnad - Över tid - Per månad]()"
+            },
+            {
+              "type": "gauge",
+              "needle": true,
+              "severity": {
+                "green": 5500,
+                "yellow": 11000,
+                "red": 16500
+              },
+              "entity": "sensor.metering_power_absorbed",
+              "name": "Effekt intag till huset",
+              "unit": "W",
+              "min": 0,
+              "max": 22000
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.grid_power",
+              "name": "Effekt solelsproduktion",
+              "unit": "W",
+              "min": 0,
+              "max": 7000,
+              "needle": true,
+              "severity": {
+                "green": 0,
+                "yellow": 7000,
+                "red": 7000
+              }
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.metering_power_supplied",
+              "name": "Effekt utmatning av solelsproduktion till nät",
+              "unit": "W",
+              "min": 0,
+              "max": 7000,
+              "needle": true,
+              "severity": {
+                "green": 0,
+                "yellow": 7000,
+                "red": 7000
+              }
+            },
+            {
+              "type": "gauge",
+              "entity": "sensor.ehs4plem_power",
+              "name": "Elbilsladdning",
+              "unit": "W",
+              "needle": true,
+              "max": 11000
             }
           ]
         },

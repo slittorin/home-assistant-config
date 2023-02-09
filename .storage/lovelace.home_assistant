@@ -32,6 +32,17 @@
                   "type": "entities",
                   "entities": [
                     {
+                      "entity": "sensor.server1_influxdb_export_yesterday_log",
+                      "icon": "mdi:backup-restore",
+                      "name": "Sista status (uppdateras en gång per timme)"
+                    }
+                  ],
+                  "title": "Export på server1 - InfluxDB"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
                       "entity": "sensor.server1_grafana_backup_log",
                       "icon": "mdi:backup-restore",
                       "name": "Sista status (uppdateras en gång per timme)"
@@ -100,6 +111,25 @@
                 }
               ],
               "title": "Grafana config push till Github"
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_text.server1_git_push_comment",
+                  "name": "Git push kommentar"
+                },
+                {
+                  "entity": "input_button.server1_github_push",
+                  "name": "Tryck för att utföra Git push"
+                },
+                {
+                  "entity": "sensor.server1_file_github_push_log",
+                  "name": "Sista git push status (kan ta 1-2 minuter innan det uppdateras)",
+                  "icon": "mdi:github"
+                }
+              ],
+              "title": "Server1 config push till Github"
             },
             {
               "type": "history-graph",

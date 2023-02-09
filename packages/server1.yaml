@@ -126,18 +126,25 @@ sensor:
     scan_interval: 3600
     name: server1 backup to nas log
     unique_id: server1_backup_to_nas_log
-    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/backup-to-nas.log"
+    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/log/backup-to-nas.log"
 
   # Every hour, for server1 we retrieve: The last row of the grafana-backup.log-file.
   - platform: command_line
     scan_interval: 3600
     name: server1 grafana backup log
     unique_id: server1_grafana_backup_log
-    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/grafana-backup.log"
+    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/log/grafana-backup.log"
 
   # Every hour, for server1 we retrieve: The last row of the grafana-backup.log-file.
   - platform: command_line
     scan_interval: 3600
     name: server1 influxdb backup log
     unique_id: server1_influxdb_backup_log
-    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/influxdb-backup.log"
+    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/log/influxdb-backup.log"
+
+  # Every hour, for server1 we retrieve: The last row of the influxdb-export-yesterday.log-file.
+  - platform: command_line
+    scan_interval: 3600
+    name: server1 influxdb export yesterday log
+    unique_id: server1_influxdb_export_yesterday_log
+    command: "/config/scripts/remote_tail.sh pi@192.168.2.30 /srv/log/influxdb-export-yesterday.log"

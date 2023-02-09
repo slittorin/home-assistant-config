@@ -1,0 +1,31 @@
+# This file includes all the entities for the Server1 Github push.
+
+# See also configuration.yaml that holds the shell_command.
+
+input_text:
+  server1_git_push_comment:
+    name: Comment to add for Server1 git push
+    icon: mdi:github
+    mode: text
+    max: 255
+
+input_button:
+  server1_github_push:
+    name: Press to perform Server1 Github push
+    icon: mdi:github
+
+automation:
+- alias: "Server1 Github push"
+  trigger:
+    - platform: state
+      entity_id: input_button.server1_github_push
+  action:
+    - service: shell_command.server1_github_push
+      data:
+        value: "{{ states('input_text.server1_git_push_comment') }}"
+
+sensor:
+    # Get the last line in the server1 git_push-logfile
+  - platform: file
+    name: server1_file_github_push_log
+    file_path: /config/logs/server1_github_push.log

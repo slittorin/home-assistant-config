@@ -23,6 +23,31 @@
         "url": "/hacsfiles/charger-card/charger-card.js?hacstag=308752409012",
         "type": "module",
         "id": "c1bd9a7c7cb844a58832acb7dc001659"
+      },
+      {
+        "url": "/hacsfiles/weather-card/weather-card.js?hacstag=192732636150",
+        "type": "module",
+        "id": "ae3ab8c9f7744a9c8f8eb1ef31cf8341"
+      },
+      {
+        "url": "/hacsfiles/lovelace-mushroom/mushroom.js?hacstag=444350375253",
+        "type": "module",
+        "id": "2c7679dcbf4c424c958e1835e11defd5"
+      },
+      {
+        "url": "/hacsfiles/home-assistant-sun-card/home-assistant-sun-card.js?hacstag=366482637014",
+        "type": "module",
+        "id": "23f684a335b34ad593dc192fe9d2acd5"
+      },
+      {
+        "url": "/hacsfiles/bar-card/bar-card.js?hacstag=163363577320",
+        "type": "module",
+        "id": "58b7387f9d56470295e3c243483c77dd"
+      },
+      {
+        "url": "/hacsfiles/ha-sankey-chart/ha-sankey-chart.js?hacstag=455846088193",
+        "type": "module",
+        "id": "ac83aa0b110d493abccc6e32301f3b85"
       }
     ]
   }

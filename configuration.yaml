@@ -1,6 +1,10 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+# Frontend
+frontend:
+  themes: !include_dir_merge_named themes
+
 # https://github.com/jcwillox/hass-auto-backup/issues/9
 logger:
   default: warn
@@ -135,6 +139,7 @@ homeassistant:
     github_push: !include packages/github_push.yaml
     grafana_github_push: !include packages/grafana_github_push.yaml
     server1: !include packages/server1.yaml
+    server1_github_push: !include packages/server1_github_push.yaml
     weather: !include packages/weather.yaml
     sma: !include packages/sma.yaml
     tariff_electrical: !include packages/tariff_electrical.yaml
@@ -146,3 +151,4 @@ shell_command:
   copy_backup: /config/scripts/copy_backup.sh pi@192.168.2.30 /srv/ha/backup &
   github_push: /config/scripts/github_push.sh "{{ value }}"
   grafana_github_push: /config/scripts/grafana_github_push.sh pi@192.168.2.30 192.168.2.30:3000 "{{ value }}"
+  server1_github_push: /config/scripts/server1_github_push.sh pi@192.168.2.30 "{{ value }}"

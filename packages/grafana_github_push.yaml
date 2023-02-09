@@ -7,6 +7,7 @@ input_text:
     name: Comment to add for grafana git push
     icon: mdi:github
     mode: text
+    max: 255
 
 input_button:
   grafana_github_push:

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_energieffektivitet",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Home",
+          "cards": [
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.electrical_daily_calculated_consumption_index_pct"
+                },
+                {
+                  "entity": "sensor.electrical_daily_calculated_consumption_index_sek"
+                }
+              ],
+              "hours_to_show": 336
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
