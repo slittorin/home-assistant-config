@@ -18,8 +18,13 @@ logger:
 recorder:
   db_url: !secret recorder_db_url
   purge_keep_days: 30
-  #auto_purge: true
+#auto_purge: true
   commit_interval: 30
+  exclude:
+    entities:
+      # 20230312. We excluded these that do not have any purpose.
+      - sensor.sn_3006917520_current_total
+      - sensor.metering_total_yield_compensation
 
 # Logbook is enabled by default.
 logbook:
@@ -117,6 +122,31 @@ influxdb:
       # 20230127. Excluded since they update every 5:th second, and we take snapshot each our instead (takes roughly 39% of events each per month).
       - sensor.metering_total_absorbed
       - sensor.metering_total_absorbed_cost
+      # 20230219. Excluded since we do not need to capture these history_stats events, as we capture last value each hour.
+      - sensor.balboa_spa_heater_running_time_hour
+      # 20230222 (22:15). Excluded since it is not required to be captured, and it generates alot of data each hour.
+      #                   Can be completely removed from Influx as we calculate yield compensation our own way.
+      - sensor.metering_total_yield_compensation
+      # 20230222 (22:15). Excluded since they update often, , and we take snapshot each our instead.
+      - sensor.pv_gen_meter
+      - sensor.total_yield
+      - sensor.metering_total_yield
+      - sensor.daily_yield
+      # 20230223 (09:20). Excluded since we do not need to capture these history_stats events, as we capture last value each hour.
+      - sensor.balboa_spa_circulationpump_running_time_hour
+      # 20230223 (19:40). Excluded since we take snapshot each hour.
+      - sensor.metering_active_power_feed_l1
+      - sensor.metering_active_power_feed_l2
+      - sensor.metering_active_power_feed_l3
+      - sensor.sma_metering_active_power_feed_l1_min
+      - sensor.sma_metering_active_power_feed_l1_max
+      - sensor.sma_metering_active_power_feed_l1_mean
+      - sensor.sma_metering_active_power_feed_l2_min
+      - sensor.sma_metering_active_power_feed_l2_max
+      - sensor.sma_metering_active_power_feed_l2_mean
+      - sensor.sma_metering_active_power_feed_l3_min
+      - sensor.sma_metering_active_power_feed_l3_max
+      - sensor.sma_metering_active_power_feed_l3_mean
 
 # Text to speech
 tts:

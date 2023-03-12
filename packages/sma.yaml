@@ -375,9 +375,108 @@ sensor:
     state_characteristic: value_max
     max_age:
       hours: 1
+  # Keep track of how long solar power is produced each hour.
+  - platform: history_stats
+    name: SMA solar power produced time hour
+    entity_id: binary_sensor.sma_solar_power_producing
+    state: 'on'
+    type: time
+    start: "{{ now().replace(minute=0, second=0) }}"
+    end: "{{ now() }}"
+  # We want to get the min statistics for metering_active_power_feed_l1
+  - platform: statistics
+    name: SMA metering active power feed l1 min
+    unique_id: sma_metering_active_power_feed_l1_min
+    entity_id: sensor.metering_active_power_feed_l1
+    state_characteristic: value_min
+    max_age:
+      hours: 1
+  # We want to get the max statistics for metering_active_power_feed_l1
+  - platform: statistics
+    name: SMA metering active power feed l1 max
+    unique_id: sma_metering_active_power_feed_l1_max
+    entity_id: sensor.metering_active_power_feed_l1
+    state_characteristic: value_max
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for metering_active_power_feed_l1
+  - platform: statistics
+    name: SMA metering active power feed l1 mean
+    unique_id: sma_metering_active_power_feed_l1_mean
+    entity_id: sensor.metering_active_power_feed_l1
+    state_characteristic: mean
+    max_age:
+      hours: 1
+  # We want to get the min statistics for metering_active_power_feed_l2
+  - platform: statistics
+    name: SMA metering active power feed l2 min
+    unique_id: sma_metering_active_power_feed_l2_min
+    entity_id: sensor.metering_active_power_feed_l2
+    state_characteristic: value_min
+    max_age:
+      hours: 1
+  # We want to get the max statistics for metering_active_power_feed_l2
+  - platform: statistics
+    name: SMA metering active power feed l2 max
+    unique_id: sma_metering_active_power_feed_l2_max
+    entity_id: sensor.metering_active_power_feed_l2
+    state_characteristic: value_max
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for metering_active_power_feed_l2
+  - platform: statistics
+    name: SMA metering active power feed l2 mean
+    unique_id: sma_metering_active_power_feed_l2_mean
+    entity_id: sensor.metering_active_power_feed_l2
+    state_characteristic: mean
+    max_age:
+      hours: 1
+  # We want to get the min statistics for metering_active_power_feed_l3
+  - platform: statistics
+    name: SMA metering active power feed l3 min
+    unique_id: sma_metering_active_power_feed_l3_min
+    entity_id: sensor.metering_active_power_feed_l3
+    state_characteristic: value_min
+    max_age:
+      hours: 1
+  # We want to get the max statistics for metering_active_power_feed_l2
+  - platform: statistics
+    name: SMA metering active power feed l3 max
+    unique_id: sma_metering_active_power_feed_l3_max
+    entity_id: sensor.metering_active_power_feed_l3
+    state_characteristic: value_max
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for metering_active_power_feed_l2
+  - platform: statistics
+    name: SMA metering active power feed l3 mean
+    unique_id: sma_metering_active_power_feed_l3_mean
+    entity_id: sensor.metering_active_power_feed_l3
+    state_characteristic: mean
+    max_age:
+      hours: 1
 
 
 template:
+  - binary_sensor:
+      # We want to know when solar power is produced.
+      - name: SMA solar power producing
+        unique_id: sma_solar_power_producing
+        state: >
+          {% set solar_power = states('sensor.grid_power') %}
+          {% set result = false %}
+          {% set inputs_valid = false %}
+          {% if (solar_power != 'unknown' and solar_power != 'unavailable') %}
+          {%   set solar_power = float(solar_power, default=0) %}
+          {%   set inputs_valid = true %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   if (solar_power > 0) %}
+          {%     set result = true %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour.
       # We trigger this one second before we run other statistics that we need more precise.
@@ -999,6 +1098,204 @@ template:
         state_class: total
         state: >
           {% set input = states('sensor.metering_total_absorbed_cost') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_solar_power_produced_time_hour each hour.
+      - name: sma_solar_power_produced_time_hour_last
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_solar_power_produced_time_hour') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save pv_gen_meter each hour.
+      # This is an increasing value, so we will capture it in next hour.
+      # Not important to capture at the very end of the hour.
+      - name: sma_pv_gen_meter_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.pv_gen_meter') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save total_yield each hour.
+      # This is an increasing value, so we will capture it in next hour.
+      # Not important to capture at the very end of the hour.
+      - name: sma_total_yield_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.total_yield') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save metering_total_yield each hour.
+      # This is an increasing value, so we will capture it in next hour.
+      # Not important to capture at the very end of the hour.
+      - name: sma_metering_total_yield_hour
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.metering_total_yield') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save daily_yield each hour.
+      - name: sma_daily_yield_hour
+        unit_of_measurement: 'Wh'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.daily_yield') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+
+
+
+      # We save sma_metering_active_power_feed_l1_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l1_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l1_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l1_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l1_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l1_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l1_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l1_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l1_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l2_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l2_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l2_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l2_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l2_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l2_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l2_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l2_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l2_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l3_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l3_min_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l3_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l3_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l3_max_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l3_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sma_metering_active_power_feed_l3_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sma_metering_active_power_feed_l3_mean_hour
+        device_class: 'power'
+        unit_of_measurement: 'W'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.sma_metering_active_power_feed_l3_mean') %}
           {% if (input == 'unknown' or input == 'unavailable') %}
           {%   set value = 0 %}
           {% else %}

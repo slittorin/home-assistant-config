@@ -301,6 +301,30 @@ template:
           {%   set result = temperature | round(1, default=0) %}
           {% endif %}
           {{ result }}
+      # We save balboa_spa_circulationpump_running_time_hour each hour.
+      - name: balboa_spa_circulationpump_running_time_hour_last
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.balboa_spa_circulationpump_running_time_hour') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save balboa_spa_heater_running_time_hour each hour.
+      - name: balboa_spa_heater_running_time_hour_last
+        unit_of_measurement: 'time'
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.balboa_spa_heater_running_time_hour') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
 
 
 automation:
