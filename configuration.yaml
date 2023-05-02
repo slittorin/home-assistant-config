@@ -158,10 +158,10 @@ notify:
     server: mailcluster.loopia.se
     port: 587
     timeout: 15
-    sender: sven.anders@littorin.nu
-    recipient: sven.anders@littorin.nu
+    sender: !secret email_email_from
+    recipient: !secret email_email_to
     starttls: true
-    username: sven.anders@littorin.nu
+    username: !secret email_email_from
     password: !secret email_password
 
 # Text to speech

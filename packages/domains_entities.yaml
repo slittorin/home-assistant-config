@@ -15,7 +15,8 @@ template:
         event: start
     sensor:
       - name: home_assistant_domains_in_use
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {{ states|map(attribute='domain')|unique|list|join(',') }}
   # Get the number of domains.
@@ -146,7 +147,8 @@ template:
       # Get the number of entities within domain: persistent_notification
       - name: home_assistant_entities_domain_persistent_notification
         icon: mdi:bell
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {%- set domains = ['persistent_notification'] -%}
           {%- for domain in domains -%}

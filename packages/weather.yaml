@@ -144,7 +144,8 @@ template:
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_above_0_degrees_hhmmss
         unit_of_measurement: 'time'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
@@ -162,7 +163,8 @@ template:
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
         unit_of_measurement: 'time'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
@@ -179,7 +181,8 @@ template:
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_below_0_degrees_hhmmss
-        unit_of_measurement: 'time'
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        unit_of_measurement: 'time'
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
           
@@ -205,7 +208,8 @@ template:
           {% endif %}
       - name: weather_sun_time_above_horizon_hhmmss
         unit_of_measurement: 'time'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') %}
           {% if (snapshot == "unknown" or snapshot == "unavailable") %}
@@ -235,7 +239,8 @@ template:
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
-        unit_of_measurement: 'time'
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        unit_of_measurement: 'time'
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
@@ -260,7 +265,8 @@ template:
           {{   time }}
           {% endif %}
       - name: weather_sun_time_reaches_solarpanels_hhmmss
-        unit_of_measurement: 'time'
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        unit_of_measurement: 'time'
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') %}
