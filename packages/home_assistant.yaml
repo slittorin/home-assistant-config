@@ -40,6 +40,59 @@ template:
         state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2, default=0) }}"
 
 automation:
+  # Added 20230424, after twice halt of HA in two weeks.
+  # We start with reboots every day.
+  - alias: Restart HA regularly
+    trigger:
+      platform: time
+      at: '23:02:00'
+    condition:
+      condition: time
+      weekday:
+        - sun
+        - sat
+        - fri
+        - thu
+        - wed
+        - tue
+        - mon
+    action:
+      - service: homeassistant.restart
+  # Added 20230424, to get notification at restart.
+  - alias: 'HA Startup Notification'
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      service: notify.email_notification
+      data:
+        title: "HA restarted"
+        message: "HA has been restarted."
+  # Added 20230424, to get notification at shutdown.
+  - alias: 'HA shutdown notification'
+    trigger:
+      - platform: homeassistant
+        event: shutdown
+    action:
+      service: notify.email_notification
+      data:
+        title: "HA shutdown"
+        message: "HA has initiated shutdown."
+  # Added 20230424, to get notification at errors or warning in log.
+  - alias: 'HA log - Error or warning'
+    trigger:
+      - platform: event
+        event_type: system_log_event
+    action:
+      service: notify.email_notification
+      data:
+        title: "HA log - Error or warning"
+        message: >-
+          Datetime: {{ trigger.timestamp | timestamp_custom('%Y%m%d %H:%M:%S') }}
+          Level: {{ trigger.level }}
+          Source: {{ trigger.source }}
+          Name of component: {{ trigger.name }}
+          Message: {{ trigger.message }}
   # https://community.home-assistant.io/t/recorder-purge-and-repack/110552
   - alias: Purge Database
     initial_state: True

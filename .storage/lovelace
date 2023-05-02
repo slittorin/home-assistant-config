@@ -113,10 +113,10 @@
               "type": "gauge",
               "entity": "sensor.ehs4plem_power",
               "name": "Elbilsladdning",
-              "unit": "W",
               "needle": true,
               "min": 0,
-              "max": 13000
+              "max": 13,
+              "unit": "kW"
             },
             {
               "type": "custom:weather-card",
@@ -141,7 +141,7 @@
           "cards": [
             {
               "type": "markdown",
-              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana). Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore verkade även ge förlust av all InfluxDB-data mellan 8/8-2022 till 16/8-2022.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar). Här nollades data för perioden. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar). Ingen nollning av data har skett för perioden.\n- Strömstyrka 16/2-2022 kl. 14 till 2/3-2022 kl 16, ingen data för sma_metering_current_l3_mean_hour. Beror troligen på att jag skrev fel i yaml-fil och rättade 2/3-2022. Då data inte fanns i databasen, så kunde jag inte rätta detta via 'convert-to-hourly'-script.",
+              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 22.00 22/4 till ca. 19.00 26/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n  - Lade till daglig omstart efter detta, och lade till notiferingar via mail vid error, warning.\n- Från ca. 04.00 20/4 till ca. 09.00 21/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n- Från ca. 12.00 22/3 till ca. 18.00 22/3-2023, så fick SMA-integration problem, och alla dessa sensorer verkar ha gett fel data.\n  - Efter omstart av HA så kom alla sensorer igång.\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana).\n  - Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore gjordes 27/3-2023 för att täcka hålet, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb).\n    - Där i princip all data kunde återskapas (men det kan finnas mindre hål, samt data som inte är helt exakt).\n    - Notera att 142 sensorer kunde återställas, av 230+.\n  - Det blev även en förlust av data mellan 7/8-2022 till 15/8-2022, så viss data är borta.\n    - Det verkar vara beroende på flera orsaker, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb---restore-failure).\n    - Vi kan inte lita på data 7/8 och 15/8, men mellan 8/8 och 14/8 så bör restore ha kommit nära sanningen.\n    - Notera att 116 sensorer kunder återställas av 230+, så viss data är borta.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Här nollades data för perioden. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Ingen nollning av data har skett för perioden.\n- Strömstyrka 16/2-2022 kl. 14 till 2/3-2022 kl 16, ingen data för sma_metering_current_l3_mean_hour.\n  - Beror troligen på att jag skrev fel i yaml-fil och rättade 2/3-2022.\n  - Då data inte fanns i databasen, så kunde jag inte rätta detta via 'convert-to-hourly'-script.",
               "title": "Inkorrekt data"
             }
           ]

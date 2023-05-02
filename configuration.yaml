@@ -5,6 +5,10 @@ default_config:
 frontend:
   themes: !include_dir_merge_named themes
 
+# Added 20230426 after HA halting twice in 2 weeks, set max_entries to 500
+system_log:
+  max_entries: 500
+
 # https://github.com/jcwillox/hass-auto-backup/issues/9
 logger:
   default: warn
@@ -147,6 +151,18 @@ influxdb:
       - sensor.sma_metering_active_power_feed_l3_min
       - sensor.sma_metering_active_power_feed_l3_max
       - sensor.sma_metering_active_power_feed_l3_mean
+
+notify:
+  - name: email_notification
+    platform: smtp
+    server: mailcluster.loopia.se
+    port: 587
+    timeout: 15
+    sender: sven.anders@littorin.nu
+    recipient: sven.anders@littorin.nu
+    starttls: true
+    username: sven.anders@littorin.nu
+    password: !secret email_password
 
 # Text to speech
 tts:
