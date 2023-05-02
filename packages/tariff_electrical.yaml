@@ -616,7 +616,8 @@ template:
       - name: electrical_consumption_intake_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+#        state_class: measurement
         state: >
           {% set persistent_snapshot = states('input_number.electrical_consumption_intake_hour_snapshot_persistent') %}
           {% set old_snapshot = states('sensor.electrical_consumption_intake_hour_snapshot') %}
@@ -648,7 +649,8 @@ template:
       - name: electrical_daily_sum_consumption_intake_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistentt') %}
           {% set current_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
@@ -682,7 +684,8 @@ template:
       - name: electrical_consumption_intake_cost_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set delta = states('sensor.electrical_consumption_intake_hour') %}
           {% if (delta == 'unknown' or delta == 'unavailable') %}
@@ -710,7 +713,8 @@ template:
       - name: electrical_daily_sum_consumption_intake_cost_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
           {% set current_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
@@ -747,7 +751,8 @@ template:
       - name: electrical_solar_yield_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+#        state_class: measurement
         state: >
           {% set persistent_snapshot = states('input_number.electrical_solar_yield_hour_snapshot_persistent') %}
           {% set old_snapshot = states('sensor.electrical_solar_yield_hour_snapshot') %}
@@ -777,7 +782,8 @@ template:
       - name:  electrical_solar_yield_return_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set delta = states('sensor.electrical_solar_yield_hour') %}
           {% if (delta == 'unknown' or delta == 'unavailable') %}
@@ -801,7 +807,8 @@ template:
       - name:  electrical_solar_production_hour
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_snapshot = states('input_number.electrical_solar_production_hour_snapshot_persistent') %}
           {% set old_snapshot = states('sensor.electrical_solar_production_hour_snapshot') %}
@@ -833,7 +840,8 @@ template:
       - name:  electrical_solar_production_reduction_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set production_delta = states('sensor.electrical_solar_production_hour') %}
           {% if (production_delta == 'unknown' or production_delta == 'unavailable') %}
@@ -866,7 +874,8 @@ template:
       - name:  electrical_solar_total_return_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set reduction = states('sensor.electrical_solar_production_reduction_hour') %}
           {% if (reduction == 'unknown' or reduction == 'unavailable') %}
@@ -887,19 +896,22 @@ template:
       - name:  electrical_consumption_intake_hour_snapshot
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {{ states(states('input_text.electrical_consumption_sensor')) }}
       - name:  electrical_solar_production_hour_snapshot
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {{ states(states('input_text.electrical_production_sensor')) }}
       - name:  electrical_solar_yield_hour_snapshot
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total_increasing', 'total'
+#        state_class: measurement
         state: >
           {{ states(states('input_text.electrical_yield_sensor')) }}
 
@@ -1104,7 +1116,8 @@ template:
       - name: electrical_daily_calculated_consumption_index_sek
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
           {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
@@ -1148,7 +1161,8 @@ template:
       - name: electrical_daily_calculated_consumption_index_sek_without_evcharger
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
           {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
@@ -1201,7 +1215,8 @@ template:
       - name: electrical_daily_sum_consumption_intake_hour_without_evcharger
         device_class: 'energy'
         unit_of_measurement: 'kWh'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
           {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
@@ -1236,7 +1251,8 @@ template:
       - name: electrical_daily_sum_consumption_intake_cost_hour_without_evcharger
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
           {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}

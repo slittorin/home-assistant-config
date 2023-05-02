@@ -143,8 +143,8 @@ template:
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_above_0_degrees_hhmmss
-        unit_of_measurement: 'time'
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class None and unit time thus indicating it has a numeric value
+#        unit_of_measurement: 'time'
 #        state_class: measurement
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
@@ -162,8 +162,8 @@ template:
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
-        unit_of_measurement: 'time'
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class None and unit time thus indicating it has a numeric value
+#        unit_of_measurement: 'time'
 #        state_class: measurement
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
@@ -207,8 +207,8 @@ template:
           {{   int(time) }}
           {% endif %}
       - name: weather_sun_time_above_horizon_hhmmss
-        unit_of_measurement: 'time'
 # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        unit_of_measurement: 'time'
 #        state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') %}
@@ -267,7 +267,7 @@ template:
       - name: weather_sun_time_reaches_solarpanels_hhmmss
 # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
 #        unit_of_measurement: 'time'
-        state_class: measurement
+#        state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') %}
           {% if (snapshot == "unknown" or snapshot == "unavailable") %}
@@ -404,7 +404,8 @@ template:
       # We want to transate wind bearing to readable format.
       - name: Weather wind bearing readable
         unique_id: weather_wind_bearing_readable
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {% set bearing = float(state_attr('weather.smhi_home', 'wind_bearing'), 0) %}
           {% set readable = '' %}
@@ -446,7 +447,8 @@ template:
       # We want to transate wind speed to readable format.
       - name: Weather wind speed readable
         unique_id: weather_wind_speed_readable
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {% set bearing = float(state_attr('weather.smhi_home', 'wind_speed'), 0) %}
           {% set readable = '' %}
@@ -488,7 +490,8 @@ template:
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252
       - name: Weather wind speed readable format
         unique_id: weather_wind_speed_readable_format
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {% set speed = float(states('sensor.weather_wind_speed_ms'), 0) %}
           {% set readable = '123' %}
@@ -513,7 +516,8 @@ template:
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252
       - name: Weather wind gust speed readable
         unique_id: weather_wind_gust_speed_readable
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+#        state_class: measurement
         state: >
           {% set speed = float(states('sensor.weather_wind_gust_speed_ms'), 0) %}
           {% set readable = '' %}

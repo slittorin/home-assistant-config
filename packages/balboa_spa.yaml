@@ -217,7 +217,8 @@ template:
       - name: balboa_spa_circulationpump_cost_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
           {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
@@ -239,7 +240,8 @@ template:
       - name: balboa_spa_heater_cost_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set consumption = states('sensor.balboa_spa_heater_consumption_hour') %}
           {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
@@ -261,7 +263,8 @@ template:
       - name: balboa_spa_circulationpump_heater_cost_hour
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+#        state_class: measurement
         state: >
           {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
           {% set consumption2 = states('sensor.balboa_spa_heater_consumption_hour') %}
@@ -287,7 +290,8 @@ template:
       - name: balboa_spa_temperature_hour
         device_class: 'temperature'
         unit_of_measurement: '°C'
-        state_class: measurement
+# 20230502: Removed since gave warning in 2023.2.5: has device class temperature, state class measurement and unit °C thus indicating it has a numeric value; however, it has the non-numeric value: None (<class 'str'>)
+#        state_class: measurement
         state: >
           {% set temperature = state_attr(states('input_text.balboa_spa_temperature_sensor'), 'current_temperature') %}
           {% set inputs_valid = true %}

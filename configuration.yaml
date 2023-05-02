@@ -155,7 +155,7 @@ influxdb:
 notify:
   - name: email_notification
     platform: smtp
-    server: mailcluster.loopia.se
+    server: !secret email_server
     port: 587
     timeout: 15
     sender: !secret email_email_from
