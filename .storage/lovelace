@@ -126,9 +126,6 @@
               "forecast": true,
               "hourly_forecast": false,
               "number_of_forecasts": "6"
-            },
-            {
-              "type": "custom:sun-card"
             }
           ]
         },

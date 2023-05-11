@@ -485,6 +485,7 @@ template:
           {% elif ((bearing >= 326.25) and (bearing < 348.75)) %}
           {%   set readable = 'NNV' %}
           {% endif %}
+          {{ readable }}
           
       # We want to transate wind speed to readable format.
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252

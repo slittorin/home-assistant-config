@@ -17,6 +17,13 @@ logger:
     homeassistant.components.recorder: info
     homeassistant.components.sensor.sql: info
     custom_components.auto_backup: debug
+# New
+    homeassistant.core: info
+# https://community.home-assistant.io/t/supervisor-log-entries-in-home-assistant-log/292522
+    supervisor.hardware.monitor: info
+    homeassistant.supervisor: info
+    supervisor.hardware: info
+    supervisor: info
 
 # Recorder is enabled by default.
 recorder:
