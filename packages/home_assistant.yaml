@@ -38,6 +38,46 @@ template:
         unit_of_measurement: '%'
         state_class: measurement
         state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2, default=0) }}"
+      # 20230516:We add tracking of version for Core
+      - name: Homeassistant Core installed_version
+        unique_id: homeassistant_core_installed_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.home_assistant_core_update', 'installed_version') }}"
+      # 20230516:We add tracking of version for Core
+      - name: Homeassistant Core latest_version
+        unique_id: homeassistant_core_latest_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.home_assistant_core_update', 'latest_version') }}"
+        # 20230516:We add tracking of version for Supervisor
+      - name: Homeassistant Supervisor installed_version
+        unique_id: homeassistant_supervisor_installed_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.home_assistant_supervisor_update', 'installed_version') }}"
+        # 20230516:We add tracking of version for Supervisor
+      - name: Homeassistant Supervisor latest_version
+        unique_id: homeassistant_supervisor_latest_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.home_assistant_supervisor_update', 'latest_version') }}"
+        # 20230516:We add tracking of version for Operating System
+      - name: Homeassistant OS installed_version
+        unique_id: homeassistant_os_installed_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.home_assistant_operating_system_update', 'installed_version') }}"
+        # 20230516:We add tracking of version for Operating System
+      - name: Homeassistant OS latest_version
+        unique_id: homeassistant_os_latest_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.home_assistant_operating_system_update', 'latest_version') }}"
+        # 20230516:We add tracking of version for MariaDB
+      - name: Homeassistant MariaDB installed_version
+        unique_id: homeassistant_mariadb_installed_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.mariadb_update', 'installed_version') }}"
+        # 20230516:We add tracking of version for MariaDB
+      - name: Homeassistant MariaDB latest_version
+        unique_id: homeassistant_mariadb_latest_version
+        icon: mdi:home-assistant
+        state: "{{ state_attr('update.mariadb_update', 'latest_version') }}"
 
 automation:
   # Added 20230424, after twice halt of HA in two weeks.

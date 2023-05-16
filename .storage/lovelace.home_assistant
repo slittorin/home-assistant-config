@@ -240,6 +240,36 @@
                 }
               ],
               "title": "Domäner och entiteter som används"
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "sensor.homeassistant_os_installed_version",
+                  "name": "Homeassistant OS installed version"
+                },
+                {
+                  "entity": "sensor.homeassistant_os_latest_version",
+                  "name": "Homeassistant OS latest version"
+                },
+                {
+                  "entity": "sensor.homeassistant_supervisor_installed_version",
+                  "name": "Homeassistant Supervisor installed version"
+                },
+                {
+                  "entity": "sensor.homeassistant_supervisor_latest_version",
+                  "name": "Homeassistant Supervisor latest version"
+                },
+                {
+                  "entity": "sensor.homeassistant_core_installed_version",
+                  "name": "Homeassistant Core installed version"
+                },
+                {
+                  "entity": "sensor.homeassistant_core_latest_version",
+                  "name": "Homeassistant Core latest version"
+                }
+              ],
+              "title": "Versioner"
             }
           ]
         }
