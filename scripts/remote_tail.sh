@@ -47,7 +47,7 @@ else
 fi
 
 # Run command.
-RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_file} ${SERVER} "tail -1 ${FILE}" 2>> ${logfile}`
+RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_file} ${SERVER} "tail -1 ${FILE}"`
 RESULT_CODE=$?
 if [ ${RESULT_CODE} -ne 0 ] 
 then

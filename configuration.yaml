@@ -42,14 +42,15 @@ logbook:
 
 # History is enabled by default.
 history:
-  exclude:
-    domains:
-      # Updater: Is not required in history data.
-      #- updater. Depreceated in 2022.3.3?
-    entity_globs:
-      # We do not include any of the test_-sensors.
-      - binary_sensor.test_*
-      - sensor.test_*
+# Obsolete since 2024.5
+#  exclude:
+#    domains:
+#      # Updater: Is not required in history data.
+#      #- updater. Depreceated in 2022.3.3?
+#    entity_globs:
+#      # We do not include any of the test_-sensors.
+#      - binary_sensor.test_*
+#      - sensor.test_*
 
 # We utilize InfluxDB as state-history database.
 influxdb:
@@ -198,6 +199,7 @@ homeassistant:
     tariff_electrical: !include packages/tariff_electrical.yaml
     balboa_spa: !include packages/balboa_spa.yaml
     charger: !include packages/charger.yaml
+#    adax: !include packages/adax.yaml
 
 shell_command:
   # We run copy_backup as background process, since otherwise HA will terminate the process after 60 seconds.

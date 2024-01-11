@@ -1,0 +1,103 @@
+# This file includes all the entitites for tracking sensor data for Adax integration.
+
+
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+
+sensor:
+  # We want to keep track of the time that the heater has been heating each hour (depends of course on polling).
+  - platform: history_stats
+    name: test_adax_heater_kitchen_running_time_hour
+    entity_id: binary_sensor.test_adax_heater_kitchen_heat
+    state: 'on'
+    type: time
+    start: "{{ now().replace(minute=0, second=0) }}"
+    end: "{{ now() }}"
+
+template:
+  - sensor:
+        # We get the temperature in the kitchen.
+      - name: test Adax heater kitchen temperature
+        unique_id: test_adax_heater_kitchen_temperature
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = state_attr('climate.kok', 'current_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+        # We get the set temperature in the kitchen.
+      - name: test_Adax heater kitchen set temperature
+        unique_id: test_adax_heater_kitchen_set_temperature
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = state_attr('climate.kok', 'temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+    
+  - binary_sensor:
+      # Since we cannot track attribute-state in history_stats, we need to create a binary template-sensor.
+      # Returns true if
+      - name:  test_Adax heater kitchen heat
+        unique_id: test_adax_heater_kitchen_heat
+        device_class: heat
+        state: "{{ is_state('climate.kok', 'heat') }}"
+
+  - sensor:
+      # We want to keep track of power for the heater in the kitchen.
+      # This specific model has 1 kW of power.
+      - name: test Adax heater kitchen power
+        unique_id: test_adax_heater_kitchen_power
+        unit_of_measurement: 'kW'
+        device_class: power
+        state: >
+          {% set heating = states('binary_sensor.test_adax_heater_kitchen_heat') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (heating == 'unknown' or heating == 'unavailable' or heating == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   if (heating == 'on') %}
+          {%     set power = 1.0 %}
+          {% else %}
+          {%     set power = 0 %}
+          {%   endif %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = power %}
+          {% endif %}
+          {{ result }}
+  - sensor:
+      # We want to keep track of accumulated hourly consumption for the heater in the kitchen.
+      # This specific model has 1 kW of power.
+      - name: test Adax heater kitchen consumption hour
+        unique_id: test_adax_heater_kitchen_consumption hour
+        unit_of_measurement: 'kWh'
+        device_class: energy
+        state_class: total_increasing
+        state: "{{ float(states('sensor.test_adax_heater_kitchen_running_time_hour'), 0) * 1.0 }}"
