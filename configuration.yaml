@@ -17,6 +17,7 @@ logger:
     homeassistant.components.recorder: info
     homeassistant.components.sensor.sql: info
     custom_components.auto_backup: debug
+    homeassistant.components.shell_command: debug
 # New
     homeassistant.core: info
 # https://community.home-assistant.io/t/supervisor-log-entries-in-home-assistant-log/292522

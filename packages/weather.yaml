@@ -6,7 +6,6 @@
 #   - Time over the horizon when it reaches my solar panels (approximatelly of course):
 #     - 4 degrees above the horizon at sunrise.
 #     - 6 degrees above the horizon at sunset.
-
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
@@ -342,7 +341,7 @@ template:
         unique_id: weather_cloudiness
         unit_of_measurement: '%'
         state_class: measurement
-        state: "{{ float(state_attr('weather.smhi_home', 'cloudiness'), 0) }}"
+        state: "{{ float(state_attr('weather.smhi_home', 'cloud_coverage'), 0) }}"
 
       # We want to keep track of thunder probability, since that sensor data is in an attribute.
       - name: Weather thunder probability
