@@ -400,7 +400,7 @@ automation:
           {% set temp_from = states('input_number.balboa_spa_temperature_hour_persistent') %}
           {% set temp_now = states('sensor.balboa_spa_temperature_hour') %}
           {% set inputs_valid = true %}
-          {% set result = 0 %}
+          {% set result = none %}
           {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
           {%   set inputs_valid = false %}
           {% else %}
