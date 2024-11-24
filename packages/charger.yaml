@@ -182,7 +182,7 @@ template:
         unit_of_measurement: 'kWh'
 # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
 #        state_class: measurement
-        state: >'
+        state: >
           {% set input_value = states(states('input_text.evcharger_consumption_sensor')) %}
           {% set inputs_valid = true %}
           {% set result = none %}
