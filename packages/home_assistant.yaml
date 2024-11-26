@@ -9,17 +9,19 @@ sensor:
   # 20221113. Deprecated. Stops working in 2022.12.0, Configuration uptime using yaml has been removed. Available through Integrations.
 #  - platform: uptime
 #    name: home_assistant_restart
-  # We wamt to keep track of basic OS/HW data, scan every 15 minute.
-  - platform: systemmonitor
-    scan_interval: 900
-    resources:
-      - type: disk_use_percent
-        arg: /
-      - type: memory_use_percent
-      - type: swap_use_percent
-      - type: load_15m
-      - type: processor_temperature
-    # Get the last line in the file for backup from HA to server1.
+#  # We wamt to keep track of basic OS/HW data, scan every 15 minute.
+# 20241126: Deprecated. In log 'The systemmonitor platform for the sensor integration does not support platform setup. Please remove it from your config.'
+#           Can be remoeved as yaml.
+#  - platform: systemmonitor
+#    scan_interval: 900
+#    resources:
+#      - type: disk_use_percent
+#        arg: /
+#      - type: memory_use_percent
+#      - type: swap_use_percent
+#      - type: load_15m
+#      - type: processor_temperature
+#    # Get the last line in the file for backup from HA to server1.
   - platform: file
     name: home_assistant_backup_to_server1
     file_path: /config/logs/copy_backup.log

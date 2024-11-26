@@ -5,7 +5,7 @@
   "data": {
     "items": [
       {
-        "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524320",
+        "url": "/hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524343",
         "type": "module",
         "id": "8b2378e041bd447ca943137b268b68eb"
       },
@@ -15,7 +15,7 @@
         "id": "cac652c5a9f044ab8ae01a819bff340b"
       },
       {
-        "url": "/hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866244",
+        "url": "/hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866245",
         "type": "module",
         "id": "8f29d74b4c934a2cb9958af4d0341ecf"
       },
@@ -30,7 +30,7 @@
         "id": "ae3ab8c9f7744a9c8f8eb1ef31cf8341"
       },
       {
-        "url": "/hacsfiles/lovelace-mushroom/mushroom.js?hacstag=444350375271",
+        "url": "/hacsfiles/lovelace-mushroom/mushroom.js?hacstag=444350375420",
         "type": "module",
         "id": "2c7679dcbf4c424c958e1835e11defd5"
       },

@@ -339,12 +339,13 @@ template:
         device_class: 'temperature'
         unit_of_measurement: '°C'
 # 20230502: Removed since gave warning in 2023.2.5: has device class temperature, state class measurement and unit °C thus indicating it has a numeric value; however, it has the non-numeric value: None (<class 'str'>)
-#        state_class: measurement
+# 20241126: Added again as it seems to have been fixed.
+        state_class: measurement
         state: >
           {% set temperature = state_attr(states('input_text.balboa_spa_temperature_sensor'), 'current_temperature') %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == 'none') %}
           {%   set inputs_valid = false %}
           {% else %}
           {%   set temperature = float(temperature, 0) %}
