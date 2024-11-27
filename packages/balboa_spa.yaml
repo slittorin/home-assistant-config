@@ -266,7 +266,8 @@ template:
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
 # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-#        state_class: measurement
+# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        state_class: total
         state: >
           {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
           {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
@@ -289,7 +290,8 @@ template:
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
 # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-#        state_class: measurement
+# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        state_class: total
         state: >
           {% set consumption = states('sensor.balboa_spa_heater_consumption_hour') %}
           {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
@@ -312,7 +314,8 @@ template:
         device_class: 'monetary'
         unit_of_measurement: 'SEK'
 # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-#        state_class: measurement
+# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        state_class: total
         state: >
           {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
           {% set consumption2 = states('sensor.balboa_spa_heater_consumption_hour') %}

@@ -10,122 +10,240 @@
           "theme": "Backend-selected",
           "path": "default_view",
           "title": "Översikt",
-          "type": "custom:masonry-layout",
+          "type": "sections",
           "badges": [],
-          "cards": [
+          "cards": [],
+          "subview": false,
+          "max_columns": 4,
+          "dense_section_placement": true,
+          "sections": [
             {
-              "type": "gauge",
-              "entity": "sensor.electrical_consumption_rate_summary",
-              "name": "Elkonsumptionsavgift",
-              "unit": "öre/kWh",
-              "min": 1,
-              "needle": true,
-              "severity": {
-                "green": 50,
-                "yellow": 100,
-                "red": 500
-              },
-              "max": 1500
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Elpriser",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.electrical_consumption_rate_summary",
+                  "name": "Elkonsumptionsavgift",
+                  "unit": "öre/kWh",
+                  "needle": true,
+                  "severity": {
+                    "green": 50,
+                    "yellow": 100,
+                    "red": 500
+                  },
+                  "max": 800
+                }
+              ],
+              "column_span": 1
             },
             {
-              "type": "gauge",
-              "entity": "sensor.metering_power_absorbed",
-              "name": "Effekt intag till huset",
-              "unit": "W",
-              "min": 0,
-              "max": 22000,
-              "needle": true,
-              "severity": {
-                "green": 5000,
-                "yellow": 11000,
-                "red": 17000
-              }
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Väder i Motala",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "custom:weather-card",
+                  "entity": "weather.smhi_home"
+                }
+              ]
             },
             {
-              "type": "gauge",
-              "name": "Effekt solelsproduktion",
-              "unit": "W",
-              "needle": true,
-              "entity": "sensor.grid_power",
-              "max": 7000,
-              "severity": {
-                "green": 0,
-                "yellow": 7000,
-                "red": 7000
-              }
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Strömstyrka",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "custom:bar-card",
+                  "entities": [
+                    {
+                      "entity": "sensor.metering_current_l1",
+                      "name": "Strömstyrka L1",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    },
+                    {
+                      "entity": "sensor.metering_current_l2",
+                      "name": "Strömstyrka L2",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    },
+                    {
+                      "entity": "sensor.metering_current_l3",
+                      "name": "Strömstyrka L3",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "column_span": 1
             },
             {
-              "type": "gauge",
-              "name": "Effekt utmatning av solelsproduktion till nät",
-              "unit": "W",
-              "needle": true,
-              "max": 7000,
-              "entity": "sensor.metering_power_supplied",
-              "severity": {
-                "green": 0,
-                "yellow": 7000,
-                "red": 7000
-              }
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading_style": "title",
+                  "heading": "Effekt"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.metering_power_absorbed",
+                  "name": "Effekt intag till huset",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 22000,
+                  "needle": true,
+                  "severity": {
+                    "green": 5000,
+                    "yellow": 11000,
+                    "red": 17000
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.grid_power",
+                  "name": "Effekt solelsproduktion",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 7000,
+                  "needle": true,
+                  "severity": {
+                    "green": 0,
+                    "yellow": 7000,
+                    "red": 7000
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.metering_power_supplied",
+                  "name": "Effekt utmatning av solelsproduktion till nät",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 7000,
+                  "needle": true,
+                  "severity": {
+                    "green": 0,
+                    "yellow": 7000,
+                    "red": 7000
+                  }
+                }
+              ],
+              "column_span": 4
             },
             {
-              "type": "gauge",
-              "entity": "sensor.metering_current_l1",
-              "name": "Strömstyrka L1",
-              "unit": "A",
-              "min": 0,
-              "max": 30,
-              "severity": {
-                "green": 5,
-                "yellow": 15,
-                "red": 25
-              },
-              "needle": true
-            },
-            {
-              "type": "gauge",
-              "entity": "sensor.metering_current_l2",
-              "name": "Strömstyrka L2",
-              "unit": "A",
-              "min": 0,
-              "max": 30,
-              "severity": {
-                "green": 5,
-                "yellow": 15,
-                "red": 25
-              },
-              "needle": true
-            },
-            {
-              "type": "gauge",
-              "entity": "sensor.metering_current_l3",
-              "name": "Strömstyrka L3",
-              "unit": "A",
-              "min": 0,
-              "max": 30,
-              "severity": {
-                "green": 5,
-                "yellow": 15,
-                "red": 25
-              },
-              "needle": true
-            },
-            {
-              "type": "gauge",
-              "entity": "sensor.ehs4plem_power",
-              "name": "Elbilsladdning",
-              "needle": true,
-              "min": 0,
-              "max": 13,
-              "unit": "kW"
-            },
-            {
-              "type": "custom:weather-card",
-              "entity": "weather.smhi_home",
-              "name": "Motala",
-              "details": true,
-              "forecast": true,
-              "hourly_forecast": false,
-              "number_of_forecasts": "6"
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Elbilsladdning",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.ehs4plem_power",
+                  "name": "Elbilsladdning",
+                  "unit": "kW",
+                  "min": 0,
+                  "max": 12,
+                  "needle": true
+                }
+              ]
             }
           ]
         },
@@ -140,6 +258,160 @@
               "type": "markdown",
               "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 02.00 till ca. 18.00 för 9/1-2024 så finns ingen data i InfluxDB (Grafana).\n  - Detta beroende på fel när server1 uppdaterades.\n  - Ingen data-loss i HA-databasen.\n  - See information [här](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-update-and-reboot-of-server1-caused-the-ha-database-to-be-lost).\n- Från ca. 22.00 22/4 till ca. 19.00 26/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n  - Lade till daglig omstart efter detta, och lade till notiferingar via mail vid error, warning.\n- Från ca. 04.00 20/4 till ca. 09.00 21/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n- Från ca. 12.00 22/3 till ca. 18.00 22/3-2023, så fick SMA-integration problem, och alla dessa sensorer verkar ha gett fel data.\n  - Efter omstart av HA så kom alla sensorer igång.\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana).\n  - Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore gjordes 27/3-2023 för att täcka hålet, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb).\n    - Där i princip all data kunde återskapas (men det kan finnas mindre hål, samt data som inte är helt exakt).\n    - Notera att 142 sensorer kunde återställas, av 230+.\n  - Det blev även en förlust av data mellan 7/8-2022 till 15/8-2022, så viss data är borta.\n    - Det verkar vara beroende på flera orsaker, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb---restore-failure).\n    - Vi kan inte lita på data 7/8 och 15/8, men mellan 8/8 och 14/8 så bör restore ha kommit nära sanningen.\n    - Notera att 116 sensorer kunder återställas av 230+, så viss data är borta.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Här nollades data för perioden. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Ingen nollning av data har skett för perioden.\n- Strömstyrka 16/2-2022 kl. 14 till 2/3-2022 kl 16, ingen data för sma_metering_current_l3_mean_hour.\n  - Beror troligen på att jag skrev fel i yaml-fil och rättade 2/3-2022.\n  - Då data inte fanns i databasen, så kunde jag inte rätta detta via 'convert-to-hourly'-script.",
               "title": "Inkorrekt data"
+            }
+          ]
+        },
+        {
+          "type": "sections",
+          "max_columns": 4,
+          "title": "Test",
+          "path": "test",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Ny sektion"
+                },
+                {
+                  "type": "custom:bar-card",
+                  "entities": [
+                    {
+                      "entity": "sensor.metering_current_l1",
+                      "name": "Strömstyrka L1",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    },
+                    {
+                      "entity": "sensor.metering_current_l2",
+                      "name": "Strömstyrka L2",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    },
+                    {
+                      "entity": "sensor.metering_current_l3",
+                      "name": "Strömstyrka L3",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Ny sektion"
+                },
+                {
+                  "layout": "auto",
+                  "height": 200,
+                  "unit_prefix": "k",
+                  "round": 1,
+                  "convert_units_to": "",
+                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
+                  "gas_co2_intensity": 2351.6459999999997,
+                  "min_box_size": 3,
+                  "min_box_distance": 5,
+                  "show_states": true,
+                  "show_units": true,
+                  "energy_date_selection": false,
+                  "sections": [],
+                  "type": "custom:sankey-chart",
+                  "autoconfig": {
+                    "print_yaml": true
+                  },
+                  "min_state": 0,
+                  "title": "Effekt"
+                }
+              ]
             }
           ]
         }
