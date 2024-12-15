@@ -7,21 +7,21 @@
 sensor:
   # We want to keep track on when Home Assistant was restarted.
   # 20221113. Deprecated. Stops working in 2022.12.0, Configuration uptime using yaml has been removed. Available through Integrations.
-#  - platform: uptime
-#    name: home_assistant_restart
-#  # We wamt to keep track of basic OS/HW data, scan every 15 minute.
-# 20241126: Deprecated. In log 'The systemmonitor platform for the sensor integration does not support platform setup. Please remove it from your config.'
-#           Can be remoeved as yaml.
-#  - platform: systemmonitor
-#    scan_interval: 900
-#    resources:
-#      - type: disk_use_percent
-#        arg: /
-#      - type: memory_use_percent
-#      - type: swap_use_percent
-#      - type: load_15m
-#      - type: processor_temperature
-#    # Get the last line in the file for backup from HA to server1.
+  #  - platform: uptime
+  #    name: home_assistant_restart
+  #  # We wamt to keep track of basic OS/HW data, scan every 15 minute.
+  # 20241126: Deprecated. In log 'The systemmonitor platform for the sensor integration does not support platform setup. Please remove it from your config.'
+  #           Can be remoeved as yaml.
+  #  - platform: systemmonitor
+  #    scan_interval: 900
+  #    resources:
+  #      - type: disk_use_percent
+  #        arg: /
+  #      - type: memory_use_percent
+  #      - type: swap_use_percent
+  #      - type: load_15m
+  #      - type: processor_temperature
+  #    # Get the last line in the file for backup from HA to server1.
   - platform: file
     name: home_assistant_backup_to_server1
     file_path: /config/logs/copy_backup.log
@@ -37,7 +37,7 @@ template:
       - name: Homeassistant cpu load 15m
         unique_id: homeassistant_cpu_load_15m
         icon: mdi:cpu-64-bit
-        unit_of_measurement: '%'
+        unit_of_measurement: "%"
         state_class: measurement
         state: "{{ (float(states('sensor.load_15m')) / 4) * 100 | round(2, default=0) }}"
       # 20230516:We add tracking of version for Core
@@ -87,7 +87,7 @@ automation:
   - alias: Restart HA regularly
     trigger:
       platform: time
-      at: '23:02:00'
+      at: "23:02:00"
     condition:
       condition: time
       weekday:
@@ -101,7 +101,7 @@ automation:
     action:
       - service: homeassistant.restart
   # Added 20230424, to get notification at restart.
-  - alias: 'HA Startup Notification'
+  - alias: "HA Startup Notification"
     trigger:
       - platform: homeassistant
         event: start
@@ -111,7 +111,7 @@ automation:
         title: "HA restarted"
         message: "HA has been restarted."
   # Added 20230424, to get notification at shutdown.
-  - alias: 'HA shutdown notification'
+  - alias: "HA shutdown notification"
     trigger:
       - platform: homeassistant
         event: shutdown
@@ -121,7 +121,7 @@ automation:
         title: "HA shutdown"
         message: "HA has initiated shutdown."
   # Added 20230424, to get notification at errors or warning in log.
-  - alias: 'HA log - Error or warning'
+  - alias: "HA log - Error or warning"
     trigger:
       - platform: event
         event_type: system_log_event
@@ -140,9 +140,16 @@ automation:
     initial_state: True
     trigger:
       platform: time
-      at: '03:00:00'
+      at: "03:00:00"
     action:
       service: recorder.purge
       data:
         keep_days: 30
         repack: true
+  # Added 20241215, to copy logfile after restart.
+  - alias: "HA Startup copy logfile"
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      service: shell_command.copy_logfile

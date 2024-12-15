@@ -402,16 +402,324 @@
                   "min_box_distance": 5,
                   "show_states": true,
                   "show_units": true,
+                  "sections": [
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.metering_total_yield",
+                            "total"
+                          ],
+                          "entity_id": "sensor.total_yield",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power",
+                          "name": "Solelsproduktion"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.metering_total_yield",
+                            "total"
+                          ],
+                          "entity_id": "sensor.metering_total_absorbed",
+                          "subtract_entities": [
+                            "sensor.metering_total_yield"
+                          ],
+                          "name": "Intag till huset",
+                          "icon": "mdi:transmission-tower-export",
+                          "color": "Green"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.metering_total_yield",
+                          "subtract_entities": [
+                            "sensor.metering_total_absorbed"
+                          ]
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "no_area",
+                            "unknown"
+                          ],
+                          "entity_id": "total",
+                          "name": "Använt av hela huset",
+                          "icon": "mdi:home-lightning-bolt",
+                          "color": "Lightblue"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "remaining_child_state",
+                          "children": [
+                            "sensor.balboa_spa_circulationpump_consumption_hour",
+                            "sensor.balboa_spa_heater_consumption_hour",
+                            "sensor.ehs4plem_lifetime_energy"
+                          ],
+                          "entity_id": "no_area",
+                          "name": "No area"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [],
+                          "entity_id": "unknown",
+                          "name": "Huset",
+                          "icon": "mdi:home"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.balboa_spa_circulationpump_consumption_hour"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.balboa_spa_heater_consumption_hour"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.ehs4plem_lifetime_energy"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    }
+                  ],
                   "energy_date_selection": false,
-                  "sections": [],
                   "type": "custom:sankey-chart",
-                  "autoconfig": {
-                    "print_yaml": true
-                  },
                   "min_state": 0,
-                  "title": "Effekt"
+                  "time_period_from": "now-1w",
+                  "show_names": true,
+                  "show_icons": true,
+                  "wide": true,
+                  "grid_options": {
+                    "columns": "full"
+                  },
+                  "title": "Energimängd",
+                  "throttle": 10000
+                },
+                {
+                  "layout": "horizontal",
+                  "height": 200,
+                  "unit_prefix": "k",
+                  "round": 0,
+                  "convert_units_to": "",
+                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
+                  "gas_co2_intensity": 2351.6459999999997,
+                  "min_box_size": 3,
+                  "min_box_distance": 5,
+                  "show_states": true,
+                  "show_units": true,
+                  "sections": [
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.sma_metering_total_yield_hour",
+                            "solarproduction_used_by_house"
+                          ],
+                          "entity_id": "sensor.sma_total_yield_hour",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power",
+                          "name": "Solelsproduktion"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.sma_metering_total_yield_hour",
+                          "name": "Utmatning av solelsproduktion",
+                          "color": "Yellow",
+                          "icon": "mdi:transmission-tower-import"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "solarproduction_used_by_house",
+                          "name": "Solelsproduktion intag till huset",
+                          "icon": "mdi:solar-power",
+                          "color": "Yellow"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "sensor.sma_metering_total_absorbed_hour",
+                          "color": "Lightgreen",
+                          "icon": "mdi:transmission-tower-export",
+                          "name": "Intag till huset"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                            "sensor.evcharger_consumption_hour",
+                            "used_by_house"
+                          ],
+                          "entity_id": "total_used_by_whole_house",
+                          "color": "lightskyblue",
+                          "icon": "mdi:home-import-outline",
+                          "name": "Använt av hela huset"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                          "name": "Spabad",
+                          "icon": "mdi:spa",
+                          "color": "lightcoral"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.evcharger_consumption_hour",
+                          "color": "lightcoral",
+                          "icon": "mdi:car-electric",
+                          "name": "Elbilsladdning"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [],
+                          "entity_id": "used_by_house",
+                          "name": "Använt av huset",
+                          "icon": "mdi:home-lightning-bolt-outline"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": []
+                    }
+                  ],
+                  "energy_date_selection": false,
+                  "type": "custom:sankey-chart",
+                  "min_state": 0,
+                  "show_names": true,
+                  "show_icons": true,
+                  "wide": true,
+                  "grid_options": {
+                    "columns": "full"
+                  },
+                  "title": "Energimängd",
+                  "time_period_from": "now-1w",
+                  "throttle": 10000
+                },
+                {
+                  "layout": "auto",
+                  "height": 200,
+                  "unit_prefix": "k",
+                  "round": 1,
+                  "convert_units_to": "",
+                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
+                  "gas_co2_intensity": 2351.6459999999997,
+                  "min_box_size": 3,
+                  "min_box_distance": 5,
+                  "show_states": true,
+                  "show_units": true,
+                  "sections": [
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.sma_total_yield_hour"
+                          ],
+                          "entity_id": "sensor.sma_metering_total_yield_hour",
+                          "name": "Utmatning av solelsproduktion",
+                          "icon": "mdi:transmission-tower-import",
+                          "color": "Yellow"
+                        },
+                        {
+                          "type": "remaining_child_state",
+                          "children": [
+                            "sensor.sma_total_yield_hour"
+                          ],
+                          "entity_id": "solarproduction_intake_to_house",
+                          "name": "Solelsproduktion intag till huset",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.sma_metering_total_absorbed_hour",
+                          "icon": "mdi:transmission-tower-export",
+                          "color": "Lightgreen",
+                          "name": "Intag till huset"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.sma_total_yield_hour",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power-variant",
+                          "name": "Solelsproduktion"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    }
+                  ],
+                  "energy_date_selection": false,
+                  "type": "custom:sankey-chart",
+                  "min_state": 0,
+                  "time_period_from": "now-1w",
+                  "show_names": true,
+                  "show_icons": true,
+                  "wide": true,
+                  "grid_options": {
+                    "columns": "full"
+                  },
+                  "title": "Energimängd",
+                  "throttle": 10000
                 }
-              ]
+              ],
+              "column_span": 2
             }
           ]
         }

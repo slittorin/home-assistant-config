@@ -18,9 +18,9 @@ logger:
     homeassistant.components.sensor.sql: info
     custom_components.auto_backup: debug
     homeassistant.components.shell_command: debug
-# New
+    # New
     homeassistant.core: info
-# https://community.home-assistant.io/t/supervisor-log-entries-in-home-assistant-log/292522
+    # https://community.home-assistant.io/t/supervisor-log-entries-in-home-assistant-log/292522
     supervisor.hardware.monitor: info
     homeassistant.supervisor: info
     supervisor.hardware: info
@@ -30,7 +30,7 @@ logger:
 recorder:
   db_url: !secret recorder_db_url
   purge_keep_days: 30
-#auto_purge: true
+  #auto_purge: true
   commit_interval: 30
   exclude:
     entities:
@@ -185,7 +185,7 @@ scene: !include scenes.yaml
 
 homeassistant:
   allowlist_external_dirs:
-    - '/config/logs'
+    - "/config/logs"
   packages:
     home_assistant: !include packages/home_assistant.yaml
     backup: !include packages/backup.yaml
@@ -205,6 +205,7 @@ homeassistant:
 shell_command:
   # We run copy_backup as background process, since otherwise HA will terminate the process after 60 seconds.
   copy_backup: /config/scripts/copy_backup.sh pi@192.168.2.30 /srv/ha/backup &
+  copy_logfile: /config/scripts/copy_logfile.sh
   github_push: /config/scripts/github_push.sh "{{ value }}"
   grafana_github_push: /config/scripts/grafana_github_push.sh pi@192.168.2.30 192.168.2.30:3000 "{{ value }}"
   server1_github_push: /config/scripts/server1_github_push.sh pi@192.168.2.30 "{{ value }}"
