@@ -15,17 +15,18 @@ input_button:
     icon: mdi:github
 
 automation:
-- alias: "Server1 Github push"
-  trigger:
-    - platform: state
-      entity_id: input_button.server1_github_push
-  action:
-    - service: shell_command.server1_github_push
-      data:
-        value: "{{ states('input_text.server1_git_push_comment') }}"
-
-sensor:
-    # Get the last line in the server1 git_push-logfile
-  - platform: file
-    name: server1_file_github_push_log
-    file_path: /config/logs/server1_github_push.log
+  - alias: "Server1 Github push"
+    trigger:
+      - platform: state
+        entity_id: input_button.server1_github_push
+    action:
+      - service: shell_command.server1_github_push
+        data:
+          value: "{{ states('input_text.server1_git_push_comment') }}"
+# Removed 20241215 for 2024.12.3 since it has been converted to GUI-setup.
+# The file platform for the sensor integration does not support platform setup. Please remove it from your config.
+#sensor:
+#    # Get the last line in the server1 git_push-logfile
+#  - platform: file
+#    name: server1_file_github_push_log
+#    file_path: /config/logs/server1_github_push.log

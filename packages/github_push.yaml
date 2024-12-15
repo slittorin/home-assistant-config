@@ -15,17 +15,18 @@ input_button:
     icon: mdi:github
 
 automation:
-- alias: "Github push"
-  trigger:
-    - platform: state
-      entity_id: input_button.github_push
-  action:
-    - service: shell_command.github_push
-      data:
-        value: "{{ states('input_text.home_assistant_git_push_comment') }}"
-
-sensor:
-    # Get the last line in the git_push-logfile
-  - platform: file
-    name: home_assistant_file_github_push_log
-    file_path: /config/logs/github_push.log
+  - alias: "Github push"
+    trigger:
+      - platform: state
+        entity_id: input_button.github_push
+    action:
+      - service: shell_command.github_push
+        data:
+          value: "{{ states('input_text.home_assistant_git_push_comment') }}"
+# Removed 20241215 for 2024.12.3 since it has been converted to GUI-setup.
+# The file platform for the sensor integration does not support platform setup. Please remove it from your config.
+#sensor:
+#    # Get the last line in the git_push-logfile
+#  - platform: file
+#    name: home_assistant_file_github_push_log
+#    file_path: /config/logs/github_push.log

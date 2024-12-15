@@ -6,19 +6,19 @@
 
 automation:
   - id: snapshot_daily
-    alias: 'Daily snapshot each monday through saturday of the week, kept 7 days'
+    alias: "Daily snapshot each monday through saturday of the week, kept 7 days"
     trigger:
       platform: time
-      at: '01:00:00'
+      at: "01:00:00"
     condition:
-    - condition: time
-      weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        - sat
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
     action:
       service: auto_backup.backup_full
       data:
@@ -26,14 +26,14 @@ automation:
         keep_days: 7
 
   - id: snapshot_weekly
-    alias: 'Weekly snapshot each sunday, kept 57 days'
+    alias: "Weekly snapshot each sunday, kept 57 days"
     trigger:
       platform: time
-      at: '01:00:00'
+      at: "01:00:00"
     condition:
-    - condition: time
-      weekday:
-        - sun
+      - condition: time
+        weekday:
+          - sun
     action:
       service: auto_backup.backup_full
       data:
@@ -41,20 +41,20 @@ automation:
         keep_days: 57
 
   - id: copy_backup
-    alias: 'Copy backup files to server1 each night'
+    alias: "Copy backup files to server1 each night"
     trigger:
       platform: time
-      at: '02:30:00'
+      at: "02:30:00"
     condition:
-    - condition: time
-      weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        - sat
-        - sun
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
     action:
       service: shell_command.copy_backup
 
@@ -73,9 +73,10 @@ input_button:
   copy_backup2:
     name: Press to copy backup files to server1 - v2
     icon: mdi:cloud-upload
-
-sensor:
-    # Get the last line in the copy_backup-logfile
-  - platform: file
-    name: home_assistant_copy_backup_log
-    file_path: /config/logs/copy_backup.log
+# Removed 20241215 for 2024.12.3 since it has been converted to GUI-setup.
+# The file platform for the sensor integration does not support platform setup. Please remove it from your config.
+#sensor:
+#    # Get the last line in the copy_backup-logfile
+#  - platform: file
+#    name: home_assistant_copy_backup_log
+#    file_path: /config/logs/copy_backup.log
