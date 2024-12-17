@@ -19,7 +19,7 @@ sensor:
 # All the below is related to keep track of the true electrical rate and income of the solar panels.
 input_number:
   electrical_distribution_rate:
-    name: 'Electrical distribution rate (before tax and VAT)'
+    name: "Electrical distribution rate (before tax and VAT)"
     icon: mdi:transmission-tower
     mode: box
     min: 0
@@ -27,7 +27,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_distribution_rate_tax:
-    name: 'Electrical distribution rate tax'
+    name: "Electrical distribution rate tax"
     icon: mdi:transmission-tower
     mode: box
     min: 0
@@ -35,7 +35,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_distribution_rate_vat:
-    name: 'Electrical distribution rate VAT'
+    name: "Electrical distribution rate VAT"
     icon: mdi:transmission-tower
     mode: box
     min: 0
@@ -43,7 +43,7 @@ input_number:
     max: 1000
     unit_of_measurement: "%"
   electrical_consumption_rate_manual:
-    name: 'Electrical consumption manual rate (before tax and VAT)'
+    name: "Electrical consumption manual rate (before tax and VAT)"
     icon: mdi:transmission-tower-import
     mode: box
     min: 0
@@ -51,7 +51,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_consumption_rate_compensation_manual:
-    name: 'Electrical consumption rate manual compensation (before tax and VAT)'
+    name: "Electrical consumption rate manual compensation (before tax and VAT)"
     icon: mdi:transmission-tower-import
     mode: box
     min: -1000
@@ -59,7 +59,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_consumption_rate_tax:
-    name: 'Electrical consumption rate tax'
+    name: "Electrical consumption rate tax"
     icon: mdi:transmission-tower-import
     mode: box
     min: 0
@@ -67,7 +67,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_consumption_rate_vat:
-    name: 'Electrical consumption rate VAT'
+    name: "Electrical consumption rate VAT"
     icon: mdi:transmission-tower-import
     mode: box
     min: 0
@@ -75,7 +75,7 @@ input_number:
     max: 100
     unit_of_measurement: "%"
   electrical_yield_rate_manual:
-    name: 'Electrical manual yield rate (for output to grid, before tax and VAT)'
+    name: "Electrical manual yield rate (for output to grid, before tax and VAT)"
     icon: mdi:transmission-tower-export
     mode: box
     min: 0
@@ -83,7 +83,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_yield_rate_compensation_manual:
-    name: 'Electrical yield rate manual compensation (for output to grid,before tax and VAT)'
+    name: "Electrical yield rate manual compensation (for output to grid,before tax and VAT)"
     icon: mdi:transmission-tower-export
     mode: box
     min: -1000
@@ -91,7 +91,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_yield_rate_tax:
-    name: 'Electrical yield rate tax (for output to grid)'
+    name: "Electrical yield rate tax (for output to grid)"
     icon: mdi:transmission-tower-export
     mode: box
     min: 0
@@ -99,7 +99,7 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_yield_rate_vat:
-    name: 'Electrical yield rate VAT (for output to grid)'
+    name: "Electrical yield rate VAT (for output to grid)"
     icon: mdi:transmission-tower-export
     mode: box
     min: 0
@@ -107,7 +107,7 @@ input_number:
     max: 100
     unit_of_measurement: "%"
   electrical_yield_rate_tax_reduction:
-    name: 'Electrical yield rate tax reduction (for output to grid)'
+    name: "Electrical yield rate tax reduction (for output to grid)"
     icon: mdi:transmission-tower-export
     mode: box
     min: 0
@@ -115,35 +115,35 @@ input_number:
     max: 1000
     unit_of_measurement: "öre/kWh"
   electrical_consumption_intake_hour_snapshot_persistent:
-    name: 'Persistence for electrical_consumption_intake_hour_snapshot'
+    name: "Persistence for electrical_consumption_intake_hour_snapshot"
     icon: mdi:database
     mode: box
     min: 0
     max: 10000000
     unit_of_measurement: "kWh"
   electrical_solar_production_hour_snapshot_persistent:
-    name: 'Persistence for electrical_solar_production_hour_snapshot'
+    name: "Persistence for electrical_solar_production_hour_snapshot"
     icon: mdi:database
     mode: box
     min: 0
     max: 10000000
     unit_of_measurement: "kWh"
   electrical_solar_yield_hour_snapshot_persistent:
-    name: 'Persistence for electrical_solar_yield_hour_snapshot'
+    name: "Persistence for electrical_solar_yield_hour_snapshot"
     icon: mdi:database
     mode: box
     min: 0
     max: 10000000
     unit_of_measurement: "kWh"
   electrical_daily_sum_consumption_intake_hour_persistent:
-    name: 'Persistence for daily sum for electrical_daily_sum_consumption_intake_hour'
+    name: "Persistence for daily sum for electrical_daily_sum_consumption_intake_hour"
     icon: mdi:transmission-tower
     mode: box
     min: 0
     max: 10000000
     unit_of_measurement: "kWh"
   electrical_daily_sum_consumption_intake_cost_hour_persistent:
-    name: 'Persistence for daily sum for electrical_daily_sum_consumption_intake_cost_hour'
+    name: "Persistence for daily sum for electrical_daily_sum_consumption_intake_cost_hour"
     icon: mdi:transmission-tower
     mode: box
     min: 0
@@ -152,27 +152,27 @@ input_number:
 
 input_boolean:
   electrical_consumption_rate_toggle:
-    name: 'If enabled, manual consumption-rate, otherwise spot based consumption rate.'
+    name: "If enabled, manual consumption-rate, otherwise spot based consumption rate."
     icon: mdi:toggle-switch
   electrical_yield_rate_toggle:
-    name: 'If enabled, manual yield-rate, otherwise spot based yield rate.'
+    name: "If enabled, manual yield-rate, otherwise spot based yield rate."
     icon: mdi:toggle-switch
 
 input_text:
   electrical_consumption_spot_sensor:
-    name: 'Name of sensor for spot-price and consumption (full name)'
+    name: "Name of sensor for spot-price and consumption (full name)"
     icon: mdi:home-import-outline
   electrical_yield_spot_sensor:
-    name: 'Name of sensor for spot-price and yield (full name)'
+    name: "Name of sensor for spot-price and yield (full name)"
     icon: mdi:home-export-outline
   electrical_consumption_sensor:
-    name: 'Name of sensor for tracking total_increasing electrical consumption into the house in kWh (full name)'
+    name: "Name of sensor for tracking total_increasing electrical consumption into the house in kWh (full name)"
     icon: mdi:home-import-outline
   electrical_production_sensor:
-    name: 'Name of sensor for tracking total_increasing electrical production in kWh (full name)'
+    name: "Name of sensor for tracking total_increasing electrical production in kWh (full name)"
     icon: mdi:solar-power
   electrical_yield_sensor:
-    name: 'Name of sensor for tracking total_increasing electrical yield (output to grid) in kWh (full name)'
+    name: "Name of sensor for tracking total_increasing electrical yield (output to grid) in kWh (full name)"
     icon: mdi:home-export-outline
 
 template:
@@ -180,7 +180,7 @@ template:
       # We want to keep track of the consumption spot rate.
       - name: Electrical consumption rate spot
         unique_id: electrical_consumption_rate_spot
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         icon: mdi:home-import-outline
         state: >
@@ -197,7 +197,7 @@ template:
       # We want to keep track of the distribution spot rate.
       - name: Electrical yield rate spot
         unique_id: electrical_yield_rate_spot
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         icon: mdi:home-export-outline
         state: >
@@ -214,7 +214,7 @@ template:
       # We want to keep track of total electrical distribution rate.
       - name: Electrical distribution rate summary
         unique_id: electrical_distribution_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower
         state: >
@@ -275,7 +275,7 @@ template:
       # We want to keep track of total electrical consumption rate.
       - name: Electrical consumption rate summary
         unique_id: electrical_consumption_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -320,7 +320,7 @@ template:
       # We want to keep track of total electrical average consumption rate.
       - name: Electrical average consumption rate summary
         unique_id: electrical_average_consumption_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -365,7 +365,7 @@ template:
       # We want to keep track of total electrical distribution plus consumption rate.
       - name: Electrical distribution consumption rate summary
         unique_id: electrical_distribution_consumption_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -388,7 +388,7 @@ template:
       # We want to keep track of total electrical distribution plus average consumption rate.
       - name: Electrical distribution average consumption rate summary
         unique_id: electrical_distribution_average_consumption_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -411,7 +411,7 @@ template:
       # We want to keep track of total electrical distribution plus consumption rate, in SEK/kWh.
       - name: Electrical distribution consumption rate summary SEK
         unique_id: electrical_distribution_consumption_rate_summary_sek
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -428,7 +428,7 @@ template:
       # This one is named 'sensor.electrical_distribution_consumption_rate_summary_sek_2' in HA, as it was first wrongly defined.
       - name: Electrical distribution average consumption rate summary SEK
         unique_id: electrical_distribution_average_consumption_rate_summary_sek
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -460,7 +460,7 @@ template:
       # We want to keep track of total electrical yield rate.
       - name: Electrical yield rate summary
         unique_id: electrical_yield_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-export
         state: >
@@ -511,7 +511,7 @@ template:
       # We want to keep track of total electrical yield rate., in SEK/kWh.
       - name: Electrical yield rate summary SEK
         unique_id: electrical_yield_rate_summary_sek
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-export
         state: >
@@ -529,7 +529,7 @@ template:
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical consumption total hour
         unique_id: electrical_consumption_total_hour
-        unit_of_measurement: 'kWh'
+        unit_of_measurement: "kWh"
         state_class: measurement
         icon: mdi:lightning-bolt
         state: >
@@ -558,7 +558,7 @@ template:
       # We want to keep track of the daily average consumption rate.
       - name: Electrical consumption average rate summary
         unique_id: electrical_consumption_average_rate_summary
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         icon: mdi:transmission-tower-import
         state: >
@@ -599,7 +599,6 @@ template:
           {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4, default=0) %}
           {{ total_rate }}
 
-
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
@@ -614,10 +613,10 @@ template:
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical_consumption_intake_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_snapshot = states('input_number.electrical_consumption_intake_hour_snapshot_persistent') %}
@@ -648,10 +647,10 @@ template:
       # We reset the sum at first hour of day.
       # 20221110: We increase decimals from 4 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical_daily_sum_consumption_intake_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistentt') %}
@@ -684,10 +683,10 @@ template:
 
       # Then we calculate the consumption and distribution cost for the hour.
       - name: electrical_consumption_intake_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set delta = states('sensor.electrical_consumption_intake_hour') %}
@@ -714,10 +713,10 @@ template:
       # Then we summarize the daily intake consumption and distribution cost for the hour.
       # We reset the sum at first hour of day.
       - name: electrical_daily_sum_consumption_intake_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
@@ -753,10 +752,10 @@ template:
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: electrical_solar_yield_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_snapshot = states('input_number.electrical_solar_yield_hour_snapshot_persistent') %}
@@ -784,11 +783,11 @@ template:
           {{ result }}
 
       # Then we calculate the yield-return for solar production.
-      - name:  electrical_solar_yield_return_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_solar_yield_return_hour
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set delta = states('sensor.electrical_solar_yield_hour') %}
@@ -810,11 +809,11 @@ template:
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
-      - name:  electrical_solar_production_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_solar_production_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_snapshot = states('input_number.electrical_solar_production_hour_snapshot_persistent') %}
@@ -844,11 +843,11 @@ template:
       # Then we calculate the reduction from solar production (i.e. that we do not need to buy the electricity).
       # Update 20220316. We need to compensate for yield back to the grid, as we do not get monetary value for all that is produced.
       # So prior to this date, the total monetary value was too large.
-      - name:  electrical_solar_production_reduction_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_solar_production_reduction_hour
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set production_delta = states('sensor.electrical_solar_production_hour') %}
@@ -879,11 +878,11 @@ template:
           {{ reduction }}
 
       # Then we calculate the total reduction, plus yield income for solar production).
-      - name:  electrical_solar_total_return_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_solar_total_return_hour
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set reduction = states('sensor.electrical_solar_production_reduction_hour') %}
@@ -902,27 +901,27 @@ template:
           {{ total_reduction }}
 
       # Last we set the snapshots.
-      - name:  electrical_consumption_intake_hour_snapshot
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_consumption_intake_hour_snapshot
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {{ states(states('input_text.electrical_consumption_sensor')) }}
-      - name:  electrical_solar_production_hour_snapshot
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_solar_production_hour_snapshot
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {{ states(states('input_text.electrical_production_sensor')) }}
-      - name:  electrical_solar_yield_hour_snapshot
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total_increasing', 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      - name: electrical_solar_yield_hour_snapshot
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total_increasing', 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {{ states(states('input_text.electrical_yield_sensor')) }}
@@ -937,7 +936,7 @@ template:
       # We set the hourly state for: electrical_yield_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_yield_rate_summary_hour
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.electrical_yield_rate_summary') %}
@@ -953,7 +952,7 @@ template:
       # We set the hourly state for: electrical_yield_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_yield_rate_summary_sek_hour
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.electrical_yield_rate_summary_sek') %}
@@ -969,7 +968,7 @@ template:
       # We set the hourly state for: electrical_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity not has changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_consumption_rate_summary_hour
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.electrical_consumption_rate_summary') %}
@@ -985,7 +984,7 @@ template:
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_distribution_consumption_rate_summary_hour
-        unit_of_measurement: 'öre/kWh'
+        unit_of_measurement: "öre/kWh"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.electrical_distribution_consumption_rate_summary') %}
@@ -1001,7 +1000,7 @@ template:
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
       - name: electrical_distribution_consumption_rate_summary_sek_hour
-        unit_of_measurement: 'SEK/kWh'
+        unit_of_measurement: "SEK/kWh"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
@@ -1014,7 +1013,6 @@ template:
         attributes:
           updated: >
             {{ now() }}
-
 
   - trigger:
       # Trigger at the  end of every day.
@@ -1029,7 +1027,7 @@ template:
       # 20221110: Renamed name from electrical_daily_calculated_consumption_index to electrical_daily_calculated_consumption_index_pct
       #           This to represent percentage in number, not index of 1,xxx or 0,xxx.
       - name: electrical_daily_calculated_consumption_index_pct
-        unit_of_measurement: '%'
+        unit_of_measurement: "%"
         state_class: measurement
         state: >
           {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
@@ -1072,7 +1070,7 @@ template:
       # If equal to 1, then we are at the average for the day. Neither good or bad.
       # 20221231: Added.
       - name: electrical_daily_calculated_consumption_index_pct_without_evcharger
-        unit_of_measurement: '%'
+        unit_of_measurement: "%"
         state_class: measurement
         state: >
           {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
@@ -1126,10 +1124,10 @@ template:
       # If higher than 0, then we have more intake consumption-cost on higher rate than average hours. I.e. bad, we 'loose' money.
       # If equal to 0, then we are at the average for the day. Neither good or bad.
       - name: electrical_daily_calculated_consumption_index_sek
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
@@ -1172,10 +1170,10 @@ template:
       # If equal to 0, then we are at the average for the day. Neither good or bad.
       # 20221231: Added.
       - name: electrical_daily_calculated_consumption_index_sek_without_evcharger
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
@@ -1227,10 +1225,10 @@ template:
       # At the end of the day summarize electrical_daily_sum_consumption_intake_hour, without evcharger consumption.
       # 20221231: Added.
       - name: electrical_daily_sum_consumption_intake_hour_without_evcharger
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
@@ -1264,10 +1262,10 @@ template:
       # At the end of the day summarize electrical_daily_sum_consumption_intake_cost_hour, without evcharger consumption.
       # 20221231: Added.
       - name: electrical_daily_sum_consumption_intake_cost_hour_without_evcharger
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
@@ -1299,11 +1297,10 @@ template:
           {% endif %}
           {{ result }}
 
-
 automation:
   # For persistence, On every state change for electrical_consumption_intake_hour_snapshot, set input_number sensor.
   - id: automation_electrical_consumption_intake_hour_snapshot
-    alias: 'Automation for persistance of electrical_consumption_intake_hour_snapshot'
+    alias: "Automation for persistance of electrical_consumption_intake_hour_snapshot"
     trigger:
       - platform: state
         entity_id: sensor.electrical_consumption_intake_hour_snapshot
@@ -1314,7 +1311,7 @@ automation:
         value: "{{ states('sensor.electrical_consumption_intake_hour_snapshot') }}"
   # For persistence, On every state change for electrical_solar_production_hour_snapshot, set input_number sensor.
   - id: automation_electrical_solar_production_hour_snapshot
-    alias: 'Automation for persistance of electrical_solar_production_hour_snapshot'
+    alias: "Automation for persistance of electrical_solar_production_hour_snapshot"
     trigger:
       - platform: state
         entity_id: sensor.electrical_solar_production_hour_snapshot
@@ -1325,7 +1322,7 @@ automation:
         value: "{{ states('sensor.electrical_solar_production_hour_snapshot') }}"
   # For persistence, On every state change for electrical_solar_yield_hour_snapshot, set input_number sensor.
   - id: automation_electrical_solar_yield_hour_snapshot
-    alias: 'Automation for persistance of electrical_solar_yield_hour_snapshot'
+    alias: "Automation for persistance of electrical_solar_yield_hour_snapshot"
     trigger:
       - platform: state
         entity_id: sensor.electrical_solar_yield_hour_snapshot
@@ -1336,7 +1333,7 @@ automation:
         value: "{{ states('sensor.electrical_solar_yield_hour_snapshot') }}"
   # For persistence, On every state change for electrical_daily_sum_consumption_intake_cost_hour
   - id: automation_electrical_daily_sum_consumption_intake_cost_hour
-    alias: 'Automation for persistance of electrical_daily_sum_consumption_intake_cost_hour'
+    alias: "Automation for persistance of electrical_daily_sum_consumption_intake_cost_hour"
     trigger:
       - platform: state
         entity_id: sensor.electrical_daily_sum_consumption_intake_cost_hour
@@ -1347,7 +1344,7 @@ automation:
         value: "{{ states('sensor.electrical_daily_sum_consumption_intake_cost_hour') }}"
   # For persistence, On every state change for electrical_daily_sum_consumption_intake_hour
   - id: automation_electrical_daily_sum_consumption_intake_hour
-    alias: 'Automation for persistance of electrical_daily_sum_consumption_intake_hour'
+    alias: "Automation for persistance of electrical_daily_sum_consumption_intake_hour"
     trigger:
       - platform: state
         entity_id: sensor.electrical_daily_sum_consumption_intake_hour

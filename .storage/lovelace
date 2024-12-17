@@ -511,7 +511,7 @@
                     "columns": "full"
                   },
                   "title": "Energimängd",
-                  "throttle": 10000
+                  "throttle": 900000
                 },
                 {
                   "layout": "horizontal",
@@ -579,7 +579,7 @@
                           "type": "remaining_parent_state",
                           "children": [
                             "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
-                            "sensor.evcharger_consumption_hour",
+                            "sensor.ehs4plem_lifetime_energy",
                             "used_by_house"
                           ],
                           "entity_id": "total_used_by_whole_house",
@@ -604,7 +604,7 @@
                         {
                           "type": "entity",
                           "children": [],
-                          "entity_id": "sensor.evcharger_consumption_hour",
+                          "entity_id": "sensor.ehs4plem_lifetime_energy",
                           "color": "lightcoral",
                           "icon": "mdi:car-electric",
                           "name": "Elbilsladdning"
@@ -635,88 +635,7 @@
                   },
                   "title": "Energimängd",
                   "time_period_from": "now-1w",
-                  "throttle": 10000
-                },
-                {
-                  "layout": "auto",
-                  "height": 200,
-                  "unit_prefix": "k",
-                  "round": 1,
-                  "convert_units_to": "",
-                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
-                  "gas_co2_intensity": 2351.6459999999997,
-                  "min_box_size": 3,
-                  "min_box_distance": 5,
-                  "show_states": true,
-                  "show_units": true,
-                  "sections": [
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [
-                            "sensor.sma_total_yield_hour"
-                          ],
-                          "entity_id": "sensor.sma_metering_total_yield_hour",
-                          "name": "Utmatning av solelsproduktion",
-                          "icon": "mdi:transmission-tower-import",
-                          "color": "Yellow"
-                        },
-                        {
-                          "type": "remaining_child_state",
-                          "children": [
-                            "sensor.sma_total_yield_hour"
-                          ],
-                          "entity_id": "solarproduction_intake_to_house",
-                          "name": "Solelsproduktion intag till huset",
-                          "color": "Yellow",
-                          "icon": "mdi:solar-power"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.sma_metering_total_absorbed_hour",
-                          "icon": "mdi:transmission-tower-export",
-                          "color": "Lightgreen",
-                          "name": "Intag till huset"
-                        }
-                      ]
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.sma_total_yield_hour",
-                          "color": "Yellow",
-                          "icon": "mdi:solar-power-variant",
-                          "name": "Solelsproduktion"
-                        }
-                      ]
-                    },
-                    {
-                      "entities": [],
-                      "sort_by": "state",
-                      "sort_group_by_parent": true
-                    },
-                    {
-                      "entities": [],
-                      "sort_by": "state",
-                      "sort_group_by_parent": true
-                    }
-                  ],
-                  "energy_date_selection": false,
-                  "type": "custom:sankey-chart",
-                  "min_state": 0,
-                  "time_period_from": "now-1w",
-                  "show_names": true,
-                  "show_icons": true,
-                  "wide": true,
-                  "grid_options": {
-                    "columns": "full"
-                  },
-                  "title": "Energimängd",
-                  "throttle": 10000
+                  "throttle": 900000
                 }
               ],
               "column_span": 2

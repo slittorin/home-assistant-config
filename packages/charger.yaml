@@ -9,19 +9,19 @@
 
 input_number:
   evcharger_consumption_hour_snapshot_persistent:
-    name: 'Persistence for evcharger_consumption_hour_snapshot'
+    name: "Persistence for evcharger_consumption_hour_snapshot"
     icon: mdi:database
     mode: box
     min: 0
     max: 10000000
   evcharger_daily_sum_consumption_hour_persistent:
-    name: 'Persistence for evcharger_daily_sum_consumption_hour_persistent'
+    name: "Persistence for evcharger_daily_sum_consumption_hour_persistent"
     icon: mdi:database
     mode: box
     min: 0
     max: 10000000
   evcharger_daily_sum_consumption_cost_hour_persistent:
-    name: 'Persistence for evcharger_daily_sum_consumption_cost_hour'
+    name: "Persistence for evcharger_daily_sum_consumption_cost_hour"
     icon: mdi:database
     mode: box
     min: 0
@@ -29,7 +29,7 @@ input_number:
 
 input_text:
   evcharger_consumption_sensor:
-    name: 'Name of sensor for EV-charger consumption (full name)'
+    name: "Name of sensor for EV-charger consumption (full name)"
     icon: mdi:ev-station
 
 template:
@@ -48,10 +48,10 @@ template:
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
       - name: evcharger_consumption_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_snapshot = states('input_number.evcharger_consumption_hour_snapshot_persistent') %}
@@ -81,10 +81,10 @@ template:
       # Then we summarize the daily sum for evcharger_consumption_hour.
       # 20221231: Added.
       - name: evcharger_daily_sum_consumption_hour
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_sum = states('input_number.evcharger_daily_sum_consumption_hour_persistent') %}
@@ -117,10 +117,10 @@ template:
 
       # Then we calculate the consumption and distribution cost for the hour.
       - name: evcharger_consumption_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set delta = states('sensor.evcharger_consumption_hour') %}
@@ -146,10 +146,10 @@ template:
       # Then we summarize the daily sum for evcharger_consumption_cost_hour.
       # 20221231: Added.
       - name: evcharger_daily_sum_consumption_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set persistent_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
@@ -182,10 +182,10 @@ template:
 
       # Last we set the snapshots.
       - name: evcharger_consumption_hour_snapshot
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('energy') it is using; expected None or one of 'total', 'total_increasing'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set input_value = states(states('input_text.evcharger_consumption_sensor')) %}
@@ -202,7 +202,7 @@ template:
 automation:
   # For persistence, On every state change for evcharger_consumption_hour_snapshot, set input_number sensor.
   - id: automation_evcharger_consumption_hour_snapshot
-    alias: 'Automation for persistance of evcharger_consumption_hour_snapshot'
+    alias: "Automation for persistance of evcharger_consumption_hour_snapshot"
     trigger:
       - platform: state
         entity_id: sensor.evcharger_consumption_hour_snapshot
@@ -213,7 +213,7 @@ automation:
         value: "{{ states('sensor.evcharger_consumption_hour_snapshot') }}"
   # For persistence, On every state change for evcharger_daily_sum_consumption_hour, set input_number sensor.
   - id: automation_evcharger_daily_sum_consumption_hour
-    alias: 'Automation for persistance of evcharger_daily_sum_consumption_hour'
+    alias: "Automation for persistance of evcharger_daily_sum_consumption_hour"
     trigger:
       - platform: state
         entity_id: sensor.evcharger_daily_sum_consumption_hour
@@ -224,7 +224,7 @@ automation:
         value: "{{ states('sensor.evcharger_daily_sum_consumption_hour') }}"
   # For persistence, On every state change for evcharger_daily_sum_consumption_cost_hour, set input_number sensor.
   - id: automation_evcharger_daily_sum_consumption_cost_hour
-    alias: 'Automation for persistance of evcharger_daily_sum_consumption_cost_hour'
+    alias: "Automation for persistance of evcharger_daily_sum_consumption_cost_hour"
     trigger:
       - platform: state
         entity_id: sensor.evcharger_daily_sum_consumption_cost_hour

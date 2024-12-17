@@ -14,66 +14,64 @@
 
 input_number:
   balboa_spa_temperature_persistent:
-    name: 'Persistence for balboa_spa_temperature'
+    name: "Persistence for balboa_spa_temperature"
     icon: mdi:thermometer-lines
     mode: box
     min: 0
     max: 100
-    unit_of_measurement: '°C'
+    unit_of_measurement: "°C"
   balboa_spa_temperature_hour_persistent:
-    name: 'Persistence for balboa_spa_temperature'
+    name: "Persistence for balboa_spa_temperature"
     icon: mdi:thermometer-lines
     mode: box
     min: 0
     max: 100
-    unit_of_measurement: '°C'
+    unit_of_measurement: "°C"
   balboa_spa_temperature_change_per_hour_persistent:
-    name: 'Persistence for balboa_spa_temperature_change_per_hour'
+    name: "Persistence for balboa_spa_temperature_change_per_hour"
     icon: mdi:thermometer-lines
     mode: box
     initial: 0
     min: -100
     max: 100
-    unit_of_measurement: '°C'
+    unit_of_measurement: "°C"
   balboa_spa_temperature_at_start_of_heating_persistent:
-    name: 'Persistence for balboa_spa_temperature_at_start_of_heating'
+    name: "Persistence for balboa_spa_temperature_at_start_of_heating"
     icon: mdi:thermometer-lines
     mode: box
     initial: 0
     min: -100
     max: 100
-    unit_of_measurement: '°C'
+    unit_of_measurement: "°C"
   balboa_spa_temperature_at_end_of_heating_persistent:
-    name: 'Persistence for balboa_spa_temperature_at_end_of_heating'
+    name: "Persistence for balboa_spa_temperature_at_end_of_heating"
     icon: mdi:thermometer-lines
     mode: box
     initial: 0
     min: -100
     max: 100
-    unit_of_measurement: '°C'
+    unit_of_measurement: "°C"
   balboa_spa_temperature_change_at_start_of_heating_persistent:
-    name: 'Persistence for balboa_spa_temperature_change_at_start_of_heating'
+    name: "Persistence for balboa_spa_temperature_change_at_start_of_heating"
     icon: mdi:thermometer-lines
     mode: box
     initial: 0
     min: -100
     max: 100
-    unit_of_measurement: '°C'
+    unit_of_measurement: "°C"
   balboa_spa_temperature_change_at_end_of_heating_persistent:
-    name: 'Persistence for balboa_spa_temperature_change_at_end_of_heating_persistent'
+    name: "Persistence for balboa_spa_temperature_change_at_end_of_heating_persistent"
     icon: mdi:thermometer-lines
     mode: box
     initial: 0
     min: -100
     max: 100
-    unit_of_measurement: '°C'
-
+    unit_of_measurement: "°C"
 
 input_text:
   balboa_spa_temperature_sensor:
-    name: 'Name of sensor for spa temperatures (full name)'
+    name: "Name of sensor for spa temperatures (full name)"
     icon: mdi:thermometer-lines
-
 
 sensor:
   # We want to keep track of the time that the circulation pump has been running each hour (depends of course on polling).
@@ -81,28 +79,27 @@ sensor:
   - platform: history_stats
     name: balboa_spa_circulationpump_running_time_hour
     entity_id: binary_sensor.nbp6013h_circ_pump
-    state: 'on'
+    state: "on"
     type: time
     start: "{{ now().replace(minute=0, second=0) }}"
     end: "{{ now() }}"
 
-   # We want to keep track of the time that the heater has been running each hour (depends of course on polling).
-   # Since we cannot track attribute-state in history_stats, we need to utilize the binary template-sensor created below.
+    # We want to keep track of the time that the heater has been running each hour (depends of course on polling).
+    # Since we cannot track attribute-state in history_stats, we need to utilize the binary template-sensor created below.
   - platform: history_stats
     name: balboa_spa_heater_running_time_hour
     entity_id: binary_sensor.balboa_spa_heater_on
-    state: 'on'
+    state: "on"
     type: time
     start: "{{ now().replace(minute=0, second=0) }}"
     end: "{{ now() }}"
-
 
 template:
   - sensor:
       # We want to keep track of accumulated hourly consumption for the circulation pump.
       - name: Balboa Spa circulationpump consumption hour
         unique_id: balboa_spa_circulationpump_consumption_hour
-        unit_of_measurement: 'kWh'
+        unit_of_measurement: "kWh"
         device_class: energy
         state_class: total_increasing
         state: "{{ float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3 }}"
@@ -111,7 +108,7 @@ template:
       # Added 20231123: We want to keep track of power for the circulation pump.
       - name: test balboa spa circulationpump power
         unique_id: test_balboa_spa_circulationpump_power
-        unit_of_measurement: 'kW'
+        unit_of_measurement: "kW"
         device_class: power
         state: >
           {% set running = states('binary_sensor.nbp6013h_circ_pump') %}
@@ -134,7 +131,7 @@ template:
   - binary_sensor:
       # Since we cannot track attribute-state in history_stats, we need to create a binary template-sensor.
       # Returns true if
-      - name:  Balboa Spa heater on
+      - name: Balboa Spa heater on
         unique_id: balboa_spa_heater_on
         device_class: heat
         state: "{{ is_state_attr('climate.nbp6013h_climate', 'hvac_action', 'heating') }}"
@@ -143,7 +140,7 @@ template:
       # We want to keep track of accumulated (hourly) consumption for the heater.
       - name: Balboa Spa heater consumption hour
         unique_id: balboa_spa_heater_consumption_hour
-        unit_of_measurement: 'kWh'
+        unit_of_measurement: "kWh"
         device_class: energy
         state_class: total_increasing
         state: "{{ float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3 }}"
@@ -152,7 +149,7 @@ template:
       # Added 20231123: We want to keep track of power for the heater.
       - name: test balboa spa heater power
         unique_id: test_balboa_spa_heater_power
-        unit_of_measurement: 'kW'
+        unit_of_measurement: "kW"
         device_class: power
         state: >
           {% set heating = states('binary_sensor.balboa_spa_heater_on') %}
@@ -178,7 +175,7 @@ template:
       # Therefore we split circulation and pump.
       - name: Balboa Spa circulation pump heater consumption hour
         unique_id: balboa_spa_circulation_pump_heater_consumption_hour
-        unit_of_measurement: 'kWh'
+        unit_of_measurement: "kWh"
         device_class: energy
         state_class: total_increasing
         state: "{{ float((float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3) + (float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3.0)) }}"
@@ -188,8 +185,8 @@ template:
       - name: Balboa Spa temperature
         unique_id: balboa_spa_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr(states('input_text.balboa_spa_temperature_sensor'), 'current_temperature') %}
@@ -210,8 +207,8 @@ template:
       - name: Balboa Spa temperature change at start of heating
         unique_id: balboa_spa_temperature_change_at_start_of_heating
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = states('input_number.balboa_spa_temperature_change_at_start_of_heating_persistent') %}
@@ -232,8 +229,8 @@ template:
       - name: Balboa Spa temperature change at end of heating
         unique_id: balboa_spa_temperature_change_at_end_of_heating
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = states('input_number.balboa_spa_temperature_change_at_end_of_heating_persistent') %}
@@ -249,7 +246,6 @@ template:
           {% endif %}
           {{ result }}
 
-
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
@@ -263,10 +259,10 @@ template:
       # We will therefore not capture the last second for the hour.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       - name: balboa_spa_circulationpump_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
@@ -287,10 +283,10 @@ template:
       # We will therefore not capture the last second for the hour.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       - name: balboa_spa_heater_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set consumption = states('sensor.balboa_spa_heater_consumption_hour') %}
@@ -311,10 +307,10 @@ template:
       # We will therefore not capture the last second for the hour.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       - name: balboa_spa_circulationpump_heater_cost_hour
-        device_class: 'monetary'
-        unit_of_measurement: 'SEK'
-# 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-# 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        device_class: "monetary"
+        unit_of_measurement: "SEK"
+        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
         state_class: total
         state: >
           {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
@@ -339,10 +335,10 @@ template:
           {{ total_cost }}
       # We set the hourly spa temperature.
       - name: balboa_spa_temperature_hour
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
-# 20230502: Removed since gave warning in 2023.2.5: has device class temperature, state class measurement and unit °C thus indicating it has a numeric value; however, it has the non-numeric value: None (<class 'str'>)
-# 20241126: Added again as it seems to have been fixed.
+        device_class: "temperature"
+        unit_of_measurement: "°C"
+        # 20230502: Removed since gave warning in 2023.2.5: has device class temperature, state class measurement and unit °C thus indicating it has a numeric value; however, it has the non-numeric value: None (<class 'str'>)
+        # 20241126: Added again as it seems to have been fixed.
         state_class: measurement
         state: >
           {% set temperature = state_attr(states('input_text.balboa_spa_temperature_sensor'), 'current_temperature') %}
@@ -359,7 +355,7 @@ template:
           {{ result }}
       # We save balboa_spa_circulationpump_running_time_hour each hour.
       - name: balboa_spa_circulationpump_running_time_hour_last
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {% set input = states('sensor.balboa_spa_circulationpump_running_time_hour') %}
@@ -371,7 +367,7 @@ template:
           {{ value }}
       # We save balboa_spa_heater_running_time_hour each hour.
       - name: balboa_spa_heater_running_time_hour_last
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {% set input = states('sensor.balboa_spa_heater_running_time_hour') %}
@@ -382,7 +378,6 @@ template:
           {% endif %}
           {{ value }}
 
-
 automation:
   # This is not really persistence.
   # Since I could not get template sensor to work properly, we instead set an input_number, and from that we can derive to a proper sensor.
@@ -390,7 +385,7 @@ automation:
   # - It should be (nearly) physically impossible to increase the temperature over 3 degrees per hour.
   # - It should be (nearly) physically impossible to decrease the temperature over 7 degrees per hour. Only if the spa is uncovered, and in minus celcius.
   - id: automation_balboa_spa_temperature_change_per_hour
-    alias: 'Automation for balboa_spa_temperature_change_per_hour'
+    alias: "Automation for balboa_spa_temperature_change_per_hour"
     trigger:
       - platform: state
         entity_id: sensor.balboa_spa_temperature_hour
@@ -435,11 +430,11 @@ automation:
           {{ result }}
 
   - id: automation_balboa_spa_temperature_at_start_of_heating_persistent
-    alias: 'Automation for balboa_spa_temperature_at_start_of_heating_persistent'
+    alias: "Automation for balboa_spa_temperature_at_start_of_heating_persistent"
     trigger:
       - platform: state
         entity_id: binary_sensor.balboa_spa_heater_on
-        to: 'on'
+        to: "on"
         for: "00:00:30"
     action:
       service: input_number.set_value
@@ -460,11 +455,11 @@ automation:
           {{ result }}
 
   - id: automation_balboa_spa_temperature_change_at_start_of_heating_persistent
-    alias: 'Automation for balboa_spa_temperature_change_at_start_of_heating_persistent'
+    alias: "Automation for balboa_spa_temperature_change_at_start_of_heating_persistent"
     trigger:
       - platform: state
         entity_id: binary_sensor.balboa_spa_heater_on
-        to: 'on'
+        to: "on"
         for: "00:01:00"
     action:
       service: input_number.set_value
@@ -505,11 +500,11 @@ automation:
           {{ result }}
 
   - id: automation_balboa_spa_temperature_at_end_of_heating_persistent
-    alias: 'Automation for balboa_spa_temperature_at_end_of_heating_persistent'
+    alias: "Automation for balboa_spa_temperature_at_end_of_heating_persistent"
     trigger:
       - platform: state
         entity_id: binary_sensor.balboa_spa_heater_on
-        to: 'off'
+        to: "off"
         for: "00:00:30"
     action:
       service: input_number.set_value
@@ -530,11 +525,11 @@ automation:
           {{ result }}
 
   - id: automation_balboa_spa_temperature_change_at_end_of_heating_persistent
-    alias: 'Automation for balboa_spa_temperature_change_at_end_of_heating_persistent'
+    alias: "Automation for balboa_spa_temperature_change_at_end_of_heating_persistent"
     trigger:
       - platform: state
         entity_id: binary_sensor.balboa_spa_heater_on
-        to: 'off'
+        to: "off"
         for: "00:01:00"
     action:
       service: input_number.set_value
@@ -574,10 +569,9 @@ automation:
           {% endif %}
           {{ result }}
 
-
   # For persistence, and spa temperature
   - id: automation_balboa_spa_temperature
-    alias: 'Automation for persistance of balboa_spa_temperature change'
+    alias: "Automation for persistance of balboa_spa_temperature change"
     trigger:
       - platform: state
         entity_id: sensor.balboa_spa_temperature
@@ -589,7 +583,7 @@ automation:
 
   # For persistence, and spa hourly temperature
   - id: automation_balboa_spa_temperature_hour
-    alias: 'Automation for persistance of balboa_spa_temperature_hour change'
+    alias: "Automation for persistance of balboa_spa_temperature_hour change"
     trigger:
       - platform: state
         entity_id: sensor.balboa_spa_temperature_hour
