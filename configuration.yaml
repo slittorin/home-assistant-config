@@ -25,6 +25,8 @@ logger:
     homeassistant.supervisor: info
     supervisor.hardware: info
     supervisor: info
+    # 20241218: To check for errors with SMA-integration.
+    #homeassistant.components.sma: debug
 
 # Recorder is enabled by default.
 recorder:

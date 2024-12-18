@@ -5,8 +5,39 @@
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
-
 # 20221011 - Added hourly statistics for: grid_power and metering_power_supplied.
+# 20241218 - Something happened at roughly 01:30, nearly all sensors for SMA failed to retrieve values. After removing and adding the SMA-integration again, sensors appeared.
+#            However, they now had the sensor name altered 'sn_3006917520_daily_yield', i.e. added serial number to sensor.
+#            No clue why, no reboot at the time, or intergration/HA upgraded.
+#            I manually altered the following sensors to get back history data, and to not need to change yaml:
+#            - sn_3006917520_metering_current_l1            to metering_current_l1
+#            - sn_3006917520_metering_current_l2            to metering_current_l2
+#            - sn_3006917520_metering_current_l3            to metering_current_l3
+#            - sn_3006917520_daily_yield                    to daily_yield
+#            - sn_3006917520_grid_power                     to grid_power
+#            - sn_3006917520_metering_power_absorbed        to metering_power_absorbed
+#            - sn_3006917520_metering_power_supplied        to metering_power_supplied
+#            - sn_3006917520_metering_total_yield           to metering_total_yield
+#            - sn_3006917520_metering_total_absorbed        to metering_total_absorbed
+#            - sn_3006917520_total_yield                    to total_yield
+#            - sn_3006917520_inverter_power_limit           to inverter_power_limit (not really needed, but changed anyway)
+#            - sn_3006917520_metering_active_power_draw_l1  to metering_active_power_draw_l1
+#            - sn_3006917520_metering_active_power_draw_l2  to metering_active_power_draw_l2
+#            - sn_3006917520_metering_active_power_draw_l3  to metering_active_power_draw_l3
+#            - sn_3006917520_metering_active_power_feed_l1  to metering_active_power_feed_l1
+#            - sn_3006917520_metering_active_power_feed_l2  to metering_active_power_feed_l2
+#            - sn_3006917520_metering_active_power_feed_l3  to metering_active_power_feed_l3
+#            - sn_3006917520_metering_frequency             to metering_frequency
+#            - sn_3006917520_pv_current_a                   to pv_current_a
+#            - sn_3006917520_pv_current_b                   to pv_current_b
+#            - sn_3006917520_pv_gen_meter                   to pv_gen_meter
+#            - sn_3006917520_pv_power                       to pv_power
+#            - sn_3006917520_pv_power_a                     to pv_power_a
+#            - sn_3006917520_pv_power_b                     to pv_power_b
+#            - sn_3006917520_status                         to status
+#            Not changed:
+#            - sn_3006917520_current_total
+#            - sn_3006917520_status
 
 # https://www.home-assistant.io/integrations/sma/
 #

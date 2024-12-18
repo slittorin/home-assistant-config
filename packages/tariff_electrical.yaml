@@ -7,7 +7,8 @@
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
 
 sensor:
-  # For spotprices, we get all the data from Nordpool, for my region and currency,
+  # For spotprices, we get all the data from Nordpool, for my region and currency.
+  # We still use HACS version 20241217 since the HA-supported version does not have all the data we need.
   - platform: nordpool
     region: "SE3"
     # We calculate with VAT ourselves.
