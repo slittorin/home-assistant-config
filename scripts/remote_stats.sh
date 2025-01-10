@@ -86,6 +86,7 @@ then
 fi
 
 # Get the values.
+echo "INFO. Result code: ${RESULT_CODE}: Result: ${RESULT}" 
 DATETIME=`echo ${RESULT} | awk -F, '{ print $1 }'i | sed 's/_/ /'`
 VALUE=`echo ${RESULT} | awk -F, '{ print $2 }'`
 

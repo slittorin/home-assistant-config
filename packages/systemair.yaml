@@ -1,0 +1,15 @@
+# This file includes all the entitites for tracking sensor data for Systemair VSR 300.
+
+
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+
+sensor:
+  # We want to gather the current temperature setpoint.
+  # Modbus value: 2000
+  # Return value times 10. For instance 180 is 18 degrees.
+  - platform: rest
+    resource: http://192.168.4.118/mread?{%222000%22:1}
+    name: test_systemair_current_temperature_setpoint
+    value_template: "{{ value_json[0] | round(1) }}"
+    unit_of_measurement: °C

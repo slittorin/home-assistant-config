@@ -202,6 +202,7 @@ homeassistant:
     tariff_electrical: !include packages/tariff_electrical.yaml
     balboa_spa: !include packages/balboa_spa.yaml
     charger: !include packages/charger.yaml
+    systemair: !include packages/systemair.yaml
 #    adax: !include packages/adax.yaml
 
 shell_command:

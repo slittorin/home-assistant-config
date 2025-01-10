@@ -30,165 +30,93 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "custom:apexcharts-card",
-                  "experimental": {
-                    "color_threshold": true
-                  },
-                  "apex_config": {
-                    "chart": {
-                      "height": "145px"
-                    }
-                  },
-                  "graph_span": "24h",
-                  "header": {
-                    "title": "Energipris idag [SEK/kWh]",
-                    "show": true
-                  },
-                  "span": {
-                    "start": "day"
-                  },
-                  "now": {
-                    "show": true,
-                    "label": "Nu"
-                  },
-                  "series": [
+                  "type": "horizontal-stack",
+                  "cards": [
                     {
-                      "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
-                      "type": "column",
-                      "data_generator": "return entity.attributes.raw_today.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), entity.attributes.raw_today[index][\"value\"]];\n});\n",
-                      "color_threshold": [
+                      "type": "custom:apexcharts-card",
+                      "experimental": {
+                        "color_threshold": true
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": "145px"
+                        }
+                      },
+                      "graph_span": "48h",
+                      "header": {
+                        "title": "Energipris idag och imorgon [öre/kWh] inkl. avgifter och moms",
+                        "show": true
+                      },
+                      "show": {
+                        "loading": true
+                      },
+                      "span": {
+                        "start": "day"
+                      },
+                      "now": {
+                        "show": true,
+                        "label": "Nu"
+                      },
+                      "series": [
                         {
-                          "value": 0,
-                          "color": "#2085e3"
-                        },
-                        {
-                          "value": 0.1,
-                          "color": "#04822e"
-                        },
-                        {
-                          "value": 0.15,
-                          "color": "#12A141"
-                        },
-                        {
-                          "value": 0.3,
-                          "color": "#79B92C"
-                        },
-                        {
-                          "value": 0.35,
-                          "color": "#C4D81D"
-                        },
-                        {
-                          "value": 0.4,
-                          "color": "#F3DC0C"
-                        },
-                        {
-                          "value": 0.45,
-                          "color": "#F4C616"
-                        },
-                        {
-                          "value": 0.5,
-                          "color": "#EFA51E"
-                        },
-                        {
-                          "value": 0.55,
-                          "color": "#E76821"
-                        },
-                        {
-                          "value": 0.6,
-                          "color": "#E33F20"
-                        },
-                        {
-                          "value": 0.65,
-                          "color": "#DC182F"
+                          "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
+                          "type": "column",
+                          "unit": "öre/kWh",
+                          "data_generator": "return [\n...entity.attributes.raw_today.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), ((entity.attributes.raw_today[index][\"value\"]*100)+(hass.states['input_number.electrical_consumption_rate_compensation_manual'].state*1)+(hass.states['input_number.electrical_consumption_rate_tax'].state*1))*(1+((hass.states['input_number.electrical_consumption_rate_vat'].state*1)/100))];\n}),\n...entity.attributes.raw_tomorrow.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), ((entity.attributes.raw_tomorrow[index][\"value\"]*100)+(hass.states['input_number.electrical_consumption_rate_compensation_manual'].state*1)+(hass.states['input_number.electrical_consumption_rate_tax'].state*1))*(1+((hass.states['input_number.electrical_consumption_rate_vat'].state*1)/100))];\n})\n];\n",
+                          "color_threshold": [
+                            {
+                              "value": 0,
+                              "color": "#2085e3"
+                            },
+                            {
+                              "value": 10,
+                              "color": "#04822e"
+                            },
+                            {
+                              "value": 15,
+                              "color": "#12A141"
+                            },
+                            {
+                              "value": 30,
+                              "color": "#79B92C"
+                            },
+                            {
+                              "value": 35,
+                              "color": "#C4D81D"
+                            },
+                            {
+                              "value": 40,
+                              "color": "#F3DC0C"
+                            },
+                            {
+                              "value": 45,
+                              "color": "#F4C616"
+                            },
+                            {
+                              "value": 50,
+                              "color": "#EFA51E"
+                            },
+                            {
+                              "value": 55,
+                              "color": "#E76821"
+                            },
+                            {
+                              "value": 100,
+                              "color": "#E33F20"
+                            },
+                            {
+                              "value": 200,
+                              "color": "#DC182F"
+                            }
+                          ]
                         }
                       ]
                     }
                   ],
-                  "yaxis": [
-                    {
-                      "min": 0,
-                      "max": 2
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "experimental": {
-                    "color_threshold": true
-                  },
-                  "apex_config": {
-                    "chart": {
-                      "height": "145px"
-                    }
-                  },
-                  "graph_span": "1d",
-                  "header": {
-                    "title": "Energipris imorgon (SEK/kWh)",
-                    "show": true
-                  },
-                  "span": {
-                    "start": "day",
-                    "offset": "+1d"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
-                      "type": "column",
-                      "data_generator": "return entity.attributes.raw_tomorrow.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), entity.attributes.raw_tomorrow[index][\"value\"]];\n});\n",
-                      "color_threshold": [
-                        {
-                          "value": 0,
-                          "color": "#2085e3"
-                        },
-                        {
-                          "value": 0.1,
-                          "color": "#04822e"
-                        },
-                        {
-                          "value": 0.15,
-                          "color": "#12A141"
-                        },
-                        {
-                          "value": 0.3,
-                          "color": "#79B92C"
-                        },
-                        {
-                          "value": 0.35,
-                          "color": "#C4D81D"
-                        },
-                        {
-                          "value": 0.4,
-                          "color": "#F3DC0C"
-                        },
-                        {
-                          "value": 0.45,
-                          "color": "#F4C616"
-                        },
-                        {
-                          "value": 0.5,
-                          "color": "#EFA51E"
-                        },
-                        {
-                          "value": 0.55,
-                          "color": "#E76821"
-                        },
-                        {
-                          "value": 0.6,
-                          "color": "#E33F20"
-                        },
-                        {
-                          "value": 0.65,
-                          "color": "#DC182F"
-                        }
-                      ]
-                    }
-                  ],
-                  "yaxis": [
-                    {
-                      "min": 0,
-                      "max": 2
-                    }
-                  ]
+                  "grid_options": {
+                    "rows": "auto",
+                    "columns": 24
+                  }
                 }
               ],
               "column_span": 2
@@ -196,6 +124,73 @@
             {
               "type": "grid",
               "cards": [
+                {
+                  "type": "gauge",
+                  "entity": "sensor.metering_power_absorbed",
+                  "name": "Effekt intag till huset",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 22000,
+                  "needle": true,
+                  "severity": {
+                    "green": 5000,
+                    "yellow": 11000,
+                    "red": 17000
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.grid_power",
+                  "name": "Effekt solelsproduktion",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 7000,
+                  "needle": true,
+                  "severity": {
+                    "green": 0,
+                    "yellow": 7000,
+                    "red": 7000
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.metering_power_supplied",
+                  "name": "Effekt utmatning av solelsproduktion till nät",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 7000,
+                  "needle": true,
+                  "severity": {
+                    "green": 0,
+                    "yellow": 7000,
+                    "red": 7000
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.ehs4plem_power",
+                  "name": "Elbilsladdning",
+                  "unit": "kW",
+                  "min": 0,
+                  "max": 12,
+                  "needle": true,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
                 {
                   "type": "custom:bar-card",
                   "entities": [
@@ -210,7 +205,7 @@
                       "type": "custom:bar-card",
                       "min": 0,
                       "max": 30,
-                      "height": 48,
+                      "height": 38,
                       "severity": [
                         {
                           "color": "Red",
@@ -245,7 +240,7 @@
                       "type": "custom:bar-card",
                       "min": 0,
                       "max": 30,
-                      "height": 48,
+                      "height": 38,
                       "severity": [
                         {
                           "color": "Red",
@@ -280,7 +275,7 @@
                       "type": "custom:bar-card",
                       "min": 0,
                       "max": 30,
-                      "height": 48,
+                      "height": 38,
                       "severity": [
                         {
                           "color": "Red",
@@ -307,63 +302,6 @@
                   ]
                 }
               ],
-              "column_span": 1
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "gauge",
-                  "entity": "sensor.metering_power_absorbed",
-                  "name": "Effekt intag till huset",
-                  "unit": "W",
-                  "min": 0,
-                  "max": 22000,
-                  "needle": true,
-                  "severity": {
-                    "green": 5000,
-                    "yellow": 11000,
-                    "red": 17000
-                  }
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.grid_power",
-                  "name": "Effekt solelsproduktion",
-                  "unit": "W",
-                  "min": 0,
-                  "max": 7000,
-                  "needle": true,
-                  "severity": {
-                    "green": 0,
-                    "yellow": 7000,
-                    "red": 7000
-                  }
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.metering_power_supplied",
-                  "name": "Effekt utmatning av solelsproduktion till nät",
-                  "unit": "W",
-                  "min": 0,
-                  "max": 7000,
-                  "needle": true,
-                  "severity": {
-                    "green": 0,
-                    "yellow": 7000,
-                    "red": 7000
-                  }
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.ehs4plem_power",
-                  "name": "Elbilsladdning",
-                  "unit": "kW",
-                  "min": 0,
-                  "max": 12,
-                  "needle": true
-                }
-              ],
               "column_span": 4
             },
             {
@@ -373,7 +311,7 @@
                   "layout": "horizontal",
                   "height": 200,
                   "unit_prefix": "k",
-                  "round": 0,
+                  "round": 1,
                   "convert_units_to": "",
                   "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
                   "gas_co2_intensity": 2351.6459999999997,
@@ -387,10 +325,10 @@
                         {
                           "type": "entity",
                           "children": [
-                            "sensor.sma_metering_total_yield_hour",
+                            "sensor.metering_total_yield",
                             "solarproduction_used_by_house"
                           ],
-                          "entity_id": "sensor.sma_total_yield_hour",
+                          "entity_id": "sensor.total_yield",
                           "color": "Yellow",
                           "icon": "mdi:solar-power",
                           "name": "Solelsproduktion"
@@ -402,7 +340,7 @@
                         {
                           "type": "entity",
                           "children": [],
-                          "entity_id": "sensor.sma_metering_total_yield_hour",
+                          "entity_id": "sensor.metering_total_yield",
                           "name": "Utmatning av solelsproduktion",
                           "color": "Yellow",
                           "icon": "mdi:transmission-tower-import"
@@ -422,7 +360,7 @@
                           "children": [
                             "total_used_by_whole_house"
                           ],
-                          "entity_id": "sensor.sma_metering_total_absorbed_hour",
+                          "entity_id": "sensor.metering_total_absorbed",
                           "color": "Lightgreen",
                           "icon": "mdi:transmission-tower-export",
                           "name": "Intag till huset"
@@ -489,9 +427,10 @@
                   "grid_options": {
                     "columns": "full"
                   },
-                  "title": "Energimängd denna vecka",
-                  "time_period_from": "now-1w",
-                  "throttle": 900000
+                  "title": "Energimängd idag",
+                  "time_period_from": "now/d",
+                  "time_period_to": "now",
+                  "throttle": 300000
                 }
               ],
               "column_span": 2
@@ -517,10 +456,10 @@
                         {
                           "type": "entity",
                           "children": [
-                            "sensor.sma_metering_total_yield_hour",
+                            "sensor.metering_total_yield",
                             "solarproduction_used_by_house"
                           ],
-                          "entity_id": "sensor.sma_total_yield_hour",
+                          "entity_id": "sensor.total_yield",
                           "color": "Yellow",
                           "icon": "mdi:solar-power",
                           "name": "Solelsproduktion"
@@ -532,7 +471,7 @@
                         {
                           "type": "entity",
                           "children": [],
-                          "entity_id": "sensor.sma_metering_total_yield_hour",
+                          "entity_id": "sensor.metering_total_yield",
                           "name": "Utmatning av solelsproduktion",
                           "color": "Yellow",
                           "icon": "mdi:transmission-tower-import"
@@ -552,7 +491,7 @@
                           "children": [
                             "total_used_by_whole_house"
                           ],
-                          "entity_id": "sensor.sma_metering_total_absorbed_hour",
+                          "entity_id": "sensor.metering_total_absorbed",
                           "color": "Lightgreen",
                           "icon": "mdi:transmission-tower-export",
                           "name": "Intag till huset"
@@ -620,8 +559,9 @@
                     "columns": "full"
                   },
                   "title": "Energimängd denna månad",
-                  "time_period_from": "now-1M",
-                  "throttle": 900000
+                  "throttle": 900000,
+                  "time_period_from": "now/M",
+                  "time_period_to": "now"
                 }
               ],
               "column_span": 2
@@ -637,7 +577,7 @@
           "cards": [
             {
               "type": "markdown",
-              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 02.00 till ca. 18.00 för 9/1-2024 så finns ingen data i InfluxDB (Grafana).\n  - Detta beroende på fel när server1 uppdaterades.\n  - Ingen data-loss i HA-databasen.\n  - See information [här](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-update-and-reboot-of-server1-caused-the-ha-database-to-be-lost).\n- Från ca. 22.00 22/4 till ca. 19.00 26/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n  - Lade till daglig omstart efter detta, och lade till notiferingar via mail vid error, warning.\n- Från ca. 04.00 20/4 till ca. 09.00 21/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n- Från ca. 12.00 22/3 till ca. 18.00 22/3-2023, så fick SMA-integration problem, och alla dessa sensorer verkar ha gett fel data.\n  - Efter omstart av HA så kom alla sensorer igång.\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana).\n  - Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore gjordes 27/3-2023 för att täcka hålet, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb).\n    - Där i princip all data kunde återskapas (men det kan finnas mindre hål, samt data som inte är helt exakt).\n    - Notera att 142 sensorer kunde återställas, av 230+.\n  - Det blev även en förlust av data mellan 7/8-2022 till 15/8-2022, så viss data är borta.\n    - Det verkar vara beroende på flera orsaker, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb---restore-failure).\n    - Vi kan inte lita på data 7/8 och 15/8, men mellan 8/8 och 14/8 så bör restore ha kommit nära sanningen.\n    - Notera att 116 sensorer kunder återställas av 230+, så viss data är borta.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Här nollades data för perioden. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Ingen nollning av data har skett för perioden.\n- Strömstyrka 16/2-2022 kl. 14 till 2/3-2022 kl 16, ingen data för sma_metering_current_l3_mean_hour.\n  - Beror troligen på att jag skrev fel i yaml-fil och rättade 2/3-2022.\n  - Då data inte fanns i databasen, så kunde jag inte rätta detta via 'convert-to-hourly'-script.",
+              "content": "### Data är inte korrekt för dessa datum:\n- Från ca. 01.30 till ca. 15.30 den 18/12-2024 för alla värden kopplat till SMA, samt allting som används för att räkna effekt, ampere o.s.v. Detta då HA fick för sig att ändra alla värden, se mer i sma.yaml.\n- Från 16/10 till 24/11-2024, då nordpool integration inte fungerade (hade inte uppgraderat tillräckligt under året).\n- Från ca. 02.00 till ca. 18.00 för 9/1-2024 så finns ingen data i InfluxDB (Grafana).\n  - Detta beroende på fel när server1 uppdaterades.\n  - Ingen data-loss i HA-databasen.\n  - See information [här](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-update-and-reboot-of-server1-caused-the-ha-database-to-be-lost).\n- Från ca. 22.00 22/4 till ca. 19.00 26/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n  - Lade till daglig omstart efter detta, och lade till notiferingar via mail vid error, warning.\n- Från ca. 04.00 20/4 till ca. 09.00 21/4-2023. HA nere, orsak oklar.\n  - Ingenting registrerat i HA eller InfluxDB.\n- Från ca. 12.00 22/3 till ca. 18.00 22/3-2023, så fick SMA-integration problem, och alla dessa sensorer verkar ha gett fel data.\n  - Efter omstart av HA så kom alla sensorer igång.\n- Från ca. 23.50 4/1 till 22.30 12/1-2023 när Server1 fick korrupt hårddisk så är inkom inte alls data till InfluxDB (och Grafana).\n  - Data registrerades dock i HA. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#failed-ssd-drive).\n  - Restore gjordes 27/3-2023 för att täcka hålet, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb).\n    - Där i princip all data kunde återskapas (men det kan finnas mindre hål, samt data som inte är helt exakt).\n    - Notera att 142 sensorer kunde återställas, av 230+.\n  - Det blev även en förlust av data mellan 7/8-2022 till 15/8-2022, så viss data är borta.\n    - Det verkar vara beroende på flera orsaker, se [instruktion](https://github.com/slittorin/home-assistant-maintenance/blob/main/README.md#after-ssd-disk-crash-restore-of-data-from-mysql-to-influxdb---restore-failure).\n    - Vi kan inte lita på data 7/8 och 15/8, men mellan 8/8 och 14/8 så bör restore ha kommit nära sanningen.\n    - Notera att 116 sensorer kunder återställas av 230+, så viss data är borta.\n\n- Spabad 8/12-2022 till 15/12-2022.2022-12-08 01:20 and 2022-12-15). Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Här nollades data för perioden. Se [maintenance](https://github.com/slittorin/home-assistant-maintenance#incorrect-balboa-spa-data).\n- Dålig data generellt 11/6-2022 då delar av nätverket låg nere.\n- Spabad 2/5-2022 till 9/5-2022. Spabad gav för stora värden på värmning (hela timmar/dagar).\n  - Ingen nollning av data har skett för perioden.\n- Strömstyrka 16/2-2022 kl. 14 till 2/3-2022 kl 16, ingen data för sma_metering_current_l3_mean_hour.\n  - Beror troligen på att jag skrev fel i yaml-fil och rättade 2/3-2022.\n  - Då data inte fanns i databasen, så kunde jag inte rätta detta via 'convert-to-hourly'-script.",
               "title": "Inkorrekt data"
             }
           ]
@@ -656,111 +596,17 @@
                   "heading": "Ny sektion"
                 },
                 {
-                  "type": "custom:bar-card",
-                  "entities": [
-                    {
-                      "entity": "sensor.metering_current_l1",
-                      "name": "Strömstyrka L1",
-                      "positions": {
-                        "icon": "off",
-                        "name": "outside",
-                        "indicator": "off"
-                      },
-                      "type": "custom:bar-card",
-                      "min": 0,
-                      "max": 30,
-                      "severity": [
-                        {
-                          "color": "Red",
-                          "from": 25.000001,
-                          "to": 30
-                        },
-                        {
-                          "color": "Orange",
-                          "from": 15.000001,
-                          "to": 25
-                        },
-                        {
-                          "color": "Green",
-                          "from": 5.000001,
-                          "to": 15
-                        },
-                        {
-                          "color": "Lightblue",
-                          "from": 0,
-                          "to": 5
-                        }
-                      ]
-                    },
-                    {
-                      "entity": "sensor.metering_current_l2",
-                      "name": "Strömstyrka L2",
-                      "positions": {
-                        "icon": "off",
-                        "name": "outside",
-                        "indicator": "off"
-                      },
-                      "type": "custom:bar-card",
-                      "min": 0,
-                      "max": 30,
-                      "severity": [
-                        {
-                          "color": "Red",
-                          "from": 25.000001,
-                          "to": 30
-                        },
-                        {
-                          "color": "Orange",
-                          "from": 15.000001,
-                          "to": 25
-                        },
-                        {
-                          "color": "Green",
-                          "from": 5.000001,
-                          "to": 15
-                        },
-                        {
-                          "color": "Lightblue",
-                          "from": 0,
-                          "to": 5
-                        }
-                      ]
-                    },
-                    {
-                      "entity": "sensor.metering_current_l3",
-                      "name": "Strömstyrka L3",
-                      "positions": {
-                        "icon": "off",
-                        "name": "outside",
-                        "indicator": "off"
-                      },
-                      "type": "custom:bar-card",
-                      "min": 0,
-                      "max": 30,
-                      "severity": [
-                        {
-                          "color": "Red",
-                          "from": 25.000001,
-                          "to": 30
-                        },
-                        {
-                          "color": "Orange",
-                          "from": 15.000001,
-                          "to": 25
-                        },
-                        {
-                          "color": "Green",
-                          "from": 5.000001,
-                          "to": 15
-                        },
-                        {
-                          "color": "Lightblue",
-                          "from": 0,
-                          "to": 5
-                        }
-                      ]
-                    }
-                  ]
+                  "type": "gauge",
+                  "entity": "sensor.electrical_consumption_rate_summary",
+                  "name": "Elkonsumptionsavgift",
+                  "unit": "öre/kWh",
+                  "needle": true,
+                  "severity": {
+                    "green": 50,
+                    "yellow": 100,
+                    "red": 500
+                  },
+                  "max": 800
                 }
               ]
             },
@@ -768,132 +614,185 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "heading",
-                  "heading": "Ny sektion"
-                },
-                {
-                  "layout": "auto",
-                  "height": 200,
-                  "unit_prefix": "k",
-                  "round": 1,
-                  "convert_units_to": "",
-                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
-                  "gas_co2_intensity": 2351.6459999999997,
-                  "min_box_size": 3,
-                  "min_box_distance": 5,
-                  "show_states": true,
-                  "show_units": true,
-                  "sections": [
+                  "type": "horizontal-stack",
+                  "cards": [
                     {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [
-                            "sensor.metering_total_yield",
-                            "total"
-                          ],
-                          "entity_id": "sensor.total_yield",
-                          "color": "Yellow",
-                          "icon": "mdi:solar-power",
-                          "name": "Solelsproduktion"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [
-                            "sensor.metering_total_yield",
-                            "total"
-                          ],
-                          "entity_id": "sensor.metering_total_absorbed",
-                          "subtract_entities": [
-                            "sensor.metering_total_yield"
-                          ],
-                          "name": "Intag till huset",
-                          "icon": "mdi:transmission-tower-export",
-                          "color": "Green"
+                      "type": "custom:apexcharts-card",
+                      "experimental": {
+                        "color_threshold": true
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": "145px"
                         }
-                      ]
-                    },
-                    {
-                      "entities": [
+                      },
+                      "graph_span": "48h",
+                      "header": {
+                        "title": "Energipris idag och imorgon [öre/kWh]",
+                        "show": true
+                      },
+                      "span": {
+                        "start": "day"
+                      },
+                      "now": {
+                        "show": true,
+                        "label": "Nu"
+                      },
+                      "series": [
                         {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.metering_total_yield",
-                          "subtract_entities": [
-                            "sensor.metering_total_absorbed"
+                          "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
+                          "type": "column",
+                          "data_generator": "return [\n...entity.attributes.raw_today.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), (entity.attributes.raw_today[index][\"value\"]*100)];\n}),\n...entity.attributes.raw_tomorrow.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), (entity.attributes.raw_tomorrow[index][\"value\"]*100)];\n})\n];\n",
+                          "color_threshold": [
+                            {
+                              "value": 0,
+                              "color": "#2085e3"
+                            },
+                            {
+                              "value": 10,
+                              "color": "#04822e"
+                            },
+                            {
+                              "value": 15,
+                              "color": "#12A141"
+                            },
+                            {
+                              "value": 30,
+                              "color": "#79B92C"
+                            },
+                            {
+                              "value": 35,
+                              "color": "#C4D81D"
+                            },
+                            {
+                              "value": 40,
+                              "color": "#F3DC0C"
+                            },
+                            {
+                              "value": 45,
+                              "color": "#F4C616"
+                            },
+                            {
+                              "value": 50,
+                              "color": "#EFA51E"
+                            },
+                            {
+                              "value": 55,
+                              "color": "#E76821"
+                            },
+                            {
+                              "value": 100,
+                              "color": "#E33F20"
+                            },
+                            {
+                              "value": 200,
+                              "color": "#DC182F"
+                            }
                           ]
-                        },
-                        {
-                          "type": "remaining_parent_state",
-                          "children": [
-                            "no_area",
-                            "unknown"
-                          ],
-                          "entity_id": "total",
-                          "name": "Använt av hela huset",
-                          "icon": "mdi:home-lightning-bolt",
-                          "color": "Lightblue"
                         }
                       ]
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "remaining_child_state",
-                          "children": [
-                            "sensor.balboa_spa_circulationpump_consumption_hour",
-                            "sensor.balboa_spa_heater_consumption_hour",
-                            "sensor.ehs4plem_lifetime_energy"
-                          ],
-                          "entity_id": "no_area",
-                          "name": "No area"
-                        },
-                        {
-                          "type": "remaining_parent_state",
-                          "children": [],
-                          "entity_id": "unknown",
-                          "name": "Huset",
-                          "icon": "mdi:home"
-                        }
-                      ],
-                      "sort_by": "state",
-                      "sort_group_by_parent": true
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.balboa_spa_circulationpump_consumption_hour"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.balboa_spa_heater_consumption_hour"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.ehs4plem_lifetime_energy"
-                        }
-                      ],
-                      "sort_by": "state",
-                      "sort_group_by_parent": true
                     }
                   ],
-                  "energy_date_selection": false,
-                  "type": "custom:sankey-chart",
-                  "min_state": 0,
-                  "time_period_from": "now-1w",
-                  "show_names": true,
-                  "show_icons": true,
-                  "wide": true,
                   "grid_options": {
-                    "columns": "full"
-                  },
-                  "title": "Energimängd",
-                  "throttle": 900000
+                    "rows": "auto",
+                    "columns": 24
+                  }
                 },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "experimental": {
+                        "color_threshold": true
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": "145px"
+                        }
+                      },
+                      "graph_span": "48h",
+                      "header": {
+                        "title": "Energipris idag och imorgon [öre/kWh] inkl. avgifter och moms",
+                        "show": true
+                      },
+                      "show": {
+                        "loading": true
+                      },
+                      "span": {
+                        "start": "day"
+                      },
+                      "now": {
+                        "show": true,
+                        "label": "Nu"
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
+                          "type": "column",
+                          "unit": "öre/kWh",
+                          "data_generator": "return [\n...entity.attributes.raw_today.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), ((entity.attributes.raw_today[index][\"value\"]*100)+(hass.states['input_number.electrical_consumption_rate_compensation_manual'].state*1)+(hass.states['input_number.electrical_consumption_rate_tax'].state*1))*(1+((hass.states['input_number.electrical_consumption_rate_vat'].state*1)/100))];\n}),\n...entity.attributes.raw_tomorrow.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), ((entity.attributes.raw_tomorrow[index][\"value\"]*100)+(hass.states['input_number.electrical_consumption_rate_compensation_manual'].state*1)+(hass.states['input_number.electrical_consumption_rate_tax'].state*1))*(1+((hass.states['input_number.electrical_consumption_rate_vat'].state*1)/100))];\n})\n];\n",
+                          "color_threshold": [
+                            {
+                              "value": 0,
+                              "color": "#2085e3"
+                            },
+                            {
+                              "value": 10,
+                              "color": "#04822e"
+                            },
+                            {
+                              "value": 15,
+                              "color": "#12A141"
+                            },
+                            {
+                              "value": 30,
+                              "color": "#79B92C"
+                            },
+                            {
+                              "value": 35,
+                              "color": "#C4D81D"
+                            },
+                            {
+                              "value": 40,
+                              "color": "#F3DC0C"
+                            },
+                            {
+                              "value": 45,
+                              "color": "#F4C616"
+                            },
+                            {
+                              "value": 50,
+                              "color": "#EFA51E"
+                            },
+                            {
+                              "value": 55,
+                              "color": "#E76821"
+                            },
+                            {
+                              "value": 100,
+                              "color": "#E33F20"
+                            },
+                            {
+                              "value": 200,
+                              "color": "#DC182F"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "grid_options": {
+                    "rows": "auto",
+                    "columns": 24
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "layout": "horizontal",
                   "height": 200,
@@ -912,10 +811,10 @@
                         {
                           "type": "entity",
                           "children": [
-                            "sensor.sma_metering_total_yield_hour",
+                            "sensor.metering_total_yield",
                             "solarproduction_used_by_house"
                           ],
-                          "entity_id": "sensor.sma_total_yield_hour",
+                          "entity_id": "sensor.total_yield",
                           "color": "Yellow",
                           "icon": "mdi:solar-power",
                           "name": "Solelsproduktion"
@@ -927,7 +826,7 @@
                         {
                           "type": "entity",
                           "children": [],
-                          "entity_id": "sensor.sma_metering_total_yield_hour",
+                          "entity_id": "sensor.metering_total_yield",
                           "name": "Utmatning av solelsproduktion",
                           "color": "Yellow",
                           "icon": "mdi:transmission-tower-import"
@@ -947,7 +846,7 @@
                           "children": [
                             "total_used_by_whole_house"
                           ],
-                          "entity_id": "sensor.sma_metering_total_absorbed_hour",
+                          "entity_id": "sensor.metering_total_absorbed",
                           "color": "Lightgreen",
                           "icon": "mdi:transmission-tower-export",
                           "name": "Intag till huset"
@@ -1014,34 +913,13 @@
                   "grid_options": {
                     "columns": "full"
                   },
-                  "title": "Energimängd senaste veckan",
-                  "time_period_from": "now-1w",
-                  "throttle": 900000
+                  "title": "Energimängd denna månad",
+                  "throttle": 900000,
+                  "time_period_from": "now/M",
+                  "time_period_to": "now"
                 }
               ],
               "column_span": 2
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Ny sektion"
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.electrical_consumption_rate_summary",
-                  "name": "Elkonsumptionsavgift",
-                  "unit": "öre/kWh",
-                  "needle": true,
-                  "severity": {
-                    "green": 50,
-                    "yellow": 100,
-                    "red": 500
-                  },
-                  "max": 800
-                }
-              ]
             }
           ]
         }

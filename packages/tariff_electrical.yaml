@@ -600,6 +600,7 @@ template:
           {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4, default=0) %}
           {{ total_rate }}
 
+
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
