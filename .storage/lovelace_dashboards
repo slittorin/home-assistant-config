@@ -111,6 +111,15 @@
         "require_admin": false,
         "mode": "storage",
         "show_in_sidebar": true
+      },
+      {
+        "id": "dashboard_varmevaxlare",
+        "show_in_sidebar": true,
+        "icon": "mdi:hvac",
+        "title": "Värmeväxlare",
+        "require_admin": false,
+        "mode": "storage",
+        "url_path": "dashboard-varmevaxlare"
       }
     ]
   }

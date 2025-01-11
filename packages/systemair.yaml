@@ -1,15 +1,49 @@
 # This file includes all the entitites for tracking sensor data for Systemair VSR 300.
-
+#
+# We use the default scan_interval of 30 seconds.
+#
+# Works for the Save Connect 2.0 with Systemair VSR 300 and the following firware:
+#
+#
+# The MODBUS-registers and logic is taken from:
+# - https://shop.systemair.com/upload/assets/SAVE_MODBUS_VARIABLE_LIST_20210301_REV36.PDF?a94f4fe0
+# - And from the javascript on the Save Connect interface reached locally.
 
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 
+# To be able to easily change the IP for the Save Connect device.
+input_text:
+  systemair_save_connect_device_ip:
+    name: "IP address of the Systemair Save Connect device"
+    icon: mdi:hvac
+
 sensor:
   # We want to gather the current temperature setpoint.
   # Modbus value: 2000
-  # Return value times 10. For instance 180 is 18 degrees.
+  # Logic:
+  # If the temperature sensor reading is higher than 60000: Temperature = (REG_SENSOR_* - 65536) / 10
+  # If temperature sensor reading is lower than 60000: Temperature = REG_SENSOR_* / 10
   - platform: rest
-    resource: http://192.168.4.118/mread?{%222000%22:1}
+    resource_template: >
+      {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
+      {% set modbus_register = "2000" %}
+      {% set url_result = "http://" + device_ip + "/mread?{%22" + modbus_register +"%22:1}" %}
+      {{ url_result }}
     name: test_systemair_current_temperature_setpoint
-    value_template: "{{ value_json[0] | round(1) }}"
+    value_template: >
+      {% set value = value_json['2000'] %}
+      {% set inputs_valid = true %}
+      {% set result = none %}
+      {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+      {%   set inputs_valid = false %}
+      {% endif %}
+      {% if (inputs_valid == true) %}
+      {%   if (value > 60000) %}
+      {%     set result = (value - 65536) / 10  %}
+      {%   else %}
+      {%     set result = value / 10  %}
+      {%   endif %}
+      {% endif %}
+      {{ result | round(1) }}
     unit_of_measurement: °C

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.dashboard_varmevaxlare",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Värmeväxlare",
+          "type": "sections",
+          "max_columns": 4,
+          "icon": "",
+          "sections": [],
+          "cards": []
+        },
+        {
+          "type": "sections",
+          "max_columns": 4,
+          "title": "Inställningar",
+          "path": "installningar",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_text.systemair_save_connect_device_ip",
+                      "name": "IP address till Systemair Save Connect"
+                    }
+                  ],
+                  "title": "Inställningar"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
