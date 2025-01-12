@@ -3,7 +3,11 @@
 # We use the default scan_interval of 30 seconds.
 #
 # Works for the Save Connect 2.0 with Systemair VSR 300 and the following firware:
-#
+# Model: VSR 300
+# Main board
+# SW: 1.22.0
+# IAM
+# SW: 1.3.0
 #
 # The MODBUS-registers and logic is taken from:
 # - https://shop.systemair.com/upload/assets/SAVE_MODBUS_VARIABLE_LIST_20210301_REV36.PDF?a94f4fe0
@@ -19,8 +23,39 @@ input_text:
     icon: mdi:hvac
 
 sensor:
+  # We may want to gather information about the temperature unit
+  # Modbus register: 9002
+  # Logic:
+  # 0 - Celcius
+  # 1- Fahrenheit
+  - platform: rest
+    resource_template: >
+      {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
+      {% set modbus_register = "9002" %}
+      {% set url_result = "http://" + device_ip + "/mread?{%22" + modbus_register +"%22:1}" %}
+      {{ url_result }}
+    name: test_systemair_temperature_unit
+    value_template: >
+      {% set modbus_register = "9002" %}
+      {% set value = value_json[modbus_register] %}
+      {% set inputs_valid = true %}
+      {% set result = none %}
+      {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+      {%   set inputs_valid = false %}
+      {% endif %}
+      {% if (inputs_valid == true) %}
+      {%   set value = int(value) %}
+      {%   if (value == 0 ) %}
+      {%     set result = 0  %}
+      {%   else %}
+      {%     set result = 1  %}
+      {%   endif %}
+      {% endif %}
+      {{ result }}
+
   # We want to gather the current temperature setpoint.
-  # Modbus value: 2000
+  # Modbus register: 2000
+  # You may need to change 'unit_of_measurement' dependent on temperature unit for the VTX.
   # Logic:
   # If the temperature sensor reading is higher than 60000: Temperature = (REG_SENSOR_* - 65536) / 10
   # If temperature sensor reading is lower than 60000: Temperature = REG_SENSOR_* / 10
@@ -32,13 +67,15 @@ sensor:
       {{ url_result }}
     name: test_systemair_current_temperature_setpoint
     value_template: >
-      {% set value = value_json['2000'] %}
+      {% set modbus_register = "2000" %}
+      {% set value = value_json[modbus_register] %}
       {% set inputs_valid = true %}
       {% set result = none %}
       {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
       {%   set inputs_valid = false %}
       {% endif %}
       {% if (inputs_valid == true) %}
+      {%   set value = int(value) %}
       {%   if (value > 60000) %}
       {%     set result = (value - 65536) / 10  %}
       {%   else %}
@@ -47,3 +84,25 @@ sensor:
       {% endif %}
       {{ result | round(1) }}
     unit_of_measurement: °C
+
+template:
+  - sensor:
+      # We may convert the temperature unit to readable string.
+      - name: Test Systemair temperature unit str
+        unique_id: test_systemair_temperature_unit_str
+        state: >
+          {% set value = states('sensor.test_systemair_temperature_unit') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "°C" %}
+          {%   else %}
+          {%     set result = "°F" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
