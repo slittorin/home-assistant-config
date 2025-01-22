@@ -195,8 +195,23 @@
                   "name": "Entiteter, domän: binary_sensor"
                 },
                 {
+                  "entity": "sensor.home_assistant_entities_domain_button",
+                  "name": "Entiteter, domän: button",
+                  "icon": "mdi:button-pointer"
+                },
+                {
                   "entity": "sensor.home_assistant_entities_domain_climate",
                   "name": "Entiteter, domän: climate"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_conversation",
+                  "name": "Entiteter, domän: conversation",
+                  "icon": "mdi:chat"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_fan",
+                  "name": "Entiteter, domän: fan",
+                  "icon": "mdi:fan"
                 },
                 {
                   "entity": "sensor.home_assistant_entities_domain_input_boolean",
@@ -211,8 +226,18 @@
                   "name": "Entiteter, domän: input_number"
                 },
                 {
+                  "entity": "sensor.home_assistant_entities_domain_input_select",
+                  "name": "Entiteter, domän: input_select",
+                  "icon": "mdi:form-dropdown"
+                },
+                {
                   "entity": "sensor.home_assistant_entities_domain_input_text",
                   "name": "Entiteter, domän: input_text"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_light",
+                  "name": "Entiteter, domän: light",
+                  "icon": "mdi:lightbulb"
                 },
                 {
                   "entity": "sensor.home_assistant_entities_domain_persistent_notification",
@@ -223,12 +248,22 @@
                   "name": "Entiteter, domän: person"
                 },
                 {
+                  "entity": "sensor.home_assistant_entities_domain_select",
+                  "name": "Entiteter, domän: select",
+                  "icon": "mdi:select"
+                },
+                {
                   "entity": "sensor.home_assistant_entities_domain_sensor",
                   "name": "Entiteter, domän: sensor"
                 },
                 {
                   "entity": "sensor.home_assistant_entities_domain_sun",
                   "name": "Entiteter, domän: sun"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_switch",
+                  "name": "Entiteter, domän: switch",
+                  "icon": "mdi:toggle-switch"
                 },
                 {
                   "entity": "sensor.home_assistant_entities_domain_weather",

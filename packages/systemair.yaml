@@ -1,8 +1,6 @@
 # This file includes all the entitites for tracking sensor data for Systemair VSR 300.
 #
-# We use the default scan_interval of 30 seconds.
-#
-# Works for the Save Connect 2.0 with Systemair VSR 300 and the following firware:
+# Works for the Save Connect 2.0 with Systemair VSR 300 and the following firmware:
 # Model: VSR 300
 # Main board
 # SW: 1.22.0
@@ -10,8 +8,9 @@
 # SW: 1.3.0
 #
 # The MODBUS-registers and logic is taken from:
-# - https://shop.systemair.com/upload/assets/SAVE_MODBUS_VARIABLE_LIST_20210301_REV36.PDF?a94f4fe0
-# - And from the javascript on the Save Connect interface reached locally.
+# A. https://github.com/cmragnar/HomeAssistant-VSR300-Modbus
+# B. And from the javascript on the Save Connect interface reached locally.
+# C. https://shop.systemair.com/upload/assets/SAVE_MODBUS_VARIABLE_LIST_20210301_REV36.PDF?a94f4fe0
 
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
@@ -19,90 +18,435 @@
 # To be able to easily change the IP for the Save Connect device.
 input_text:
   systemair_save_connect_device_ip:
-    name: "IP address of the Systemair Save Connect device"
+    name: "Domain- or IP-address of the Systemair Save Connect device"
+    icon: mdi:hvac
+
+input_select:
+  systemair_chosen_unit_type:
+    name: Type of Systemair device
+    options:
+      - Systemair VSR 300
+    initial: Systemair VSR 300
     icon: mdi:hvac
 
 sensor:
-  # We may want to gather information about the temperature unit
-  # Modbus register: 9002
-  # Logic:
-  # 0 - Celcius
-  # 1- Fahrenheit
+  # To not overflow the Save Connect device, we gather all data we need with one call.
+  # Scanned every 30 second as default for rest sensors.
+  # http://192.168.4.118/mread?{%222000%22:1,%222502%22:1%222502%22:1,%229000%22:1}
+  # http://192.168.4.118/mread?{%221160%22:2,%222000%22:1,%222505%22:1,%229002%22:1,%2212401%22:1,%2214001%22:1}
   - platform: rest
     resource_template: >
+      {% set device_type = states('input_select.systemair_chosen_unit_type') %}
       {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
-      {% set modbus_register = "9002" %}
-      {% set url_result = "http://" + device_ip + "/mread?{%22" + modbus_register +"%22:1}" %}
-      {{ url_result }}
-    name: test_systemair_temperature_unit
+      {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+      {% set ns = namespace(url = "http://" + device_ip + "/mread?") %}
+      {% set inputs_valid = true %}
+      {% set result = none %}
+      {% if (device_type == "unknown" or device_type == "unavailable" or device_type == "none") %}
+      {%     set inputs_valid = false %}
+      {% elif (device_ip == "unknown" or device_ip == "unavailable" or device_ip == "none") %}
+      {%     set inputs_valid = false %}
+      {% elif (json_array == "unknown" or json_array == "unavailable" or json_array == "none") %}
+      {%     set inputs_valid = false %}
+      {% endif %}
+      {% if (inputs_valid == true) %}
+      {%   for entry in json_array[device_type] %}
+      {%     set register_valid = true %}
+      {%     set register = json_array[device_type][entry].register | string %}
+      {%     if (register == "unknown" or register == "unavailable" or register == "none") %}
+      {%       set register_valid = false %}
+      {%     endif %}
+      {%     if (register_valid == true) %}
+      {%       if (loop.first) %}
+      {%         set ns.url = ns.url + "{" %}
+      {%       endif %}
+      {%       set ns.url = ns.url + "%22" + register + "%22:1" %}
+      {%       if (loop.last) %}
+      {%         set ns.url = ns.url + "}" %}
+      {%       else %}
+      {%         set ns.url = ns.url + "," %}
+      {%       endif %}
+      {%     endif %}
+      {%   endfor %}
+      {% endif %}
+      {{ ns.url }}
+    name: systemair_save_connect_response
     value_template: >
-      {% set modbus_register = "9002" %}
-      {% set value = value_json[modbus_register] %}
+      {% set value = value_json %}
       {% set inputs_valid = true %}
       {% set result = none %}
       {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
       {%   set inputs_valid = false %}
       {% endif %}
       {% if (inputs_valid == true) %}
-      {%   set value = int(value) %}
-      {%   if (value == 0 ) %}
-      {%     set result = 0  %}
-      {%   else %}
-      {%     set result = 1  %}
-      {%   endif %}
+      {%   set result = value | replace("'", '"')  %}
       {% endif %}
       {{ result }}
 
-  # We want to gather the current temperature setpoint.
-  # Modbus register: 2000
-  # You may need to change 'unit_of_measurement' dependent on temperature unit for the VTX.
-  # Logic:
-  # If the temperature sensor reading is higher than 60000: Temperature = (REG_SENSOR_* - 65536) / 10
-  # If temperature sensor reading is lower than 60000: Temperature = REG_SENSOR_* / 10
-  - platform: rest
-    resource_template: >
-      {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
-      {% set modbus_register = "2000" %}
-      {% set url_result = "http://" + device_ip + "/mread?{%22" + modbus_register +"%22:1}" %}
-      {{ url_result }}
-    name: test_systemair_current_temperature_setpoint
-    value_template: >
-      {% set modbus_register = "2000" %}
-      {% set value = value_json[modbus_register] %}
-      {% set inputs_valid = true %}
-      {% set result = none %}
-      {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
-      {%   set inputs_valid = false %}
-      {% endif %}
-      {% if (inputs_valid == true) %}
-      {%   set value = int(value) %}
-      {%   if (value > 60000) %}
-      {%     set result = (value - 65536) / 10  %}
-      {%   else %}
-      {%     set result = value / 10  %}
-      {%   endif %}
-      {% endif %}
-      {{ result | round(1) }}
-    unit_of_measurement: °C
-
 template:
   - sensor:
-      # We may convert the temperature unit to readable string.
-      - name: Test Systemair temperature unit str
-        unique_id: test_systemair_temperature_unit_str
+      # This is the configuration array that holds all data to be able to interact with Save Connect.
+      # The configuration array holds all valid registers for the Systemair sensors/functions.
+      # All register-addresses seems to be one lower than value in MODBUS variable list
+      - name: Systemair configuration
+        unique_id: systemair_configuration
         state: >
-          {% set value = states('sensor.test_systemair_temperature_unit') %}
+          {{ "Systemair configuration" }}
+        attributes:
+          configuration: >
+            {% set json_array = { "Systemair VSR 300": {
+                                   "REG_USERMODE_MODE": { "register": "1160", "desc": "Active user mode." },
+                                   "REG_TC_SP": { "register": "2000", "desc": "Current temperature setpoint." },
+                                   "REG_ECO_MODE_ON_OFF": { "register": "2504", "desc": "ECO mode configuration status." },
+                                   "REG_TEMP_UNIT": { "register": "9002", "desc": "Temperature unit." },
+                                   "REG_SENSOR_RPM_SAF": { "register": "12400", "desc": "Supply Fan (SAF) RPM indication." },
+                                   "REG_SENSOR_RPM_EAF": { "register": "12401", "desc": "Extract Air Fan (EAF) RPM indication." },
+                                   "REG_OUTPUT_SAF": { "register": "14000", "desc": "Supply Air Fan (SAF) output, percentage." },
+                                   "REG_OUTPUT_EAF": { "register": "14001", "desc": "Extract Air Fan (EAF) output, percentage." }
+                                  }
+                                } %}
+            {{ json_array }}
+
+  - sensor:
+      # We want to gather information about the temperature unit.
+      # Modbus register in configuration: REG_TEMP_UNIT
+      # Logic:
+      # 0 - Celcius
+      # 1- Fahrenheit
+      - name: Systemair temperature unit
+        unique_id: systemair_temperature_unit
+        state_class: measurement
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_TEMP_UNIT"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the temperature unit, to string.
+      # Modbus register in configuration: REG_TEMP_UNIT
+      # Logic:
+      # 0 - Celcius
+      # 1- Fahrenheit
+      - name: Systemair temperature unit str
+        unique_id: systemair_temperature_unit_str
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_TEMP_UNIT"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
           {%     set result = "°C" %}
-          {%   else %}
+          {%   elif (value == 1) %}
           {%     set result = "°F" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the current temperature setpoint in celcius.
+      # Modbus register in configuration: REG_TC_SP
+      # Modbus register: 2000
+      # Takes into account the temperature unit of the unit.
+      # Logic:
+      # If the temperature sensor reading is higher than 60000: Temperature = (REG_SENSOR_* - 65536) / 10
+      # If temperature sensor reading is lower than 60000: Temperature = REG_SENSOR_* / 10
+      - name: Systemair current temperature setpoint celcius
+        unique_id: systemair_current_temperature_setpoint_celcius
+        unit_of_measurement: "°C"
+        state_class: measurement
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set temp_unit = states('sensor.systemair_temperature_unit') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (temp_unit == 'unknown' or temp_unit == 'unavailable' or temp_unit == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_TC_SP"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set value = int(value) %}
+          {%   set temp_unit = int(temp_unit) %}
+          {%   if (value > 60000) %}
+          {%     set result = (value - 65536) / 10  %}
+          {%   else %}
+          {%     set result = value / 10  %}
+          {%   endif %}
+          {%   if (temp_unit == 0) %}
+          {%     set result = result %}
+          {%   elif (temp_unit == 1) %}
+          {%     set result = ((result - 32) * (5/9)) %}
+          {%   endif %}
+          {%   set result = result | round(1) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the current temperature setpoint in fahrenheit.
+      # Modbus register in configuration: REG_TC_SP
+      # Takes into account the temperature unit of the unit.
+      # Logic:
+      # If the temperature sensor reading is higher than 60000: Temperature = (REG_SENSOR_* - 65536) / 10
+      # If temperature sensor reading is lower than 60000: Temperature = REG_SENSOR_* / 10
+      - name: Systemair current temperature setpoint fahrenheit
+        unique_id: systemair_current_temperature_setpoint_fahrenheit
+        unit_of_measurement: "°F"
+        state_class: measurement
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set temp_unit = states('sensor.systemair_temperature_unit') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (temp_unit == 'unknown' or temp_unit == 'unavailable' or temp_unit == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_TC_SP"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set value = int(value) %}
+          {%   set temp_unit = int(temp_unit) %}
+          {%   if (value > 60000) %}
+          {%     set result = (value - 65536) / 10  %}
+          {%   else %}
+          {%     set result = value / 10  %}
+          {%   endif %}
+          {%   if (temp_unit == 0) %}
+          {%     set result = ((result * (9/5)) + 32) %}
+          {%   elif (temp_unit == 1) %}
+          {%     set result = result %}
+          {%   endif %}
+          {%   set result = result | round(1) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the active user mode.
+      # Modbus register in configuration: REG_USERMODE_MODE
+      # Logic:
+      # 0: Auto
+      # 1: Manual
+      # 2: Crowded
+      # 3: Refresh
+      # 4: Fireplace
+      # 5: Away
+      # 6: Holiday
+      # 7: Cooker Hood
+      # 8: Vacuum cleaner
+      # 9: Configurable DI 1
+      # 10: Configurable DI 2
+      # 11: Configurable D
+      - name: Systemair active user mode
+        unique_id: systemair_active_user_mode
+        state_class: measurement
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_USERMODE_MODE"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the active user mode, to string.
+      # Modbus register in configuration: REG_USERMODE_MODE
+      # Logic:
+      # 0: Auto
+      # 1: Manual
+      # 2: Crowded
+      # 3: Refresh
+      # 4: Fireplace
+      # 5: Away
+      # 6: Holiday
+      # 7: Cooker Hood
+      # 8: Vacuum cleaner
+      # 9: Configurable DI 1
+      # 10: Configurable DI 2
+      # 11: Configurable D
+      - name: Systemair active user mode str
+        unique_id: systemair_active_user_mode_str
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_USERMODE_MODE"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Auto" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Manual" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Crowded" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Refresh" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Fireplace" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Away" %}
+          {%   elif (value == 6) %}
+          {%     set result = "Holiday" %}
+          {%   elif (value == 7) %}
+          {%     set result = "Cooker Hood" %}
+          {%   elif (value == 8) %}
+          {%     set result = "Vacuum cleaner" %}
+          {%   elif (value == 9) %}
+          {%     set result = "Configurable DI 1" %}
+          {%   elif (value == 10) %}
+          {%     set result = "Configurable DI 2" %}
+          {%   elif (value == 11) %}
+          {%     set result = "Configurable D" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the Supply Air Fan (SAF) RPM indication.
+      # Modbus register in configuration: REG_SENSOR_RPM_SAF
+      - name: Systemair SAF RPM indication
+        unique_id: systemair_saf_rpm_indication
+        unit_of_measurement: "rpm"
+        state_class: measurement
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_SENSOR_RPM_SAF"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the Supply Air Fan (SAF) percentage.
+      # Modbus register in configuration: REG_OUTPUT_SAF
+      # Min value 16.
+      - name: Systemair SAF percentage
+        unique_id: systemair_saf_percentage
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_OUTPUT_SAF"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+  - binary_sensor:
+      # We want to gather information about the ECO mode configuration status.
+      # Modbus register in configuration: REG_ECO_MODE_ON_OFF
+      - name: Systemair ECO mode configuration status
+        unique_id: systemair_eco_mode_configuration_status
+        state: >
+          {% set response = states('sensor.systemair_save_connect_response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (response == 'unknown' or response == 'unavailable' or response == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_ECO_MODE_ON_OFF"].register | string %}
+          {%   set response = response | from_json %}
+          {%   set value = response[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = 0 %}
+          {%   elif (value == 1) %}
+          {%     set result = 1 %}
           {%   endif %}
           {% endif %}
           {{ result }}

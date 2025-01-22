@@ -26,8 +26,11 @@
                   "type": "entities",
                   "entities": [
                     {
+                      "entity": "input_select.test_systemair_chosen_unit_type"
+                    },
+                    {
                       "entity": "input_text.systemair_save_connect_device_ip",
-                      "name": "IP address till Systemair Save Connect"
+                      "name": "Domän- eller IP-address till Systemair Save Connect"
                     }
                   ],
                   "title": "Inställningar"
