@@ -29,12 +29,12 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "sensor.systemair_current_temperature_setpoint_celcius",
+                      "entity": "sensor.systemair_read_current_temperature_setpoint_celcius",
                       "icon": "mdi:thermometer",
                       "name": "Nuvarande temperaturinställning"
                     },
                     {
-                      "entity": "sensor.systemair_active_user_mode_str",
+                      "entity": "sensor.systemair_read_active_user_mode_str",
                       "name": "Driftläge",
                       "icon": "mdi:cog"
                     },
@@ -42,18 +42,18 @@
                       "type": "conditional",
                       "conditions": [
                         {
-                          "entity": "sensor.systemair_active_user_mode",
+                          "entity": "sensor.systemair_read_active_user_mode",
                           "state": "1"
                         }
                       ],
                       "row": {
-                        "entity": "sensor.systemair_usermode_manual_airflow_level_str",
+                        "entity": "sensor.systemair_read_usermode_manual_airflow_level_str",
                         "name": "Luftflödesinställning",
                         "icon": "mdi:fan"
                       }
                     },
                     {
-                      "entity": "binary_sensor.systemair_eco_mode_configuration_status",
+                      "entity": "binary_sensor.systemair_read_eco_mode_configuration_status",
                       "name": "ECO-mode inställning",
                       "icon": "mdi:sprout"
                     }
@@ -64,47 +64,47 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "sensor.systemair_outdoor_air_temperature_celcius",
+                      "entity": "sensor.systemair_read_outdoor_air_temperature_celcius",
                       "name": "Uteluftstemperatur"
                     },
                     {
-                      "entity": "sensor.systemair_supply_air_temperature_celcius",
+                      "entity": "sensor.systemair_read_supply_air_temperature_celcius",
                       "name": "Tilluftstemperatur"
                     },
                     {
-                      "entity": "sensor.systemair_extract_air_temperature_celcius",
+                      "entity": "sensor.systemair_read_extract_air_temperature_celcius",
                       "name": "Frånluftstemperatur"
                     },
                     {
-                      "entity": "sensor.systemair_overheat_temperature_celcius",
+                      "entity": "sensor.systemair_read_overheat_temperature_celcius",
                       "name": "Överhettningstemperatur"
                     },
                     {
                       "type": "divider"
                     },
                     {
-                      "entity": "sensor.systemair_eaf_relative_humidity",
+                      "entity": "sensor.systemair_read_eaf_relative_humidity",
                       "name": "Frånluft, relativ fuktighet"
                     },
                     {
                       "type": "divider"
                     },
                     {
-                      "entity": "sensor.systemair_saf_rpm_indication",
+                      "entity": "sensor.systemair_read_saf_rpm_indication",
                       "icon": "mdi:fan",
                       "name": "Tilluftsfläkt, varvtal"
                     },
                     {
-                      "entity": "sensor.systemair_saf_percentage",
+                      "entity": "sensor.systemair_read_saf_percentage",
                       "icon": "mdi:fan",
                       "name": "Tilluftsfläkt, effektprocent"
                     },
                     {
-                      "entity": "sensor.systemair_eaf_rpm_indication",
+                      "entity": "sensor.systemair_read_eaf_rpm_indication",
                       "name": "Frånluftsfläkt, varvtal"
                     },
                     {
-                      "entity": "sensor.systemair_eaf_percentage",
+                      "entity": "sensor.systemair_read_eaf_percentage",
                       "name": "Frånluftsfläkt, effektprocent"
                     }
                   ],
