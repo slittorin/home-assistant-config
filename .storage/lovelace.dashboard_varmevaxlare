@@ -137,6 +137,29 @@
                     }
                   ],
                   "title": "Inställningar"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.systemair_read_heat_exchanger_type_str",
+                      "name": "Typ av värmeväxlare"
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "sensor.systemair_read_heat_exchanger_type",
+                          "state": "0"
+                        }
+                      ],
+                      "row": {
+                        "entity": "sensor.systemair_read_heat_exchanger_actuator_str",
+                        "name": "Ställdon, typ av styrsignal"
+                      }
+                    }
+                  ],
+                  "title": "Konfiguration"
                 }
               ]
             }
