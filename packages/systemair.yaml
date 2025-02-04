@@ -31,104 +31,6 @@ input_select:
     initial: Systemair VSR 300
     icon: mdi:hvac
 
-rest:
-  # To not overflow the Save Connect device, we gather all data we need with one call.
-  # Here we have a constraint of 255 characters for sensors, and I could not use attributes as I do not want to hardcode registers in the rest-sensor.
-  #   On top of that we also got an warning at startup in the logs for temperature sensors: has device class 'temperature', state class 'measurement' unit '°C' and suggested precision 'None' thus indicating it has a numeric value; however, it has the non-numeric value: 'Unknown' (<class 'str'
-  #     I tried all sorts of yaml-trickery but could not get the warning to not appear in the logs.
-  #       Therefore I reverted back, and created two sensors of 255 characters each, that is thereafter added to a sensor attribute from the sensors (i.e. no 255 limit).
-  #         Template sensors can thereafter gather data from the sensor-attributes.
-  #     I still get the following warning for the rest sensor: Template variable warning: 'None' has no attribute 'Systemair VSR 300'
-  #       I have not yet figured out yaml-wizardry to remove this.
-  # Scanned every 60 second (not 30 as default), as the Save Connect device seems sensitive to too many requests.
-  # http://192.168.4.118/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
-  - scan_interval: 30
-    timeout: 28
-    resource_template: >
-      {% set device_type = states('input_select.systemair_chosen_unit_type') %}
-      {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
-      {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
-      {% set inputs_valid = true %}
-      {% set result = none %}
-      {% if (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
-      {%     set inputs_valid = false %}
-      {% elif (device_ip == 'unknown' or device_ip == 'unavailable' or device_ip == 'none') %}
-      {%     set inputs_valid = false %}
-      {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == '' or json_array == {} or json_array == '{}None') %}
-      {%     set inputs_valid = false %}
-      {% endif %}
-      {% if (inputs_valid == true) %}
-      {%   set entries_valid = true %}
-      {%   set entries = json_array[device_type] %}
-      {%   if (entries == 'unknown' or entries == 'unavailable' or entries == 'none') %}
-      {%     set entries_valid = false %}
-      {%   endif %}
-      {%   if (entries_valid == true) %}
-      {%     set ns = namespace(url = "http://" + device_ip + "/mread?") %}
-      {%     for entry in entries %}
-      {%       set register_valid = true %}
-      {%       set register = json_array[device_type][entry].register | string %}
-      {%       if (register == 'unknown' or register == 'unavailable' or register == 'none') %}
-      {%         set register_valid = false %}
-      {%       endif %}
-      {%       if (register_valid == true) %}
-      {%         if (loop.first) %}
-      {%           set ns.url = ns.url + "{" %}
-      {%         endif %}
-      {%         set ns.url = ns.url + "%22" + register + "%22:1" %}
-      {%         if (loop.last) %}
-      {%           set ns.url = ns.url + "}" %}
-      {%         else %}
-      {%           set ns.url = ns.url + "," %}
-      {%         endif %}
-      {%       endif %}
-      {%     endfor %}
-      {%     set result = ns.url %}
-      {%   endif %}
-      {% endif %}
-      {{ result }}
-    sensor:
-      # We want to gather characters 0-254 in the response as state.
-      # A sensor can maximum have 255 characters.
-      - name: Systemair Save connect response 1 part
-        unique_id: systemair_save_connect_response_1_part
-        value_template: >
-          {% set value = value_json %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
-          {%   set inputs_valid = false %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = value | replace("'", '"') %}
-          {%   set length = result | count %}
-          {%   if (length > 255) %}
-          {%     set result = result[0:255] %}
-          {%   endif %}
-          {% endif %}
-          {{ result }}
-      # We want to gather characters 255-509 in the response as state.
-      # A sensor can maximum have 255 characters.
-      - name: Systemair Save connect response 2 part
-        unique_id: systemair_save_connect_response_2_part
-        value_template: >
-          {% set value = value_json %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
-          {%   set inputs_valid = false %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = value | replace("'", '"') %}
-          {%   set length = result | count %}
-          {%   if (length > 255) %}
-          {%     set result = result[255:511] %}
-          {%   else %}
-          {%     set result = none %}
-          {%   endif %}
-          {% endif %}
-          {{ result }}
-
 template:
   - sensor:
       # This is the configuration array that holds all data to be able to interact with Save Connect.
@@ -148,6 +50,7 @@ template:
                                    "REG_TC_SP": { "register": "2000", "desc": "Current temperature setpoint." },
                                    "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "desc": "Heat exchanger type (register name not official)." },
                                    "REG_ECO_MODE_ON_OFF": { "register": "2504", "desc": "ECO mode configuration status." },
+                                   "REG_HEATER_TYPE": { "register": "3001", "desc": "Heater type (register name not official)." },
                                    "REG_PLATE_EXCHANGER_BYPASS_LOCATION": { "register": "3002", "desc": "Plate exchange bypass location (register name not official)." },
                                    "REG_TEMP_UNIT": { "register": "9002", "desc": "Temperature unit (register name not official)." },
                                    "REG_SENSOR_FPT": { "register": "12100", "desc": "Frost protection temperature sensor." },
@@ -160,6 +63,7 @@ template:
                                    "REG_SENSOR_RPM_SAF": { "register": "12400", "desc": "Supply Fan (SAF) RPM indication." },
                                    "REG_SENSOR_RPM_EAF": { "register": "12401", "desc": "Extract Air Fan (EAF) RPM indication." },
                                    "REG_SENSOR_PDM_EAT_VALUE": { "register": "12543", "desc": "In-built extract air temperature sensor value." },
+                                   "REG_HEATER_ACTUATOR": { "register": "13020", "desc": "Heater actuator (register name not official)." },
                                    "REG_HEAT_EXCHANGER_ACTUATOR": { "register": "13021", "desc": "Heat exchanger actuator (register name not official)." },
                                    "REG_OUTPUT_SAF": { "register": "14000", "desc": "Supply Air Fan (SAF) output, percentage." },
                                    "REG_OUTPUT_EAF": { "register": "14001", "desc": "Extract Air Fan (EAF) output, percentage." }
@@ -1182,6 +1086,208 @@ template:
           {% endif %}
           {{ result }}
 
+      # We want to gather the plate exchange bypass location.
+      # Modbus register in configuration: REG_PLATE_EXCHANGER_BYPASS_LOCATION
+      # Logic:
+      # 0: Supply
+      # 1: Extract
+      - name: Systemair read plate exchanger bypass location
+        unique_id: systemair_read_plate_exchanger_bypass_location
+        state_class: measurement
+        icon: mdi:swap-horizontal
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_PLATE_EXCHANGER_BYPASS_LOCATION"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the plate exchange bypass location, to string.
+      # Modbus register in configuration: REG_PLATE_EXCHANGER_BYPASS_LOCATION
+      # Logic:
+      # 0: Supply
+      # 1: Extract
+      - name: Systemair read plate exchanger bypass location str
+        unique_id: systemair_read_plate_exchanger_bypass_location_str
+        icon: mdi:swap-horizontal
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_PLATE_EXCHANGER_BYPASS_LOCATION"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Supply" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Extract" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the heater type.
+      # Modbus register in configuration: REG_HEATER_TYPE
+      # Logic:
+      # 0: None
+      # 1: Electrical
+      # 2: Water
+      # 3: Change-over
+      - name: Systemair read heater type
+        unique_id: systemair_read_heater_type
+        state_class: measurement
+        icon: mdi:heat-wave
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_HEATER_TYPE"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the heater type, to string.
+      # Modbus register in configuration: REG_HEATER_TYPE
+      # Logic:
+      # 0: None
+      # 1: Electrical
+      # 2: Water
+      # 3: Change-over
+      - name: Systemair read heater type str
+        unique_id: systemair_read_heater_type_str
+        icon: mdi:heat-wave
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_HEATER_TYPE"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "None" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Electrical" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Water" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Change-over" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the heater type.
+      # Modbus register in configuration: REG_HEATER_ACTUATOR
+      # Logic:
+      # 0: 0-10V
+      # 1: 2-10V
+      # 2: 10-0V
+      # 3: 10-2V
+      - name: Systemair read heater actuator
+        unique_id: systemair_read_heater_actuator
+        state_class: measurement
+        icon: mdi:current-dc
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_HEATER_ACTUATOR"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the heater type, to string.
+      # Modbus register in configuration: REG_HEATER_ACTUATOR
+      # Logic:
+      # 0: 0-10V
+      # 1: 2-10V
+      # 2: 10-0V
+      # 3: 10-2V
+      - name: Systemair read heater actuator str
+        unique_id: systemair_read_heater_actuator_str
+        icon: mdi:current-dc
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_HEATER_ACTUATOR"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "0-10V" %}
+          {%   elif (value == 1) %}
+          {%     set result = "2-10V" %}
+          {%   elif (value == 2) %}
+          {%     set result = "10-0V" %}
+          {%   elif (value == 3) %}
+          {%     set result = "10-2V" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
   - binary_sensor:
       # We want to gather the fan speed level for mode: manual.
       # Modbus register in configuration: REG_FAN_MANUAL_STOP_ALLOWED
@@ -1234,6 +1340,104 @@ template:
           {%     set result = 0 %}
           {%   elif (value == 1) %}
           {%     set result = 1 %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+rest:
+  # To not overflow the Save Connect device, we gather all data we need with one call.
+  # Here we have a constraint of 255 characters for sensors, and I could not use attributes as I do not want to hardcode registers in the rest-sensor.
+  #   On top of that we also got an warning at startup in the logs for temperature sensors: has device class 'temperature', state class 'measurement' unit '°C' and suggested precision 'None' thus indicating it has a numeric value; however, it has the non-numeric value: 'Unknown' (<class 'str'
+  #     I tried all sorts of yaml-trickery but could not get the warning to not appear in the logs.
+  #       Therefore I reverted back, and created two sensors of 255 characters each, that is thereafter added to a sensor attribute from the sensors (i.e. no 255 limit).
+  #         Template sensors can thereafter gather data from the sensor-attributes.
+  #     I still get the following warning for the rest sensor: Template variable warning: 'None' has no attribute 'Systemair VSR 300'
+  #       I have not yet figured out yaml-wizardry to remove this.
+  # Scanned every 60 second (not 30 as default), as the Save Connect device seems sensitive to too many requests.
+  # http://192.168.4.118/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
+  - scan_interval: 30
+    timeout: 28
+    resource_template: >
+      {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+      {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
+      {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+      {% set inputs_valid = true %}
+      {% set result = none %}
+      {% if (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+      {%     set inputs_valid = false %}
+      {% elif (device_ip == 'unknown' or device_ip == 'unavailable' or device_ip == 'none') %}
+      {%     set inputs_valid = false %}
+      {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == '' or json_array == {} or json_array == '{}None') %}
+      {%     set inputs_valid = false %}
+      {% endif %}
+      {% if (inputs_valid == true) %}
+      {%   set entries_valid = true %}
+      {%   set entries = json_array[device_type] %}
+      {%   if (entries == 'unknown' or entries == 'unavailable' or entries == 'none') %}
+      {%     set entries_valid = false %}
+      {%   endif %}
+      {%   if (entries_valid == true) %}
+      {%     set ns = namespace(url = "http://" + device_ip + "/mread?") %}
+      {%     for entry in entries %}
+      {%       set register_valid = true %}
+      {%       set register = json_array[device_type][entry].register | string %}
+      {%       if (register == 'unknown' or register == 'unavailable' or register == 'none') %}
+      {%         set register_valid = false %}
+      {%       endif %}
+      {%       if (register_valid == true) %}
+      {%         if (loop.first) %}
+      {%           set ns.url = ns.url + "{" %}
+      {%         endif %}
+      {%         set ns.url = ns.url + "%22" + register + "%22:1" %}
+      {%         if (loop.last) %}
+      {%           set ns.url = ns.url + "}" %}
+      {%         else %}
+      {%           set ns.url = ns.url + "," %}
+      {%         endif %}
+      {%       endif %}
+      {%     endfor %}
+      {%     set result = ns.url %}
+      {%   endif %}
+      {% endif %}
+      {{ result }}
+    sensor:
+      # We want to gather characters 0-254 in the response as state.
+      # A sensor can maximum have 255 characters.
+      - name: Systemair Save connect response 1 part
+        unique_id: systemair_save_connect_response_1_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 255) %}
+          {%     set result = result[0:255] %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+      # We want to gather characters 255-509 in the response as state.
+      # A sensor can maximum have 255 characters.
+      - name: Systemair Save connect response 2 part
+        unique_id: systemair_save_connect_response_2_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 255) %}
+          {%     set result = result[255:511] %}
+          {%   else %}
+          {%     set result = none %}
           {%   endif %}
           {% endif %}
           {{ result }}

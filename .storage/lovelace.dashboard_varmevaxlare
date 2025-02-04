@@ -146,17 +146,32 @@
                       "name": "Typ av värmeväxlare"
                     },
                     {
+                      "entity": "sensor.systemair_read_heat_exchanger_actuator_str",
+                      "name": "Ställdon, typ av styrsignal"
+                    },
+                    {
                       "type": "conditional",
                       "conditions": [
                         {
                           "entity": "sensor.systemair_read_heat_exchanger_type",
-                          "state": "0"
+                          "state": "1"
                         }
                       ],
                       "row": {
-                        "entity": "sensor.systemair_read_heat_exchanger_actuator_str",
-                        "name": "Ställdon, typ av styrsignal"
+                        "entity": "sensor.systemair_read_plate_exchanger_bypass_location_str",
+                        "name": "Bypass, placering"
                       }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_heater_type_str",
+                      "name": "Typ av värmare"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_heater_actuator_str",
+                      "name": "Ställdon, typ av styrsignal"
                     }
                   ],
                   "title": "Konfiguration"
