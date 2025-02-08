@@ -150,19 +150,6 @@
                       "name": "Ställdon, typ av styrsignal"
                     },
                     {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "sensor.systemair_read_heat_exchanger_type",
-                          "state": "1"
-                        }
-                      ],
-                      "row": {
-                        "entity": "sensor.systemair_read_plate_exchanger_bypass_location_str",
-                        "name": "Bypass, placering"
-                      }
-                    },
-                    {
                       "type": "divider"
                     },
                     {
@@ -170,8 +157,57 @@
                       "name": "Typ av värmare"
                     },
                     {
-                      "entity": "sensor.systemair_read_heater_actuator_str",
-                      "name": "Ställdon, typ av styrsignal"
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "sensor.systemair_read_heater_type",
+                          "state": "1"
+                        }
+                      ],
+                      "row": {
+                        "entity": "sensor.systemair_read_heater_actuator_str",
+                        "name": "Ställdon, typ av styrsignal"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "sensor.systemair_read_heater_type",
+                          "state": "2"
+                        }
+                      ],
+                      "row": {
+                        "entity": "sensor.systemair_read_heater_actuator_str",
+                        "name": "Ställdon, typ av styrsignal"
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_cooler_type_str",
+                      "name": "Typ av kylare"
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "sensor.systemair_read_cooler_type",
+                          "state": "1"
+                        }
+                      ],
+                      "row": {
+                        "entity": "sensor.systemair_read_cooler_actuator_str",
+                        "name": "Ställdon, typ av styrsignal"
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extra_controller_mode_str",
+                      "name": "Extra regulator"
                     }
                   ],
                   "title": "Konfiguration"
