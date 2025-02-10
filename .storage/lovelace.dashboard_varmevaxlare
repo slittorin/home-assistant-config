@@ -59,10 +59,49 @@
                     }
                   ],
                   "title": "Driftsinställningar"
-                },
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "entities",
                   "entities": [
+                    {
+                      "entity": "binary_sensor.systemair_read_heat_exchanger_on",
+                      "name": "Värmeåtervinning"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_heat_exchanger_recovery_demand_percentage",
+                      "name": "Värmeåtervinning, för att nå måltemperatur"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_recovery_temperature_celcius",
+                      "name": "Ökning av uteluft till tilluft"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_heat_exchanger_efficicency",
+                      "name": "Värmeåtervinning, effektivitet"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_heater_on",
+                      "name": "Värmare"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_heater_control_percentage",
+                      "name": "Värmare, procent effekt"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_heater_power",
+                      "name": "Värmare, effekt"
+                    },
+                    {
+                      "type": "divider"
+                    },
                     {
                       "entity": "sensor.systemair_read_outdoor_air_temperature_celcius",
                       "name": "Uteluftstemperatur"
@@ -108,7 +147,47 @@
                       "name": "Frånluftsfläkt, effektprocent"
                     }
                   ],
-                  "title": "Sensorer"
+                  "title": "Sensorer",
+                  "state_color": false
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "binary_sensor.systemair_read_filter_replacement_alarm",
+                      "name": "Filter, byte",
+                      "icon": ""
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_filter_warning_alarm",
+                      "name": "Filter, varning"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_filter_alarm",
+                      "name": "Filter, alarm"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_alarm_type_a",
+                      "name": "Alarm, typ A"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_alarm_type_b",
+                      "name": "Alarm, typ B"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_alarm_type_c",
+                      "name": "Alarm, typ C"
+                    }
+                  ],
+                  "title": "Alarm"
                 }
               ]
             }
@@ -137,10 +216,34 @@
                     }
                   ],
                   "title": "Inställningar"
-                },
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "entities",
                   "entities": [
+                    {
+                      "entity": "sensor.systemair_read_control_mode_str",
+                      "name": "Reglertyp"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_temperature_unit_str",
+                      "name": "Temperaturenhet"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_airflow_type_str",
+                      "name": "Reglertyp fläkt"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_fan_manual_stop_allowed",
+                      "name": "Manuellt fläktstopp tillåtet"
+                    },
+                    {
+                      "type": "divider"
+                    },
                     {
                       "entity": "sensor.systemair_read_heat_exchanger_type_str",
                       "name": "Typ av värmeväxlare"
@@ -211,6 +314,109 @@
                     }
                   ],
                   "title": "Konfiguration"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_min_percentage",
+                      "name": "Tilluft, minimum"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_min_rpm",
+                      "name": "Tilluft, minimum"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_min_percentage",
+                      "name": "Frånluft, minimum"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_min_rpm",
+                      "name": "Frånluft, minimum"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_low_percentage",
+                      "name": "Tilluft, låg"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_low_rpm",
+                      "name": "Tilluft, låg"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_low_percentage",
+                      "name": "Frånluft, låg"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_low_rpm",
+                      "name": "Frånluft, låg"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_normal_percentage",
+                      "name": "Tilluft, normal"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_normal_rpm",
+                      "name": "Tilluft, normal"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_normal_percentage",
+                      "name": "Frånluft, normal"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_normal_rpm",
+                      "name": "Frånluft, normal"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_high_percentage",
+                      "name": "Tilluft, hög"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_high_rpm",
+                      "name": "Tilluft, hög"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_high_percentage",
+                      "name": "Frånluft, hög"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_high_rpm",
+                      "name": "Frånluft, hög"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_max_percentage",
+                      "name": "Tilluft, max"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_supply_air_fan_max_rpm",
+                      "name": "Tilluft, max"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_max_percentage",
+                      "name": "Frånluft, max"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_extract_air_fan_max_rpm",
+                      "name": "Frånluft, max"
+                    }
+                  ],
+                  "title": "Konfiguration - Fläkthastigheter"
                 }
               ]
             }
