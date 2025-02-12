@@ -7,6 +7,8 @@
 # IAM
 # SW: 1.3.0
 #
+# Note that I have focused on my current setup, there are more sensors and logic that needs to be applied to cover all types, versions and setups.
+#
 # The MODBUS-registers and logic is taken from:
 # A. https://github.com/cmragnar/HomeAssistant-VSR300-Modbus
 # B. And from the javascript on the Save Connect interface reached locally.
@@ -70,16 +72,33 @@ template:
                                    "REG_FAN_LEVEL_SAF_MAX_RPM": { "register": "1418", "desc": "Max supply air fan speed setting, rpm." },
                                    "REG_FAN_LEVEL_EAF_MAX_RPM": { "register": "1419", "desc": "Max extract air fan speed setting, rpm." },
                                    "REG_TC_SP": { "register": "2000", "desc": "Current temperature setpoint." },
-                                   "REG_CONTROL_MODE": { "register": "2030", "desc": "Control mode (register name not official)." },
-                                   "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "desc": "Heat exchanger type (register name not official)." },
+                                   "REG_TC_CONTROL_MODE ": { "register": "2030", "desc": "Control mode." },
+                                   "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "desc": "Heat exchanger type." },
                                    "REG_HEAT_EXCHANGER_FROM_SATC": { "register": "2140", "desc": "Heat recovery demand by temperature control, %." },
                                    "REG_HEATER_FROM_SATC": { "register": "2148", "desc": "Heating demand by temperature control, %." },
+                                   "REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT": { "register": "2202", "desc": "Rotor relative humidity transfer control setpoint." },
+                                   "REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF": { "register": "2203", "desc": "Rotor relative humidity transfer control." },
+                                   "REG_CALC_RHS_EAF": { "register": "2210", "desc": "Calculated moisture extract air." },
+                                   "REG_CALC_RHS_SAF": { "register": "2211", "desc": "Calculated moisture supply air." },
                                    "REG_ECO_MODE_ON_OFF": { "register": "2504", "desc": "ECO mode configuration status." },
-                                   "REG_HEATER_TYPE": { "register": "3001", "desc": "Heater type (register name not official)." },
-                                   "REG_COOLER_TYPE": { "register": "3013", "desc": "Cooler type (register name not official)." },
-                                   "REG_EXTRA_CONTROLLER": { "register": "3014", "desc": "Extra Controller Mode (register name not official)." },
+                                   "REG_UNIT_CONFIG_REHEATER_TYPE": { "register": "3001", "desc": "Heater type." },
+                                   "REG_UNIT_CONFIG_COOLER": { "register": "3013", "desc": "Cooler type." },
+                                   "REG_UNIT_CONFIG_EXTRA_CONTROLLER": { "register": "3014", "desc": "Extra Controller Mode." },
+                                   "REG_FUNCTION_ACTIVE_HEATING": { "register": "3102", "desc": "Function, active heating." },
+                                   "REG_FUNCTION_ACTIVE_DEFROSTING": { "register": "3103", "desc": "Function, active defrosting." },
+                                   "REG_FUNCTION_ACTIVE_HEAT_RECOVERY": { "register": "3104", "desc": "Function, active heat recovery." },
+                                   "REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER": { "register": "3106", "desc": "Function, active moisture transfer." },
+                                   "REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN": { "register": "3112", "desc": "Function, active heater cool down." },
                                    "REG_FILTER_REPLACEMENT_ALARM": { "register": "7006", "desc": "Filter replacement alarm (register name not official)." },
-                                   "REG_TEMP_UNIT": { "register": "9002", "desc": "Temperature unit (register name not official)." },
+                                   "REG_SYSTEM_UNIT_TEMPERATURE": { "register": "9002", "desc": "Temperature unit." },
+                                   "REG_AI_CFG_CONNECTION_NTC1": { "register": "11000", "desc": "Analog input 1 type." },
+                                   "REG_UI_CFG_TYPE_1": { "register": "11100", "desc": "Universal input 1 analog or digital." },
+                                   "REG_UI_CFG_TYPE_2": { "register": "11101", "desc": "Universal input 2 analog or digital." },
+                                   "REG_UI_CONNECTION_ANALOG1": { "register": "11200", "desc": "Universal input 1 analog type." },
+                                   "REG_UI_CONNECTION_ANALOG2": { "register": "11201", "desc": "Universal input 2 analog type." },
+                                   "REG_UI_CONNECTION_DIGITAL1": { "register": "11300", "desc": "Universal input 1 digital type." },
+                                   "REG_UI_CONNECTION_DIGITAL2": { "register": "11301", "desc": "Universal input 1 digital type." },
+                                   "REG_DI_CONNECTION_1": { "register": "11400", "desc": "Digital input 1 type." },
                                    "REG_SENSOR_FPT": { "register": "12100", "desc": "Frost protection temperature sensor." },
                                    "REG_SENSOR_OAT": { "register": "12101", "desc": "Outdoor air temperature sensor value." },
                                    "REG_SENSOR_SAT": { "register": "12102", "desc": "Supply air temperature sensor value." },
@@ -90,13 +109,13 @@ template:
                                    "REG_SENSOR_RPM_SAF": { "register": "12400", "desc": "Supply Fan (SAF) RPM indication." },
                                    "REG_SENSOR_RPM_EAF": { "register": "12401", "desc": "Extract Air Fan (EAF) RPM indication." },
                                    "REG_SENSOR_PDM_EAT_VALUE": { "register": "12543", "desc": "In-built extract air temperature sensor value." },
-                                   "REG_HEATER_ACTUATOR": { "register": "13020", "desc": "Heater actuator (register name not official)." },
-                                   "REG_HEAT_EXCHANGER_ACTUATOR": { "register": "13021", "desc": "Heat exchanger actuator (register name not official)." },
-                                   "REG_COOLER_ACTUATOR": { "register": "13022", "desc": "Cooler actuator (register name not official)." },
+                                   "REG_CFG_HEATER_ACTUATOR_TYPE": { "register": "13020", "desc": "Heater actuator." },
+                                   "REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE": { "register": "13021", "desc": "Heat exchanger actuator." },
+                                   "REG_CFG_COOLER_ACTUATOR_TYPE": { "register": "13022", "desc": "Cooler actuator." },
                                    "REG_OUTPUT_SAF": { "register": "14000", "desc": "Supply Air Fan (SAF) output, percentage." },
                                    "REG_OUTPUT_EAF": { "register": "14001", "desc": "Extract Air Fan (EAF) output, percentage." },
-                                   "REG_FILTER_ALARM": { "register": "15141", "desc": "Filter replacement alarm (register name not official)." },
-                                   "REG_FILTER_WARNING_ALARM": { "register": "15543", "desc": "Filter replacement alarm (register name not official)." },
+                                   "REG_ALARM_FILTER_ALARM": { "register": "15141", "desc": "Filter replacement alarm" },
+                                   "REG_ALARM_FILTER_WARNING_ALARM": { "register": "15543", "desc": "Filter replacement alarm." },
                                    "REG_ALARM_TYPE_A": { "register": "15900", "desc": "Indicates if an alarm Type A is active." },
                                    "REG_ALARM_TYPE_B": { "register": "15901", "desc": "Indicates if an alarm Type B is active." },
                                    "REG_ALARM_TYPE_C": { "register": "15902", "desc": "Indicates if an alarm Type C is active." }
@@ -146,6 +165,7 @@ template:
             {% set response1 = states('sensor.systemair_save_connect_response_1_part') %}
             {% set response2 = states('sensor.systemair_save_connect_response_2_part') %}
             {% set response3 = states('sensor.systemair_save_connect_response_3_part') %}
+            {% set response4 = states('sensor.systemair_save_connect_response_4_part') %}
             {% set inputs_valid = true %}
             {% set result = none %}
             {% if (response1 == 'unknown' or response1 == 'unavailable' or response1 == 'none' or response1 == '{}') %}
@@ -158,14 +178,18 @@ template:
             {%     if (response3 == 'unknown' or response3 == 'unavailable' or response3 == 'none') %}
             {%       set result = response1 + response2 %}
             {%     else %}
-            {%       set result = response1 + response2 + response3 %}
+            {%       if (response4 == 'unknown' or response4 == 'unavailable' or response4 == 'none') %}
+            {%         set result = response1 + response2 + response3 %}
+            {%       else %}
+            {%         set result = response1 + response2 + response3 + response4 %}
+            {%       endif %}
             {%     endif %}
             {%   endif %}
             {% endif %}
             {{ result }}
 
       # We want to gather information about the temperature unit.
-      # Modbus register in configuration: REG_TEMP_UNIT
+      # Modbus register in configuration: REG_SYSTEM_UNIT_TEMPERATURE
       # Logic:
       # 0 - Celcius
       # 1- Fahrenheit
@@ -187,14 +211,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_TEMP_UNIT"].register | string %}
+          {%   set register = json_array[device_type]["REG_SYSTEM_UNIT_TEMPERATURE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather information about the temperature unit, to string.
-      # Modbus register in configuration: REG_TEMP_UNIT
+      # Modbus register in configuration: REG_SYSTEM_UNIT_TEMPERATURE
       # Logic:
       # 0 - Celcius
       # 1- Fahrenheit
@@ -215,7 +239,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_TEMP_UNIT"].register | string %}
+          {%   set register = json_array[device_type]["REG_SYSTEM_UNIT_TEMPERATURE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1121,7 +1145,7 @@ template:
           {{ result }}
 
       # We want to gather the heat exchanger actuator.
-      # Modbus register in configuration: REG_HEAT_EXCHANGER_ACTUATOR
+      # Modbus register in configuration: REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE
       # Logic:
       # 0: 0-10V
       # 1: 2-10V
@@ -1145,14 +1169,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_HEAT_EXCHANGER_ACTUATOR"].register | string %}
+          {%   set register = json_array[device_type]["REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the heat exchanger actuator, to string.
-      # Modbus register in configuration: REG_HEAT_EXCHANGER_ACTUATOR
+      # Modbus register in configuration: REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE
       # Logic:
       # 0: 0-10V
       # 1: 2-10V
@@ -1175,7 +1199,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_HEAT_EXCHANGER_ACTUATOR"].register | string %}
+          {%   set register = json_array[device_type]["REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1191,7 +1215,7 @@ template:
           {{ result }}
 
       # We want to gather the heater type.
-      # Modbus register in configuration: REG_HEATER_TYPE
+      # Modbus register in configuration: REG_UNIT_CONFIG_REHEATER_TYPE
       # Logic:
       # 0: None (None defined, as None otherwise becomes unknown)
       # 1: Electrical
@@ -1215,14 +1239,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_HEATER_TYPE"].register | string %}
+          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_REHEATER_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the heater type, to string.
-      # Modbus register in configuration: REG_HEATER_TYPE
+      # Modbus register in configuration: REG_UNIT_CONFIG_REHEATER_TYPE
       # Logic:
       # 0: None (None defined, as None otherwise becomes unknown)
       # 1: Electrical
@@ -1245,7 +1269,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_HEATER_TYPE"].register | string %}
+          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_REHEATER_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1261,7 +1285,7 @@ template:
           {{ result }}
 
       # We want to gather the heater actuator.
-      # Modbus register in configuration: REG_HEATER_ACTUATOR
+      # Modbus register in configuration: REG_CFG_HEATER_ACTUATOR_TYPE
       # Logic:
       # 0: 0-10V
       # 1: 2-10V
@@ -1285,14 +1309,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_HEATER_ACTUATOR"].register | string %}
+          {%   set register = json_array[device_type]["REG_CFG_HEATER_ACTUATOR_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the heater actuator, to string.
-      # Modbus register in configuration: REG_HEATER_ACTUATOR
+      # Modbus register in configuration: REG_CFG_HEATER_ACTUATOR_TYPE
       # Logic:
       # 0: 0-10V
       # 1: 2-10V
@@ -1315,7 +1339,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_HEATER_ACTUATOR"].register | string %}
+          {%   set register = json_array[device_type]["REG_CFG_HEATER_ACTUATOR_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1331,7 +1355,7 @@ template:
           {{ result }}
 
       # We want to gather the cooler type.
-      # Modbus register in configuration: REG_COOLER_TYPE
+      # Modbus register in configuration: REG_UNIT_CONFIG_COOLER
       # Logic:
       # 0: None (None defined, as None otherwise becomes unknown)
       # 1: Water
@@ -1354,14 +1378,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_COOLER_TYPE"].register | string %}
+          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_COOLER"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the cooler type, to string.
-      # Modbus register in configuration: REG_COOLER_TYPE
+      # Modbus register in configuration: REG_UNIT_CONFIG_COOLER
       # Logic:
       # 0: None (None defined, as None otherwise becomes unknown)
       # 1: Water
@@ -1383,7 +1407,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_COOLER_TYPE"].register | string %}
+          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_COOLER"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1397,7 +1421,7 @@ template:
           {{ result }}
 
       # We want to gather the cooler actuator.
-      # Modbus register in configuration: REG_COOLER_ACTUATOR
+      # Modbus register in configuration: REG_CFG_COOLER_ACTUATOR_TYPE
       # Logic:
       # 0: 0-10V
       # 1: 2-10V
@@ -1421,14 +1445,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_COOLER_ACTUATOR"].register | string %}
+          {%   set register = json_array[device_type]["REG_CFG_COOLER_ACTUATOR_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the cooler actuator, to string.
-      # Modbus register in configuration: REG_COOLER_ACTUATOR
+      # Modbus register in configuration: REG_CFG_COOLER_ACTUATOR_TYPE
       # Logic:
       # 0: 0-10V
       # 1: 2-10V
@@ -1451,7 +1475,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_COOLER_ACTUATOR"].register | string %}
+          {%   set register = json_array[device_type]["REG_CFG_COOLER_ACTUATOR_TYPE"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1467,7 +1491,7 @@ template:
           {{ result }}
 
       # We want to gather the extra controller mode.
-      # Modbus register in configuration: REG_EXTRA_CONTROLLER
+      # Modbus register in configuration: REG_UNIT_CONFIG_EXTRA_CONTROLLER
       # Logic:
       # 0: None (None defined, as None otherwise becomes unknown)
       # 1: Preheater
@@ -1492,14 +1516,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_EXTRA_CONTROLLER"].register | string %}
+          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_EXTRA_CONTROLLER"].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the extra controller mode, to string.
-      # Modbus register in configuration: REG_EXTRA_CONTROLLER
+      # Modbus register in configuration: REG_UNIT_CONFIG_EXTRA_CONTROLLER
       # Logic:
       # 0: None (None defined, as None otherwise becomes unknown)
       # 1: Preheater
@@ -1523,7 +1547,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_EXTRA_CONTROLLER"].register | string %}
+          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_EXTRA_CONTROLLER"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1541,7 +1565,7 @@ template:
           {{ result }}
 
       # We want to gather the control mode.
-      # Modbus register in configuration: REG_CONTROL_MODE
+      # Modbus register in configuration: REG_TC_CONTROL_MODE
       # Logic:
       # 0: Supply air temperature control
       # 1: Room temperature control
@@ -1564,14 +1588,14 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_CONTROL_MODE"].register | string %}
+          {%   set register = json_array[device_type]["REG_TC_CONTROL_MODE "].register | string %}
           {%   set value = value_json[register] %}
           {%   set result = int(value) %}
           {% endif %}
           {{ result }}
 
       # We want to gather the control mode, to string.
-      # Modbus register in configuration: REG_CONTROL_MODE
+      # Modbus register in configuration: REG_TC_CONTROL_MODE
       # Logic:
       # 0: Supply air temperature control
       # 1: Room temperature control
@@ -1593,7 +1617,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_CONTROL_MODE"].register | string %}
+          {%   set register = json_array[device_type]["REG_TC_CONTROL_MODE "].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -1782,6 +1806,39 @@ template:
           {% elif (outdoor == 'unknown' or outdoor == 'unavailable' or outdoor == 'none') %}
           {%   set inputs_valid = false %}
           {% elif (extract == 'unknown' or extract == 'unavailable' or extract == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set supply = float(supply) %}
+          {%   set outdoor = float(outdoor) %}
+          {%   set extract = float(extract) %}
+          {%   set result = ((supply - outdoor) / (extract - outdoor)) * 100 %}
+          {%   set result = result | round (1) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information the heat exchanger efficiency, without heater.
+      # Will be set to None if the heater is on.
+      # Note that this sensor is only valid if the heater is not enabled.
+      - name: Systemair read heat exchanger efficicency without heater
+        unique_id: systemair_read_heat_exchanger_efficicency_without_heater
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:chart-bell-curve-cumulative
+        state: >
+          {% set supply = states('sensor.systemair_read_supply_air_temperature_celcius') %}
+          {% set outdoor = states('sensor.systemair_read_outdoor_air_temperature_celcius') %}
+          {% set extract = states('sensor.systemair_read_extract_air_temperature_celcius') %}
+          {% set heater_on = states('binary_sensor.systemair_read_heater_on') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (supply == 'unknown' or supply == 'unavailable' or supply == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (outdoor == 'unknown' or outdoor == 'unavailable' or outdoor == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (extract == 'unknown' or extract == 'unavailable' or extract == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (heater_on == 'unknown' or heater_on == 'unavailable' or heater_on == 'none' or heater_on == 'on') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
@@ -2333,6 +2390,855 @@ template:
           {% endif %}
           {{ result }}
 
+      # We want to gather information about the rotor relative humidity transfer control setpoint.
+      # Modbus register in configuration: REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT
+      - name: Systemair read rotor relative humidity transfer control setpoint
+        unique_id: systemair_read_heat_rotor_relative_humidity_transfer_control_setpoint
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:water-percent-alert
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the calculated moisture extract air.
+      # Modbus register in configuration: REG_CALC_RHS_EAF
+      - name: Systemair read calculated moisture extract air
+        unique_id: systemair_read_calculated_moisture_extract_air
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:water-percent
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_CALC_RHS_EAF"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information about the calculated moisture supply air.
+      # Modbus register in configuration: REG_CALC_RHS_SAF
+      - name: Systemair read calculated moisture supply air
+        unique_id: systemair_read_calculated_moisture_supply_air
+        unit_of_measurement: "%"
+        state_class: measurement
+        icon: mdi:water-percent
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_CALC_RHS_SAF"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type for analog input 1.
+      # Modbus register in configuration: REG_AI_CFG_CONNECTION_NTC1
+      # Logic:
+      # 0: Inactive Input
+      # 1: Outdoor Air Temperature sensor (OAT)
+      # 2: Supply Air Temperature sensor (SAT)
+      # 3: Overheat Temperature Sensor (OHT)
+      # 4: Frost Protection Temperature Sensor (FPT)
+      # 5: Room Air Temperature sensor (RAT)
+      # 6: Extract Air Temperature sensor (EAT)
+      # 7: Extra Controller Temperature sensor (ECT)
+      # 8: Efficiency temperature sensor (EFT)
+      - name: Systemair read analog input 1 type
+        unique_id: systemair_analog_input_1_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_AI_CFG_CONNECTION_NTC1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type for analog input 1, to string.
+      # Modbus register in configuration: REG_AI_CFG_CONNECTION_NTC1
+      # Logic:
+      # 0: Inactive Input
+      # 1: Outdoor Air Temperature sensor (OAT)
+      # 2: Supply Air Temperature sensor (SAT)
+      # 3: Overheat Temperature Sensor (OHT)
+      # 4: Frost Protection Temperature Sensor (FPT)
+      # 5: Room Air Temperature sensor (RAT)
+      # 6: Extract Air Temperature sensor (EAT)
+      # 7: Extra Controller Temperature sensor (ECT)
+      # 8: Efficiency temperature sensor (EFT)
+      - name: Systemair read analog input 1 type_str
+        unique_id: systemair_analog_input_1_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_AI_CFG_CONNECTION_NTC1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Outdoor Air Temperature sensor (OAT)" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Supply Air Temperature sensor (SAT)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Overheat Temperature Sensor (OHT)" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Frost Protection Temperature Sensor (FPT)" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Room Air Temperature sensor (RAT)" %}
+          {%   elif (value == 6) %}
+          {%     set result = "Extract Air Temperature sensor (EAT)" %}
+          {%   elif (value == 7) %}
+          {%     set result = "Extra Controller Temperature sensor (ECT)" %}
+          {%   elif (value == 8) %}
+          {%     set result = "Efficiency temperature sensor (EFT)" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type for digital input 1.
+      # Modbus register in configuration: REG_DI_CONNECTION_1
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read digital input 1 type
+        unique_id: systemair_digital_input_1_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_DI_CONNECTION_1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type for digital input 1, to string.
+      # Modbus register in configuration: REG_DI_CONNECTION_1
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read digital input 1 type str
+        unique_id: systemair_digital_input_1_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_DI_CONNECTION_1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Away" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Bypass Damper (BYS)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Vacuum Cleaner" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Cooker Hood" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Crowded" %}
+          {%   elif (value == 6) %}
+          {%     set result = "EMT" %}
+          {%   elif (value == 7) %}
+          {%     set result = "External Stop" %}
+          {%   elif (value == 8) %}
+          {%     set result = "Extra Controller Alarm" %}
+          {%   elif (value == 9) %}
+          {%     set result = "Fireplace" %}
+          {%   elif (value == 10) %}
+          {%     set result = "Holiday" %}
+          {%   elif (value == 11) %}
+          {%     set result = "Refresh" %}
+          {%   elif (value == 12) %}
+          {%     set result = "RGS" %}
+          {%   elif (value == 13) %}
+          {%     set result = "Change Over Feedback" %}
+          {%   elif (value == 14) %}
+          {%     set result = "Fire Alarm" %}
+          {%   elif (value == 15) %}
+          {%     set result = "Configurable digital input 1" %}
+          {%   elif (value == 16) %}
+          {%     set result = "Configurable digital input 2" %}
+          {%   elif (value == 17) %}
+          {%     set result = "Configurable digital input 3" %}
+          {%   elif (value == 18) %}
+          {%     set result = "Pressure Guard" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type (analog or digital) for universal input 1.
+      # Modbus register in configuration: REG_UI_CFG_TYPE_1
+      # Logic:
+      # 0: Not set
+      # 1: Analog Input
+      # 2: Digital Input
+      - name: Systemair read universal input 1 type
+        unique_id: systemair_universal_input_1_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CFG_TYPE_1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type (analog or digital) for universal input 1, to string.
+      # Modbus register in configuration: REG_UI_CFG_TYPE_1
+      # Logic:
+      # 0: Not set
+      # 1: Analog Input
+      # 2: Digital Input
+      - name: Systemair read universal input 1 type str
+        unique_id: systemair_universal_input_1_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CFG_TYPE_1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Not set" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Analog Input" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Digital Input" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type (analog or digital) for universal input 2.
+      # Modbus register in configuration: REG_UI_CFG_TYPE_2
+      # Logic:
+      # 0: Not set
+      # 1: Analog Input
+      # 2: Digital Input
+      - name: Systemair read universal input 2 type
+        unique_id: systemair_universal_input_2_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CFG_TYPE_2"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type (analog or digital) for universal input 1, to string.
+      # Modbus register in configuration: REG_UI_CFG_TYPE_2
+      # Logic:
+      # 0: Not set
+      # 1: Analog Input
+      # 2: Digital Input
+      - name: Systemair read universal input 2 type str
+        unique_id: systemair_universal_input_2_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CFG_TYPE_2"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Not set" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Analog Input" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Digital Input" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the analog type for universal input 1.
+      # Modbus register in configuration: REG_UI_CONNECTION_ANALOG1
+      # Logic:
+      # 0: Inactive Input
+      # 1: RH Sensor (RH)
+      # 2: CO2 Sensor (CO2)
+      # 3: Supply Air Fan Control (SAFC)
+      # 4: Extract Air Fan Control (EAFC)
+      # 5: Bypass damper Feedback (BYF)
+      - name: Systemair read universal input 1 analog type
+        unique_id: systemair_universal_input_1_analog_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_ANALOG1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the analog type for universal input 1, to string.
+      # Modbus register in configuration: REG_UI_CONNECTION_ANALOG1
+      # Logic:
+      # 0: Inactive Input
+      # 1: RH Sensor (RH)
+      # 2: CO2 Sensor (CO2)
+      # 3: Supply Air Fan Control (SAFC)
+      # 4: Extract Air Fan Control (EAFC)
+      # 5: Bypass damper Feedback (BYF)
+      - name: Systemair read universal input 1 analog type str
+        unique_id: systemair_universal_input_1_analog_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_ANALOG1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "RH Sensor (RH)" %}
+          {%   elif (value == 2) %}
+          {%     set result = "CO2 Sensor (CO2)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Supply Air Fan Control (SAFC)" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Extract Air Fan Control (EAFC)" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Bypass damper Feedback (BYF)" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the analog type for universal input 2.
+      # Modbus register in configuration: REG_UI_CONNECTION_ANALOG2
+      # Logic:
+      # 0: Inactive Input
+      # 1: RH Sensor (RH)
+      # 2: CO2 Sensor (CO2)
+      # 3: Supply Air Fan Control (SAFC)
+      # 4: Extract Air Fan Control (EAFC)
+      # 5: Bypass damper Feedback (BYF)
+      - name: Systemair read universal input 2 analog type
+        unique_id: systemair_universal_input_2_analog_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_ANALOG2"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the analog type for universal input 2, to string.
+      # Modbus register in configuration: REG_UI_CONNECTION_ANALOG2
+      # Logic:
+      # 0: Inactive Input
+      # 1: RH Sensor (RH)
+      # 2: CO2 Sensor (CO2)
+      # 3: Supply Air Fan Control (SAFC)
+      # 4: Extract Air Fan Control (EAFC)
+      # 5: Bypass damper Feedback (BYF)
+      - name: Systemair read universal input 2 analog type str
+        unique_id: systemair_universal_input_2_analog_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_ANALOG2"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "RH Sensor (RH)" %}
+          {%   elif (value == 2) %}
+          {%     set result = "CO2 Sensor (CO2)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Supply Air Fan Control (SAFC)" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Extract Air Fan Control (EAFC)" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Bypass damper Feedback (BYF)" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the digital type for universal input 1.
+      # Modbus register in configuration: REG_UI_CONNECTION_DIGITAL1
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read universal input 1 digital type
+        unique_id: systemair_universal_input_1_digital_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_DIGITAL1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the digital type for universal input 1, to string.
+      # Modbus register in configuration: REG_UI_CONNECTION_DIGITAL1
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read universal input 1 digital type str
+        unique_id: systemair_universal_input_1_digital_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_DIGITAL1"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Away" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Bypass Damper (BYS)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Vacuum Cleaner" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Cooker Hood" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Crowded" %}
+          {%   elif (value == 6) %}
+          {%     set result = "EMT" %}
+          {%   elif (value == 7) %}
+          {%     set result = "External Stop" %}
+          {%   elif (value == 8) %}
+          {%     set result = "Extra Controller Alarm" %}
+          {%   elif (value == 9) %}
+          {%     set result = "Fireplace" %}
+          {%   elif (value == 10) %}
+          {%     set result = "Holiday" %}
+          {%   elif (value == 11) %}
+          {%     set result = "Refresh" %}
+          {%   elif (value == 12) %}
+          {%     set result = "RGS" %}
+          {%   elif (value == 13) %}
+          {%     set result = "Change Over Feedback" %}
+          {%   elif (value == 14) %}
+          {%     set result = "Fire Alarm" %}
+          {%   elif (value == 15) %}
+          {%     set result = "Configurable digital input 1" %}
+          {%   elif (value == 16) %}
+          {%     set result = "Configurable digital input 2" %}
+          {%   elif (value == 17) %}
+          {%     set result = "Configurable digital input 3" %}
+          {%   elif (value == 18) %}
+          {%     set result = "Pressure Guard" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the digital type for universal input 2.
+      # Modbus register in configuration: REG_UI_CONNECTION_DIGITAL2
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read universal input 2 digital type
+        unique_id: systemair_universal_input_2_digital_type
+        state_class: measurement
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_DIGITAL2"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set result = int(value) %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the digital type for universal input 2, to string.
+      # Modbus register in configuration: REG_UI_CONNECTION_DIGITAL2
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read universal input 2 digital type str
+        unique_id: systemair_universal_input_2_digital_type_str
+        icon: mdi:import
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_UI_CONNECTION_DIGITAL2"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Away" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Bypass Damper (BYS)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Vacuum Cleaner" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Cooker Hood" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Crowded" %}
+          {%   elif (value == 6) %}
+          {%     set result = "EMT" %}
+          {%   elif (value == 7) %}
+          {%     set result = "External Stop" %}
+          {%   elif (value == 8) %}
+          {%     set result = "Extra Controller Alarm" %}
+          {%   elif (value == 9) %}
+          {%     set result = "Fireplace" %}
+          {%   elif (value == 10) %}
+          {%     set result = "Holiday" %}
+          {%   elif (value == 11) %}
+          {%     set result = "Refresh" %}
+          {%   elif (value == 12) %}
+          {%     set result = "RGS" %}
+          {%   elif (value == 13) %}
+          {%     set result = "Change Over Feedback" %}
+          {%   elif (value == 14) %}
+          {%     set result = "Fire Alarm" %}
+          {%   elif (value == 15) %}
+          {%     set result = "Configurable digital input 1" %}
+          {%   elif (value == 16) %}
+          {%     set result = "Configurable digital input 2" %}
+          {%   elif (value == 17) %}
+          {%     set result = "Configurable digital input 3" %}
+          {%   elif (value == 18) %}
+          {%     set result = "Pressure Guard" %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
   - binary_sensor:
       # We want to gather the fan speed level for mode: manual.
       # Modbus register in configuration: REG_FAN_MANUAL_STOP_ALLOWED
@@ -2420,7 +3326,7 @@ template:
           {{ result }}
 
       # We want to gather information about the filter warning alarm.
-      # Modbus register in configuration: REG_FILTER_WARNING_ALARM
+      # Modbus register in configuration: REG_ALARM_FILTER_WARNING_ALARM
       - name: Systemair read filter warning alarm
         unique_id: systemair_read_filter_warning_alarm
         icon: mdi:air-filter
@@ -2438,7 +3344,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_FILTER_WARNING_ALARM"].register | string %}
+          {%   set register = json_array[device_type]["REG_ALARM_FILTER_WARNING_ALARM"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -2450,7 +3356,7 @@ template:
           {{ result }}
 
       # We want to gather information about the filter alarm.
-      # Modbus register in configuration: REG_FILTER_ALARM
+      # Modbus register in configuration: REG_ALARM_FILTER_ALARM
       - name: Systemair read filter alarm
         unique_id: systemair_read_filter_alarm
         icon: mdi:air-filter
@@ -2468,7 +3374,7 @@ template:
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set register = json_array[device_type]["REG_FILTER_ALARM"].register | string %}
+          {%   set register = json_array[device_type]["REG_ALARM_FILTER_ALARM"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}
@@ -2600,43 +3506,181 @@ template:
           {% endif %}
           {{ result }}
 
-      # We want to gather information if the heat exchanger is on.
+      # We want to gather information if the heat exchanger is on (heat recovery).
+      # Modbus register in configuration: REG_FUNCTION_ACTIVE_HEAT_RECOVERY
       - name: Systemair read heat exchanger on
         unique_id: systemair_read_heat_exchanger_on
         icon: mdi:heat-pump
         state: >
-          {% set value = states('sensor.systemair_read_heat_exchanger_recovery_demand_percentage') %}
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = float(value) %}
+          {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_HEAT_RECOVERY"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
           {%   if (value == 0) %}
           {%     set result = 0 %}
-          {%   elif (value > 0) %}
+          {%   elif (value == 1) %}
           {%     set result = 1 %}
           {%   endif %}
           {% endif %}
           {{ result }}
 
       # We want to gather information if the heater is on.
+      # Modbus register in configuration: REG_FUNCTION_ACTIVE_HEATING
       - name: Systemair read heater on
         unique_id: systemair_read_heater_on
         icon: mdi:heat-wave
         state: >
-          {% set value = states('sensor.systemair_read_heater_control_percentage') %}
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = float(value) %}
+          {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_HEATING"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
           {%   if (value == 0) %}
           {%     set result = 0 %}
-          {%   elif (value > 0) %}
+          {%   elif (value == 1) %}
+          {%     set result = 1 %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information the rotor relative humidity transfer control mode.
+      # Modbus register in configuration: REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF
+      - name: Systemair read rotor relative humidity transfer control_mode
+        unique_id: systemair_read_rotor_relative_humidity_transfer_control_mode
+        icon: mdi:water-percent-alert
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = 0 %}
+          {%   elif (value == 1) %}
+          {%     set result = 1 %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information if the rotor relative humidity transfer control is on (active moisture transfer).
+      # Modbus register in configuration: REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER
+      - name: Systemair read rotor relative humidity transfer control_on
+        unique_id: systemair_read_rotor_relative_humidity_transfer_control_on
+        icon: mdi:water-percent-alert
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = 0 %}
+          {%   elif (value == 1) %}
+          {%     set result = 1 %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information if the defrosting is on.
+      # Modbus register in configuration: REG_FUNCTION_ACTIVE_DEFROSTING
+      - name: Systemair read function active defrosting on
+        unique_id: systemair_read_function_active_defrosting_on
+        icon: mdi:snowflake-melt
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_DEFROSTING"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = 0 %}
+          {%   elif (value == 1) %}
+          {%     set result = 1 %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information if the heater is cooling down.
+      # Modbus register in configuration: REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN
+      - name: Systemair read function active heater cool down on
+        unique_id: systemair_read_function_active_heater_cool_down_on
+        icon: mdi:heat-wave
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = 0 %}
+          {%   elif (value == 1) %}
           {%     set result = 1 %}
           {%   endif %}
           {% endif %}
@@ -2651,8 +3695,8 @@ rest:
   #         Template sensors can thereafter gather data from the sensor-attributes.
   #     I still get the following warning for the rest sensor: Template variable warning: 'None' has no attribute 'Systemair VSR 300'
   #       I have not yet figured out yaml-wizardry to remove this.
-  # Scanned every 60 second (not 30 as default), as the Save Connect device seems sensitive to too many requests.
-  # http://192.168.4.118/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
+  # Scanned every 30 second, as the Save Connect device seems sensitive to too many requests.
+  # Example request: http://IPADDRESS/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
   - scan_interval: 30
     timeout: 28
     resource_template: >
@@ -2756,7 +3800,7 @@ rest:
           {%   endif %}
           {% endif %}
           {{ result }}
-      # We want to gather characters 511-765 in the response as state.
+      # We want to gather characters 510-765 in the response as state.
       # As a sensor can maximum have 255 characters.
       - name: Systemair Save connect response 3 part
         unique_id: systemair_save_connect_response_3_part
@@ -2772,6 +3816,27 @@ rest:
           {%   set length = result | count %}
           {%   if (length > 510) %}
           {%     set result = result[510:765] %}
+          {%   else %}
+          {%     set result = none %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+      # We want to gather characters 765-1020 in the response as state.
+      # As a sensor can maximum have 255 characters.
+      - name: Systemair Save connect response 4 part
+        unique_id: systemair_save_connect_response_4_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 510) %}
+          {%     set result = result[765:1020] %}
           {%   else %}
           {%     set result = none %}
           {%   endif %}

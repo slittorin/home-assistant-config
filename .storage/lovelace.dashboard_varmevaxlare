@@ -56,6 +56,29 @@
                       "entity": "binary_sensor.systemair_read_eco_mode_configuration_status",
                       "name": "ECO-mode inställning",
                       "icon": "mdi:sprout"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_heat_exchanger_on",
+                      "name": "Värmeåtervinning"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_rotor_relative_humidity_transfer_control_on",
+                      "name": "Varvtalsbegränsning rotor p.g.a hög fuktöverföring"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_heater_on",
+                      "name": "Värmare"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_function_active_heater_cool_down_on",
+                      "name": "Värmare, nedkylning"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_function_active_defrosting_on",
+                      "name": "Avfrostning"
                     }
                   ],
                   "title": "Driftsinställningar"
@@ -68,10 +91,6 @@
                 {
                   "type": "entities",
                   "entities": [
-                    {
-                      "entity": "binary_sensor.systemair_read_heat_exchanger_on",
-                      "name": "Värmeåtervinning"
-                    },
                     {
                       "entity": "sensor.systemair_read_heat_exchanger_recovery_demand_percentage",
                       "name": "Värmeåtervinning, för att nå måltemperatur"
@@ -86,10 +105,6 @@
                     },
                     {
                       "type": "divider"
-                    },
-                    {
-                      "entity": "binary_sensor.systemair_read_heater_on",
-                      "name": "Värmare"
                     },
                     {
                       "entity": "sensor.systemair_read_heater_control_percentage",
@@ -122,8 +137,16 @@
                       "type": "divider"
                     },
                     {
+                      "entity": "sensor.systemair_read_calculated_moisture_supply_air",
+                      "name": "Tilluft, beräknad relativ luftfuktighet"
+                    },
+                    {
                       "entity": "sensor.systemair_read_eaf_relative_humidity",
-                      "name": "Frånluft, relativ fuktighet"
+                      "name": "Frånluft, relativ luftfuktighet"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_calculated_moisture_extract_air",
+                      "name": "Frånluft, beräknad relativ luftfuktighet"
                     },
                     {
                       "type": "divider"
@@ -240,6 +263,14 @@
                     {
                       "entity": "binary_sensor.systemair_read_fan_manual_stop_allowed",
                       "name": "Manuellt fläktstopp tillåtet"
+                    },
+                    {
+                      "entity": "binary_sensor.systemair_read_rotor_relative_humidity_transfer_control_mode",
+                      "name": "Fuktöverföring, begränsning rotorhastighet"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_rotor_relative_humidity_transfer_control_setpoint",
+                      "name": "Fuktöverföring, begränsningevärde relativ luftfuktighet"
                     },
                     {
                       "type": "divider"
@@ -417,6 +448,67 @@
                     }
                   ],
                   "title": "Konfiguration - Fläkthastigheter"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.systemair_read_analog_input_3_type_str",
+                      "name": "Analog input 3"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_digital_input_2_type_str",
+                      "name": "Digital input 2"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_1_type"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_1_type_str"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_2_type"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_2_type_str"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_1_analog_type"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_1_analog_type_str"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_2_analog_type"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_2_analog_type_str"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_1_digital_type"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_1_digital_type_str"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_2_digital_type"
+                    },
+                    {
+                      "entity": "sensor.systemair_read_universal_input_2_digital_type_str"
+                    }
+                  ],
+                  "title": "Konfiguration - Input"
                 }
               ]
             }
