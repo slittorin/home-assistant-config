@@ -258,7 +258,7 @@ template:
           {%   set inputs_valid = false %}
           {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
           {%   set inputs_valid = false %}
-          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == '' or json_array == {} or json_array == '{}None') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
@@ -286,7 +286,7 @@ template:
           {%   set inputs_valid = false %}
           {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
           {%   set inputs_valid = false %}
-          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == '' or json_array == {} or json_array == '{}None') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
@@ -3727,6 +3727,37 @@ template:
           {% endif %}
           {% if (inputs_valid == true) %}
           {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   set value = int(value) %}
+          {%   if (value == 0) %}
+          {%     set result = 0 %}
+          {%   elif (value == 1) %}
+          {%     set result = 1 %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather information if the pressure sensor we have on the channel from the kitchen fan is enabled.
+      # The pressure sensor is connected to digital input 2, and is set to trigger the Cooker hood-mode.
+      # Modbus register in configuration: REG_INPUT_DIGITAL_UI_2
+      - name: Systemair read kitchen fan pressure sensor on
+        unique_id: systemair_read_kitchen_fan_pressure_sensor_on
+        icon: mdi:fan-chevron-up
+        state: >
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == '' or value_json == {} or value_json == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_INPUT_DIGITAL_UI_2"].register | string %}
           {%   set value = value_json[register] %}
           {%   set value = int(value) %}
           {%   if (value == 0) %}

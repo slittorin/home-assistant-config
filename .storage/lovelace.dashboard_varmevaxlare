@@ -69,6 +69,10 @@
                       "name": "Varvtalsbegränsning rotor p.g.a hög fuktöverföring"
                     },
                     {
+                      "entity": "binary_sensor.systemair_read_kitchen_fan_pressure_sensor_on",
+                      "name": "Köksfläkt, trycksensor"
+                    },
+                    {
                       "entity": "binary_sensor.systemair_read_heater_on",
                       "name": "Värmare"
                     },
@@ -448,67 +452,6 @@
                     }
                   ],
                   "title": "Konfiguration - Fläkthastigheter"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "sensor.systemair_read_analog_input_3_type_str",
-                      "name": "Analog input 3"
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_digital_input_2_type_str",
-                      "name": "Digital input 2"
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_1_type"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_1_type_str"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_2_type"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_2_type_str"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_1_analog_type"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_1_analog_type_str"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_2_analog_type"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_2_analog_type_str"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_1_digital_type"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_1_digital_type_str"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_2_digital_type"
-                    },
-                    {
-                      "entity": "sensor.systemair_read_universal_input_2_digital_type_str"
-                    }
-                  ],
-                  "title": "Konfiguration - Input"
                 }
               ]
             }
