@@ -39,6 +39,16 @@ recorder:
       # 20230312. We excluded these that do not have any purpose.
       - sensor.sn_3006917520_current_total
       - sensor.metering_total_yield_compensation
+      # We exclude systemair sensors.
+      - sensor.systemair_prio_1_save_connect_response_1_part
+      - sensor.systemair_prio_1_save_connect_response_2_part
+      - sensor.systemair_prio_1_save_connect_response_3_part
+      - sensor.systemair_prio_1_save_connect_response_4_part
+      - sensor.systemair_prio_2_save_connect_response_1_part
+      - sensor.systemair_prio_2_save_connect_response_2_part
+      - sensor.systemair_prio_2_save_connect_response_3_part
+      - sensor.systemair_prio_2_save_connect_response_4_part
+      - sensor.systemair_save_connect_response
 
 # Logbook is enabled by default.
 logbook:
@@ -161,7 +171,17 @@ influxdb:
       - sensor.sma_metering_active_power_feed_l2_mean
       - sensor.sma_metering_active_power_feed_l3_min
       - sensor.sma_metering_active_power_feed_l3_max
-      - sensor.sma_metering_active_power_feed_l3_mean
+      - sensor.
+      # We exclude systemair sensors.
+      - sensor.systemair_prio_1_save_connect_response_1_part
+      - sensor.systemair_prio_1_save_connect_response_2_part
+      - sensor.systemair_prio_1_save_connect_response_3_part
+      - sensor.systemair_prio_1_save_connect_response_4_part
+      - sensor.systemair_prio_2_save_connect_response_1_part
+      - sensor.systemair_prio_2_save_connect_response_2_part
+      - sensor.systemair_prio_2_save_connect_response_3_part
+      - sensor.systemair_prio_2_save_connect_response_4_part
+      - sensor.systemair_save_connect_response
 
 notify:
   - name: email_notification

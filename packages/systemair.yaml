@@ -1,13 +1,15 @@
 # This file includes all the entitites for tracking sensor data for Systemair heat exchanger (VTX).
 #
-# Works for the Save Connect 2.0 with Systemair VSR 300 and the following firmware:
+# Works for the Save Connect 2.0 with Systemair VSR 300 and the following firmware (snapshot 20250213):
 # Model: VSR 300
 # Main board
 # SW: 1.22.0
 # IAM
 # SW: 1.3.0
 #
-# Note that I have focused on my current setup, there are more sensors and logic that needs to be applied to cover all types, versions and setups.
+# Note:
+# - That I have focused on my current setup, there are more sensors and logic that needs to be applied to cover all types, versions and setups.
+# - that I have added some of the sensor register for inputs, but not all. Logic must be verified for each.
 #
 # The MODBUS-registers and logic is taken from:
 # A. https://github.com/cmragnar/HomeAssistant-VSR300-Modbus
@@ -40,6 +42,9 @@ template:
       # Links to 'systemair_chosen_unit_type'.
       # The configuration array holds all valid registers for the Systemair sensors/functions.
       # All register-addresses seems to be one lower than value in MODBUS variable list.
+      # As the Save Connect device seems to be overwhelmed with adding too many registers at once, not all values are taken:
+      # Prio 1. All operational settings/sensors and sensors.
+      # Prio 2. All configuration settings.
       - name: Systemair configuration
         unique_id: systemair_configuration
         state: >
@@ -47,78 +52,89 @@ template:
         attributes:
           configuration: >
             {% set json_array = { "Systemair VSR 300": {
-                                   "REG_USERMODE_MANUAL_AIRFLOW_LEVEL": { "register": "1130", "desc": "Fan speed level for mode Manual. Applies to both the supply and the extract air fans." },
-                                   "REG_USERMODE_MODE": { "register": "1160", "desc": "Active user mode." },
-                                   "REG_FAN_REGULATION_UNIT": { "register": "1273", "desc": "Airflow type." }, 
-                                   "REG_FAN_MANUAL_STOP_ALLOWED": { "register": "1352", "desc": "Allow manual fan stop (also as selection for user modes and Week schedule)." },
-                                   "REG_FAN_LEVEL_SAF_MIN_PERCENTAGE": { "register": "1400", "desc": "Minimum supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_MIN_PERCENTAGE": { "register": "1401", "desc": "Minimum extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_LOW_PERCENTAGE": { "register": "1402", "desc": "Low supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_LOW_PERCENTAGE": { "register": "1403", "desc": "Low extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_NORMAL_PERCENTAGE": { "register": "1404", "desc": "Normal supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_NORMAL_PERCENTAGE": { "register": "1405", "desc": "Normal extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_HIGH_PERCENTAGE": { "register": "1406", "desc": "High supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_HIGH_PERCENTAGE": { "register": "1407", "desc": "High extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_MAX_PERCENTAGE": { "register": "1408", "desc": "Max supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_MAX_PERCENTAGE": { "register": "1409", "desc": "Max extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_MIN_RPM": { "register": "1410", "desc": "Minimum supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_MIN_RPM": { "register": "1411", "desc": "Minimum extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_LOW_RPM": { "register": "1412", "desc": "Low supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_LOW_RPM": { "register": "1413", "desc": "Low extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_NORMAL_RPM": { "register": "1414", "desc": "Normal supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_NORMAL_RPM": { "register": "1415", "desc": "Normal extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_HIGH_RPM": { "register": "1416", "desc": "High supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_HIGH_RPM": { "register": "1417", "desc": "High extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_MAX_RPM": { "register": "1418", "desc": "Max supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_MAX_RPM": { "register": "1419", "desc": "Max extract air fan speed setting, rpm." },
-                                   "REG_TC_SP": { "register": "2000", "desc": "Current temperature setpoint." },
-                                   "REG_TC_CONTROL_MODE ": { "register": "2030", "desc": "Control mode." },
-                                   "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "desc": "Heat exchanger type." },
-                                   "REG_HEAT_EXCHANGER_FROM_SATC": { "register": "2140", "desc": "Heat recovery demand by temperature control, %." },
-                                   "REG_HEATER_FROM_SATC": { "register": "2148", "desc": "Heating demand by temperature control, %." },
-                                   "REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT": { "register": "2202", "desc": "Rotor relative humidity transfer control setpoint." },
-                                   "REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF": { "register": "2203", "desc": "Rotor relative humidity transfer control." },
-                                   "REG_CALC_RHS_EAF": { "register": "2210", "desc": "Calculated moisture extract air." },
-                                   "REG_CALC_RHS_SAF": { "register": "2211", "desc": "Calculated moisture supply air." },
-                                   "REG_ECO_MODE_ON_OFF": { "register": "2504", "desc": "ECO mode configuration status." },
-                                   "REG_UNIT_CONFIG_REHEATER_TYPE": { "register": "3001", "desc": "Heater type." },
-                                   "REG_UNIT_CONFIG_COOLER": { "register": "3013", "desc": "Cooler type." },
-                                   "REG_UNIT_CONFIG_EXTRA_CONTROLLER": { "register": "3014", "desc": "Extra Controller Mode." },
-                                   "REG_FUNCTION_ACTIVE_HEATING": { "register": "3102", "desc": "Function, active heating." },
-                                   "REG_FUNCTION_ACTIVE_DEFROSTING": { "register": "3103", "desc": "Function, active defrosting." },
-                                   "REG_FUNCTION_ACTIVE_HEAT_RECOVERY": { "register": "3104", "desc": "Function, active heat recovery." },
-                                   "REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER": { "register": "3106", "desc": "Function, active moisture transfer." },
-                                   "REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN": { "register": "3112", "desc": "Function, active heater cool down." },
-                                   "REG_FILTER_REPLACEMENT_ALARM": { "register": "7006", "desc": "Filter replacement alarm (register name not official)." },
-                                   "REG_SYSTEM_UNIT_TEMPERATURE": { "register": "9002", "desc": "Temperature unit." },
-                                   "REG_AI_CFG_CONNECTION_NTC1": { "register": "11000", "desc": "Analog input 1 type." },
-                                   "REG_UI_CFG_TYPE_1": { "register": "11100", "desc": "Universal input 1 analog or digital." },
-                                   "REG_UI_CFG_TYPE_2": { "register": "11101", "desc": "Universal input 2 analog or digital." },
-                                   "REG_UI_CONNECTION_ANALOG1": { "register": "11200", "desc": "Universal input 1 analog type." },
-                                   "REG_UI_CONNECTION_ANALOG2": { "register": "11201", "desc": "Universal input 2 analog type." },
-                                   "REG_UI_CONNECTION_DIGITAL1": { "register": "11300", "desc": "Universal input 1 digital type." },
-                                   "REG_UI_CONNECTION_DIGITAL2": { "register": "11301", "desc": "Universal input 1 digital type." },
-                                   "REG_DI_CONNECTION_1": { "register": "11400", "desc": "Digital input 1 type." },
-                                   "REG_SENSOR_FPT": { "register": "12100", "desc": "Frost protection temperature sensor." },
-                                   "REG_SENSOR_OAT": { "register": "12101", "desc": "Outdoor air temperature sensor value." },
-                                   "REG_SENSOR_SAT": { "register": "12102", "desc": "Supply air temperature sensor value." },
-                                   "REG_SENSOR_RAT": { "register": "12103", "desc": "Room air temperature sensor value." },
-                                   "REG_SENSOR_EAT": { "register": "12104", "desc": "Extract air temperature sensor value." },
-                                   "REG_SENSOR_OHT": { "register": "12107", "desc": "Overheat temperature sensor value." },
-                                   "REG_SENSOR_RHS_PDM": { "register": "12135", "desc": "In-built extract air relative humidity sensor value." },
-                                   "REG_SENSOR_RPM_SAF": { "register": "12400", "desc": "Supply Fan (SAF) RPM indication." },
-                                   "REG_SENSOR_RPM_EAF": { "register": "12401", "desc": "Extract Air Fan (EAF) RPM indication." },
-                                   "REG_SENSOR_PDM_EAT_VALUE": { "register": "12543", "desc": "In-built extract air temperature sensor value." },
-                                   "REG_CFG_HEATER_ACTUATOR_TYPE": { "register": "13020", "desc": "Heater actuator." },
-                                   "REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE": { "register": "13021", "desc": "Heat exchanger actuator." },
-                                   "REG_CFG_COOLER_ACTUATOR_TYPE": { "register": "13022", "desc": "Cooler actuator." },
-                                   "REG_OUTPUT_SAF": { "register": "14000", "desc": "Supply Air Fan (SAF) output, percentage." },
-                                   "REG_OUTPUT_EAF": { "register": "14001", "desc": "Extract Air Fan (EAF) output, percentage." },
-                                   "REG_ALARM_FILTER_ALARM": { "register": "15141", "desc": "Filter replacement alarm" },
-                                   "REG_ALARM_FILTER_WARNING_ALARM": { "register": "15543", "desc": "Filter replacement alarm." },
-                                   "REG_ALARM_TYPE_A": { "register": "15900", "desc": "Indicates if an alarm Type A is active." },
-                                   "REG_ALARM_TYPE_B": { "register": "15901", "desc": "Indicates if an alarm Type B is active." },
-                                   "REG_ALARM_TYPE_C": { "register": "15902", "desc": "Indicates if an alarm Type C is active." }
+                                   "REG_USERMODE_MANUAL_AIRFLOW_LEVEL": { "register": "1130", "prio": "1", "desc": "Fan speed level for mode Manual. Applies to both the supply and the extract air fans." },
+                                   "REG_USERMODE_MODE": { "register": "1160", "prio": "1", "desc": "Active user mode." },
+                                   "REG_FAN_REGULATION_UNIT": { "register": "1273", "prio": "2", "desc": "Airflow type." }, 
+                                   "REG_FAN_MANUAL_STOP_ALLOWED": { "register": "1352", "prio": "2", "desc": "Allow manual fan stop (also as selection for user modes and Week schedule)." },
+                                   "REG_FAN_LEVEL_SAF_MIN_PERCENTAGE": { "register": "1400", "prio": "2", "desc": "Minimum supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_MIN_PERCENTAGE": { "register": "1401", "prio": "2", "desc": "Minimum extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_LOW_PERCENTAGE": { "register": "1402", "prio": "2", "desc": "Low supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_LOW_PERCENTAGE": { "register": "1403", "prio": "2", "desc": "Low extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_NORMAL_PERCENTAGE": { "register": "1404", "prio": "2", "desc": "Normal supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_NORMAL_PERCENTAGE": { "register": "1405", "prio": "2", "desc": "Normal extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_HIGH_PERCENTAGE": { "register": "1406", "prio": "2", "desc": "High supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_HIGH_PERCENTAGE": { "register": "1407", "prio": "2", "desc": "High extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_MAX_PERCENTAGE": { "register": "1408", "prio": "2", "desc": "Max supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_MAX_PERCENTAGE": { "register": "1409", "prio": "2", "desc": "Max extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_MIN_RPM": { "register": "1410", "prio": "2", "desc": "Minimum supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_MIN_RPM": { "register": "1411", "prio": "2", "desc": "Minimum extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_LOW_RPM": { "register": "1412", "prio": "2", "desc": "Low supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_LOW_RPM": { "register": "1413", "prio": "2", "desc": "Low extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_NORMAL_RPM": { "register": "1414", "prio": "2", "desc": "Normal supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_NORMAL_RPM": { "register": "1415", "prio": "2", "desc": "Normal extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_HIGH_RPM": { "register": "1416", "prio": "2", "desc": "High supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_HIGH_RPM": { "register": "1417", "prio": "2", "desc": "High extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_MAX_RPM": { "register": "1418", "prio": "2", "desc": "Max supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_MAX_RPM": { "register": "1419", "prio": "2", "desc": "Max extract air fan speed setting, rpm." },
+                                   "REG_TC_SP": { "register": "2000", "prio": "1", "desc": "Current temperature setpoint." },
+                                   "REG_TC_CONTROL_MODE ": { "register": "2030", "prio": "2", "desc": "Control mode." },
+                                   "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "prio": "2", "desc": "Heat exchanger type." },
+                                   "REG_HEAT_EXCHANGER_FROM_SATC": { "register": "2140", "prio": "1", "desc": "Heat recovery demand by temperature control, %." },
+                                   "REG_HEATER_FROM_SATC": { "register": "2148", "prio": "1", "desc": "Heating demand by temperature control, %." },
+                                   "REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT": { "register": "2202", "prio": "2", "desc": "Rotor relative humidity transfer control setpoint." },
+                                   "REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF": { "register": "2203", "prio": "2", "desc": "Rotor relative humidity transfer control." },
+                                   "REG_CALC_RHS_EAF": { "register": "2210", "prio": "1", "desc": "Calculated moisture extract air." },
+                                   "REG_CALC_RHS_SAF": { "register": "2211", "prio": "1", "desc": "Calculated moisture supply air." },
+                                   "REG_ECO_MODE_ON_OFF": { "register": "2504", "prio": "1", "desc": "ECO mode configuration status." },
+                                   "REG_UNIT_CONFIG_REHEATER_TYPE": { "register": "3001", "prio": "2", "desc": "Heater type." },
+                                   "REG_UNIT_CONFIG_COOLER": { "register": "3013", "prio": "2", "desc": "Cooler type." },
+                                   "REG_UNIT_CONFIG_EXTRA_CONTROLLER": { "register": "3014", "prio": "2", "desc": "Extra Controller Mode." },
+                                   "REG_FUNCTION_ACTIVE_HEATING": { "register": "3102", "prio": "1", "desc": "Function, active heating." },
+                                   "REG_FUNCTION_ACTIVE_DEFROSTING": { "register": "3103", "prio": "1", "desc": "Function, active defrosting." },
+                                   "REG_FUNCTION_ACTIVE_HEAT_RECOVERY": { "register": "3104", "prio": "1", "desc": "Function, active heat recovery." },
+                                   "REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER": { "register": "3106", "prio": "1", "desc": "Function, active moisture transfer." },
+                                   "REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN": { "register": "3112", "prio": "1", "desc": "Function, active heater cool down." },
+                                   "REG_FILTER_REPLACEMENT_ALARM": { "register": "7006", "prio": "2", "desc": "Filter replacement alarm (register name not official)." },
+                                   "REG_SYSTEM_UNIT_TEMPERATURE": { "register": "9002", "prio": "2", "desc": "Temperature unit." },
+                                   "REG_AI_CFG_CONNECTION_NTC1": { "register": "11000", "prio": "2", "desc": "Analog input 1 type." },
+                                   "REG_UI_CFG_TYPE_1": { "register": "11100", "prio": "2", "desc": "Universal input 1 analog or digital." },
+                                   "REG_UI_CFG_TYPE_2": { "register": "11101", "prio": "2", "desc": "Universal input 2 analog or digital." },
+                                   "REG_UI_CONNECTION_ANALOG1": { "register": "11200", "prio": "2", "desc": "Universal input 1 analog type." },
+                                   "REG_UI_CONNECTION_ANALOG2": { "register": "11201", "prio": "2", "desc": "Universal input 2 analog type." },
+                                   "REG_UI_CONNECTION_DIGITAL1": { "register": "11300", "prio": "2", "desc": "Universal input 1 digital type." },
+                                   "REG_UI_CONNECTION_DIGITAL2": { "register": "11301", "prio": "2", "desc": "Universal input 1 digital type." },
+                                   "REG_DI_CONNECTION_1": { "register": "11400","prio": "2", "desc": "Digital input 1 type." },
+                                   "REG_INPUT_DIGITAL_UI_1": { "register": "12020", "prio": "1", "desc": "Universal input 1, digital value." },
+                                   "REG_INPUT_DIGITAL_UI_2": { "register": "12021", "prio": "1", "desc": "Universal input 1, digital value." },
+                                   "REG_INPUT_DIGITAL_DI_1": { "register": "12030", "prio": "1", "desc": "Digital input 1, value." },
+                                   "REG_INPUT_DIGITAL_DI_2": { "register": "12031", "prio": "1", "desc": "Digital input 2, value." },
+                                   "REG_SENSOR_FPT": { "register": "12100", "prio": "1", "desc": "Frost protection temperature sensor." },
+                                   "REG_SENSOR_OAT": { "register": "12101", "prio": "1", "desc": "Outdoor air temperature sensor value." },
+                                   "REG_SENSOR_SAT": { "register": "12102", "prio": "1", "desc": "Supply air temperature sensor value." },
+                                   "REG_SENSOR_RAT": { "register": "12103", "prio": "1", "desc": "Room air temperature sensor value." },
+                                   "REG_SENSOR_EAT": { "register": "12104", "prio": "1", "desc": "Extract air temperature sensor value." },
+                                   "REG_SENSOR_ECT": { "register": "12105", "prio": "1", "desc": "Extract controller temperature sensor value." },
+                                   "REG_SENSOR_EFT": { "register": "12106", "prio": "1", "desc": "Efficiency temperature sensor value." },
+                                   "REG_SENSOR_OHT": { "register": "12107", "prio": "1", "desc": "Overheat temperature sensor value." },
+                                   "REG_SENSOR_RHS": { "register": "12108", "prio": "1", "desc": "Relative humidity sensor value." },
+                                   "REG_SENSOR_BYS": { "register": "12109", "prio": "1", "desc": "Bypass damper sensor value." },
+                                   "REG_SENSOR_EMT": { "register": "12110", "prio": "1", "desc": "EMT (frost) sensor value." },
+                                   "REG_SENSOR_RGS": { "register": "12111", "prio": "1", "desc": "RGS (rotation guard) sensor value." },
+                                   "REG_SENSOR_CO2S": { "register": "12114", "prio": "1", "desc": "CO2 sensor value." },
+                                   "REG_SENSOR_RHS_PDM": { "register": "12135", "prio": "1", "desc": "In-built extract air relative humidity sensor value." },
+                                   "REG_SENSOR_RPM_SAF": { "register": "12400", "prio": "1", "desc": "Supply Fan (SAF) RPM indication." },
+                                   "REG_SENSOR_RPM_EAF": { "register": "12401", "prio": "1", "desc": "Extract Air Fan (EAF) RPM indication." },
+                                   "REG_SENSOR_PDM_EAT_VALUE": { "register": "12543", "prio": "1", "desc": "In-built extract air temperature sensor value." },
+                                   "REG_CFG_HEATER_ACTUATOR_TYPE": { "register": "13020", "prio": "2", "desc": "Heater actuator." },
+                                   "REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE": { "register": "13021", "prio": "2", "desc": "Heat exchanger actuator." },
+                                   "REG_CFG_COOLER_ACTUATOR_TYPE": { "register": "13022", "prio": "2", "desc": "Cooler actuator." },
+                                   "REG_OUTPUT_SAF": { "register": "14000", "prio": "1", "desc": "Supply Air Fan (SAF) output, percentage." },
+                                   "REG_OUTPUT_EAF": { "register": "14001", "prio": "1", "desc": "Extract Air Fan (EAF) output, percentage." },
+                                   "REG_ALARM_FILTER_ALARM": { "register": "15141", "prio": "1", "desc": "Filter replacement alarm" },
+                                   "REG_ALARM_FILTER_WARNING_ALARM": { "register": "15543", "prio": "1", "desc": "Filter replacement alarm." },
+                                   "REG_ALARM_TYPE_A": { "register": "15900", "prio": "1", "desc": "Indicates if an alarm Type A is active." },
+                                   "REG_ALARM_TYPE_B": { "register": "15901", "prio": "1", "desc": "Indicates if an alarm Type B is active." },
+                                   "REG_ALARM_TYPE_C": { "register": "15902", "prio": "1", "desc": "Indicates if an alarm Type C is active." }
                                   }
                                 } %}
             {{ json_array }}
@@ -143,10 +159,7 @@ template:
                                 } %}
             {{ json_array }}
 
-      # This is the configuration array that holds all data to be able to interact with Save Connect.
-      # Links to 'systemair_chosen_unit_type'.
-      # The configuration array holds all valid registers for the Systemair sensors/functions.
-      # All register-addresses seems to be one lower than value in MODBUS variable list.
+      # This creates attributes based on the JSON-response.
       - name: Systemair Save connect response
         unique_id: systemair_save_connect_response
         state: >
@@ -162,27 +175,65 @@ template:
           {{ result }}
         attributes:
           response: >
-            {% set response1 = states('sensor.systemair_save_connect_response_1_part') %}
-            {% set response2 = states('sensor.systemair_save_connect_response_2_part') %}
-            {% set response3 = states('sensor.systemair_save_connect_response_3_part') %}
-            {% set response4 = states('sensor.systemair_save_connect_response_4_part') %}
+            {% set response_prio1_1 = states('sensor.systemair_prio_1_save_connect_response_1_part') %}
+            {% set response_prio1_2 = states('sensor.systemair_prio_1_save_connect_response_2_part') %}
+            {% set response_prio1_3 = states('sensor.systemair_prio_1_save_connect_response_3_part') %}
+            {% set response_prio1_4 = states('sensor.systemair_prio_1_save_connect_response_4_part') %}
+            {% set response_prio2_1 = states('sensor.systemair_prio_2_save_connect_response_1_part') %}
+            {% set response_prio2_2 = states('sensor.systemair_prio_2_save_connect_response_2_part') %}
+            {% set response_prio2_3 = states('sensor.systemair_prio_2_save_connect_response_3_part') %}
+            {% set response_prio2_4 = states('sensor.systemair_prio_2_save_connect_response_4_part') %}
             {% set inputs_valid = true %}
             {% set result = none %}
-            {% if (response1 == 'unknown' or response1 == 'unavailable' or response1 == 'none' or response1 == '{}') %}
+            {% if (response_prio1_1 == 'unknown' or response_prio1_1 == 'unavailable' or response_prio1_1 == 'None' or response_prio1_1 == '{}') %}
+            {%   set inputs_valid = false %}
+            {% elif (response_prio2_1 == 'unknown' or response_prio2_1 == 'unavailable' or response_prio2_1 == 'None' or response_prio2_1 == '{}') %}
             {%   set inputs_valid = false %}
             {% endif %}
             {% if (inputs_valid == true) %}
-            {%   if (response2 == 'unknown' or response2 == 'unavailable' or response2 == 'none') %}
-            {%     set result = response1 %}
-            {%   else %}
-            {%     if (response3 == 'unknown' or response3 == 'unavailable' or response3 == 'none') %}
-            {%       set result = response1 + response2 %}
+            {%   if (response_prio1_1 == 'unknown' or response_prio1_1 == 'unavailable' or response_prio1_1 == 'None' or response_prio1_1 == '{}') %}
+            {%     set response_prio1_1 = "" %}
+            {%   endif %}
+            {%   if (response_prio1_2 == 'unknown' or response_prio1_2 == 'unavailable' or response_prio1_2 == 'None' or response_prio1_2 == '{}') %}
+            {%     set response_prio1_2 = "" %}
+            {%   endif %}
+            {%   if (response_prio1_3 == 'unknown' or response_prio1_3 == 'unavailable' or response_prio1_3 == 'None' or response_prio1_3 == '{}') %}
+            {%     set response_prio1_3 = "" %}
+            {%   endif %}
+            {%   if (response_prio1_4 == 'unknown' or response_prio1_4 == 'unavailable' or response_prio1_4 == 'None' or response_prio1_4 == '{}') %}
+            {%     set response_prio1_4 = "" %}
+            {%   endif %}
+            {%   if (response_prio2_1 == 'unknown' or response_prio2_1 == 'unavailable' or response_prio2_1 == 'None' or response_prio2_1 == '{}') %}
+            {%     set response_prio2_1 = "" %}
+            {%   endif %}
+            {%   if (response_prio2_2 == 'unknown' or response_prio2_2 == 'unavailable' or response_prio2_2 == 'None' or response_prio2_2 == '{}') %}
+            {%     set response_prio2_2 = "" %}
+            {%   endif %}
+            {%   if (response_prio2_3 == 'unknown' or response_prio2_3 == 'unavailable' or response_prio2_3 == 'None' or response_prio2_3 == '{}') %}
+            {%     set response_prio2_3 = "" %}
+            {%   endif %}
+            {%   if (response_prio2_4 == 'unknown' or response_prio2_4 == 'unavailable' or response_prio2_4 == 'None' or response_prio2_4 == '{}') %}
+            {%     set response_prio2_4 = "" %}
+            {%   endif %}
+            {%   set response_prio1 = response_prio1_1 + response_prio1_2 + response_prio1_3 + response_prio1_4 %}
+            {%   set response_prio1 = response_prio1 | replace('{', '') %}
+            {%   set response_prio1 = response_prio1 | replace('}', '') %}
+            {%   set response_prio1_length = response_prio1 | count %}
+            {%   set response_prio2 = response_prio2_1 + response_prio2_2 + response_prio2_3 + response_prio2_4 %}
+            {%   set response_prio2 = response_prio2 | replace('{', '') %}
+            {%   set response_prio2 = response_prio2 | replace('}', '') %}
+            {%   set response_prio2_length = response_prio2 | count %}
+            {%   if (response_prio1_length == 0) %}
+            {%     if (response_prio2_length == 0) %}
+            {%       set result = none %}
             {%     else %}
-            {%       if (response4 == 'unknown' or response4 == 'unavailable' or response4 == 'none') %}
-            {%         set result = response1 + response2 + response3 %}
-            {%       else %}
-            {%         set result = response1 + response2 + response3 + response4 %}
-            {%       endif %}
+            {%       set result = '{' + response_prio2 + '}' %}
+            {%     endif %}
+            {%   else %}
+            {%     if (response_prio2_length == 0) %}
+            {%       set result = '{' + response_prio1 + '}' %}
+            {%     else %}
+            {%       set result = '{' + response_prio1 + "," + response_prio2 + '}' %}
             {%     endif %}
             {%   endif %}
             {% endif %}
@@ -3687,7 +3738,9 @@ template:
           {{ result }}
 
 rest:
-  # To not overflow the Save Connect device, we gather all data we need with one call.
+  # To not overflow the Save Connect device, we gather all data we need for prio 1 and in another sensor for prio 2.
+  # Prio 1: Scanned every 30 second.
+  # Prio 2: Scanned every 56 second, to not interfer too often with prio 1.
   # Here we have a constraint of 255 characters for sensors, and I could not use attributes as I do not want to hardcode registers in the rest-sensor.
   #   On top of that we also got an warning at startup in the logs for temperature sensors: has device class 'temperature', state class 'measurement' unit '°C' and suggested precision 'None' thus indicating it has a numeric value; however, it has the non-numeric value: 'Unknown' (<class 'str'
   #     I tried all sorts of yaml-trickery but could not get the warning to not appear in the logs.
@@ -3695,7 +3748,6 @@ rest:
   #         Template sensors can thereafter gather data from the sensor-attributes.
   #     I still get the following warning for the rest sensor: Template variable warning: 'None' has no attribute 'Systemair VSR 300'
   #       I have not yet figured out yaml-wizardry to remove this.
-  # Scanned every 30 second, as the Save Connect device seems sensitive to too many requests.
   # Example request: http://IPADDRESS/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
   - scan_interval: 30
     timeout: 28
@@ -3704,6 +3756,7 @@ rest:
       {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
       {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
       {% set inputs_valid = true %}
+      {% set filter_priority = 1 %}
       {% set result = none %}
       {% if (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
       {%     set inputs_valid = false %}
@@ -3719,33 +3772,38 @@ rest:
       {%     set entries_valid = false %}
       {%   endif %}
       {%   if (entries_valid == true) %}
-      {%     set ns = namespace(url = "http://" + device_ip + "/mread?") %}
+      {%     set ns = namespace(url = "http://" + device_ip + "/mread?", index = 0) %}
       {%     for entry in entries %}
-      {%       set register_valid = true %}
+      {%       set json_valid = true %}
       {%       set register = json_array[device_type][entry].register | string %}
+      {%       set prio = json_array[device_type][entry].prio | string %}
       {%       if (register == 'unknown' or register == 'unavailable' or register == 'none') %}
-      {%         set register_valid = false %}
+      {%         set json_valid = false %}
+      {%       elif (prio == 'unknown' or prio == 'unavailable' or prio == 'none') %}
+      {%         set json_valid = false %}
       {%       endif %}
-      {%       if (register_valid == true) %}
-      {%         if (loop.first) %}
-      {%           set ns.url = ns.url + "{" %}
-      {%         endif %}
-      {%         set ns.url = ns.url + "%22" + register + "%22:1" %}
-      {%         if (loop.last) %}
-      {%           set ns.url = ns.url + "}" %}
-      {%         else %}
-      {%           set ns.url = ns.url + "," %}
+      {%       if (json_valid == true) %}
+      {%         set prio = prio | int %}
+      {%         if (filter_priority == prio) %}
+      {%           if (ns.index == 0) %}
+      {%             set ns.url = ns.url + "{" %}
+      {%           else %}
+      {%             set ns.url = ns.url + "," %}
+      {%           endif %}
+      {%           set ns.url = ns.url + "%22" + register + "%22:1" %}
+      {%           set ns.index = ns.index + 1 %}
       {%         endif %}
       {%       endif %}
       {%     endfor %}
+      {%     set ns.url = ns.url + "}" %}
       {%     set result = ns.url %}
       {%   endif %}
       {% endif %}
       {{ result }}
     sensor:
       # We want to gather the length of the response.
-      - name: Systemair Save connect response length
-        unique_id: systemair_save_connect_response_length
+      - name: Systemair prio 1 Save connect response length
+        unique_id: systemair_prio_1_save_connect_response_length
         value_template: >
           {% set value = value_json %}
           {% set inputs_valid = true %}
@@ -3760,8 +3818,8 @@ rest:
           {{ result }}
       # We want to gather characters 0-254 in the response as state.
       # As a sensor can maximum have 255 characters.
-      - name: Systemair Save connect response 1 part
-        unique_id: systemair_save_connect_response_1_part
+      - name: Systemair prio 1 Save connect response 1 part
+        unique_id: systemair_prio_1_save_connect_response_1_part
         value_template: >
           {% set value = value_json %}
           {% set inputs_valid = true %}
@@ -3781,8 +3839,8 @@ rest:
           {{ result }}
       # We want to gather characters 255-510 in the response as state.
       # As a sensor can maximum have 255 characters.
-      - name: Systemair Save connect response 2 part
-        unique_id: systemair_save_connect_response_2_part
+      - name: Systemair prio 1 Save connect response 2 part
+        unique_id: systemair_prio_1_save_connect_response_2_part
         value_template: >
           {% set value = value_json %}
           {% set inputs_valid = true %}
@@ -3802,8 +3860,8 @@ rest:
           {{ result }}
       # We want to gather characters 510-765 in the response as state.
       # As a sensor can maximum have 255 characters.
-      - name: Systemair Save connect response 3 part
-        unique_id: systemair_save_connect_response_3_part
+      - name: Systemair prio 1 Save connect response 3 part
+        unique_id: systemair_prio_1_save_connect_response_3_part
         value_template: >
           {% set value = value_json %}
           {% set inputs_valid = true %}
@@ -3823,8 +3881,159 @@ rest:
           {{ result }}
       # We want to gather characters 765-1020 in the response as state.
       # As a sensor can maximum have 255 characters.
-      - name: Systemair Save connect response 4 part
-        unique_id: systemair_save_connect_response_4_part
+      - name: Systemair prio 1 Save connect response 4 part
+        unique_id: systemair_prio_1_save_connect_response_4_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 510) %}
+          {%     set result = result[765:1020] %}
+          {%   else %}
+          {%     set result = none %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+  - scan_interval: 55
+    timeout: 28
+    resource_template: >
+      {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+      {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
+      {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+      {% set inputs_valid = true %}
+      {% set filter_priority = 2 %}
+      {% set result = none %}
+      {% if (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none') %}
+      {%     set inputs_valid = false %}
+      {% elif (device_ip == 'unknown' or device_ip == 'unavailable' or device_ip == 'none') %}
+      {%     set inputs_valid = false %}
+      {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == '' or json_array == {} or json_array == '{}None') %}
+      {%     set inputs_valid = false %}
+      {% endif %}
+      {% if (inputs_valid == true) %}
+      {%   set entries_valid = true %}
+      {%   set entries = json_array[device_type] %}
+      {%   if (entries == 'unknown' or entries == 'unavailable' or entries == 'none') %}
+      {%     set entries_valid = false %}
+      {%   endif %}
+      {%   if (entries_valid == true) %}
+      {%     set ns = namespace(url = "http://" + device_ip + "/mread?", index = 0) %}
+      {%     for entry in entries %}
+      {%       set json_valid = true %}
+      {%       set register = json_array[device_type][entry].register | string %}
+      {%       set prio = json_array[device_type][entry].prio | string %}
+      {%       if (register == 'unknown' or register == 'unavailable' or register == 'none') %}
+      {%         set json_valid = false %}
+      {%       elif (prio == 'unknown' or prio == 'unavailable' or prio == 'none') %}
+      {%         set json_valid = false %}
+      {%       endif %}
+      {%       if (json_valid == true) %}
+      {%         set prio = prio | int %}
+      {%         if (filter_priority == prio) %}
+      {%           if (ns.index == 0) %}
+      {%             set ns.url = ns.url + "{" %}
+      {%           else %}
+      {%             set ns.url = ns.url + "," %}
+      {%           endif %}
+      {%           set ns.url = ns.url + "%22" + register + "%22:1" %}
+      {%           set ns.index = ns.index + 1 %}
+      {%         endif %}
+      {%       endif %}
+      {%     endfor %}
+      {%     set ns.url = ns.url + "}" %}
+      {%     set result = ns.url %}
+      {%   endif %}
+      {% endif %}
+      {{ result }}
+    sensor:
+      # We want to gather the length of the response.
+      - name: Systemair prio 2 Save connect response length
+        unique_id: systemair_prio_2_save_connect_response_length
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set value = value | replace("'", '"') %}
+          {%   set result = value | count %}
+          {% endif %}
+          {{ result }}
+      # We want to gather characters 0-254 in the response as state.
+      # As a sensor can maximum have 255 characters.
+      - name: Systemair prio 2 Save connect response 1 part
+        unique_id: systemair_prio_2_save_connect_response_1_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == '{}') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 0) %}
+          {%     set result = result[0:255] %}
+          {%   else %}
+          {%     set result = none %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+      # We want to gather characters 255-510 in the response as state.
+      # As a sensor can maximum have 255 characters.
+      - name: Systemair prio 2 Save connect response 2 part
+        unique_id: systemair_prio_2_save_connect_response_2_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 255) %}
+          {%     set result = result[255:510] %}
+          {%   else %}
+          {%     set result = none %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+      # We want to gather characters 510-765 in the response as state.
+      # As a sensor can maximum have 255 characters.
+      - name: Systemair prio 2 Save connect response 3 part
+        unique_id: systemair_prio_2_save_connect_response_3_part
+        value_template: >
+          {% set value = value_json %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value == 'unknown' or value == 'unavailable' or value == 'none') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = value | replace("'", '"') %}
+          {%   set length = result | count %}
+          {%   if (length > 510) %}
+          {%     set result = result[510:765] %}
+          {%   else %}
+          {%     set result = none %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+      # We want to gather characters 765-1020 in the response as state.
+      # As a sensor can maximum have 255 characters.
+      - name: Systemair prio 2 Save connect response 4 part
+        unique_id: systemair_prio_2_save_connect_response_4_part
         value_template: >
           {% set value = value_json %}
           {% set inputs_valid = true %}
