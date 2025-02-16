@@ -1421,8 +1421,6 @@ template:
           {% if (inputs_valid == true) %}
           {%   set register = json_array[device_type]["REG_UNIT_CONFIG_REHEATER_TYPE"].register | string %}
           {%   set value = value_json[register] %}
-          {%   set register = json_array[device_type]["REG_UNIT_CONFIG_REHEATER_TYPE"].register | string %}
-          {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
           {%     set result = none %}
           {%   else %}
@@ -1576,7 +1574,6 @@ template:
           {% endif %}
           {% if (inputs_valid == true) %}
           {%   set register = json_array[device_type]["REG_UNIT_CONFIG_COOLER"].register | string %}
-          {%   set value = value_json[register] %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
           {%     set result = none %}
@@ -1815,7 +1812,7 @@ template:
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
           {%     set result = none %}
           {%   else %}
-          {%     set result = int(value) %}
+          {%     set value = int(value) %}
           {%     if (value == 0) %}
           {%       set result = "Supply air temperature control" %}
           {%     elif (value == 1) %}
@@ -1893,7 +1890,7 @@ template:
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
           {%     set result = none %}
           {%   else %}
-          {%     set result = int(value) %}
+          {%     set value = int(value) %}
           {%     if (value == 0) %}
           {%       set result = "Manual" %}
           {%     elif (value == 1) %}
@@ -4122,21 +4119,18 @@ automation:
 
 rest:
   # To not overflow the Save Connect device, we gather all data we need in one rest-sensor, and go divide the sensors in different priorities.
-  #   The priorities are
+  #   The priorities are:
   #     Prio 0: Added every time.
   #     Prio 1 through 3: First 1, then 2 and lastly 3, then over again with 1.
-  # Therefore it will take up to 3 rest-calls until all registry-values are collected
-  # Note:
-  # - That all priority levels must exist in 'sensor.systemair_configuration'. Thus for instance prio 2 must exists in at least one of the rows.
-  # - In total the reponse for each priority must not exceed 4x255 characters.
+  # Therefore it will take up to 3 rest-calls until all registry-values are collected.
   #
-  # Here we have a constraint of 255 characters for sensors, and I could not use attributes as I do not want to hardcode registers in the rest-sensor.
-  #   On top of that we also got an warning at startup in the logs for temperature sensors: has device class 'temperature', state class 'measurement' unit '°C' and suggested precision 'None' thus indicating it has a numeric value; however, it has the non-numeric value: 'Unknown' (<class 'str'
-  #     I tried all sorts of yaml-trickery but could not get the warning to not appear in the logs.
-  #       Therefore I reverted back, and created two sensors of 255 characters each, that is thereafter added to a sensor attribute from the sensors (i.e. no 255 limit).
-  #         Template sensors can thereafter gather data from the sensor-attributes.
-  #     I still get the following warning for the rest sensor: Template variable warning: 'None' has no attribute 'Systemair VSR 300'
-  #       I have not yet figured out yaml-wizardry to remove this.
+  # Note:
+  # - That all priority levels (1 through 3, not 0) must exist in 'sensor.systemair_configuration'.
+  #   - For instance prio 2 must exists in at least one of the rows.
+  # - In total the reponse for each priority (incl. prio 0) must not exceed 4x255 characters.
+  # - Before this last code was finalized, we tried to utilize several rest-calls, but that seemed to swamp the Save Connect device
+  #   - We also tried to have only one rest-call with all registries, but that seemed to also swamp the Save Connect device.
+  #     - So we ended up with this code that works with template sensor 'systemair_save_connect_response' to gather all the required registers ov er three calls.
   # Example request: http://IPADDRESS/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
   - scan_interval: 30
     timeout: 10
