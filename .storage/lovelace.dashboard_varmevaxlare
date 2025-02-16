@@ -83,6 +83,9 @@
                     {
                       "entity": "binary_sensor.systemair_read_function_active_defrosting_on",
                       "name": "Avfrostning"
+                    },
+                    {
+                      "entity": "input_button.set_temperature"
                     }
                   ],
                   "title": "Driftsinställningar"
