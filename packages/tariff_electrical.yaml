@@ -259,6 +259,54 @@ template:
   - sensor:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
+      # Therefore we create a intermediary sensor to get it to [öre/kWh] for min.
+      - name: Electrical consumption spot sensor intermediary min
+        unique_id: electrical_consumption_spot_sensor_intermediary_min
+        state_class: measurement
+        state: >
+          {% set value = state_attr(states('input_text.electrical_consumption_spot_sensor'), 'min') %}
+          {% if (value != 'unknown' or value != 'unavailable') %}
+          {%   set spot = float(value, 0) * 100 %}
+          {% else %}
+          {%   set spot = 0 %}
+          {% endif %}
+          {{ spot }}
+
+  - sensor:
+      # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
+      # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
+      # Therefore we create a intermediary sensor to get it to [öre/kWh] for max.
+      - name: Electrical consumption spot sensor intermediary max
+        unique_id: electrical_consumption_spot_sensor_intermediary_max
+        state_class: measurement
+        state: >
+          {% set value = state_attr(states('input_text.electrical_consumption_spot_sensor'), 'max') %}
+          {% if (value != 'unknown' or value != 'unavailable') %}
+          {%   set spot = float(value, 0) * 100 %}
+          {% else %}
+          {%   set spot = 0 %}
+          {% endif %}
+          {{ spot }}
+
+  - sensor:
+      # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
+      # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
+      # Therefore we create a intermediary sensor to get it to [öre/kWh] for mean.
+      - name: Electrical consumption spot sensor intermediary mean
+        unique_id: electrical_consumption_spot_sensor_intermediary_mean
+        state_class: measurement
+        state: >
+          {% set value = state_attr(states('input_text.electrical_consumption_spot_sensor'), 'mean') %}
+          {% if (value != 'unknown' or value != 'unavailable') %}
+          {%   set spot = float(value, 0) * 100 %}
+          {% else %}
+          {%   set spot = 0 %}
+          {% endif %}
+          {{ spot }}
+
+  - sensor:
+      # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
+      # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh].
       - name: Electrical consumption average spot sensor intermediary
         unique_id: electrical_consumption_average_spot_sensor_intermediary
@@ -289,6 +337,141 @@ template:
           {%   endif %}
           {% else %}
           {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary') %}
+          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate, 0) %}
+          {%   endif %}
+          {% endif %}
+          {% set compensation = states('input_number.electrical_consumption_rate_compensation_manual') %}
+          {% if (compensation == 'unknown' or compensation == 'unavailable') %}
+          {%   set compensation = 0 %}
+          {% else %}
+          {%   set compensation = float(compensation, 0) %}
+          {% endif %}
+          {% set compensated_rate = rate + compensation  %}
+          {% set tax = states('input_number.electrical_consumption_rate_tax') %}
+          {% if (tax == 'unknown' or tax == 'unavailable') %}
+          {%   set tax = 0 %}
+          {% else %}
+          {%   set tax = float(tax, 0) %}
+          {% endif %}
+          {% set vat = states('input_number.electrical_consumption_rate_vat') %}
+          {% if (vat == 'unknown' or vat == 'unavailable') %}
+          {%   set vat = 0 %}
+          {% else %}
+          {%   set vat = float(vat, 0) %}
+          {% endif %}
+          {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(2, default=0) %}
+          {{ total_rate }}
+
+  - sensor:
+      # We want to keep track of total electrical consumption rate, min.
+      - name: Electrical consumption rate summary min
+        unique_id: electrical_consumption_rate_summary_min
+        unit_of_measurement: "öre/kWh"
+        state_class: measurement
+        icon: mdi:transmission-tower-import
+        state: >
+          {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
+          {%   set rate = states('input_number.electrical_consumption_rate_manual') %}
+          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary_min') %}
+          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate, 0) %}
+          {%   endif %}
+          {% endif %}
+          {% set compensation = states('input_number.electrical_consumption_rate_compensation_manual') %}
+          {% if (compensation == 'unknown' or compensation == 'unavailable') %}
+          {%   set compensation = 0 %}
+          {% else %}
+          {%   set compensation = float(compensation, 0) %}
+          {% endif %}
+          {% set compensated_rate = rate + compensation  %}
+          {% set tax = states('input_number.electrical_consumption_rate_tax') %}
+          {% if (tax == 'unknown' or tax == 'unavailable') %}
+          {%   set tax = 0 %}
+          {% else %}
+          {%   set tax = float(tax, 0) %}
+          {% endif %}
+          {% set vat = states('input_number.electrical_consumption_rate_vat') %}
+          {% if (vat == 'unknown' or vat == 'unavailable') %}
+          {%   set vat = 0 %}
+          {% else %}
+          {%   set vat = float(vat, 0) %}
+          {% endif %}
+          {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(2, default=0) %}
+          {{ total_rate }}
+
+  - sensor:
+      # We want to keep track of total electrical consumption rate, max.
+      - name: Electrical consumption rate summary max
+        unique_id: electrical_consumption_rate_summary_max
+        unit_of_measurement: "öre/kWh"
+        state_class: measurement
+        icon: mdi:transmission-tower-import
+        state: >
+          {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
+          {%   set rate = states('input_number.electrical_consumption_rate_manual') %}
+          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary_max') %}
+          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate, 0) %}
+          {%   endif %}
+          {% endif %}
+          {% set compensation = states('input_number.electrical_consumption_rate_compensation_manual') %}
+          {% if (compensation == 'unknown' or compensation == 'unavailable') %}
+          {%   set compensation = 0 %}
+          {% else %}
+          {%   set compensation = float(compensation, 0) %}
+          {% endif %}
+          {% set compensated_rate = rate + compensation  %}
+          {% set tax = states('input_number.electrical_consumption_rate_tax') %}
+          {% if (tax == 'unknown' or tax == 'unavailable') %}
+          {%   set tax = 0 %}
+          {% else %}
+          {%   set tax = float(tax, 0) %}
+          {% endif %}
+          {% set vat = states('input_number.electrical_consumption_rate_vat') %}
+          {% if (vat == 'unknown' or vat == 'unavailable') %}
+          {%   set vat = 0 %}
+          {% else %}
+          {%   set vat = float(vat, 0) %}
+          {% endif %}
+          {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(2, default=0) %}
+          {{ total_rate }}
+
+  - sensor:
+      # We want to keep track of total electrical consumption rate, mean.
+      - name: Electrical consumption rate summary mean
+        unique_id: electrical_consumption_rate_summary_mean
+        unit_of_measurement: "öre/kWh"
+        state_class: measurement
+        icon: mdi:transmission-tower-import
+        state: >
+          {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
+          {%   set rate = states('input_number.electrical_consumption_rate_manual') %}
+          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+          {%     set rate = 0 %}
+          {%   else %}
+          {%     set rate = float(rate, 0) %}
+          {%   endif %}
+          {% else %}
+          {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary_mean') %}
           {%   if (rate == 'unknown' or rate == 'unavailable') %}
           {%     set rate = 0 %}
           {%   else %}
@@ -599,7 +782,6 @@ template:
           {% endif %}
           {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4, default=0) %}
           {{ total_rate }}
-
 
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).

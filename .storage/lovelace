@@ -573,25 +573,16 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
-                      "type": "attribute",
-                      "name": "Minimum",
-                      "attribute": "min",
-                      "suffix": "SEK"
+                      "entity": "sensor.electrical_consumption_rate_summary_min",
+                      "name": "Minimum"
                     },
                     {
-                      "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
-                      "type": "attribute",
-                      "name": "Medel",
-                      "attribute": "average",
-                      "suffix": "SEK"
+                      "entity": "sensor.electrical_consumption_rate_summary_mean",
+                      "name": "Medel"
                     },
                     {
-                      "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
-                      "type": "attribute",
-                      "name": "Max",
-                      "attribute": "max",
-                      "suffix": "SEK"
+                      "entity": "sensor.electrical_consumption_rate_summary_max",
+                      "name": "Max"
                     }
                   ],
                   "title": "Elpris idag"

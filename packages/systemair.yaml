@@ -169,8 +169,8 @@ template:
       # This creates attributes based on the JSON-response.
       # It takes all the registers in 'sensor.systemair_configuration' and fills the attribute 'response' with a dictionary of all registers.
       # The attributes are populated based on the response, that can be only parts of all registers.
-      # Thus, the dictionary and registers will be updated once the response has walked through all priorities.
-      # Note that we needed to add individual if/endif, as if/elif did not properly catch state of 'response_prio1_4', bug?
+      # Thus, the dictionary and all registers will be updated once the response has walked through all priorities.
+      # Note that we needed to add individual if/endif, as if/elif did not properly catch state of 'response_4', bug?
       - name: Systemair Save connect response
         unique_id: systemair_save_connect_response
         state: >
