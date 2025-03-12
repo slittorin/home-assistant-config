@@ -573,6 +573,10 @@
                   "type": "entities",
                   "entities": [
                     {
+                      "entity": "sensor.electrical_consumption_rate_summary",
+                      "name": "Nuvarande timpris"
+                    },
+                    {
                       "entity": "sensor.electrical_consumption_rate_summary_min",
                       "name": "Minimum"
                     },

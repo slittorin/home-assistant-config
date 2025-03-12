@@ -63,6 +63,107 @@
               "unit": "W",
               "needle": true,
               "max": 11000
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "sensor.test_sma_effekttariff_current_load_period_string",
+                  "name": "Nuvarande nivå för effekttariff",
+                  "secondary_info": "none",
+                  "icon": "mdi:application-array-outline"
+                },
+                {
+                  "entity": "sensor.sma_metering_power_absorbed_max"
+                },
+                {
+                  "entity": "sensor.sma_metering_power_absorbed_max_hour"
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "entity": "input_number.test_sma_metering_power_absorbed_max_hour_max",
+                  "name": "Latest maximum hourly load"
+                },
+                {
+                  "entity": "input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period",
+                  "name": "Latest maximum hourly high-load"
+                },
+                {
+                  "entity": "input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period",
+                  "name": "Latest maximum hourly low-load"
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_day"
+                },
+                {
+                  "entity": "input_text.test_sma_metering_power_absorbed_max_month_array"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_day_high_load_period"
+                },
+                {
+                  "entity": "input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_day_low_load_period"
+                },
+                {
+                  "entity": "input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_day_low_load_factor_period"
+                },
+                {
+                  "entity": "input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_day_high_and_low_load_factor_period"
+                },
+                {
+                  "entity": "input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array"
+                },
+                {
+                  "entity": "input_number.test_sma_effekttariff_current_load_period"
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_month"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_average_month"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_month_high_load_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_average_month_high_load_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_month_low_load_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_average_month_low_load_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_month_low_load_factor_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_average_month_low_load_factor_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period"
+                },
+                {
+                  "entity": "sensor.test_sma_metering_power_absorbed_average_month_high_and_low_load_factor_period"
+                }
+              ]
             }
           ]
         },
@@ -141,6 +242,202 @@
               "type": "iframe",
               "url": "http://192.168.2.30:3000/d/GiztvNYnk/effekt-detta-ar-per-manad?orgId=1&from=now/1y&to=now/1y&refresh=5m&theme=light&kiosk=tv",
               "aspect_ratio": "100%"
+            }
+          ]
+        },
+        {
+          "type": "sections",
+          "max_columns": 4,
+          "title": "Effektinställningar",
+          "path": "effektinstallningar",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "icon": "",
+                  "heading": "Inställningar för mätning av hög- och låg-effektlaster",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.test_setting_effekttariff_lowload_factor",
+                      "name": "Omräkningsfaktor låg-effektlast sensorer"
+                    },
+                    {
+                      "entity": "input_number.test_setting_effekttariff_number_days_for_average",
+                      "name": "Antal dagar under månad som skall användas för medellast-sensorer"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "input_boolean.test_setting_effekttariff_highload_month_enabled",
+                      "name": "Om hög/låg-effektlast skall mätas under vissa månader"
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_month_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_number.test_setting_effekttariff_highload_from_month",
+                        "name": "Högeffekt-last mäts från och med månad"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_month_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_number.test_setting_effekttariff_highload_to_month",
+                        "name": "Högeffekt-last mäts till och med månad"
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                      "name": "Om hög/låg-effektlast skall mätas under vissa veckodagar"
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_monday",
+                        "name": "Högeffekt-last mäts för Måndagar"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_tuesday",
+                        "name": "Högeffekt-last mäts för Tisdagar"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_wednesday",
+                        "name": "Högeffekt-last mäts för Onsdagar"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_thursday",
+                        "name": "Högeffekt-last mäts för Torsdagar"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_friday",
+                        "name": "Högeffekt-last mäts för Fredagar"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_saturday",
+                        "name": "Högeffekt-last mäts för Lördagar"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_weekdays_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_boolean.test_setting_effekttariff_highload_weekday_sunday",
+                        "name": "Högeffekt-last mäts för Söndagar"
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "entity": "input_boolean.test_setting_effekttariff_highload_hours_enabled",
+                      "name": "Om hög/låg-effektlast skall mätas under vissa timmar"
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_hours_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_number.test_setting_effekttariff_highload_from_hour",
+                        "name": "Högeffekt-last mäts från och med timme"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.test_setting_effekttariff_highload_hours_enabled",
+                          "state": "on"
+                        }
+                      ],
+                      "row": {
+                        "entity": "input_number.test_setting_effekttariff_highload_to_hour",
+                        "name": "Högeffekt-last mäts till och med timme"
+                      }
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

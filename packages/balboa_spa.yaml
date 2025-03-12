@@ -566,7 +566,7 @@ automation:
           {%       set result = 0 %}
           {%     endif %}
           {%  endif %}
-          {% endif %}
+          {% endif %}f
           {{ result }}
 
   # For persistence, and spa temperature

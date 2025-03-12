@@ -61,87 +61,87 @@ template:
             {% set json_array = { "Systemair VSR 300": {
                                    "REG_USERMODE_MANUAL_AIRFLOW_LEVEL": { "register": "1130", "prio": "0", "desc": "Fan speed level for mode Manual. Applies to both the supply and the extract air fans." },
                                    "REG_USERMODE_MODE": { "register": "1160", "prio": "0", "desc": "Active user mode." },
-                                   "REG_FAN_REGULATION_UNIT": { "register": "1273", "prio": "2", "desc": "Airflow type." }, 
-                                   "REG_FAN_MANUAL_STOP_ALLOWED": { "register": "1352", "prio": "2", "desc": "Allow manual fan stop (also as selection for user modes and Week schedule)." },
-                                   "REG_FAN_LEVEL_SAF_MIN_PERCENTAGE": { "register": "1400", "prio": "3", "desc": "Minimum supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_MIN_PERCENTAGE": { "register": "1401", "prio": "3", "desc": "Minimum extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_LOW_PERCENTAGE": { "register": "1402", "prio": "3", "desc": "Low supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_LOW_PERCENTAGE": { "register": "1403", "prio": "3", "desc": "Low extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_NORMAL_PERCENTAGE": { "register": "1404", "prio": "3", "desc": "Normal supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_NORMAL_PERCENTAGE": { "register": "1405", "prio": "3", "desc": "Normal extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_HIGH_PERCENTAGE": { "register": "1406", "prio": "3", "desc": "High supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_HIGH_PERCENTAGE": { "register": "1407", "prio": "3", "desc": "High extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_MAX_PERCENTAGE": { "register": "1408", "prio": "3", "desc": "Max supply air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_EAF_MAX_PERCENTAGE": { "register": "1409", "prio": "3", "desc": "Max extract air fan speed setting, %." },
-                                   "REG_FAN_LEVEL_SAF_MIN_RPM": { "register": "1410", "prio": "3", "desc": "Minimum supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_MIN_RPM": { "register": "1411", "prio": "3", "desc": "Minimum extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_LOW_RPM": { "register": "1412", "prio": "3", "desc": "Low supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_LOW_RPM": { "register": "1413", "prio": "3", "desc": "Low extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_NORMAL_RPM": { "register": "1414", "prio": "3", "desc": "Normal supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_NORMAL_RPM": { "register": "1415", "prio": "3", "desc": "Normal extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_HIGH_RPM": { "register": "1416", "prio": "3", "desc": "High supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_HIGH_RPM": { "register": "1417", "prio": "3", "desc": "High extract air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_SAF_MAX_RPM": { "register": "1418", "prio": "3", "desc": "Max supply air fan speed setting, rpm." },
-                                   "REG_FAN_LEVEL_EAF_MAX_RPM": { "register": "1419", "prio": "3", "desc": "Max extract air fan speed setting, rpm." },
+                                   "REG_FAN_REGULATION_UNIT": { "register": "1273", "prio": "4", "desc": "Airflow type." }, 
+                                   "REG_FAN_MANUAL_STOP_ALLOWED": { "register": "1352", "prio": "4", "desc": "Allow manual fan stop (also as selection for user modes and Week schedule)." },
+                                   "REG_FAN_LEVEL_SAF_MIN_PERCENTAGE": { "register": "1400", "prio": "6", "desc": "Minimum supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_MIN_PERCENTAGE": { "register": "1401", "prio": "6", "desc": "Minimum extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_LOW_PERCENTAGE": { "register": "1402", "prio": "6", "desc": "Low supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_LOW_PERCENTAGE": { "register": "1403", "prio": "6", "desc": "Low extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_NORMAL_PERCENTAGE": { "register": "1404", "prio": "6", "desc": "Normal supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_NORMAL_PERCENTAGE": { "register": "1405", "prio": "6", "desc": "Normal extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_HIGH_PERCENTAGE": { "register": "1406", "prio": "7", "desc": "High supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_HIGH_PERCENTAGE": { "register": "1407", "prio": "7", "desc": "High extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_MAX_PERCENTAGE": { "register": "1408", "prio": "7", "desc": "Max supply air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_EAF_MAX_PERCENTAGE": { "register": "1409", "prio": "7", "desc": "Max extract air fan speed setting, %." },
+                                   "REG_FAN_LEVEL_SAF_MIN_RPM": { "register": "1410", "prio": "7", "desc": "Minimum supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_MIN_RPM": { "register": "1411", "prio": "7", "desc": "Minimum extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_LOW_RPM": { "register": "1412", "prio": "7", "desc": "Low supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_LOW_RPM": { "register": "1413", "prio": "7", "desc": "Low extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_NORMAL_RPM": { "register": "1414", "prio": "7", "desc": "Normal supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_NORMAL_RPM": { "register": "1415", "prio": "8", "desc": "Normal extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_HIGH_RPM": { "register": "1416", "prio": "8", "desc": "High supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_HIGH_RPM": { "register": "1417", "prio": "8", "desc": "High extract air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_SAF_MAX_RPM": { "register": "1418", "prio": "8", "desc": "Max supply air fan speed setting, rpm." },
+                                   "REG_FAN_LEVEL_EAF_MAX_RPM": { "register": "1419", "prio": "8", "desc": "Max extract air fan speed setting, rpm." },
                                    "REG_TC_SP": { "register": "2000", "prio": "0", "desc": "Current temperature setpoint." },
-                                   "REG_TC_CONTROL_MODE ": { "register": "2030", "prio": "2", "desc": "Control mode." },
-                                   "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "prio": "2", "desc": "Heat exchanger type." },
-                                   "REG_HEAT_EXCHANGER_FROM_SATC": { "register": "2140", "prio": "1", "desc": "Heat recovery demand by temperature control, %." },
-                                   "REG_HEATER_FROM_SATC": { "register": "2148", "prio": "1", "desc": "Heating demand by temperature control, %." },
-                                   "REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT": { "register": "2202", "prio": "2", "desc": "Rotor relative humidity transfer control setpoint." },
-                                   "REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF": { "register": "2203", "prio": "2", "desc": "Rotor relative humidity transfer control." },
+                                   "REG_TC_CONTROL_MODE ": { "register": "2030", "prio": "4", "desc": "Control mode." },
+                                   "REG_HEAT_EXCHANGER_TYPE": { "register": "2132", "prio": "4", "desc": "Heat exchanger type." },
+                                   "REG_HEAT_EXCHANGER_FROM_SATC": { "register": "2140", "prio": "0", "desc": "Heat recovery demand by temperature control, %." },
+                                   "REG_HEATER_FROM_SATC": { "register": "2148", "prio": "0", "desc": "Heating demand by temperature control, %." },
+                                   "REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT": { "register": "2202", "prio": "4", "desc": "Rotor relative humidity transfer control setpoint." },
+                                   "REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF": { "register": "2203", "prio": "4", "desc": "Rotor relative humidity transfer control." },
                                    "REG_CALC_RHS_EAF": { "register": "2210", "prio": "1", "desc": "Calculated moisture extract air." },
                                    "REG_CALC_RHS_SAF": { "register": "2211", "prio": "1", "desc": "Calculated moisture supply air." },
-                                   "REG_ECO_MODE_ON_OFF": { "register": "2504", "prio": "0", "desc": "ECO mode configuration status." },
-                                   "REG_UNIT_CONFIG_REHEATER_TYPE": { "register": "3001", "prio": "2", "desc": "Heater type." },
-                                   "REG_UNIT_CONFIG_COOLER": { "register": "3013", "prio": "2", "desc": "Cooler type." },
-                                   "REG_UNIT_CONFIG_EXTRA_CONTROLLER": { "register": "3014", "prio": "2", "desc": "Extra Controller Mode." },
+                                   "REG_ECO_MODE_ON_OFF": { "register": "2504", "prio": "3", "desc": "ECO mode configuration status." },
+                                   "REG_UNIT_CONFIG_REHEATER_TYPE": { "register": "3001", "prio": "4", "desc": "Heater type." },
+                                   "REG_UNIT_CONFIG_COOLER": { "register": "3013", "prio": "4", "desc": "Cooler type." },
+                                   "REG_UNIT_CONFIG_EXTRA_CONTROLLER": { "register": "3014", "prio": "4", "desc": "Extra Controller Mode." },
                                    "REG_FUNCTION_ACTIVE_HEATING": { "register": "3102", "prio": "1", "desc": "Function, active heating." },
                                    "REG_FUNCTION_ACTIVE_DEFROSTING": { "register": "3103", "prio": "1", "desc": "Function, active defrosting." },
                                    "REG_FUNCTION_ACTIVE_HEAT_RECOVERY": { "register": "3104", "prio": "1", "desc": "Function, active heat recovery." },
                                    "REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER": { "register": "3106", "prio": "1", "desc": "Function, active moisture transfer." },
                                    "REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN": { "register": "3112", "prio": "1", "desc": "Function, active heater cool down." },
-                                   "REG_FILTER_REPLACEMENT_ALARM": { "register": "7006", "prio": "2", "desc": "Filter replacement alarm (register name not official)." },
-                                   "REG_SYSTEM_UNIT_TEMPERATURE": { "register": "9002", "prio": "2", "desc": "Temperature unit." },
-                                   "REG_AI_CFG_CONNECTION_NTC1": { "register": "11000", "prio": "2", "desc": "Analog input 1 type." },
-                                   "REG_UI_CFG_TYPE_1": { "register": "11100", "prio": "2", "desc": "Universal input 1 analog or digital." },
-                                   "REG_UI_CFG_TYPE_2": { "register": "11101", "prio": "2", "desc": "Universal input 2 analog or digital." },
-                                   "REG_UI_CONNECTION_ANALOG1": { "register": "11200", "prio": "2", "desc": "Universal input 1 analog type." },
-                                   "REG_UI_CONNECTION_ANALOG2": { "register": "11201", "prio": "2", "desc": "Universal input 2 analog type." },
-                                   "REG_UI_CONNECTION_DIGITAL1": { "register": "11300", "prio": "2", "desc": "Universal input 1 digital type." },
-                                   "REG_UI_CONNECTION_DIGITAL2": { "register": "11301", "prio": "2", "desc": "Universal input 1 digital type." },
-                                   "REG_DI_CONNECTION_1": { "register": "11400","prio": "2", "desc": "Digital input 1 type." },
-                                   "REG_INPUT_DIGITAL_UI_1": { "register": "12020", "prio": "1", "desc": "Universal input 1, digital value." },
-                                   "REG_INPUT_DIGITAL_UI_2": { "register": "12021", "prio": "1", "desc": "Universal input 1, digital value." },
-                                   "REG_INPUT_DIGITAL_DI_1": { "register": "12030", "prio": "1", "desc": "Digital input 1, value." },
-                                   "REG_INPUT_DIGITAL_DI_2": { "register": "12031", "prio": "1", "desc": "Digital input 2, value." },
-                                   "REG_SENSOR_FPT": { "register": "12100", "prio": "1", "desc": "Frost protection temperature sensor." },
-                                   "REG_SENSOR_OAT": { "register": "12101", "prio": "1", "desc": "Outdoor air temperature sensor value." },
-                                   "REG_SENSOR_SAT": { "register": "12102", "prio": "1", "desc": "Supply air temperature sensor value." },
+                                   "REG_FILTER_REPLACEMENT_ALARM": { "register": "7006", "prio": "3", "desc": "Filter replacement alarm (register name not official)." },
+                                   "REG_SYSTEM_UNIT_TEMPERATURE": { "register": "9002", "prio": "1", "desc": "Temperature unit." },
+                                   "REG_AI_CFG_CONNECTION_NTC1": { "register": "11000", "prio": "5", "desc": "Analog input 1 type." },
+                                   "REG_UI_CFG_TYPE_1": { "register": "11100", "prio": "5", "desc": "Universal input 1 analog or digital." },
+                                   "REG_UI_CFG_TYPE_2": { "register": "11101", "prio": "5", "desc": "Universal input 2 analog or digital." },
+                                   "REG_UI_CONNECTION_ANALOG1": { "register": "11200", "prio": "5", "desc": "Universal input 1 analog type." },
+                                   "REG_UI_CONNECTION_ANALOG2": { "register": "11201", "prio": "5", "desc": "Universal input 2 analog type." },
+                                   "REG_UI_CONNECTION_DIGITAL1": { "register": "11300", "prio": "6", "desc": "Universal input 1 digital type." },
+                                   "REG_UI_CONNECTION_DIGITAL2": { "register": "11301", "prio": "6", "desc": "Universal input 1 digital type." },
+                                   "REG_DI_CONNECTION_1": { "register": "11400","prio": "6", "desc": "Digital input 1 type." },
+                                   "REG_INPUT_DIGITAL_UI_1": { "register": "12020", "prio": "2", "desc": "Universal input 1, digital value." },
+                                   "REG_INPUT_DIGITAL_UI_2": { "register": "12021", "prio": "2", "desc": "Universal input 1, digital value." },
+                                   "REG_INPUT_DIGITAL_DI_1": { "register": "12030", "prio": "2", "desc": "Digital input 1, value." },
+                                   "REG_INPUT_DIGITAL_DI_2": { "register": "12031", "prio": "2", "desc": "Digital input 2, value." },
+                                   "REG_SENSOR_FPT": { "register": "12100", "prio": "2", "desc": "Frost protection temperature sensor." },
+                                   "REG_SENSOR_OAT": { "register": "12101", "prio": "0", "desc": "Outdoor air temperature sensor value." },
+                                   "REG_SENSOR_SAT": { "register": "12102", "prio": "0", "desc": "Supply air temperature sensor value." },
                                    "REG_SENSOR_RAT": { "register": "12103", "prio": "1", "desc": "Room air temperature sensor value." },
-                                   "REG_SENSOR_EAT": { "register": "12104", "prio": "1", "desc": "Extract air temperature sensor value." },
-                                   "REG_SENSOR_ECT": { "register": "12105", "prio": "1", "desc": "Extract controller temperature sensor value." },
-                                   "REG_SENSOR_EFT": { "register": "12106", "prio": "1", "desc": "Efficiency temperature sensor value." },
+                                   "REG_SENSOR_EAT": { "register": "12104", "prio": "0", "desc": "Extract air temperature sensor value." },
+                                   "REG_SENSOR_ECT": { "register": "12105", "prio": "2", "desc": "Extract controller temperature sensor value." },
+                                   "REG_SENSOR_EFT": { "register": "12106", "prio": "2", "desc": "Efficiency temperature sensor value." },
                                    "REG_SENSOR_OHT": { "register": "12107", "prio": "1", "desc": "Overheat temperature sensor value." },
-                                   "REG_SENSOR_RHS": { "register": "12108", "prio": "1", "desc": "Relative humidity sensor value." },
-                                   "REG_SENSOR_BYS": { "register": "12109", "prio": "1", "desc": "Bypass damper sensor value." },
-                                   "REG_SENSOR_EMT": { "register": "12110", "prio": "1", "desc": "EMT (frost) sensor value." },
-                                   "REG_SENSOR_RGS": { "register": "12111", "prio": "1", "desc": "RGS (rotation guard) sensor value." },
-                                   "REG_SENSOR_CO2S": { "register": "12114", "prio": "1", "desc": "CO2 sensor value." },
+                                   "REG_SENSOR_RHS": { "register": "12108", "prio": "2", "desc": "Relative humidity sensor value." },
+                                   "REG_SENSOR_BYS": { "register": "12109", "prio": "2", "desc": "Bypass damper sensor value." },
+                                   "REG_SENSOR_EMT": { "register": "12110", "prio": "2", "desc": "EMT (frost) sensor value." },
+                                   "REG_SENSOR_RGS": { "register": "12111", "prio": "2", "desc": "RGS (rotation guard) sensor value." },
+                                   "REG_SENSOR_CO2S": { "register": "12114", "prio": "2", "desc": "CO2 sensor value." },
                                    "REG_SENSOR_RHS_PDM": { "register": "12135", "prio": "1", "desc": "In-built extract air relative humidity sensor value." },
-                                   "REG_SENSOR_RPM_SAF": { "register": "12400", "prio": "1", "desc": "Supply Fan (SAF) RPM indication." },
-                                   "REG_SENSOR_RPM_EAF": { "register": "12401", "prio": "1", "desc": "Extract Air Fan (EAF) RPM indication." },
-                                   "REG_SENSOR_PDM_EAT_VALUE": { "register": "12543", "prio": "1", "desc": "In-built extract air temperature sensor value." },
-                                   "REG_CFG_HEATER_ACTUATOR_TYPE": { "register": "13020", "prio": "2", "desc": "Heater actuator." },
-                                   "REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE": { "register": "13021", "prio": "2", "desc": "Heat exchanger actuator." },
-                                   "REG_CFG_COOLER_ACTUATOR_TYPE": { "register": "13022", "prio": "2", "desc": "Cooler actuator." },
-                                   "REG_OUTPUT_SAF": { "register": "14000", "prio": "1", "desc": "Supply Air Fan (SAF) output, percentage." },
-                                   "REG_OUTPUT_EAF": { "register": "14001", "prio": "1", "desc": "Extract Air Fan (EAF) output, percentage." },
-                                   "REG_ALARM_FILTER_ALARM": { "register": "15141", "prio": "1", "desc": "Filter replacement alarm" },
-                                   "REG_ALARM_FILTER_WARNING_ALARM": { "register": "15543", "prio": "1", "desc": "Filter replacement alarm." },
-                                   "REG_ALARM_TYPE_A": { "register": "15900", "prio": "1", "desc": "Indicates if an alarm Type A is active." },
-                                   "REG_ALARM_TYPE_B": { "register": "15901", "prio": "1", "desc": "Indicates if an alarm Type B is active." },
-                                   "REG_ALARM_TYPE_C": { "register": "15902", "prio": "1", "desc": "Indicates if an alarm Type C is active." }
+                                   "REG_SENSOR_RPM_SAF": { "register": "12400", "prio": "3", "desc": "Supply Fan (SAF) RPM indication." },
+                                   "REG_SENSOR_RPM_EAF": { "register": "12401", "prio": "3", "desc": "Extract Air Fan (EAF) RPM indication." },
+                                   "REG_SENSOR_PDM_EAT_VALUE": { "register": "12543", "prio": "0", "desc": "In-built extract air temperature sensor value." },
+                                   "REG_CFG_HEATER_ACTUATOR_TYPE": { "register": "13020", "prio": "5", "desc": "Heater actuator." },
+                                   "REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE": { "register": "13021", "prio": "5", "desc": "Heat exchanger actuator." },
+                                   "REG_CFG_COOLER_ACTUATOR_TYPE": { "register": "13022", "prio": "5", "desc": "Cooler actuator." },
+                                   "REG_OUTPUT_SAF": { "register": "14000", "prio": "3", "desc": "Supply Air Fan (SAF) output, percentage." },
+                                   "REG_OUTPUT_EAF": { "register": "14001", "prio": "3", "desc": "Extract Air Fan (EAF) output, percentage." },
+                                   "REG_ALARM_FILTER_ALARM": { "register": "15141", "prio": "3", "desc": "Filter replacement alarm" },
+                                   "REG_ALARM_FILTER_WARNING_ALARM": { "register": "15543", "prio": "3", "desc": "Filter replacement alarm." },
+                                   "REG_ALARM_TYPE_A": { "register": "15900", "prio": "3", "desc": "Indicates if an alarm Type A is active." },
+                                   "REG_ALARM_TYPE_B": { "register": "15901", "prio": "3", "desc": "Indicates if an alarm Type B is active." },
+                                   "REG_ALARM_TYPE_C": { "register": "15902", "prio": "3", "desc": "Indicates if an alarm Type C is active." }
                                   }
                                 } %}
             {{ json_array }}
@@ -4074,16 +4074,27 @@ template:
           {{ result }}
 
 rest_command:
-  # We want to set the current temperature setpoint.
-  # We set it in celcius.
-  # Modbus register in configuration: REG_TC_SP
+  # We want to write to the Save Connect.
   # Data used is:
-  # { "temp": TEMPERATUREINCELCIUS }
-  systemair_write_current_temperature_setpoint:
+  #   register: "REGISTERNAME"
+  #   value: VALUETOWRITE }
+  #
+  # Note that:
+  # - Register must be a valid register-name from sensor systemair_configuration.
+  # - Value must be a valid number. See logic for each register.
+  #
+  # Example to set temperature setpoint to 17 degrees celcius.
+  #   The following data:
+  #     register: "REG_TC_SP"
+  #     value: 170
+  #   Gives the following write-command: http://192.168.4.118/mwrite?{%222000%22:170} returns "OK", with status code 200.
+  systemair_write_to_register:
     url: >
       {% set device_type = states('input_select.systemair_chosen_unit_type') %}
       {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
       {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+      {% set input_register = register %}
+      {% set input_value = value %}
       {% set inputs_valid = true %}
       {% set result = none %}
       {% if (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none' or device_type == None) %}
@@ -4092,15 +4103,23 @@ rest_command:
       {%     set inputs_valid = false %}
       {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == None or json_array == {} or json_array == '{}None') %}
       {%     set inputs_valid = false %}
+      {% elif (input_register == 'unknown' or input_register == 'unavailable' or input_register == 'none' or input_register == None) %}
+      {%     set inputs_valid = false %}
+      {% elif (input_value == 'unknown' or input_value == 'unavailable' or input_value == 'none' or input_value == None) %}
+      {%     set inputs_valid = false %}
       {% endif %}
       {% if (inputs_valid == true) %}
-      {%   set register = json_array[device_type]["REG_TC_SP"].register | string %}
+      {%   set input_value = input_value | string %}
+      {%   set register = json_array[device_type][input_register].register | string %}
       {%   set url = "http://" + device_ip + "/mwrite?" %}
-      {%   set url = url + "{%22" + register + "%22:" + temp + "}" %}
+      {%   set url = url + '{%22' + register + '%22:' + input_value + '}' %}
       {%   set result = url %}
       {% endif %}
       {{ result }}
-    method: POST
+    method: GET
+    content_type: "text/html"
+    headers:
+      Connection: close
 
 input_button:
   set_temperature:
@@ -4113,15 +4132,32 @@ automation:
       - trigger: state
         entity_id: input_button.set_temperature
     actions:
-      - action: rest_command.systemair_write_current_temperature_setpoint
+      - action: rest_command.systemair_write_to_register
         data:
-          temp: "17"
+          register: "REG_TC_SP"
+          value: 170
+        response_variable: systemair_write_response
+      - if: "{{ systemair_write_response['status'] == 200 }}"
+        then:
+          - action: system_log.write
+            data:
+              title: "Success: Wrote to Systemair Save Connect"
+              message: "Success. Content: {{ systemair_write_response['content'] }}"
+              level: warning
+        else:
+          - action: system_log.write
+            data:
+              title: "Error: Wrote to Systemair Save Connect"
+              message: "Error. Content: {{ systemair_write_response['content'] }}"
+              level: warning
 
 rest:
   # To not overflow the Save Connect device, we gather all data we need in one rest-sensor, and go divide the sensors in different priorities.
   #   The priorities are:
   #     Prio 0: Added every time.
-  #     Prio 1 through 3: First 1, then 2 and lastly 3, then over again with 1.
+  #     Prio 1 through 8: First 1, then 2 and lastly 8, then over again with 1.
+  # 20250222: Changed from 3 to 8 since it seems like the modbus on the heat exchanger gets overwhelmed after 1-2 day.
+  #           Also reduced the sensors to always retrieve (0), so we have a maximum of approx. 20 registers each rest-call.
   # Therefore it will take up to 3 rest-calls until all registry-values are collected.
   #
   # Note:
@@ -4187,7 +4223,7 @@ rest:
       {% endif %}
       {{ result }}
     sensor:
-      # We want to increment the index from 1 to 3.
+      # We want to increment the index from 1 to 8.
       - name: Systemair save connect response priority
         unique_id: systemair_save_connect_response_priority
         value_template: >
@@ -4198,7 +4234,7 @@ rest:
           {%   set current_value = current_value | int %}
           {% endif %}
           {% set current_value = current_value + 1 %}
-          {% if (current_value > 3) %}
+          {% if (current_value > 8) %}
           {%   set current_value = 1 %}
           {% endif %}
           {% set result = current_value %}
