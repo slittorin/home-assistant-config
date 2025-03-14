@@ -141,27 +141,27 @@
 #
 # In the logic above and below we have the following parameters:
 # --------------------------------------------------------------
-# - If enabled (input_boolean.test_setting_effekttariff_highload_month_enabled):
+# - If enabled (input_boolean.setting_effekttariff_highload_month_enabled):
 #   - High-load months, from and to.
-#     - input_number.test_setting_effekttariff_highload_from_month (such as 10 for October)
-#     - input_number.test_setting_effekttariff_highload_to_month (such as 3 for March)
-# - If enabled (input_boolean.test_setting_effekttariff_highload_weekdays_enabled):
+#     - input_number.setting_effekttariff_highload_from_month (such as 10 for October)
+#     - input_number.setting_effekttariff_highload_to_month (such as 3 for March)
+# - If enabled (input_boolean.setting_effekttariff_highload_weekdays_enabled):
 #   - High-load weekdays if enabled:
-#     - input_boolean.test_setting_effekttariff_highload_weekday_monday
-#     - input_boolean.test_setting_effekttariff_highload_weekday_tuesday
-#     - input_boolean.test_setting_effekttariff_highload_weekday_wednesday
-#     - input_boolean.test_setting_effekttariff_highload_weekday_thursday
-#     - input_boolean.test_setting_effekttariff_highload_weekday_friday
-#     - input_boolean.test_setting_effekttariff_highload_weekday_saturday
-#     - input_boolean.test_setting_effekttariff_highload_weekday_sunday
-# - If enabled (input_boolean.test_setting_effekttariff_highload_hours_enabled):
+#     - input_boolean.setting_effekttariff_highload_weekday_monday
+#     - input_boolean.setting_effekttariff_highload_weekday_tuesday
+#     - input_boolean.setting_effekttariff_highload_weekday_wednesday
+#     - input_boolean.setting_effekttariff_highload_weekday_thursday
+#     - input_boolean.setting_effekttariff_highload_weekday_friday
+#     - input_boolean.setting_effekttariff_highload_weekday_saturday
+#     - input_boolean.setting_effekttariff_highload_weekday_sunday
+# - If enabled (input_boolean.setting_effekttariff_highload_hours_enabled):
 #   - High-load hours, from and to:
-#     - input_number.test_setting_effekttariff_highload_from_hour (such as 6, from 6.00).
-#     - input_number.test_setting_effekttariff_highload_to_hour (such as 20, to 20.59.59).
+#     - input_number.setting_effekttariff_highload_from_hour (such as 6, from 6.00).
+#     - input_number.setting_effekttariff_highload_to_hour (such as 20, to 20.59.59).
 # - Highest load during low-load period is to be recalculated by factor (0 through 1, steps of 0.1).
-#   - input_number.test_setting_effekttariff_lowload_factor
+#   - input_number.setting_effekttariff_lowload_factor
 # - The number of highest day-loads (2 through 5) to average at the end of the month.
-#   - input_number.test_setting_effekttariff_number_days_for_average
+#   - input_number.setting_effekttariff_number_days_for_average
 #
 # The sensor that drives the machine is the statistics-sensor that measures the maximum power over one hour:
 # ----------------------------------------------------------------------------------------------------------
@@ -171,7 +171,7 @@
 #
 # We have created the following sensors:
 # --------------------------------------
-# 1. Each hour at 00.02  we set the input sensor (for persistence) 'test_sma_effekttariff_current_load_period' to high or low-load hour:
+# 1. Each hour at 00.02  we set the input sensor (for persistence) 'sma_effekttariff_current_load_period' to high or low-load hour:
 #    - Depending on the parameters above:
 #      - 0 for no high/low hour, or error in parameters.
 #      - 1 for low-load hour.
@@ -182,33 +182,33 @@
 #       - This is the root of all measurements for load (W).
 #       - We know that we will not get all/right statistics for the hour as we miss 4 seconds, but that should only have a minor effect.
 # 3. Maximum hourly loads (input_numbers to be persistent to reboots and reload of yaml, reset each day at 00.00.02):
-#    - input_number.test_sma_metering_power_absorbed_max_hour_max: The maximum hourly-load.
-#    - input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period: The maximum hourly-load, during high-load hours.
-#    - input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period: The maximum hourly-load, during low-load hours.
+#    - input_number.sma_metering_power_absorbed_max_hour_max: The maximum hourly-load.
+#    - input_number.sma_metering_power_absorbed_max_hour_max_high_load_period: The maximum hourly-load, during high-load hours.
+#    - input_number.sma_metering_power_absorbed_max_hour_max_low_load_period: The maximum hourly-load, during low-load hours.
 # 4. Daily maximum loads are created each day at 23.59.57:
-#    - sensor.test_sma_metering_power_absorbed_max_day: The maximum hourly-load for the day.
-#    - sensor.test_sma_metering_power_absorbed_max_day_high_load_period: The maximum hourly-load for the day, during high-load hours.
-#    - sensor.test_sma_metering_power_absorbed_max_day_low_load_period: The maximum hourly-load for the day, during low-load hours.
-#    - sensor.test_sma_metering_power_absorbed_max_day_low_load_factor_period: The maximum hourly-load for the day, during low-load hours with factor parameter.
-#    - sensor.test_sma_metering_power_absorbed_max_day_high_and_low_load_factor_period: The maximum hourly-load for the day, for either high-load or low-load hours with factor parameter.
+#    - sensor.sma_metering_power_absorbed_max_day: The maximum hourly-load for the day.
+#    - sensor.sma_metering_power_absorbed_max_day_high_load_period: The maximum hourly-load for the day, during high-load hours.
+#    - sensor.sma_metering_power_absorbed_max_day_low_load_period: The maximum hourly-load for the day, during low-load hours.
+#    - sensor.sma_metering_power_absorbed_max_day_low_load_factor_period: The maximum hourly-load for the day, during low-load hours with factor parameter.
+#    - sensor.sma_metering_power_absorbed_max_day_high_and_low_load_factor_period: The maximum hourly-load for the day, for either high-load or low-load hours with factor parameter.
 # 5. Array of 5 maximum days during the month are created after daily maximum are created through trigger (persistent, reset at 00.00.02 at start of each month):
-#    - input_text.test_sma_metering_power_absorbed_max_month_array: Array of 5 maximum load days for the month.
-#    - input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array: Array of 5 maximum high-load days for the month.
-#    - input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array: Array of 5 maximum low-load days for the month.
-#    - input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array: Array of 5 maximum low-load, with factor parameter, days for the month.
-#    - input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array: Array of 5 maximum for either high-load or low-load days with factor parameter, for the month.
+#    - input_text.sma_metering_power_absorbed_max_month_array: Array of 5 maximum load days for the month.
+#    - input_text.sma_metering_power_absorbed_max_month_high_load_period_array: Array of 5 maximum high-load days for the month.
+#    - input_text.sma_metering_power_absorbed_max_month_low_load_period_array: Array of 5 maximum low-load days for the month.
+#    - input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array: Array of 5 maximum low-load, with factor parameter, days for the month.
+#    - input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array: Array of 5 maximum for either high-load or low-load days with factor parameter, for the month.
 # 6. Monthly maximum loads are created at end of month at 23.59.59 (taken from array):
-#    - sensor.test_sma_metering_power_absorbed_max_month: The maximum dayly-load for the month.
-#    - sensor.test_sma_metering_power_absorbed_max_month_high_load_period: The maximum high-load day for the month.
-#    - sensor.test_sma_metering_power_absorbed_max_month_low_load_period: The maximum low-load day for the month.
-#    - sensor.test_sma_metering_power_absorbed_max_month_low_load_factor_period: The maximum low-load day for the month with factor parameter.
-#    - sensor.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period: The maximum hourly-load for the month, for either high-load or low-load hours with factor parameter.
+#    - sensor.sma_metering_power_absorbed_max_month: The maximum dayly-load for the month.
+#    - sensor.sma_metering_power_absorbed_max_month_high_load_period: The maximum high-load day for the month.
+#    - sensor.sma_metering_power_absorbed_max_month_low_load_period: The maximum low-load day for the month.
+#    - sensor.sma_metering_power_absorbed_max_month_low_load_factor_period: The maximum low-load day for the month with factor parameter.
+#    - sensor.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period: The maximum hourly-load for the month, for either high-load or low-load hours with factor parameter.
 # 7. Monthly average loads are created at end of month at 23.59.59 (taken from array, number of days is set by parameter):
-#    - sensor.test_sma_metering_power_absorbed_average_month: The average dayly-load for the month.
-#    - sensor.test_sma_metering_power_absorbed_average_month_high_load_period: The average high-load day for the month.
-#    - sensor.test_sma_metering_power_absorbed_average_month_low_load_period: The average low-load day for the month.
-#    - sensor.test_sma_metering_power_absorbed_average_month_low_load_factor_period: The average low-load day for the month with factor parameter.
-#    - sensor.test_sma_metering_power_absorbed_average_month_high_and_low_load_factor_period: The maximum hourly-load for the month, for either high-load or low-load hours with factor parameter.
+#    - sensor.sma_metering_power_absorbed_average_month: The average dayly-load for the month.
+#    - sensor.sma_metering_power_absorbed_average_month_high_load_period: The average high-load day for the month.
+#    - sensor.sma_metering_power_absorbed_average_month_low_load_period: The average low-load day for the month.
+#    - sensor.sma_metering_power_absorbed_average_month_low_load_factor_period: The average low-load day for the month with factor parameter.
+#    - sensor.sma_metering_power_absorbed_average_month_high_and_low_load_factor_period: The maximum hourly-load for the month, for either high-load or low-load hours with factor parameter.
 #
 # Note the following:
 # - The logic and sensors survives reboots.
@@ -217,99 +217,85 @@
 
 input_boolean:
   # Setting for effekttariff: If high-load period shall be measured for specific months.
-  test_setting_effekttariff_highload_month_enabled:
+  setting_effekttariff_highload_month_enabled:
     name: "If high-load period shall be measured for specific months"
     icon: mdi:priority-high
   # Setting for effekttariff: If high-load period shall be measured for specific weekdays.
-  test_setting_effekttariff_highload_weekdays_enabled:
+  setting_effekttariff_highload_weekdays_enabled:
     name: "If high-load period shall be measured for specific weekdays"
     icon: mdi:priority-high
   # Setting for effekttariff: If high-load period shall be measured for weekday: Monday.
-  test_setting_effekttariff_highload_weekday_monday:
+  setting_effekttariff_highload_weekday_monday:
     name: "If high-load period shall be measured for: Monday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for weekday: Tuesday.
-  test_setting_effekttariff_highload_weekday_tuesday:
+  setting_effekttariff_highload_weekday_tuesday:
     name: "If high-load period shall be measured for: Tuesday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for weekday: Wednesday.
-  test_setting_effekttariff_highload_weekday_wednesday:
+  setting_effekttariff_highload_weekday_wednesday:
     name: "If high-load period shall be measured for: Wednesday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for weekday: Thursday.
-  test_setting_effekttariff_highload_weekday_thursday:
+  setting_effekttariff_highload_weekday_thursday:
     name: "If high-load period shall be measured for: Thursday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for weekday: Friday.
-  test_setting_effekttariff_highload_weekday_friday:
+  setting_effekttariff_highload_weekday_friday:
     name: "If high-load period shall be measured for: Friday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for weekday: Saturday.
-  test_setting_effekttariff_highload_weekday_saturday:
+  setting_effekttariff_highload_weekday_saturday:
     name: "If high-load period shall be measured for: Saturday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for weekday: Sunday.
-  test_setting_effekttariff_highload_weekday_sunday:
+  setting_effekttariff_highload_weekday_sunday:
     name: "If high-load period shall be measured for: Sunday"
     icon: mdi:calendar-range
   # Setting for effekttariff: If high-load period shall be measured for specific hours.
-  test_setting_effekttariff_highload_hours_enabled:
+  setting_effekttariff_highload_hours_enabled:
     name: "If high-load period shall be measured for specific hours"
     icon: mdi:priority-high
 
 input_number:
-  #  sma_metering_power_absorbed_max_day_persistent:
-  #    name: "Persistence for metering_power_absorbed_max_day"
-  #    mode: box
-  #    min: 0
-  #    max: 100000
-  #    unit_of_measurement: "W"
-  # We want to keep the maximum power.
   # Setting for effekttariff: From month that the maximum absorbed power by the house shall be measured.
-  test_setting_effekttariff_highload_from_month:
+  setting_effekttariff_highload_from_month:
     name: "From month that high-load period shall be measured (autum/winter-month)"
     mode: box
     min: 1
     max: 12
     icon: mdi:counter
   # Setting for effekttariff: To month that the maximum absorbed power by the house shall be measured.
-  test_setting_effekttariff_highload_to_month:
+  setting_effekttariff_highload_to_month:
     name: "To month that high-load period shall be measured (spring-month)"
     mode: box
     min: 1
     max: 12
     icon: mdi:counter
   # Setting for effekttariff: From hour that the maximum absorbed power by the house shall be measured.
-  test_setting_effekttariff_highload_from_hour:
+  setting_effekttariff_highload_from_hour:
     name: "From hour that the maximum absorbed power-load by the house shall be measured"
     mode: box
     min: 1
     max: 23
     icon: mdi:counter
   # Setting for effekttariff: From hour that the maximum absorbed power by the house shall be measured.
-  test_setting_effekttariff_highload_to_hour:
+  setting_effekttariff_highload_to_hour:
     name: "To hour that the maximum absorbed power-load by the house shall be measured"
     mode: box
     min: 1
     max: 23
     icon: mdi:counter
   # We want to keep the maxium power each hour over the day from metering_power_absorbed_max_day.
-  test_sma_metering_power_absorbed_max_hour_max:
+  sma_metering_power_absorbed_max_hour_max:
     name: "Maximum power each hour over the day from metering_power_absorbed_max_day"
     mode: box
     min: 0
     max: 100000
     unit_of_measurement: "W"
     icon: mdi:format-vertical-align-top
-  # We want to keep the maxium power each hour over the day from metering_power_absorbed_max_day, for effekttariff.
-  #  test_sma_metering_power_absorbed_max_hour_max_effekttariff:
-  #    name: "Maximum power each hour over the day from metering_power_absorbed_max_day, for effekttariff"
-  #    mode: box
-  #    min: 0
-  #    max: 100000
-  #    unit_of_measurement: "W"
   # We want to keep the maximum hourly-load, during high-load hours.
-  test_sma_metering_power_absorbed_max_hour_max_high_load_period:
+  sma_metering_power_absorbed_max_hour_max_high_load_period:
     name: "Maximum power each hour over the day from metering_power_absorbed_max_day, during high-load hours"
     mode: box
     min: 0
@@ -317,7 +303,7 @@ input_number:
     unit_of_measurement: "W"
     icon: mdi:format-vertical-align-top
   # We want to keep the maximum hourly-load, during low-load hours.
-  test_sma_metering_power_absorbed_max_hour_max_low_load_period:
+  sma_metering_power_absorbed_max_hour_max_low_load_period:
     name: "Maximum power each hour over the day from metering_power_absorbed_max_day, during low-load hours"
     mode: box
     min: 0
@@ -325,65 +311,45 @@ input_number:
     unit_of_measurement: "W"
     icon: mdi:format-vertical-align-top
   # We set the load-period based on inputs.
-  test_sma_effekttariff_current_load_period:
+  sma_effekttariff_current_load_period:
     name: "The load-period based on parameters and month, weekday or time."
     mode: box
     min: 0
     max: 2
     icon: mdi:priority-high
-  test_setting_effekttariff_lowload_factor:
+  setting_effekttariff_lowload_factor:
     name: "The recalculation factor for maximum power for low-load and hour."
     mode: box
     min: 0
     max: 1
     step: 0.1
     icon: mdi:calculator
-  test_setting_effekttariff_number_days_for_average:
+  setting_effekttariff_number_days_for_average:
     name: "The number of highest day-loads to average at the end of the month.."
     mode: box
     min: 2
     max: 5
     icon: mdi:timeline-clock
-#  test_sma_metering_power_absorbed_max_top1_persistent:
-#    name: "Maximum power each hour over the day metering_power_absorbed_max_day, top 1"
-#    mode: box
-#    min: 0
-#    max: 100000
-#    unit_of_measurement: "W"
-#  # We want to keep the second maximum power.
-#  test_sma_metering_power_absorbed_max_top2_persistent:
-#    name: "Maximum power each hour over the day metering_power_absorbed_max_day, top 2"
-#    mode: box
-#    min: 0
-#    max: 100000
-#    unit_of_measurement: "W"
-#  # We want to keep the third maximum power.
-#  test_sma_metering_power_absorbed_max_top3_persistent:
-#    name: "Maximum power each hour over the day metering_power_absorbed_max_day, top 3"
-#    mode: box
-#    min: 0
-#    max: 100000
-#    unit_of_measurement: "W"
 
 input_text:
   # We want to keep an array of the maximum 5 daily loads during the month.
-  test_sma_metering_power_absorbed_max_month_array:
+  sma_metering_power_absorbed_max_month_array:
     name: "Array of 5 daily maximum load days during the month"
     icon: mdi:application-array-outline
   # We want to keep an array of the maximum 5 daily high-loads during the month.
-  test_sma_metering_power_absorbed_max_month_high_load_period_array:
+  sma_metering_power_absorbed_max_month_high_load_period_array:
     name: "Array of 5 daily maximum high-load days during the month"
     icon: mdi:application-array-outline
   # We want to keep an array of the maximum 5 daily low-loads during the month.
-  test_sma_metering_power_absorbed_max_month_low_load_period_array:
+  sma_metering_power_absorbed_max_month_low_load_period_array:
     name: "Array of 5 daily maximum low-load days during the month"
     icon: mdi:application-array-outline
   # We want to keep an array of the maximum 5 daily low-loads, with factor, during the month.
-  test_sma_metering_power_absorbed_max_month_low_load_factor_period_array:
+  sma_metering_power_absorbed_max_month_low_load_factor_period_array:
     name: "Array of 5 daily maximum low-load, with factor parameter, days during the month"
     icon: mdi:application-array-outline
   # We want to keep an array of the maximum 5 daily loads for either high-load or low-load with factor parameter, during the month.
-  test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array:
+  sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array:
     name: "Array of 5 daily maximum loads for either high-load or low-load with factor parameter during the month"
     icon: mdi:application-array-outline
 
@@ -856,11 +822,11 @@ template:
           {{ result }}
   - sensor:
       # Convert the current load to readable string.
-      - name: test SMA effekttariff current load period string
-        unique_id: test_sma_effekttariff_current_load_period_string
+      - name: SMA effekttariff current load period string
+        unique_id: sma_effekttariff_current_load_period_string
         icon: mdi:priority-high
         state: >
-          {% set current_load = states('input_number.test_sma_effekttariff_current_load_period') %}
+          {% set current_load = states('input_number.sma_effekttariff_current_load_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_load == 'unknown' or current_load == 'unavailable' or current_load == 'none' or current_load == None) %}
@@ -875,44 +841,6 @@ template:
           {%   endif %}
           {% endif %}
           {{ result }}
-
-  #  - sensor:
-  #      # We want to set the the maximum power absorbed for each hour-
-  #      # In the first hour, we compare towards zero value.
-  #      # If HA is restarted, we try to get the latest from a persistent input_value.
-  #      - name: test SMA metering power absorbed max day
-  #        unique_id: test_sma_metering_power_absorbed_max_day
-  #        device_class: "power"
-  #        unit_of_measurement: "W"
-  #        state_class: measurement
-  #        state: >
-  #          {% set current_hour = now().hour %}
-  #          {% set current_max_hour = states('sensor.sma_metering_power_absorbed_max_hour') %}
-  #          {% set current_max_day = states('sensor.test_sma_metering_power_absorbed_max_day') %}
-  #          {% set persistent_max_day = states('input_number.sma_metering_power_absorbed_max_day_persistent') %}
-  #          {% set result = none %}
-  #          {% set inputs_valid = true %}
-  #          {% if (current_max_hour == 'unknown' or current_max_hour == 'unavailable' or current_max_hour == 'none' or current_max_hour == None) %}
-  #          {%   set inputs_valid = false %}
-  #          {% endif %}
-  #          {% if (current_max_day == 'unknown' or current_max_day == 'unavailable' or current_max_day == 'none' or current_max_day == None) %}
-  #          {%   if (persistent_max_day == 'unknown' or persistent_max_day == 'unavailable' or persistent_max_day == 'none' or persistent_max_day == None) %}
-  #          {%     set inputs_valid = false %}
-  #          {%   else %}
-  #          {%     set current_max_day = persistent_max_day | int %}
-  #          {%   endif %}
-  #          {% endif %}
-  #          {% if (inputs_valid == true) %}
-  #          {%   set current_max_hour = current_max_hour | int %}
-  #          {%   set current_max_day = current_max_day | int %}
-  #          {%   set persistent_max_day = persistent_max_day | int %}
-  #          {%   if (current_max_hour > current_max_day) %}
-  #          {%     set result = current_max_hour %}
-  #          {%   else %}
-  #          {%     set result = current_max_day %}
-  #          {%   endif %}
-  #          {% endif %}
-  #          {{ result }}
 
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour.
@@ -1737,99 +1665,6 @@ template:
           {% endif %}
           {{ value }}
 
-  #  - trigger:
-  #      # Trigger at start of each hour.
-  #      - platform: time_pattern
-  #        hours: "/1"
-  #        minutes: "00"
-  #        seconds: "02"
-  #    sensor:
-  #      # Sets the load-period based on inputs.
-  #      # This means that if the inputs are changed after 00.02 on the hour, it will not be changed until next hour.
-  #      # The following is returned:
-  #      # 0 - No high/low-load period (defaults to this value if errors occur).
-  #      # 1 - Low-load period.
-  #      # 2 - High-load period.
-  #      - name: test_sma_effekttariff_load_period
-  #        state_class: measurement
-  #        state: >
-  #          {% set current_month = now().month | int %}
-  #          {% set current_weekday = now().weekday() | int %}
-  #          {% set current_hour = now().hour | int %}
-  #          {% set setting_month_enabled = states('input_boolean.test_setting_effekttariff_highload_month_enabled') %}
-  #          {% set setting_from_month = states('input_number.test_setting_effekttariff_highload_from_month') %}
-  #          {% set setting_to_month = states('input_number.test_setting_effekttariff_highload_to_month') %}
-  #          {% set setting_weekdays_enabled = states('input_boolean.test_setting_effekttariff_highload_weekdays_enabled') %}
-  #          {% set setting_weekday_monday = states('input_boolean.test_setting_effekttariff_highload_weekday_monday') %}
-  #          {% set setting_weekday_tuesday = states('input_boolean.test_setting_effekttariff_highload_weekday_tuesday') %}
-  #          {% set setting_weekday_wednesday = states('input_boolean.test_setting_effekttariff_highload_weekday_wednesday') %}
-  #          {% set setting_weekday_thursday = states('input_boolean.test_setting_effekttariff_highload_weekday_thursday') %}
-  #          {% set setting_weekday_friday = states('input_boolean.test_setting_effekttariff_highload_weekday_friday') %}
-  #          {% set setting_weekday_saturday = states('input_boolean.test_setting_effekttariff_highload_weekday_saturday') %}
-  #          {% set setting_weekday_sunday = states('input_boolean.test_setting_effekttariff_highload_weekday_sunday') %}
-  #          {% set setting_hours_enabled = states('input_boolean.test_setting_effekttariff_highload_hours_enabled') %}
-  #          {% set setting_from_hour = states('input_number.test_setting_effekttariff_highload_from_hour') %}
-  #          {% set setting_to_hour = states('input_number.test_setting_effekttariff_highload_to_hour') %}
-  #          {% set result = 0 %}
-  #          {% set inputs_valid = true %}
-  #          {% if (setting_month_enabled == 'unknown' or setting_month_enabled == 'unavailable' or setting_month_enabled == 'none' or setting_month_enabled == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% elif (setting_from_month == 'unknown' or setting_from_month == 'unavailable' or setting_from_month == 'none' or setting_from_month == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% elif (setting_to_month == 'unknown' or setting_to_month == 'unavailable' or setting_to_month == 'none' or setting_to_month == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% elif (setting_weekdays_enabled == 'unknown' or setting_weekdays_enabled == 'unavailable' or setting_weekdays_enabled == 'none' or setting_weekdays_enabled == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% elif (setting_hours_enabled == 'unknown' or setting_hours_enabled == 'unavailable' or setting_hours_enabled == 'none' or setting_hours_enabled == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% elif (setting_from_hour == 'unknown' or setting_from_hour == 'unavailable' or setting_from_hour == 'none' or setting_from_hour == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% elif (setting_to_hour == 'unknown' or setting_to_hour == 'unavailable' or setting_to_hour == 'none' or setting_to_hour == None) %}
-  #          {%   set inputs_valid = true %}
-  #          {% endif %}
-  #          {% if (inputs_valid == true) %}
-  #          {%   set setting_from_month = setting_from_month | int %}
-  #          {%   set setting_to_month = setting_to_month | int %}
-  #          {%   set setting_from_hour = setting_from_hour | int %}
-  #          {%   set setting_to_hour = setting_to_hour | int %}
-  #          {%   if (setting_month_enabled == 'on') %}
-  #          {%     set correct_parameters = false %}
-  #          {%     if (current_month >= setting_from_month or current_month <= setting_to_month) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     endif %}
-  #          {%   endif %}
-  #          {%   if (setting_weekdays_enabled == 'on' and correct_parameters == true) %}
-  #          {%     set correct_parameters = false %}
-  #          {%     if (current_weekday == 0 and setting_weekday_monday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     elif (current_weekday == 1 and setting_weekday_tuesday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     elif (current_weekday == 2 and setting_weekday_wednesday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     elif (current_weekday == 3 and setting_weekday_thursday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     elif (current_weekday == 4 and setting_weekday_friday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     elif (current_weekday == 5 and setting_weekday_saturday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     elif (current_weekday == 6 and setting_weekday_sunday == 'on' ) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     endif %}
-  #          {%   endif %}
-  #          {%   if (setting_hours_enabled == 'on' and correct_parameters == true) %}
-  #          {%     set correct_parameters = false %}
-  #          {%     if (current_hour >= setting_from_hour and current_hour <= setting_to_hour) %}
-  #          {%        set correct_parameters = true %}
-  #          {%     endif %}
-  #          {%   endif %}
-  #          {%   if (correct_parameters == true) %}
-  #          {%     set result = 2 %}
-  #          {%   else %}
-  #          {%     set result = 1 %}
-  #          {%   endif %}
-  #          {% endif %}
-  #          {{ result }}
-
   - trigger:
       # Trigger at end of day to get last maximum power.
       # Triggered 23.59.57, after sensors has been set 59.56.
@@ -1839,13 +1674,13 @@ template:
         seconds: "57"
     sensor:
       # Get the last maximum power for the day.
-      - name: test_sma_metering_power_absorbed_max_day
+      - name: sma_metering_power_absorbed_max_day
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set input = states('input_number.test_sma_metering_power_absorbed_max_hour_max') %}
+          {% set input = states('input_number.sma_metering_power_absorbed_max_hour_max') %}
           {% if (input == 'unknown' or input == 'unavailable' or input == 'none' or input == None) %}
           {%   set value = none %}
           {% else %}
@@ -1853,13 +1688,13 @@ template:
           {% endif %}
           {{ value }}
       # Get the last maximum power for the day, for high-load period.
-      - name: test_sma_metering_power_absorbed_max_day_high_load_period
+      - name: sma_metering_power_absorbed_max_day_high_load_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set input = states('input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period') %}
+          {% set input = states('input_number.sma_metering_power_absorbed_max_hour_max_high_load_period') %}
           {% if (input == 'unknown' or input == 'unavailable' or input == 'none' or input == None) %}
           {%   set value = none %}
           {% else %}
@@ -1867,13 +1702,13 @@ template:
           {% endif %}
           {{ value }}
       # Get the last maximum power for the day, for low-load period.
-      - name: test_sma_metering_power_absorbed_max_day_low_load_period
+      - name: sma_metering_power_absorbed_max_day_low_load_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set input = states('input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period') %}
+          {% set input = states('input_number.sma_metering_power_absorbed_max_hour_max_low_load_period') %}
           {% if (input == 'unknown' or input == 'unavailable' or input == 'none' or input == None) %}
           {%   set value = none %}
           {% else %}
@@ -1881,14 +1716,14 @@ template:
           {% endif %}
           {{ value }}
       # Get the last maximum power for the day, for low-load period with factor.
-      - name: test_sma_metering_power_absorbed_max_day_low_load_factor_period
+      - name: sma_metering_power_absorbed_max_day_low_load_factor_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set input = states('input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period') %}
-          {% set factor = states('input_number.test_setting_effekttariff_lowload_factor') %}
+          {% set input = states('input_number.sma_metering_power_absorbed_max_hour_max_low_load_period') %}
+          {% set factor = states('input_number.setting_effekttariff_lowload_factor') %}
           {% set inputs_valid = true %}
           {% set result = none %}
           {% if (input == 'unknown' or input == 'unavailable' or input == 'none' or input == None) %}
@@ -1903,15 +1738,15 @@ template:
           {% endif %}
           {{ result }}
       # Get the last maximum hourly-load for the day, for either high-load or low-load hours with reduction parameter.
-      - name: test_sma_metering_power_absorbed_max_day_high_and_low_load_factor_period
+      - name: sma_metering_power_absorbed_max_day_high_and_low_load_factor_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set input_high = states('input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period') %}
-          {% set input_low = states('input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period') %}
-          {% set factor = states('input_number.test_setting_effekttariff_lowload_factor') %}
+          {% set input_high = states('input_number.sma_metering_power_absorbed_max_hour_max_high_load_period') %}
+          {% set input_low = states('input_number.sma_metering_power_absorbed_max_hour_max_low_load_period') %}
+          {% set factor = states('input_number.setting_effekttariff_lowload_factor') %}
           {% set inputs_valid = true %}
           {% set result = none %}
           {% if (input_high == 'unknown' or input_high == 'unavailable' or input_high == 'none' or input_high == None) %}
@@ -1945,17 +1780,17 @@ template:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ (now() + timedelta(hours=1)).day == 12 }}"
+            value_template: "{{ (now() + timedelta(hours=1)).day == 1 }}"
     sensor:
       # Get the maximum dayly-load for the month.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_array
-      - name: test_sma_metering_power_absorbed_max_month
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_array
+      - name: sma_metering_power_absorbed_max_month
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_array') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_array') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -1967,16 +1802,16 @@ template:
           {% endif %}
           {{ result }}
       # Get the average dayly-load for the month.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_array
-      #  Utilize the input sensor 'test_setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
-      - name: test_sma_metering_power_absorbed_average_month
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_array
+      #  Utilize the input sensor 'setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
+      - name: sma_metering_power_absorbed_average_month
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_array') %}
-          {% set current_days = states('input_number.test_setting_effekttariff_number_days_for_average') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_array') %}
+          {% set current_days = states('input_number.setting_effekttariff_number_days_for_average') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -1996,14 +1831,14 @@ template:
           {% endif %}
           {{ result }}
       # Get the maximum high-load for the month.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_high_load_period_array
-      - name: test_sma_metering_power_absorbed_max_month_high_load_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_high_load_period_array
+      - name: sma_metering_power_absorbed_max_month_high_load_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_high_load_period_array') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2015,16 +1850,16 @@ template:
           {% endif %}
           {{ result }}
       # Get the average high-load for the month.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_high_load_period_array
-      #  Utilize the input sensor 'test_setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
-      - name: test_sma_metering_power_absorbed_average_month_high_load_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_high_load_period_array
+      #  Utilize the input sensor 'setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
+      - name: sma_metering_power_absorbed_average_month_high_load_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array') %}
-          {% set current_days = states('input_number.test_setting_effekttariff_number_days_for_average') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_high_load_period_array') %}
+          {% set current_days = states('input_number.setting_effekttariff_number_days_for_average') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2044,14 +1879,14 @@ template:
           {% endif %}
           {{ result }}
       # Get the maximum low-load for the month.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_low_load_period_array
-      - name: test_sma_metering_power_absorbed_max_month_low_load_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_low_load_period_array
+      - name: sma_metering_power_absorbed_max_month_low_load_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_low_load_period_array') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2063,16 +1898,16 @@ template:
           {% endif %}
           {{ result }}
       # Get the average low-load for the month.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_low_load_period_array
-      #  Utilize the input sensor 'test_setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
-      - name: test_sma_metering_power_absorbed_average_month_low_load_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_low_load_period_array
+      #  Utilize the input sensor 'setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
+      - name: sma_metering_power_absorbed_average_month_low_load_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array') %}
-          {% set current_days = states('input_number.test_setting_effekttariff_number_days_for_average') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_low_load_period_array') %}
+          {% set current_days = states('input_number.setting_effekttariff_number_days_for_average') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2092,14 +1927,14 @@ template:
           {% endif %}
           {{ result }}
       # Get the maximum low-load day for the month with factor parameter.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_low_load_factor_period_array
-      - name: test_sma_metering_power_absorbed_max_month_low_load_factor_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_low_load_factor_period_array
+      - name: sma_metering_power_absorbed_max_month_low_load_factor_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2111,16 +1946,16 @@ template:
           {% endif %}
           {{ result }}
       # Get the average low-load day for the month with factor parameter.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_low_load_factor_period_array
-      #  Utilize the input sensor 'test_setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
-      - name: test_sma_metering_power_absorbed_average_month_low_load_factor_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_low_load_factor_period_array
+      #  Utilize the input sensor 'setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
+      - name: sma_metering_power_absorbed_average_month_low_load_factor_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array') %}
-          {% set current_days = states('input_number.test_setting_effekttariff_number_days_for_average') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array') %}
+          {% set current_days = states('input_number.setting_effekttariff_number_days_for_average') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2140,14 +1975,14 @@ template:
           {% endif %}
           {{ result }}
       # Get the maximum hourly-load for the month, for either high-load or low-load hours with factor parameter.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
-      - name: test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
+      - name: sma_metering_power_absorbed_max_month_high_and_low_load_factor_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2159,16 +1994,16 @@ template:
           {% endif %}
           {{ result }}
       # Get the average hourly-load for the month, for either high-load or low-load hours with factor parameter.
-      #  Retrieve from the sensor with array: test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
-      #  Utilize the input sensor 'test_setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
-      - name: test_sma_metering_power_absorbed_average_month_high_and_low_load_factor_period
+      #  Retrieve from the sensor with array: sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
+      #  Utilize the input sensor 'setting_effekttariff_number_days_for_average' for number of days with maximum load to average.
+      - name: sma_metering_power_absorbed_average_month_high_and_low_load_factor_period
         device_class: "power"
         unit_of_measurement: "W"
         state_class: measurement
         icon: mdi:format-vertical-align-top
         state: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array') %}
-          {% set current_days = states('input_number.test_setting_effekttariff_number_days_for_average') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array') %}
+          {% set current_days = states('input_number.setting_effekttariff_number_days_for_average') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2189,46 +2024,20 @@ template:
           {{ result }}
 
 automation:
-  # Automation to update 'sma_metering_power_absorbed_max_day_persistent' when ''
-  #  - id: automation_sma_metering_power_absorbed_max_day_persistent
-  #    alias: "Automation for persistence of metering_power_absorbed_max_day"
-  #    trigger:
-  #      - platform: state
-  #        entity_id: sensor.test_sma_metering_power_absorbed_max_day
-  #    action:
-  #      service: input_number.set_value
-  #      data_template:
-  #        entity_id: input_number.sma_metering_power_absorbed_max_day_persistent
-  #        value: >
-  #          {% set current_persistent_value = states('input_number.sma_metering_power_absorbed_max_day_persistent') %}
-  #          {% set current_value = states('sensor.test_sma_metering_power_absorbed_max_day') %}
-  #          {% set result = none %}
-  #          {% set inputs_valid = true %}
-  #          {% if (current_value == 'unknown' or current_value == 'unavailable' or current_value == 'none' or current_value == None) %}
-  #          {%   if (current_persistent_value == 'unknown' or current_persistent_value == 'unavailable' or current_persistent_value == 'none' or current_persistent_value == None) %}
-  #          {%      set inputs_valid = false %}
-  #          {%   else %}
-  #          {%     set current_value = current_persistent_value %}
-  #          {%   endif %}
-  #          {% endif %}
-  #          {% if (inputs_valid == true) %}
-  #          {%   set result = current_value | int %}
-  #          {% endif %}
-  #          {{ result }}
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_hour_max' when 'sma_metering_power_absorbed_max_hour' updates.
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_hour_max' when 'sma_metering_power_absorbed_max_hour' updates.
   # To get the maximum value for the day.
-  - id: automation_test_sma_metering_power_absorbed_max_hour_max
-    alias: "Automation for updating input_number.test_sma_metering_power_absorbed_max_hour_max"
+  - id: automation_sma_metering_power_absorbed_max_hour_max
+    alias: "Automation for updating input_number.sma_metering_power_absorbed_max_hour_max"
     trigger:
       - platform: state
         entity_id: sensor.sma_metering_power_absorbed_max_hour
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max
+        entity_id: input_number.sma_metering_power_absorbed_max_hour_max
         value: >
           {% set current_max_hour = states('sensor.sma_metering_power_absorbed_max_hour') %}
-          {% set current_max_day = states('input_number.test_sma_metering_power_absorbed_max_hour_max') %}
+          {% set current_max_day = states('input_number.sma_metering_power_absorbed_max_hour_max') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_max_hour == 'unknown' or current_max_hour == 'unavailable' or current_max_hour == 'none' or current_max_hour == None) %}
@@ -2249,68 +2058,22 @@ automation:
           {% endif %}
           {{ result }}
 
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_hour_max_effekttariff' when 'sma_metering_power_absorbed_max_hour' updates.
-  # To get the maximum value for the day according to the following logic:
-  # - Between monday through friday (weekday 0 through 4).
-  # - Between the hours 'input_number.test_setting_effekttariff_highload_from_hour' and 'input_number.test_setting_effekttariff_highload_to_hour'.
-  #  - id: automation_test_sma_metering_power_absorbed_max_hour_max_effekttariff
-  #    alias: "Automation for updating input_number.test_sma_metering_power_absorbed_max_hour_max_effekttariff"
-  #    trigger:
-  #      - platform: state
-  #        entity_id: sensor.sma_metering_power_absorbed_max_hour
-  #    action:
-  #      service: input_number.set_value
-  #      data_template:
-  #        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max_effekttariff
-  #        value: >
-  #          {% set current_weekday = now().weekday() | int %}
-  #          {% set current_hour = now().hour | int %}
-  #          {% set setting_from_hour = states('input_number.test_setting_effekttariff_highload_from_hour') %}
-  #          {% set setting_to_hour = states('input_number.test_setting_effekttariff_highload_to_hour') %}
-  #          {% set current_max_hour = states('sensor.sma_metering_power_absorbed_max_hour') %}
-  #          {% set current_max_day = states('input_number.test_sma_metering_power_absorbed_max_hour_max_effekttariff') %}
-  #          {% set result = none %}
-  #          {% set inputs_valid = true %}
-  #          {% if (current_max_hour == 'unknown' or current_max_hour == 'unavailable' or current_max_hour == 'none' or current_max_hour == None) %}
-  #          {%   if (current_max_day == 'unknown' or current_max_day == 'unavailable' or current_max_day == 'none' or current_max_day == None) %}
-  #          {%     set inputs_valid = false %}
-  #          {%   else %}
-  #          {%     set current_max_hour = current_max_day | int %}
-  #          {%   endif %}
-  #          {% endif %}
-  #          {% if (inputs_valid == true) %}
-  #          {%   set current_max_hour = current_max_hour | int %}
-  #          {%   set current_max_day = current_max_day | int %}
-  #          {%   set setting_from_hour = setting_from_hour | int %}
-  #          {%   set setting_to_hour = setting_to_hour | int %}
-  #          {%   set result = current_max_day %}
-  #          {%   if (current_weekday >= 0 and current_weekday <= 4) %}
-  #          {%     if (current_hour >= setting_from_hour and current_hour <= setting_to_hour) %}
-  #          {%       if (current_max_hour > current_max_day) %}
-  #          {%         set result = current_max_hour %}
-  #          {%       endif %}
-  #          {%     endif %}
-  #          {%   endif %}
-  #          {{ result }}
-  #
-  # --------------------------------------------------------------------------------------------------------------
-  #
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_hour_max_high_load_period'.
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_hour_max_high_load_period'.
   #   When 'sma_metering_power_absorbed_max_hour' updates.
-  #     And when input sensor 'test_sma_effekttariff_current_load_period' is set to 2.
-  - id: automation_test_sma_metering_power_absorbed_max_hour_max_high_load_period
-    alias: "Automation for updating input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period"
+  #     And when input sensor 'sma_effekttariff_current_load_period' is set to 2.
+  - id: automation_sma_metering_power_absorbed_max_hour_max_high_load_period
+    alias: "Automation for updating input_number.sma_metering_power_absorbed_max_hour_max_high_load_period"
     trigger:
       - platform: state
         entity_id: sensor.sma_metering_power_absorbed_max_hour
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period
+        entity_id: input_number.sma_metering_power_absorbed_max_hour_max_high_load_period
         value: >
-          {% set highlow_load_period = states('input_number.test_sma_effekttariff_current_load_period') %}
+          {% set highlow_load_period = states('input_number.sma_effekttariff_current_load_period') %}
           {% set current_max_hour = states('sensor.sma_metering_power_absorbed_max_hour') %}
-          {% set current_max_day = states('input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period') %}
+          {% set current_max_day = states('input_number.sma_metering_power_absorbed_max_hour_max_high_load_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (highlow_load_period == 'unknown' or highlow_load_period == 'unavailable' or highlow_load_period == 'none' or highlow_load_period == None) %}
@@ -2335,22 +2098,23 @@ automation:
           {%   endif %}
           {% endif %}
           {{ result }}
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_hour_max_low_load_period'.
+
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_hour_max_low_load_period'.
   #   When 'sma_metering_power_absorbed_max_hour' updates.
-  #     And when input sensor 'test_sma_effekttariff_current_load_period' is set to 1.
-  - id: automation_test_sma_metering_power_absorbed_max_hour_max_low_load_period
-    alias: "Automation for updating input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period"
+  #     And when input sensor 'sma_effekttariff_current_load_period' is set to 1.
+  - id: automation_sma_metering_power_absorbed_max_hour_max_low_load_period
+    alias: "Automation for updating input_number.sma_metering_power_absorbed_max_hour_max_low_load_period"
     trigger:
       - platform: state
         entity_id: sensor.sma_metering_power_absorbed_max_hour
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period
+        entity_id: input_number.sma_metering_power_absorbed_max_hour_max_low_load_period
         value: >
-          {% set highlow_load_period = states('input_number.test_sma_effekttariff_current_load_period') %}
+          {% set highlow_load_period = states('input_number.sma_effekttariff_current_load_period') %}
           {% set current_max_hour = states('sensor.sma_metering_power_absorbed_max_hour') %}
-          {% set current_max_day = states('input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period') %}
+          {% set current_max_day = states('input_number.sma_metering_power_absorbed_max_hour_max_low_load_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (highlow_load_period == 'unknown' or highlow_load_period == 'unavailable' or highlow_load_period == 'none' or highlow_load_period == None) %}
@@ -2378,20 +2142,20 @@ automation:
   #
   # --------------------------------------------------------------------------------------------------------------
   #
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_month_array'.
-  #   When 'test_sma_metering_power_absorbed_max_day' updates.
-  - id: automation_test_sma_metering_power_absorbed_max_month_array
-    alias: "Automation for updating input_text.test_sma_metering_power_absorbed_max_month_array"
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_month_array'.
+  #   When 'sma_metering_power_absorbed_max_day' updates.
+  - id: automation_sma_metering_power_absorbed_max_month_array
+    alias: "Automation for updating input_text.sma_metering_power_absorbed_max_month_array"
     trigger:
       - platform: state
-        entity_id: sensor.test_sma_metering_power_absorbed_max_day
+        entity_id: sensor.sma_metering_power_absorbed_max_day
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_array
         value: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_array') %}
-          {% set current_max = states('sensor.test_sma_metering_power_absorbed_max_day') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_array') %}
+          {% set current_max = states('sensor.sma_metering_power_absorbed_max_day') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2408,20 +2172,20 @@ automation:
           {%   set result = result[0:5] %}
           {% endif %}
           {{ result }}
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_month_high_load_period_array'.
-  #   When 'test_sma_metering_power_absorbed_max_day_high_load_period' updates.
-  - id: automation_test_sma_metering_power_absorbed_max_month_high_load_period_array
-    alias: "Automation for updating input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array"
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_month_high_load_period_array'.
+  #   When 'sma_metering_power_absorbed_max_day_high_load_period' updates.
+  - id: automation_sma_metering_power_absorbed_max_month_high_load_period_array
+    alias: "Automation for updating input_text.sma_metering_power_absorbed_max_month_high_load_period_array"
     trigger:
       - platform: state
-        entity_id: sensor.test_sma_metering_power_absorbed_max_day_high_load_period
+        entity_id: sensor.sma_metering_power_absorbed_max_day_high_load_period
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_high_load_period_array
         value: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array') %}
-          {% set current_max = states('sensor.test_sma_metering_power_absorbed_max_day_high_load_period') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_high_load_period_array') %}
+          {% set current_max = states('sensor.sma_metering_power_absorbed_max_day_high_load_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2438,20 +2202,20 @@ automation:
           {%   set result = result[0:5] %}
           {% endif %}
           {{ result }}
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_month_low_load_period_array'.
-  #   When 'test_sma_metering_power_absorbed_max_day_low_load_period' updates.
-  - id: automation_test_sma_metering_power_absorbed_max_month_low_load_period_array
-    alias: "Automation for updating input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array"
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_month_low_load_period_array'.
+  #   When 'sma_metering_power_absorbed_max_day_low_load_period' updates.
+  - id: automation_sma_metering_power_absorbed_max_month_low_load_period_array
+    alias: "Automation for updating input_text.sma_metering_power_absorbed_max_month_low_load_period_array"
     trigger:
       - platform: state
-        entity_id: sensor.test_sma_metering_power_absorbed_max_day_low_load_period
+        entity_id: sensor.sma_metering_power_absorbed_max_day_low_load_period
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_low_load_period_array
         value: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array') %}
-          {% set current_max = states('sensor.test_sma_metering_power_absorbed_max_day_low_load_period') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_low_load_period_array') %}
+          {% set current_max = states('sensor.sma_metering_power_absorbed_max_day_low_load_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2468,20 +2232,20 @@ automation:
           {%   set result = result[0:5] %}
           {% endif %}
           {{ result }}
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_month_low_load_factor_period_array'.
-  #   When 'test_sma_metering_power_absorbed_max_day_low_load_factor_period' updates.
-  - id: automation_test_sma_metering_power_absorbed_max_month_low_load_factor_period_array
-    alias: "Automation for updating input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array"
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_month_low_load_factor_period_array'.
+  #   When 'sma_metering_power_absorbed_max_day_low_load_factor_period' updates.
+  - id: automation_sma_metering_power_absorbed_max_month_low_load_factor_period_array
+    alias: "Automation for updating input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array"
     trigger:
       - platform: state
-        entity_id: sensor.test_sma_metering_power_absorbed_max_day_low_load_factor_period
+        entity_id: sensor.sma_metering_power_absorbed_max_day_low_load_factor_period
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array
         value: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array') %}
-          {% set current_max = states('sensor.test_sma_metering_power_absorbed_max_day_low_load_factor_period') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array') %}
+          {% set current_max = states('sensor.sma_metering_power_absorbed_max_day_low_load_factor_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2498,20 +2262,20 @@ automation:
           {%   set result = result[0:5] %}
           {% endif %}
           {{ result }}
-  # Automation for updating input sensor 'test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array'.
-  #   When 'test_sma_metering_power_absorbed_max_day_high_and_low_load_factor_period' updates.
-  - id: automationtest_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
-    alias: "Automation for updating input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array"
+  # Automation for updating input sensor 'sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array'.
+  #   When 'sma_metering_power_absorbed_max_day_high_and_low_load_factor_period' updates.
+  - id: automationsma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
+    alias: "Automation for updating input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array"
     trigger:
       - platform: state
-        entity_id: sensor.test_sma_metering_power_absorbed_max_day_high_and_low_load_factor_period
+        entity_id: sensor.sma_metering_power_absorbed_max_day_high_and_low_load_factor_period
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
         value: >
-          {% set current_array = states('input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array') %}
-          {% set current_max = states('sensor.test_sma_metering_power_absorbed_max_day_high_and_low_load_factor_period') %}
+          {% set current_array = states('input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array') %}
+          {% set current_max = states('sensor.sma_metering_power_absorbed_max_day_high_and_low_load_factor_period') %}
           {% set result = none %}
           {% set inputs_valid = true %}
           {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
@@ -2531,9 +2295,9 @@ automation:
   #
   # --------------------------------------------------------------------------------------------------------------
   #
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_hour_max' at 00.00.02 each day.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_hour_max
-    alias: "Automation for resetting input_number.test_sma_metering_power_absorbed_max_hour_max"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_hour_max' at 00.00.02 each day.
+  - id: automation_reset_sma_metering_power_absorbed_max_hour_max
+    alias: "Automation for resetting input_number.sma_metering_power_absorbed_max_hour_max"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2542,13 +2306,13 @@ automation:
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max
+        entity_id: input_number.sma_metering_power_absorbed_max_hour_max
         value: >
           {%  set result = 0 %}
           {{ result }}
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_hour_max_high_load_period' at 00.00.02 each day.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_hour_max_high_load_period
-    alias: "Automation for resetting input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_hour_max_high_load_period' at 00.00.02 each day.
+  - id: automation_reset_sma_metering_power_absorbed_max_hour_max_high_load_period
+    alias: "Automation for resetting input_number.sma_metering_power_absorbed_max_hour_max_high_load_period"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2557,13 +2321,13 @@ automation:
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max_high_load_period
+        entity_id: input_number.sma_metering_power_absorbed_max_hour_max_high_load_period
         value: >
           {%  set result = 0 %}
           {{ result }}
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_hour_max_low_load_period' at 00.00.02 each day.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_hour_max_low_load_period
-    alias: "Automation for resetting input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_hour_max_low_load_period' at 00.00.02 each day.
+  - id: automation_reset_sma_metering_power_absorbed_max_hour_max_low_load_period
+    alias: "Automation for resetting input_number.sma_metering_power_absorbed_max_hour_max_low_load_period"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2572,16 +2336,16 @@ automation:
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max_low_load_period
+        entity_id: input_number.sma_metering_power_absorbed_max_hour_max_low_load_period
         value: >
           {%  set result = 0 %}
           {{ result }}
   #
   # --------------------------------------------------------------------------------------------------------------
   #
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_month_array' at 00.00.02 at start of month.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_month_array
-    alias: "Automation for resetting input_text.test_sma_metering_power_absorbed_max_month_array"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_month_array' at 00.00.02 at start of month.
+  - id: automation_reset_sma_metering_power_absorbed_max_month_array
+    alias: "Automation for resetting input_text.sma_metering_power_absorbed_max_month_array"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2591,17 +2355,17 @@ automation:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ now().day == 12 }}"
+            value_template: "{{ now().day == 1 }}"
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_array
         value: >
           {%  set result = "[0, 0, 0, 0, 0]" %}
           {{ result }}
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_month_high_load_period_array' at 00.00.02 at start of month.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_month_high_load_period_array
-    alias: "Automation for resetting input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_month_high_load_period_array' at 00.00.02 at start of month.
+  - id: automation_reset_sma_metering_power_absorbed_max_month_high_load_period_array
+    alias: "Automation for resetting input_text.sma_metering_power_absorbed_max_month_high_load_period_array"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2611,17 +2375,17 @@ automation:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ now().day == 12 }}"
+            value_template: "{{ now().day == 1 }}"
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_high_load_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_high_load_period_array
         value: >
           {%  set result = "[0, 0, 0, 0, 0]" %}
           {{ result }}
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_month_low_load_period_array' at 00.00.02 at start of month.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_month_low_load_period_array
-    alias: "Automation for resetting input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_month_low_load_period_array' at 00.00.02 at start of month.
+  - id: automation_reset_sma_metering_power_absorbed_max_month_low_load_period_array
+    alias: "Automation for resetting input_text.sma_metering_power_absorbed_max_month_low_load_period_array"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2631,17 +2395,17 @@ automation:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ now().day == 12 }}"
+            value_template: "{{ now().day == 1 }}"
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_low_load_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_low_load_period_array
         value: >
           {%  set result = "[0, 0, 0, 0, 0]" %}
           {{ result }}
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_month_low_load_factor_period_array' at 00.00.02 at start of month.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_month_low_load_factor_period_array
-    alias: "Automation for resetting input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_month_low_load_factor_period_array' at 00.00.02 at start of month.
+  - id: automation_reset_sma_metering_power_absorbed_max_month_low_load_factor_period_array
+    alias: "Automation for resetting input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2651,17 +2415,17 @@ automation:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ now().day == 12 }}"
+            value_template: "{{ now().day == 1 }}"
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_low_load_factor_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_low_load_factor_period_array
         value: >
           {%  set result = "[0, 0, 0, 0, 0]" %}
           {{ result }}
-  # Automation resetting input sensor 'test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array' at 00.00.02 at start of month.
-  - id: automation_reset_test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
-    alias: "Automation for resetting input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array"
+  # Automation resetting input sensor 'sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array' at 00.00.02 at start of month.
+  - id: automation_reset_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
+    alias: "Automation for resetting input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array"
     trigger:
       - platform: time_pattern
         hours: "00"
@@ -2671,11 +2435,11 @@ automation:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ now().day == 12 }}"
+            value_template: "{{ now().day == 1 }}"
     action:
       service: input_text.set_value
       data_template:
-        entity_id: input_text.test_sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
+        entity_id: input_text.sma_metering_power_absorbed_max_month_high_and_low_load_factor_period_array
         value: >
           {%  set result = "[0, 0, 0, 0, 0]" %}
           {{ result }}
@@ -2692,8 +2456,8 @@ automation:
   # 0 - No high/low-load period (defaults to this value if errors occur).
   # 1 - Low-load period.
   # 2 - High-load period.
-  - id: automation_set_test_sma_effekttariff_current_load_period
-    alias: "Automation for setting input_number.test_sma_effekttariff_current_load_period"
+  - id: automation_set_sma_effekttariff_current_load_period
+    alias: "Automation for setting input_number.sma_effekttariff_current_load_period"
     trigger:
       - platform: time_pattern
         hours: "/1"
@@ -2702,25 +2466,25 @@ automation:
     action:
       service: input_number.set_value
       data_template:
-        entity_id: input_number.test_sma_effekttariff_current_load_period
+        entity_id: input_number.sma_effekttariff_current_load_period
         value: >
           {% set current_month = now().month | int %}
           {% set current_weekday = now().weekday() | int %}
           {% set current_hour = now().hour | int %}
-          {% set setting_month_enabled = states('input_boolean.test_setting_effekttariff_highload_month_enabled') %}
-          {% set setting_from_month = states('input_number.test_setting_effekttariff_highload_from_month') %}
-          {% set setting_to_month = states('input_number.test_setting_effekttariff_highload_to_month') %}
-          {% set setting_weekdays_enabled = states('input_boolean.test_setting_effekttariff_highload_weekdays_enabled') %}
-          {% set setting_weekday_monday = states('input_boolean.test_setting_effekttariff_highload_weekday_monday') %}
-          {% set setting_weekday_tuesday = states('input_boolean.test_setting_effekttariff_highload_weekday_tuesday') %}
-          {% set setting_weekday_wednesday = states('input_boolean.test_setting_effekttariff_highload_weekday_wednesday') %}
-          {% set setting_weekday_thursday = states('input_boolean.test_setting_effekttariff_highload_weekday_thursday') %}
-          {% set setting_weekday_friday = states('input_boolean.test_setting_effekttariff_highload_weekday_friday') %}
-          {% set setting_weekday_saturday = states('input_boolean.test_setting_effekttariff_highload_weekday_saturday') %}
-          {% set setting_weekday_sunday = states('input_boolean.test_setting_effekttariff_highload_weekday_sunday') %}
-          {% set setting_hours_enabled = states('input_boolean.test_setting_effekttariff_highload_hours_enabled') %}
-          {% set setting_from_hour = states('input_number.test_setting_effekttariff_highload_from_hour') %}
-          {% set setting_to_hour = states('input_number.test_setting_effekttariff_highload_to_hour') %}
+          {% set setting_month_enabled = states('input_boolean.setting_effekttariff_highload_month_enabled') %}
+          {% set setting_from_month = states('input_number.setting_effekttariff_highload_from_month') %}
+          {% set setting_to_month = states('input_number.setting_effekttariff_highload_to_month') %}
+          {% set setting_weekdays_enabled = states('input_boolean.setting_effekttariff_highload_weekdays_enabled') %}
+          {% set setting_weekday_monday = states('input_boolean.setting_effekttariff_highload_weekday_monday') %}
+          {% set setting_weekday_tuesday = states('input_boolean.setting_effekttariff_highload_weekday_tuesday') %}
+          {% set setting_weekday_wednesday = states('input_boolean.setting_effekttariff_highload_weekday_wednesday') %}
+          {% set setting_weekday_thursday = states('input_boolean.setting_effekttariff_highload_weekday_thursday') %}
+          {% set setting_weekday_friday = states('input_boolean.setting_effekttariff_highload_weekday_friday') %}
+          {% set setting_weekday_saturday = states('input_boolean.setting_effekttariff_highload_weekday_saturday') %}
+          {% set setting_weekday_sunday = states('input_boolean.setting_effekttariff_highload_weekday_sunday') %}
+          {% set setting_hours_enabled = states('input_boolean.setting_effekttariff_highload_hours_enabled') %}
+          {% set setting_from_hour = states('input_number.setting_effekttariff_highload_from_hour') %}
+          {% set setting_to_hour = states('input_number.setting_effekttariff_highload_to_hour') %}
           {% set result = 0 %}
           {% set inputs_valid = true %}
           {% if (setting_month_enabled == 'unknown' or setting_month_enabled == 'unavailable' or setting_month_enabled == 'none' or setting_month_enabled == None) %}
@@ -2786,19 +2550,3 @@ automation:
           {%   endif %}
           {% endif %}
           {{ result }}
-
-# Automation resetting input sensor 'test_sma_metering_power_absorbed_max_hour_max_effekttariff' each day.
-#  - id: automation_reset_test_sma_metering_power_absorbed_max_hour_max_effekttariff
-#    alias: "Automation for resetting input_number.test_sma_metering_power_absorbed_max_hour_max_effekttariff"
-#    trigger:
-#      - platform: time_pattern
-#        hours: "00"
-#        minutes: "00"
-#        seconds: "02"
-#    action:
-#      service: input_number.set_value
-#      data_template:
-#        entity_id: input_number.test_sma_metering_power_absorbed_max_hour_max_effekttariff
-#        value: >
-#          {%  set result = 0 %}
-#          {{ result }}

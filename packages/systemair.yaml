@@ -4117,7 +4117,7 @@ rest_command:
       {% endif %}
       {{ result }}
     method: GET
-    content_type: "text/html"
+    content_type: "text/plain"
     headers:
       Connection: close
 
@@ -4222,6 +4222,8 @@ rest:
       {%   endif %}
       {% endif %}
       {{ result }}
+    headers:
+      Connection: close
     sensor:
       # We want to increment the index from 1 to 8.
       - name: Systemair save connect response priority
