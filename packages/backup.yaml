@@ -3,42 +3,42 @@
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
-
+# 20250319 - With new backup function, we removed daily backups (as it was configured through GUI) and changed weekly backups.
 automation:
-  - id: snapshot_daily
-    alias: "Daily snapshot each monday through saturday of the week, kept 7 days"
-    trigger:
-      platform: time
-      at: "01:00:00"
-    condition:
-      - condition: time
-        weekday:
-          - mon
-          - tue
-          - wed
-          - thu
-          - fri
-          - sat
-    action:
-      service: auto_backup.backup_full
-      data:
-        name: ha_snapshot_daily_{{now().strftime('%Y%m%d_%H%M%S')}}
-        keep_days: 7
+  #  - id: snapshot_daily
+  #    alias: "Daily snapshot each monday through saturday of the week, kept 7 days"
+  #    trigger:
+  #      platform: time
+  #      at: "01:00:00"
+  #    condition:
+  #      - condition: time
+  #        weekday:
+  #          - mon
+  #          - tue
+  #          - wed
+  #          - thu
+  #          - fri
+  #          - sat
+  #    action:
+  #      service: auto_backup.backup_full
+  #      data:
+  #        name: ha_snapshot_daily_{{now().strftime('%Y%m%d_%H%M%S')}}
+  #        keep_days: 7
 
-  - id: snapshot_weekly
-    alias: "Weekly snapshot each sunday, kept 57 days"
-    trigger:
-      platform: time
-      at: "01:00:00"
-    condition:
-      - condition: time
-        weekday:
-          - sun
-    action:
-      service: auto_backup.backup_full
-      data:
-        name: ha_snapshot_weekly_{{now().strftime('%Y%m%d_%H%M%S')}}
-        keep_days: 57
+  # - id: snapshot_weekly
+  #   alias: "Weekly snapshot each sunday, kept 57 days"
+  #   trigger:
+  #     platform: time
+  #     at: "01:00:00"
+  #   condition:
+  #     - condition: time
+  #       weekday:
+  #         - sun
+  #   action:
+  #     service: backup.create_automatic
+  #     data:
+  #       name: ha_snapshot_weekly_{{now().strftime('%Y%m%d_%H%M%S')}}
+  #       keep_days: 57
 
   - id: copy_backup
     alias: "Copy backup files to server1 each night"

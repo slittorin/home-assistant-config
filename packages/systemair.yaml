@@ -4087,7 +4087,7 @@ rest_command:
   #   The following data:
   #     register: "REG_TC_SP"
   #     value: 170
-  #   Gives the following write-command: http://192.168.4.118/mwrite?{%222000%22:170} returns "OK", with status code 200.
+  #   Gives the following write-command: "http://192.168.4.118/mwrite?{%222000%22:170}" returns "OK", with status code 200.
   systemair_write_to_register:
     url: >
       {% set device_type = states('input_select.systemair_chosen_unit_type') %}
@@ -4158,6 +4158,7 @@ rest:
   #     Prio 1 through 8: First 1, then 2 and lastly 8, then over again with 1.
   # 20250222: Changed from 3 to 8 since it seems like the modbus on the heat exchanger gets overwhelmed after 1-2 day.
   #           Also reduced the sensors to always retrieve (0), so we have a maximum of approx. 20 registers each rest-call.
+  # 20250804: Changed from 30 seconds to 60 seconds scan-interval, since the SaveConnect locks itself from time to time.
   # Therefore it will take up to 3 rest-calls until all registry-values are collected.
   #
   # Note:
@@ -4168,7 +4169,7 @@ rest:
   #   - We also tried to have only one rest-call with all registries, but that seemed to also swamp the Save Connect device.
   #     - So we ended up with this code that works with template sensor 'systemair_save_connect_response' to gather all the required registers ov er three calls.
   # Example request: http://IPADDRESS/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
-  - scan_interval: 30
+  - scan_interval: 60
     timeout: 10
     resource_template: >
       {% set device_type = states('input_select.systemair_chosen_unit_type') %}
