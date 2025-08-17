@@ -408,7 +408,7 @@ template:
           {%- endfor -%}
   - trigger:
       - platform: time
-        at: "01:20:00"
+        at: "01:21:00"
       - platform: homeassistant
         event: start
     sensor:
@@ -418,6 +418,63 @@ template:
         state_class: measurement
         state: >
           {%- set domains = ['select'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:22:00"
+      - platform: homeassistant
+        event: start
+    sensor:
+      # Get the number of entities within domain: device_tracker
+      - name: home_assistant_entities_domain_device_tracker
+        icon: mdi:devices
+        state_class: measurement
+        state: >
+          {%- set domains = ['device_tracker'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:23:00"
+      - platform: homeassistant
+        event: start
+    sensor:
+      # Get the number of entities within domain: time
+      - name: home_assistant_entities_domain_time
+        icon: mdi:clock-time-eight-outline
+        state_class: measurement
+        state: >
+          {%- set domains = ['time'] -%}
+          {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+          {% if loop.first %}
+          {{loop.length}}
+          {% endif %}
+          {%- endfor -%}
+          {%- endfor -%}
+  - trigger:
+      - platform: time
+        at: "01:24:00"
+      - platform: homeassistant
+        event: start
+    sensor:
+      # Get the number of entities within domain: event
+      - name: home_assistant_entities_domain_event
+        icon: mdi:format-list-bulleted
+        state_class: measurement
+        state: >
+          {%- set domains = ['event'] -%}
           {%- for domain in domains -%}
           {%- for item in states[domain] -%}
           {% if loop.first %}

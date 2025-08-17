@@ -209,6 +209,14 @@
                   "icon": "mdi:chat"
                 },
                 {
+                  "entity": "sensor.home_assistant_entities_domain_device_tracker",
+                  "name": "Entiteter, domän: device_tracker"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_event",
+                  "name": "Entiteter, domän: event"
+                },
+                {
                   "entity": "sensor.home_assistant_entities_domain_fan",
                   "name": "Entiteter, domän: fan",
                   "icon": "mdi:fan"
@@ -264,6 +272,10 @@
                   "entity": "sensor.home_assistant_entities_domain_switch",
                   "name": "Entiteter, domän: switch",
                   "icon": "mdi:toggle-switch"
+                },
+                {
+                  "entity": "sensor.home_assistant_entities_domain_time",
+                  "name": "Entiteter, domän: time"
                 },
                 {
                   "entity": "sensor.home_assistant_entities_domain_weather",

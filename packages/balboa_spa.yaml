@@ -106,8 +106,8 @@ template:
 
   - sensor:
       # Added 20231123: We want to keep track of power for the circulation pump.
-      - name: test balboa spa circulationpump power
-        unique_id: test_balboa_spa_circulationpump_power
+      - name: balboa spa circulationpump power
+        unique_id: balboa_spa_circulationpump_power
         unit_of_measurement: "kW"
         device_class: power
         state: >
@@ -147,8 +147,8 @@ template:
 
   - sensor:
       # Added 20231123: We want to keep track of power for the heater.
-      - name: test balboa spa heater power
-        unique_id: test_balboa_spa_heater_power
+      - name: balboa spa heater power
+        unique_id: balboa_spa_heater_power
         unit_of_measurement: "kW"
         device_class: power
         state: >
@@ -593,15 +593,22 @@ automation:
         entity_id: input_number.balboa_spa_temperature_hour_persistent
         value: "{{ float(states('sensor.balboa_spa_temperature_hour'), 0) }}"
 
-  # Added 20231123 when Balboa spa is not online.
-  - alias: Balboa spa not online
+#binary_sensor:
+#  - platform: ping
+#    name: "Balboa Spa online" # Friendly name for the sensor
+#    host: 192.168.4.20 # Replace with IP or hostname of the device
+#    count: 2 # Number of ping packets to send
+#    scan_interval: 60 # How often to check (in seconds)
+
+# Send email when Balboa spa is not online.
+# Create a ping sensor towards 192.168.4.20 through GUI.
+  - alias: "Send email when Balboa Spa is not online"
     trigger:
-      - entity_id: climate.nbp6013h_climate
-        for: 00:01:00
-        platform: state
-        to: unavailable
+      - platform: state
+        entity_id: binary_sensor.192_168_4_20
+        to: "off"
     action:
-      service: notify.email_notification
-      data:
-        title: "Balboa Spa Offline"
-        message: "Balboa Spa is offline, please turn power off and on after 10 seconds."
+      - service: notify.email_notification
+        data:
+          title: "Balboa Spa is offline"
+          message: "HA cannot ping Balboa Spa on 192.168.4.20. Please turn power off at the Spa, and on after 10 seconds."

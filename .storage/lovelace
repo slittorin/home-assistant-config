@@ -192,6 +192,19 @@
                   }
                 },
                 {
+                  "type": "gauge",
+                  "entity": "sensor.balboa_spa_heater_power",
+                  "name": "Spabad värmare",
+                  "unit": "kW",
+                  "min": 0,
+                  "max": 3,
+                  "needle": true,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
                   "type": "custom:bar-card",
                   "entities": [
                     {
