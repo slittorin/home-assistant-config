@@ -132,50 +132,6 @@
               "title": "Server1 config push till Github"
             },
             {
-              "type": "history-graph",
-              "entities": [
-                {
-                  "entity": "sensor.home_assistant_db_size",
-                  "name": "Full databasstorlek"
-                },
-                {
-                  "entity": "sensor.home_assistant_table_size_states",
-                  "name": "Tabell - states"
-                },
-                {
-                  "entity": "sensor.home_assistant_table_size_events",
-                  "name": "Tabell - events"
-                },
-                {
-                  "entity": "sensor.home_assistant_table_size_statistics",
-                  "name": "Tabell - statistics"
-                },
-                {
-                  "entity": "sensor.home_assistant_table_size_statistics_short_term",
-                  "name": "Tabell - statistics_short_term"
-                }
-              ],
-              "hours_to_show": 720,
-              "refresh_interval": 0,
-              "title": "Storlek på Recorder-databas och tabeller"
-            },
-            {
-              "type": "history-graph",
-              "entities": [
-                {
-                  "entity": "sensor.server1_influxdb_size"
-                }
-              ],
-              "hours_to_show": 4320,
-              "refresh_interval": 0,
-              "title": "Storlek på Influx-databas"
-            },
-            {
-              "type": "markdown",
-              "content": "{% set rows = states('sensor.home_assistant_domains_in_use').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
-              "title": "Domäner som används"
-            },
-            {
               "type": "entities",
               "entities": [
                 {
@@ -287,6 +243,11 @@
                 }
               ],
               "title": "Domäner och entiteter som används"
+            },
+            {
+              "type": "markdown",
+              "content": "{% set rows = states('sensor.home_assistant_domains_in_use').split(\",\") %}\n{%- for row in rows %}\n{{ row }}\n{%- endfor %}\n",
+              "title": "Domäner som används"
             },
             {
               "type": "entities",

@@ -31,7 +31,7 @@ logger:
 # Recorder is enabled by default.
 recorder:
   db_url: !secret recorder_db_url
-  purge_keep_days: 30
+  purge_keep_days: 15
   #auto_purge: true
   commit_interval: 30
   exclude:
@@ -177,6 +177,10 @@ influxdb:
       - sensor.systemair_save_connect_response
       - sensor.systemair_save_connect_response_length
       - sensor.systemair_save_connect_response_priority
+      # We exclude binary_sensor.ehs4plem_online since it fills upp InfluxDB, and the sensor is not really needed / 20250825.
+      - binary_sensor.ehs4plem_online
+      # We exclude sun.sun since it fills upp InfluxDB, and we already have the data as sensors (and not attributes) / 20250825.
+      - sun.sun
 
 notify:
   - name: email_notification
@@ -218,7 +222,7 @@ homeassistant:
     balboa_spa: !include packages/balboa_spa.yaml
     charger: !include packages/charger.yaml
     systemair: !include packages/systemair.yaml
-#    adax: !include packages/adax.yaml
+    adax: !include packages/adax.yaml
 
 shell_command:
   # We run copy_backup as background process, since otherwise HA will terminate the process after 60 seconds.

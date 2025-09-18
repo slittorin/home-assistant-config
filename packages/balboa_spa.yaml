@@ -601,14 +601,29 @@ automation:
 #    scan_interval: 60 # How often to check (in seconds)
 
 # Send email when Balboa spa is not online.
-# Create a ping sensor towards 192.168.4.20 through GUI.
+# Dependency: A ping sensor towards 192.168.4.20 through GUI.
   - alias: "Send email when Balboa Spa is not online"
     trigger:
       - platform: state
         entity_id: binary_sensor.192_168_4_20
         to: "off"
+        for:
+          seconds: 180   # Must stay OFF for 180 seconds before triggering
     action:
       - service: notify.email_notification
         data:
           title: "Balboa Spa is offline"
           message: "HA cannot ping Balboa Spa on 192.168.4.20. Please turn power off at the Spa, and on after 10 seconds."
+          
+# Send email when Balboa spa is online.
+# Dependency: A ping sensor towards 192.168.4.20 through GUI.
+#  - alias: "Send email when Balboa Spa is online"
+#    trigger:
+#      - platform: state
+#        entity_id: binary_sensor.192_168_4_20
+#        to: "on"
+#    action:
+#      - service: notify.email_notification
+#        data:
+#          title: "Balboa Spa is online"
+#          message: "HA can ping Balboa Spa on 192.168.4.20. Balboa Spa is online."

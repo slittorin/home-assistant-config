@@ -1,82 +1,358 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.lovelace_infrastructure",
-    "data": {
-        "config": {
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_infrastructure",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Home",
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
                 {
-                    "title": "Home",
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.home_assistant_restart",
-                                    "name": "Senaste omstart"
-                                },
-                                {
-                                    "entity": "sensor.disk_use_percent",
-                                    "name": "Diskutnyttjande"
-                                },
-                                {
-                                    "entity": "sensor.memory_use_percent",
-                                    "name": "Minnesutnyttjande"
-                                },
-                                {
-                                    "entity": "sensor.swap_use_percent",
-                                    "name": "Swap-utnyttjande"
-                                },
-                                {
-                                    "entity": "sensor.homeassistant_cpu_load_15m",
-                                    "name": "Processorutnyttjande senaste 15 min"
-                                },
-                                {
-                                    "entity": "sensor.processor_temperature",
-                                    "name": "Processortemperatur"
-                                }
-                            ],
-                            "title": "Server - homeassistant"
-                        },
-                        {
-                            "type": "entities",
-                            "entities": [
-                                {
-                                    "entity": "sensor.server1_uptime",
-                                    "name": "Senaste omstart",
-                                    "icon": "mdi:clock"
-                                },
-                                {
-                                    "entity": "sensor.server1_disk_used_pct",
-                                    "name": "Diskutnyttjande",
-                                    "icon": "mdi:harddisk"
-                                },
-                                {
-                                    "entity": "sensor.server1_mem_used_pct",
-                                    "name": "Minnesutnyttjande",
-                                    "icon": "mdi:memory"
-                                },
-                                {
-                                    "entity": "sensor.server1_swap_used_pct",
-                                    "name": "Swap-utnyttjande",
-                                    "icon": "mdi:harddisk"
-                                },
-                                {
-                                    "entity": "sensor.server1_cpu_used_pct",
-                                    "name": "Processorutnyttjande senaste 15 min",
-                                    "icon": "mdi:cpu-64-bit"
-                                },
-                                {
-                                    "entity": "sensor.server1_cpu_temperature",
-                                    "name": "Processortemperatur",
-                                    "icon": "mdi:thermometer"
-                                }
-                            ],
-                            "title": "Server - server1"
-                        }
-                    ]
+                  "entity": "sensor.home_assistant_restart",
+                  "name": "Senaste omstart"
+                },
+                {
+                  "entity": "sensor.disk_use_percent",
+                  "name": "Diskutnyttjande"
+                },
+                {
+                  "entity": "sensor.memory_use_percent",
+                  "name": "Minnesutnyttjande"
+                },
+                {
+                  "entity": "sensor.swap_use_percent",
+                  "name": "Swap-utnyttjande"
+                },
+                {
+                  "entity": "sensor.homeassistant_cpu_load_15m",
+                  "name": "Processorutnyttjande senaste 15 min"
+                },
+                {
+                  "entity": "sensor.processor_temperature",
+                  "name": "Processortemperatur"
                 }
-            ]
+              ],
+              "title": "Server - homeassistant"
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "sensor.server1_uptime",
+                  "name": "Senaste omstart",
+                  "icon": "mdi:clock"
+                },
+                {
+                  "entity": "sensor.server1_disk_used_pct",
+                  "name": "Diskutnyttjande",
+                  "icon": "mdi:harddisk"
+                },
+                {
+                  "entity": "sensor.server1_mem_used_pct",
+                  "name": "Minnesutnyttjande",
+                  "icon": "mdi:memory"
+                },
+                {
+                  "entity": "sensor.server1_swap_used_pct",
+                  "name": "Swap-utnyttjande",
+                  "icon": "mdi:harddisk"
+                },
+                {
+                  "entity": "sensor.server1_cpu_used_pct",
+                  "name": "Processorutnyttjande senaste 15 min",
+                  "icon": "mdi:cpu-64-bit"
+                },
+                {
+                  "entity": "sensor.server1_cpu_temperature",
+                  "name": "Processortemperatur",
+                  "icon": "mdi:thermometer"
+                }
+              ],
+              "title": "Server - server1"
+            },
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.home_assistant_db_size",
+                  "name": "Full databasstorlek"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_states",
+                  "name": "Tabell - states"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_events",
+                  "name": "Tabell - events"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_statistics",
+                  "name": "Tabell - statistics"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_statistics_short_term",
+                  "name": "Tabell - statistics_short_term"
+                }
+              ],
+              "hours_to_show": 720,
+              "refresh_interval": 0,
+              "title": "Storlek på Recorder-databas och tabeller"
+            },
+            {
+              "type": "horizontal-stack",
+              "cards": [
+                {
+                  "type": "history-graph",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_influxdb_size"
+                    }
+                  ],
+                  "hours_to_show": 4320,
+                  "refresh_interval": 0,
+                  "title": "Storlek på Influx-databas"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "iframe",
+                      "url": "http://192.168.2.30:3000/d/51RfVfuHz/influxdb-top-100-entities-the-last-month&refresh=1h&theme=light&kiosk=tv",
+                      "aspect_ratio": "100%"
+                    }
+                  ]
+                }
+              ],
+              "title": "InfluxDB"
+            },
+            {
+              "type": "horizontal-stack",
+              "cards": [
+                {
+                  "type": "history-graph",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_influxdb_size"
+                    }
+                  ],
+                  "hours_to_show": 4320,
+                  "refresh_interval": 0,
+                  "title": "Storlek på Influx-databas"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "iframe",
+                      "url": "http://192.168.2.30:3000/d/51RfVfuHz/influxdb-top-100-entities-the-last-month&refresh=1h&theme=light&kiosk=tv",
+                      "aspect_ratio": "100%"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "type": "custom:horizontal-layout"
+        },
+        {
+          "title": "Home2",
+          "cards": [
+            {
+              "type": "history-graph",
+              "entities": [
+                {
+                  "entity": "sensor.home_assistant_db_size",
+                  "name": "Full databasstorlek"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_states",
+                  "name": "Tabell - states"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_events",
+                  "name": "Tabell - events"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_statistics",
+                  "name": "Tabell - statistics"
+                },
+                {
+                  "entity": "sensor.home_assistant_table_size_statistics_short_term",
+                  "name": "Tabell - statistics_short_term"
+                }
+              ],
+              "hours_to_show": 720,
+              "refresh_interval": 0,
+              "title": "Storlek på Recorder-databas och tabeller"
+            },
+            {
+              "type": "horizontal-stack",
+              "cards": [
+                {
+                  "type": "history-graph",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_influxdb_size"
+                    }
+                  ],
+                  "hours_to_show": 4320,
+                  "refresh_interval": 0,
+                  "title": "Storlek på Influx-databas"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "iframe",
+                      "url": "http://192.168.2.30:3000/d/51RfVfuHz/influxdb-top-100-entities-the-last-month&refresh=1h&theme=light&kiosk=tv",
+                      "aspect_ratio": "100%"
+                    }
+                  ]
+                }
+              ],
+              "title": "InfluxDB"
+            },
+            {
+              "type": "horizontal-stack",
+              "cards": [
+                {
+                  "type": "history-graph",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_influxdb_size"
+                    }
+                  ],
+                  "hours_to_show": 4320,
+                  "refresh_interval": 0,
+                  "title": "Storlek på Influx-databas"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "iframe",
+                      "url": "http://192.168.2.30:3000/d/51RfVfuHz/influxdb-top-100-entities-the-last-month&refresh=1h&theme=light&kiosk=tv",
+                      "aspect_ratio": "100%"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "type": "sections",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Servers",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.home_assistant_restart",
+                      "name": "Senaste omstart"
+                    },
+                    {
+                      "entity": "sensor.disk_use_percent",
+                      "name": "Diskutnyttjande"
+                    },
+                    {
+                      "entity": "sensor.memory_use_percent",
+                      "name": "Minnesutnyttjande"
+                    },
+                    {
+                      "entity": "sensor.swap_use_percent",
+                      "name": "Swap-utnyttjande"
+                    },
+                    {
+                      "entity": "sensor.homeassistant_cpu_load_15m",
+                      "name": "Processorutnyttjande senaste 15 min"
+                    },
+                    {
+                      "entity": "sensor.processor_temperature",
+                      "name": "Processortemperatur"
+                    }
+                  ],
+                  "title": "Server - homeassistant"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_uptime",
+                      "name": "Senaste omstart",
+                      "icon": "mdi:clock"
+                    },
+                    {
+                      "entity": "sensor.server1_disk_used_pct",
+                      "name": "Diskutnyttjande",
+                      "icon": "mdi:harddisk"
+                    },
+                    {
+                      "entity": "sensor.server1_mem_used_pct",
+                      "name": "Minnesutnyttjande",
+                      "icon": "mdi:memory"
+                    },
+                    {
+                      "entity": "sensor.server1_swap_used_pct",
+                      "name": "Swap-utnyttjande",
+                      "icon": "mdi:harddisk"
+                    },
+                    {
+                      "entity": "sensor.server1_cpu_used_pct",
+                      "name": "Processorutnyttjande senaste 15 min",
+                      "icon": "mdi:cpu-64-bit"
+                    },
+                    {
+                      "entity": "sensor.server1_cpu_temperature",
+                      "name": "Processortemperatur",
+                      "icon": "mdi:thermometer"
+                    }
+                  ],
+                  "title": "Server - server1"
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "InfluxDB",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "history-graph",
+                  "entities": [
+                    {
+                      "entity": "sensor.server1_influxdb_size"
+                    }
+                  ],
+                  "hours_to_show": 4320,
+                  "refresh_interval": 0,
+                  "title": "Storlek på Influx-databas"
+                }
+              ],
+              "column_span": 2
+            }
+          ],
+          "max_columns": 2,
+          "header": {
+            "layout": "start",
+            "badges_position": "bottom",
+            "badges_wrap": "wrap"
+          }
         }
+      ]
     }
+  }
 }

@@ -141,7 +141,9 @@ template:
                                    "REG_ALARM_FILTER_WARNING_ALARM": { "register": "15543", "prio": "3", "desc": "Filter replacement alarm." },
                                    "REG_ALARM_TYPE_A": { "register": "15900", "prio": "3", "desc": "Indicates if an alarm Type A is active." },
                                    "REG_ALARM_TYPE_B": { "register": "15901", "prio": "3", "desc": "Indicates if an alarm Type B is active." },
-                                   "REG_ALARM_TYPE_C": { "register": "15902", "prio": "3", "desc": "Indicates if an alarm Type C is active." }
+                                   "REG_ALARM_TYPE_C": { "register": "15902", "prio": "3", "desc": "Indicates if an alarm Type C is active." },
+                                   "REG_TIME_RTC_SECONDS_L": { "register": "6011", "prio": "3", "desc": "Now time in seconds. Lower 16 bits." },
+                                   "REG_TIME_RTC_SECONDS_H": { "register": "6012", "prio": "3", "desc": "Now time in seconds. Higher 16 bits." }
                                   }
                                 } %}
             {{ json_array }}
