@@ -116,7 +116,7 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the set temperature in the ivingroom - behind the sofa.
+        # We get the set temperature in the livingroom - behind the sofa.
       - name: Adax heater livingroom set temperature
         unique_id: adax_heater_livingroom_set_temperature
         state_class: measurement
@@ -125,6 +125,94 @@ template:
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.vardagsrum', 'temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+        # We get the temperature in the bathroom.
+      - name: Adax heater bathroom temperature
+        unique_id: adax_heater_bathroom_temperature
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = state_attr('climate.badrum', 'current_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+        # We get the set temperature in the bathroom.
+      - name: Adax heater bathroom set temperature
+        unique_id: adax_heater_bathroom_set_temperature
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = state_attr('climate.badrum', 'temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+        # We get the temperature in the bedroom.
+      - name: Adax heater bedroom temperature
+        unique_id: adax_heater_bedroom_temperature
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = state_attr('climate.sovrum', 'current_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set temperature = float(temperature, 0) %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = temperature | round(1, default=0) %}
+          {% endif %}
+          {{ result }}
+
+  - sensor:
+        # We get the set temperature in the bedroom.
+      - name: Adax heater bedroom set temperature
+        unique_id: adax_heater_bedroom_set_temperature
+        state_class: measurement
+        device_class: 'temperature'
+        unit_of_measurement: '°C'
+        icon: mdi:thermometer-lines
+        state: >
+          {% set temperature = state_attr('climate.sovrum', 'temperature') %}
           {% set inputs_valid = true %}
           {% set result = none %}
           {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
@@ -150,8 +238,12 @@ template:
           {% set heater1 = states('sensor.kok_energi') %}
           {% set heater2 = states('sensor.toalett_energi') %}
           {% set heater3 = states('sensor.vardagsrum_energi') %}
+          {% set heater4 = states('sensor.badrum_energi') %}
+          {% set heater5 = states('sensor.sovrum_energi') %}
           {% set heater1 = float(heater1, default=0) %}
           {% set heater2 = float(heater2, default=0) %}
           {% set heater3 = float(heater3, default=0) %}
-          {% set result = heater1 + heater2 + heater3 %}
+          {% set heater4 = float(heater4, default=0) %}
+          {% set heater5 = float(heater5, default=0) %}
+          {% set result = heater1 + heater2 + heater3 + heater4 + heater5 %}
           {{ result }}

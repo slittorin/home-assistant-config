@@ -14,21 +14,46 @@
           "badges": [],
           "cards": [],
           "subview": false,
-          "max_columns": 4,
-          "dense_section_placement": true,
           "sections": [
             {
               "type": "grid",
               "cards": [
                 {
-                  "type": "custom:weather-card",
-                  "entity": "weather.smhi_home"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
+                  "show_current": true,
+                  "show_forecast": true,
+                  "type": "weather-forecast",
+                  "entity": "weather.smhi_home",
+                  "forecast_type": "daily",
+                  "forecast_slots": 8,
+                  "grid_options": {
+                    "rows": 4
+                  }
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary",
+                      "name": "Nuvarande timpris"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary_min",
+                      "name": "Minimum"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary_mean",
+                      "name": "Medel"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary_max",
+                      "name": "Max"
+                    }
+                  ],
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 4
+                  }
+                },
                 {
                   "type": "horizontal-stack",
                   "cards": [
@@ -39,7 +64,7 @@
                       },
                       "apex_config": {
                         "chart": {
-                          "height": "145px"
+                          "height": "192px"
                         }
                       },
                       "graph_span": "48h",
@@ -114,12 +139,12 @@
                     }
                   ],
                   "grid_options": {
-                    "rows": "auto",
+                    "rows": 4,
                     "columns": 24
                   }
                 }
               ],
-              "column_span": 2
+              "column_span": 6
             },
             {
               "type": "grid",
@@ -185,19 +210,6 @@
                   "unit": "kW",
                   "min": 0,
                   "max": 12,
-                  "needle": true,
-                  "grid_options": {
-                    "columns": 6,
-                    "rows": "auto"
-                  }
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.balboa_spa_heater_power",
-                  "name": "Spabad värmare",
-                  "unit": "kW",
-                  "min": 0,
-                  "max": 3,
                   "needle": true,
                   "grid_options": {
                     "columns": 6,
@@ -312,10 +324,14 @@
                         }
                       ]
                     }
-                  ]
+                  ],
+                  "grid_options": {
+                    "columns": 9,
+                    "rows": "auto"
+                  }
                 }
               ],
-              "column_span": 4
+              "column_span": 6
             },
             {
               "type": "grid",
@@ -418,7 +434,13 @@
                         },
                         {
                           "type": "remaining_parent_state",
-                          "children": [],
+                          "children": [
+                            "sensor.kok_energi",
+                            "sensor.vardagsrum_energi",
+                            "sensor.toalett_energi",
+                            "sensor.badrum_energi",
+                            "sensor.sovrum_energi"
+                          ],
                           "entity_id": "used_by_house",
                           "name": "Använt av huset",
                           "icon": "mdi:home-lightning-bolt-outline"
@@ -428,7 +450,48 @@
                       "sort_group_by_parent": true
                     },
                     {
-                      "entities": []
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.kok_energi",
+                          "name": "Element Kök",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.vardagsrum_energi",
+                          "name": "Element Vardagsrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.toalett_energi",
+                          "name": "Element Toalett",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.badrum_energi",
+                          "name": "Element Badrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.sovrum_energi",
+                          "name": "Element Sovrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        }
+                      ]
                     }
                   ],
                   "energy_date_selection": false,
@@ -437,144 +500,14 @@
                   "show_names": true,
                   "show_icons": true,
                   "wide": true,
-                  "grid_options": {
-                    "columns": "full"
-                  },
                   "title": "Energimängd idag",
                   "time_period_from": "now/d",
                   "time_period_to": "now",
-                  "throttle": 300000
-                }
-              ],
-              "column_span": 2
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "layout": "horizontal",
-                  "height": 200,
-                  "unit_prefix": "k",
-                  "round": 0,
-                  "convert_units_to": "",
-                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
-                  "gas_co2_intensity": 2351.6459999999997,
-                  "min_box_size": 3,
-                  "min_box_distance": 5,
-                  "show_states": true,
-                  "show_units": true,
-                  "sections": [
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [
-                            "sensor.metering_total_yield",
-                            "solarproduction_used_by_house"
-                          ],
-                          "entity_id": "sensor.total_yield",
-                          "color": "Yellow",
-                          "icon": "mdi:solar-power",
-                          "name": "Solelsproduktion"
-                        }
-                      ]
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.metering_total_yield",
-                          "name": "Utmatning av solelsproduktion",
-                          "color": "Yellow",
-                          "icon": "mdi:transmission-tower-import"
-                        },
-                        {
-                          "type": "remaining_parent_state",
-                          "children": [
-                            "total_used_by_whole_house"
-                          ],
-                          "entity_id": "solarproduction_used_by_house",
-                          "name": "Solelsproduktion intag till huset",
-                          "icon": "mdi:solar-power",
-                          "color": "Yellow"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [
-                            "total_used_by_whole_house"
-                          ],
-                          "entity_id": "sensor.metering_total_absorbed",
-                          "color": "Lightgreen",
-                          "icon": "mdi:transmission-tower-export",
-                          "name": "Intag till huset"
-                        }
-                      ]
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "remaining_parent_state",
-                          "children": [
-                            "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
-                            "sensor.ehs4plem_lifetime_energy",
-                            "used_by_house"
-                          ],
-                          "entity_id": "total_used_by_whole_house",
-                          "color": "lightskyblue",
-                          "icon": "mdi:home-import-outline",
-                          "name": "Använt av hela huset"
-                        }
-                      ],
-                      "sort_by": "state",
-                      "sort_group_by_parent": true
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
-                          "name": "Spabad",
-                          "icon": "mdi:spa",
-                          "color": "lightcoral"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.ehs4plem_lifetime_energy",
-                          "color": "lightcoral",
-                          "icon": "mdi:car-electric",
-                          "name": "Elbilsladdning"
-                        },
-                        {
-                          "type": "remaining_parent_state",
-                          "children": [],
-                          "entity_id": "used_by_house",
-                          "name": "Använt av huset",
-                          "icon": "mdi:home-lightning-bolt-outline"
-                        }
-                      ],
-                      "sort_by": "state",
-                      "sort_group_by_parent": true
-                    },
-                    {
-                      "entities": []
-                    }
-                  ],
-                  "energy_date_selection": false,
-                  "type": "custom:sankey-chart",
-                  "min_state": 0,
-                  "show_names": true,
-                  "show_icons": true,
-                  "wide": true,
+                  "throttle": 300000,
                   "grid_options": {
-                    "columns": "full"
-                  },
-                  "title": "Energimängd denna månad",
-                  "throttle": 900000,
-                  "time_period_from": "now/M",
-                  "time_period_to": "now"
+                    "columns": 24,
+                    "rows": "auto"
+                  }
                 },
                 {
                   "layout": "horizontal",
@@ -674,7 +607,13 @@
                         },
                         {
                           "type": "remaining_parent_state",
-                          "children": [],
+                          "children": [
+                            "sensor.kok_energi",
+                            "sensor.vardagsrum_energi",
+                            "sensor.toalett_energi",
+                            "sensor.badrum_energi",
+                            "sensor.sovrum_energi"
+                          ],
                           "entity_id": "used_by_house",
                           "name": "Använt av huset",
                           "icon": "mdi:home-lightning-bolt-outline"
@@ -684,7 +623,48 @@
                       "sort_group_by_parent": true
                     },
                     {
-                      "entities": []
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.kok_energi",
+                          "name": "Element Kök",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.vardagsrum_energi",
+                          "name": "Element Vardagsrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.toalett_energi",
+                          "name": "Element Toalett",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.badrum_energi",
+                          "name": "Element Badrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.sovrum_energi",
+                          "name": "Element Sovrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        }
+                      ]
                     }
                   ],
                   "energy_date_selection": false,
@@ -693,45 +673,199 @@
                   "show_names": true,
                   "show_icons": true,
                   "wide": true,
-                  "grid_options": {
-                    "columns": "full"
-                  },
-                  "title": "Energimängd detta år",
+                  "title": "Energimängd denna månad",
                   "throttle": 900000,
-                  "time_period_from": "now/y",
-                  "time_period_to": "now"
+                  "time_period_from": "now/M",
+                  "time_period_to": "now",
+                  "grid_options": {
+                    "columns": 24,
+                    "rows": "auto"
+                  }
                 }
               ],
-              "column_span": 2
+              "column_span": 6
             },
             {
               "type": "grid",
               "cards": [
                 {
-                  "type": "entities",
-                  "entities": [
+                  "layout": "horizontal",
+                  "height": 200,
+                  "unit_prefix": "k",
+                  "round": 0,
+                  "convert_units_to": "",
+                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
+                  "gas_co2_intensity": 2351.6459999999997,
+                  "min_box_size": 3,
+                  "min_box_distance": 5,
+                  "show_states": true,
+                  "show_units": true,
+                  "sections": [
                     {
-                      "entity": "sensor.electrical_consumption_rate_summary",
-                      "name": "Nuvarande timpris"
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.metering_total_yield",
+                            "solarproduction_used_by_house"
+                          ],
+                          "entity_id": "sensor.total_yield",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power",
+                          "name": "Solelsproduktion"
+                        }
+                      ]
                     },
                     {
-                      "entity": "sensor.electrical_consumption_rate_summary_min",
-                      "name": "Minimum"
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.metering_total_yield",
+                          "name": "Utmatning av solelsproduktion",
+                          "color": "Yellow",
+                          "icon": "mdi:transmission-tower-import"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "solarproduction_used_by_house",
+                          "name": "Solelsproduktion intag till huset",
+                          "icon": "mdi:solar-power",
+                          "color": "Yellow"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "sensor.metering_total_absorbed",
+                          "color": "Lightgreen",
+                          "icon": "mdi:transmission-tower-export",
+                          "name": "Intag till huset"
+                        }
+                      ]
                     },
                     {
-                      "entity": "sensor.electrical_consumption_rate_summary_mean",
-                      "name": "Medel"
+                      "entities": [
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                            "sensor.ehs4plem_lifetime_energy",
+                            "used_by_house"
+                          ],
+                          "entity_id": "total_used_by_whole_house",
+                          "color": "lightskyblue",
+                          "icon": "mdi:home-import-outline",
+                          "name": "Använt av hela huset"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
                     },
                     {
-                      "entity": "sensor.electrical_consumption_rate_summary_max",
-                      "name": "Max"
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                          "name": "Spabad",
+                          "icon": "mdi:spa",
+                          "color": "lightcoral"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.ehs4plem_lifetime_energy",
+                          "color": "lightcoral",
+                          "icon": "mdi:car-electric",
+                          "name": "Elbilsladdning"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.kok_energi",
+                            "sensor.vardagsrum_energi",
+                            "sensor.toalett_energi",
+                            "sensor.badrum_energi",
+                            "sensor.sovrum_energi"
+                          ],
+                          "entity_id": "used_by_house",
+                          "name": "Använt av huset",
+                          "icon": "mdi:home-lightning-bolt-outline"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.kok_energi",
+                          "name": "Element Kök",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.vardagsrum_energi",
+                          "name": "Element Vardagsrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.toalett_energi",
+                          "name": "Element Toalett",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.badrum_energi",
+                          "name": "Element Badrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.sovrum_energi",
+                          "name": "Element Sovrum",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        }
+                      ]
                     }
                   ],
-                  "title": "Elpris idag"
+                  "energy_date_selection": false,
+                  "type": "custom:sankey-chart",
+                  "min_state": 0,
+                  "show_names": true,
+                  "show_icons": true,
+                  "wide": true,
+                  "title": "Energimängd detta år",
+                  "throttle": 900000,
+                  "time_period_from": "now/y",
+                  "time_period_to": "now",
+                  "grid_options": {
+                    "columns": 24,
+                    "rows": "auto"
+                  }
                 }
-              ]
+              ],
+              "column_span": 6
             }
-          ]
+          ],
+          "max_columns": 6
         },
         {
           "theme": "Backend-selected",
@@ -757,21 +891,12 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "heading",
-                  "heading": "Ny sektion"
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.electrical_consumption_rate_summary",
-                  "name": "Elkonsumptionsavgift",
-                  "unit": "öre/kWh",
-                  "needle": true,
-                  "severity": {
-                    "green": 50,
-                    "yellow": 100,
-                    "red": 500
-                  },
-                  "max": 800
+                  "type": "custom:weather-card",
+                  "entity": "weather.smhi_home",
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 2
+                  }
                 }
               ]
             },
@@ -779,89 +904,39 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "horizontal-stack",
-                  "cards": [
+                  "type": "heading",
+                  "heading": "Ny sektion"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
                     {
-                      "type": "custom:apexcharts-card",
-                      "experimental": {
-                        "color_threshold": true
-                      },
-                      "apex_config": {
-                        "chart": {
-                          "height": "145px"
-                        }
-                      },
-                      "graph_span": "48h",
-                      "header": {
-                        "title": "Energipris idag och imorgon [öre/kWh]",
-                        "show": true
-                      },
-                      "span": {
-                        "start": "day"
-                      },
-                      "now": {
-                        "show": true,
-                        "label": "Nu"
-                      },
-                      "series": [
-                        {
-                          "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
-                          "type": "column",
-                          "data_generator": "return [\n...entity.attributes.raw_today.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), (entity.attributes.raw_today[index][\"value\"]*100)];\n}),\n...entity.attributes.raw_tomorrow.map((start, index) => {\n  return [new Date(start[\"start\"]).getTime(), (entity.attributes.raw_tomorrow[index][\"value\"]*100)];\n})\n];\n",
-                          "color_threshold": [
-                            {
-                              "value": 0,
-                              "color": "#2085e3"
-                            },
-                            {
-                              "value": 10,
-                              "color": "#04822e"
-                            },
-                            {
-                              "value": 15,
-                              "color": "#12A141"
-                            },
-                            {
-                              "value": 30,
-                              "color": "#79B92C"
-                            },
-                            {
-                              "value": 35,
-                              "color": "#C4D81D"
-                            },
-                            {
-                              "value": 40,
-                              "color": "#F3DC0C"
-                            },
-                            {
-                              "value": 45,
-                              "color": "#F4C616"
-                            },
-                            {
-                              "value": 50,
-                              "color": "#EFA51E"
-                            },
-                            {
-                              "value": 55,
-                              "color": "#E76821"
-                            },
-                            {
-                              "value": 100,
-                              "color": "#E33F20"
-                            },
-                            {
-                              "value": 200,
-                              "color": "#DC182F"
-                            }
-                          ]
-                        }
-                      ]
+                      "entity": "sensor.electrical_consumption_rate_summary",
+                      "name": "Nuvarande timpris"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary_min",
+                      "name": "Minimum"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary_mean",
+                      "name": "Medel"
+                    },
+                    {
+                      "entity": "sensor.electrical_consumption_rate_summary_max",
+                      "name": "Max"
                     }
                   ],
-                  "grid_options": {
-                    "rows": "auto",
-                    "columns": 24
-                  }
+                  "title": "Elpris idag"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Ny sektion"
                 },
                 {
                   "type": "horizontal-stack",
@@ -948,16 +1023,364 @@
                     }
                   ],
                   "grid_options": {
-                    "rows": "auto",
-                    "columns": 24
+                    "rows": 2,
+                    "columns": 21
                   }
                 }
-              ],
-              "column_span": 2
+              ]
             },
             {
               "type": "grid",
               "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Ny sektion"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.metering_power_absorbed",
+                  "name": "Effekt intag till huset",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 22000,
+                  "needle": true,
+                  "severity": {
+                    "green": 5000,
+                    "yellow": 11000,
+                    "red": 17000
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.grid_power",
+                  "name": "Effekt solelsproduktion",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 7000,
+                  "needle": true,
+                  "severity": {
+                    "green": 0,
+                    "yellow": 7000,
+                    "red": 7000
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.metering_power_supplied",
+                  "name": "Effekt utmatning av solelsproduktion till nät",
+                  "unit": "W",
+                  "min": 0,
+                  "max": 7000,
+                  "needle": true,
+                  "severity": {
+                    "green": 0,
+                    "yellow": 7000,
+                    "red": 7000
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.ehs4plem_power",
+                  "name": "Elbilsladdning",
+                  "unit": "kW",
+                  "min": 0,
+                  "max": 12,
+                  "needle": true,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.balboa_spa_heater_power",
+                  "name": "Spabad värmare",
+                  "unit": "kW",
+                  "min": 0,
+                  "max": 3,
+                  "needle": true,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Ny sektion"
+                },
+                {
+                  "type": "custom:bar-card",
+                  "entities": [
+                    {
+                      "entity": "sensor.metering_current_l1",
+                      "name": "Strömstyrka L1",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "height": 38,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    },
+                    {
+                      "entity": "sensor.metering_current_l2",
+                      "name": "Strömstyrka L2",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "height": 38,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    },
+                    {
+                      "entity": "sensor.metering_current_l3",
+                      "name": "Strömstyrka L3",
+                      "positions": {
+                        "icon": "off",
+                        "name": "outside",
+                        "indicator": "off"
+                      },
+                      "type": "custom:bar-card",
+                      "min": 0,
+                      "max": 30,
+                      "height": 38,
+                      "severity": [
+                        {
+                          "color": "Red",
+                          "from": 25.000001,
+                          "to": 30
+                        },
+                        {
+                          "color": "Orange",
+                          "from": 15.000001,
+                          "to": 25
+                        },
+                        {
+                          "color": "Green",
+                          "from": 5.000001,
+                          "to": 15
+                        },
+                        {
+                          "color": "Lightblue",
+                          "from": 0,
+                          "to": 5
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Ny sektion"
+                },
+                {
+                  "layout": "horizontal",
+                  "height": 200,
+                  "unit_prefix": "k",
+                  "round": 1,
+                  "convert_units_to": "",
+                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
+                  "gas_co2_intensity": 2351.6459999999997,
+                  "min_box_size": 3,
+                  "min_box_distance": 5,
+                  "show_states": true,
+                  "show_units": true,
+                  "sections": [
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.metering_total_yield",
+                            "solarproduction_used_by_house"
+                          ],
+                          "entity_id": "sensor.total_yield",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power",
+                          "name": "Solelsproduktion"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.metering_total_yield",
+                          "name": "Utmatning av solelsproduktion",
+                          "color": "Yellow",
+                          "icon": "mdi:transmission-tower-import"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "solarproduction_used_by_house",
+                          "name": "Solelsproduktion intag till huset",
+                          "icon": "mdi:solar-power",
+                          "color": "Yellow"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "sensor.metering_total_absorbed",
+                          "color": "Lightgreen",
+                          "icon": "mdi:transmission-tower-export",
+                          "name": "Intag till huset"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                            "sensor.ehs4plem_lifetime_energy",
+                            "used_by_house"
+                          ],
+                          "entity_id": "total_used_by_whole_house",
+                          "color": "lightskyblue",
+                          "icon": "mdi:home-import-outline",
+                          "name": "Använt av hela huset"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                          "name": "Spabad",
+                          "icon": "mdi:spa",
+                          "color": "lightcoral"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.ehs4plem_lifetime_energy",
+                          "color": "lightcoral",
+                          "icon": "mdi:car-electric",
+                          "name": "Elbilsladdning"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.adax_heaters_total_increasing_energy"
+                          ],
+                          "entity_id": "used_by_house",
+                          "name": "Använt av huset",
+                          "icon": "mdi:home-lightning-bolt-outline"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.adax_heaters_total_increasing_energy",
+                          "name": "Adax värmare",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        }
+                      ]
+                    }
+                  ],
+                  "energy_date_selection": false,
+                  "type": "custom:sankey-chart",
+                  "min_state": 0,
+                  "show_names": true,
+                  "show_icons": true,
+                  "wide": true,
+                  "grid_options": {
+                    "columns": 18,
+                    "rows": "auto"
+                  },
+                  "title": "Energimängd idag",
+                  "time_period_from": "now/d",
+                  "time_period_to": "now",
+                  "throttle": 300000
+                },
                 {
                   "layout": "horizontal",
                   "height": 200,
@@ -1056,7 +1479,9 @@
                         },
                         {
                           "type": "remaining_parent_state",
-                          "children": [],
+                          "children": [
+                            "sensor.adax_heaters_total_increasing_energy"
+                          ],
                           "entity_id": "used_by_house",
                           "name": "Använt av huset",
                           "icon": "mdi:home-lightning-bolt-outline"
@@ -1066,7 +1491,16 @@
                       "sort_group_by_parent": true
                     },
                     {
-                      "entities": []
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.adax_heaters_total_increasing_energy",
+                          "name": "Adax värmare",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        }
+                      ]
                     }
                   ],
                   "energy_date_selection": false,
@@ -1076,11 +1510,149 @@
                   "show_icons": true,
                   "wide": true,
                   "grid_options": {
-                    "columns": "full"
+                    "columns": 18,
+                    "rows": "auto"
                   },
                   "title": "Energimängd denna månad",
                   "throttle": 900000,
                   "time_period_from": "now/M",
+                  "time_period_to": "now"
+                },
+                {
+                  "layout": "horizontal",
+                  "height": 200,
+                  "unit_prefix": "k",
+                  "round": 0,
+                  "convert_units_to": "",
+                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
+                  "gas_co2_intensity": 2351.6459999999997,
+                  "min_box_size": 3,
+                  "min_box_distance": 5,
+                  "show_states": true,
+                  "show_units": true,
+                  "sections": [
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [
+                            "sensor.metering_total_yield",
+                            "solarproduction_used_by_house"
+                          ],
+                          "entity_id": "sensor.total_yield",
+                          "color": "Yellow",
+                          "icon": "mdi:solar-power",
+                          "name": "Solelsproduktion"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.metering_total_yield",
+                          "name": "Utmatning av solelsproduktion",
+                          "color": "Yellow",
+                          "icon": "mdi:transmission-tower-import"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "solarproduction_used_by_house",
+                          "name": "Solelsproduktion intag till huset",
+                          "icon": "mdi:solar-power",
+                          "color": "Yellow"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [
+                            "total_used_by_whole_house"
+                          ],
+                          "entity_id": "sensor.metering_total_absorbed",
+                          "color": "Lightgreen",
+                          "icon": "mdi:transmission-tower-export",
+                          "name": "Intag till huset"
+                        }
+                      ]
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                            "sensor.ehs4plem_lifetime_energy",
+                            "used_by_house"
+                          ],
+                          "entity_id": "total_used_by_whole_house",
+                          "color": "lightskyblue",
+                          "icon": "mdi:home-import-outline",
+                          "name": "Använt av hela huset"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                          "name": "Spabad",
+                          "icon": "mdi:spa",
+                          "color": "lightcoral"
+                        },
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.ehs4plem_lifetime_energy",
+                          "color": "lightcoral",
+                          "icon": "mdi:car-electric",
+                          "name": "Elbilsladdning"
+                        },
+                        {
+                          "type": "remaining_parent_state",
+                          "children": [
+                            "sensor.adax_heaters_total_increasing_energy"
+                          ],
+                          "entity_id": "used_by_house",
+                          "name": "Använt av huset",
+                          "icon": "mdi:home-lightning-bolt-outline"
+                        }
+                      ],
+                      "sort_by": "state",
+                      "sort_group_by_parent": true
+                    },
+                    {
+                      "entities": [
+                        {
+                          "type": "entity",
+                          "children": [],
+                          "entity_id": "sensor.adax_heaters_total_increasing_energy",
+                          "name": "Adax värmare",
+                          "icon": "mdi:radiator",
+                          "color": "lightskyblue"
+                        }
+                      ]
+                    }
+                  ],
+                  "energy_date_selection": false,
+                  "type": "custom:sankey-chart",
+                  "min_state": 0,
+                  "show_names": true,
+                  "show_icons": true,
+                  "wide": true,
+                  "grid_options": {
+                    "columns": 18,
+                    "rows": "auto"
+                  },
+                  "title": "Energimängd detta år",
+                  "throttle": 900000,
+                  "time_period_from": "now/y",
                   "time_period_to": "now"
                 }
               ],
