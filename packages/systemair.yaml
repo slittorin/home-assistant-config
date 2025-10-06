@@ -48,6 +48,7 @@ template:
       #   The priorities are
       #     Prio 0: Added every time.
       #     Prio 1 through 3: First 1, then 2 and lastly 3, then over again with 1.
+      # Note that at least one item must exist for each prio.
       #
       # Note:
       # - That all priority levels must exist. Thus for instance prio 2 must exists in at least one of the rows.
@@ -4161,7 +4162,9 @@ rest:
   # 20250222: Changed from 3 to 8 since it seems like the modbus on the heat exchanger gets overwhelmed after 1-2 day.
   #           Also reduced the sensors to always retrieve (0), so we have a maximum of approx. 20 registers each rest-call.
   # 20250804: Changed from 30 seconds to 60 seconds scan-interval, since the SaveConnect locks itself from time to time.
-  # Therefore it will take up to 3 rest-calls until all registry-values are collected.
+  #           Therefore it will take up to 3 rest-calls until all registry-values are collected.
+  # 20251006: Changed from 60 to 120 second scan interval. Since we still get locks.
+  #           Therefore it will take up to 3 rest-calls until all registry-values are collected.
   #
   # Note:
   # - That all priority levels (1 through 3, not 0) must exist in 'sensor.systemair_configuration'.
@@ -4171,8 +4174,8 @@ rest:
   #   - We also tried to have only one rest-call with all registries, but that seemed to also swamp the Save Connect device.
   #     - So we ended up with this code that works with template sensor 'systemair_save_connect_response' to gather all the required registers ov er three calls.
   # Example request: http://IPADDRESS/mread?{%221130%22:1,%221160%22:1,%221352%22:1,%222000%22:1,%222132%22:1,%222504%22:1,%229002%22:1,%2212100%22:1,%2212101%22:1,%2212102%22:1,%2212103%22:1,%2212104%22:1,%2212107%22:1,%2212135%22:1,%2212400%22:1,%2212401%22:1,%2212543%22:1,%2213021%22:1,%2214000%22:1,%2214001%22:1}
-  - scan_interval: 60
-    timeout: 10
+  - scan_interval: 120
+    timeout: 20
     resource_template: >
       {% set device_type = states('input_select.systemair_chosen_unit_type') %}
       {% set device_ip = states('input_text.systemair_save_connect_device_ip') %}
