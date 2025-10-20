@@ -247,3 +247,82 @@ template:
           {% set heater5 = float(heater5, default=0) %}
           {% set result = heater1 + heater2 + heater3 + heater4 + heater5 %}
           {{ result }}
+
+  - trigger:
+      # Trigger at the end of every hour, since we want the sensor value to be set for the hour.
+      # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
+      - platform: time_pattern
+        hours: "/1"
+        minutes: "59"
+        seconds: "56"
+    sensor:
+      # We save kok_energi
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: kok_energi_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.kok_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save toalett_energi
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: toalett_energi_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.toalett_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save vardagsrum_energi
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: vardagsrum_energi_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.vardagsrum_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save badrum_energi
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: badrum_energi_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.badrum_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save sovrum_energi
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: sovrum_energi_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.sovrum_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}

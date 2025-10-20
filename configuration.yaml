@@ -181,6 +181,23 @@ influxdb:
       - binary_sensor.ehs4plem_online
       # We exclude sun.sun since it fills upp InfluxDB, and we already have the data as sensors (and not attributes) / 20250825.
       - sun.sun
+      # We exclude Adax-sensors, since we create hourly-sensors instead.
+      - sensor.kok_energi
+      - sensor.toalett_energi
+      - sensor.vardagsrum_energi
+      - sensor.badrum_energi
+      - sensor.sovrum_energi
+      # We exclude Shelly-sensors, since we create hourly-sensors instead.
+      - sensor.shelly_heatpump_livingroom_energy
+      - sensor.shelly_heatpump_livingroom_power_min
+      - sensor.shelly_heatpump_livingroom_power_max
+      - sensor.shelly_heatpump_livingroom_power_mean
+      - sensor.shelly_heatpump_upstairs_energy
+      - sensor.shelly_heatpump_upstairs_power
+      - sensor.shelly_heatpump_upstairs_power_min
+      - sensor.shelly_heatpump_upstairs_power_max
+      - sensor.shelly_heatpump_upstairs_power_mean
+      - sensor.shelly_heatpumps_total_increasing_energy
 
 notify:
   - name: email_notification
@@ -223,6 +240,7 @@ homeassistant:
     charger: !include packages/charger.yaml
     systemair: !include packages/systemair.yaml
     adax: !include packages/adax.yaml
+    shelly: !include packages/shelly.yaml
 
 shell_command:
   # We run copy_backup as background process, since otherwise HA will terminate the process after 60 seconds.

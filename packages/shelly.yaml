@@ -1,0 +1,220 @@
+# This file includes all the entities for the Shelly-devices.
+#
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+#
+
+sensor:
+  # We want to get the min statistics for the power (W) for heatpump in the livingroom.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly heatpump livingroom power min
+    unique_id: shelly_heatpump_livingroom_power_min
+    entity_id: sensor.shelly_heatpump_livingroom_power
+    state_characteristic: value_min
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the max statistics for the power (W) for heatpump in the livingroom.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly heatpump livingroom power max
+    unique_id: shelly_heatpump_livingroom_power_max
+    entity_id: sensor.shelly_heatpump_livingroom_power
+    state_characteristic: value_max
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for the power (W) for heatpump in the livingroom.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly heatpump livingroom power mean
+    unique_id: shelly_heatpump_livingroom_power_mean
+    entity_id: sensor.shelly_heatpump_livingroom_power
+    state_characteristic: mean
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the min statistics for the power (W) for heatpump upstairs.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly heatpump upstairs power min
+    unique_id: shelly_heatpump_upstairs_power_min
+    entity_id: sensor.shelly_heatpump_upstairs_power
+    state_characteristic: value_min
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the max statistics for the power (W) for heatpump upstairs.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly heatpump upstairs power max
+    unique_id: shelly_heatpump_upstairs_power_max
+    entity_id: sensor.shelly_heatpump_upstairs_power
+    state_characteristic: value_max
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for the power (W) for heatpump upstairs.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly heatpump upstairs power mean
+    unique_id: shelly_heatpump_upstairs_power_mean
+    entity_id: sensor.shelly_heatpump_upstairs_power
+    state_characteristic: mean
+    sampling_size: 120
+    max_age:
+      hours: 1
+
+template:
+  - sensor:
+        # We get the total consumed for all Shelly-devices conected to heatpumps.
+        # Needs to be added one, by one.
+      - name: Shelly heatpumps total increasing energy
+        unique_id: shelly_heatpumps_total_increasing_energy
+        state_class: total_increasing
+        device_class: 'energy'
+        unit_of_measurement: 'kWh'
+        icon: mdi:radiator
+        state: >
+          {% set heatpump1 = states('sensor.shelly_heatpump_livingroom_energy') %}
+          {% set heatpump2 = states('sensor.shelly_heatpump_upstairs_energy') %}
+          {% set heatpump1 = float(heatpump1, default=0) %}
+          {% set heatpump2 = float(heatpump2, default=0) %}
+          {% set result = heatpump1 + heatpump2 %}
+          {{ result }}
+          
+  - trigger:
+      # Trigger at the end of every hour, since we want the sensor value to be set for the hour.
+      # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
+      - platform: time_pattern
+        hours: "/1"
+        minutes: "59"
+        seconds: "56"
+    sensor:
+      # We save shelly_heatpump_livingroom_energy
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_livingroom_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.shelly_heatpump_livingroom_energy') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_livingroom_power_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_livingroom_power_min_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_heatpump_livingroom_power_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_livingroom_power_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_livingroom_power_max_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_heatpump_livingroom_power_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_livingroom_power_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_livingroom_power_mean_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_heatpump_livingroom_power_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_livingroom_energy
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_upstairs_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.shelly_heatpump_upstairs_energy') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_upstairs_power_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_upstairs_power_min_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_heatpump_upstairs_power_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_upstairs_power_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_upstairs_power_max_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_heatpump_upstairs_power_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpump_upstairs_power_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpump_upstairs_power_mean_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_heatpump_upstairs_power_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_heatpumps_total_increasing_energy
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_heatpumps_total_increasing_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.shelly_heatpumps_total_increasing_energy') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}

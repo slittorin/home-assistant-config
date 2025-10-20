@@ -5,6 +5,61 @@
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
+#
+# --------------------------------------------------------------------------------------------------------------------
+# At 1 oktober 2025 Sweden went over to 15 minutes interval for pricing of consumption of electricity.
+# To accomodate this we needed to do some changes:
+# - We created several new sensors to measure the consumption and cost correctly each 15 minutes.
+# - We adapted the hourly sensors to summmarize the last hours summary (4x15 minutes).
+#   This as we wanted to keep the hourly measurement.
+# - We changeed the HACS Nordpool-component. See below.
+#
+# The HACS Nordpool-component has not of this date (20251016) been adapted to meet the 15 minute interval.
+# (we do not use the official Nordpool-component as it does not hold the attributes we require for our sensors)
+# Therefore we needed to perform a few changes directly in the code at /config/custom_components/nordpool:
+# 1. Change according to the following proposed pull-request: https://github.com/custom-components/nordpool/pull/491
+#    - https://github.com/custom-components/nordpool/pull/491/commits/5c152177aa59e357f886c841c7d23f738c9d935a
+#    - https://github.com/custom-components/nordpool/pull/491/commits/1df0aaa357044b6ed64453cf7d9e9452d498e99a
+# 2. Since we also get error 'WARNING (Recorder) [homeassistant.components.recorder.db_schema] State attributes for sensor.nordpool_kwh_se3_sek_3_10_0 exceed maximum size of 16384 bytes.' in the log, we also remove the attribute 'raw_today' and 'raw_tomorrow':
+#    - We do not need these attributes for any sensor.
+#    - In file 'sensor.py':
+#      - Remove the following two lines (in 'def extra_state_attributes(self) -> dict:'):
+#          "tomorrow_valid": self.tomorrow_valid,
+#          "raw_today": self.raw_today,
+#
+# Due to the change in step 2, we also changed the ApexChart-plugin and data_generator from:
+#    data_generator: |
+#      return [
+#      ...entity.attributes.raw_today.map((start, index) => {
+#        return [new Date(start["start"]).getTime(), ((entity.attributes.raw_today[index]["value"]*100)+(hass.states['input_number.electrical_consumption_rate_compensation_manual'].state*1)+(hass.states['input_number.electrical_consumption_rate_tax'].state*1))*(1+((hass.states['input_number.electrical_consumption_rate_vat'].state*1)/100))];
+#      }),
+#      ...entity.attributes.raw_tomorrow.map((start, index) => {
+#        return [new Date(start["start"]).getTime(), ((entity.attributes.raw_tomorrow[index]["value"]*100)+(hass.states['input_number.electrical_consumption_rate_compensation_manual'].state*1)+(hass.states['input_number.electrical_consumption_rate_tax'].state*1))*(1+((hass.states['input_number.electrical_consumption_rate_vat'].state*1)/100))];
+#      })
+#      ];
+# to
+#      const vat = (1 + (hass.states['input_number.electrical_consumption_rate_vat'].state * 1) / 100);
+#      const comp = hass.states['input_number.electrical_consumption_rate_compensation_manual'].state * 1;
+#      const tax = hass.states['input_number.electrical_consumption_rate_tax'].state * 1;
+#      const todayValues = entity.attributes.today || [];
+#      const tomorrowValues = entity.attributes.tomorrow || [];
+#      const baseToday = new Date();
+#      baseToday.setHours(0, 0, 0, 0);
+#      const baseTomorrow = new Date(baseToday);
+#      baseTomorrow.setDate(baseTomorrow.getDate() + 1);
+#      const intervalMinutes = 15;
+#      const todayData = todayValues.map((value, index) => {
+#        const timestamp = new Date(baseToday.getTime() + index * intervalMinutes * 60000).getTime();
+#        const adjustedValue = ((value * 100) + comp + tax) * vat;
+#        return [timestamp, adjustedValue];
+#      });
+#      const tomorrowData = tomorrowValues.map((value, index) => {
+#        const timestamp = new Date(baseTomorrow.getTime() + index * intervalMinutes * 60000).getTime();
+#        const adjustedValue = ((value * 100) + comp + tax) * vat;
+#        return [timestamp, adjustedValue];
+#      });
+#      return [...todayData, ...tomorrowData];
+# --------------------------------------------------------------------------------------------------------------------
 
 sensor:
   # For spotprices, we get all the data from Nordpool, for my region and currency.
@@ -175,10 +230,22 @@ input_text:
   electrical_yield_sensor:
     name: "Name of sensor for tracking total_increasing electrical yield (output to grid) in kWh (full name)"
     icon: mdi:home-export-outline
+  # We want to track consumption each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  test_electrical_consumption_intake_array:
+    name: "Array for calculating correct 15 minute consumption"
+    icon: mdi:application-array-outline
+  # We want to track cost each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # Index 4 is the summary for each 15 minute during the hour.
+  test_electrical_consumption_intake_cost_array:
+    name: "Array for calculating correct 15 minute consumption cost"
+    icon: mdi:application-array-outline
 
 template:
   - sensor:
       # We want to keep track of the consumption spot rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption rate spot
         unique_id: electrical_consumption_rate_spot
         unit_of_measurement: "SEK/kWh"
@@ -196,6 +263,7 @@ template:
 
   - sensor:
       # We want to keep track of the distribution spot rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical yield rate spot
         unique_id: electrical_yield_rate_spot
         unit_of_measurement: "SEK/kWh"
@@ -213,6 +281,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical distribution rate.
+      # 20251011: Not affected by 15 minute changes when the NordPool-integration is updated.
       - name: Electrical distribution rate summary
         unique_id: electrical_distribution_rate_summary
         unit_of_measurement: "öre/kWh"
@@ -244,6 +313,7 @@ template:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh].
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption spot sensor intermediary
         unique_id: electrical_consumption_spot_sensor_intermediary
         state_class: measurement
@@ -260,6 +330,7 @@ template:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh] for min.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption spot sensor intermediary min
         unique_id: electrical_consumption_spot_sensor_intermediary_min
         state_class: measurement
@@ -276,6 +347,7 @@ template:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh] for max.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption spot sensor intermediary max
         unique_id: electrical_consumption_spot_sensor_intermediary_max
         state_class: measurement
@@ -292,6 +364,7 @@ template:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh] for mean.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption spot sensor intermediary mean
         unique_id: electrical_consumption_spot_sensor_intermediary_mean
         state_class: measurement
@@ -308,6 +381,7 @@ template:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_consumption_rate_summary
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_ratesummary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh].
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption average spot sensor intermediary
         unique_id: electrical_consumption_average_spot_sensor_intermediary
         state_class: measurement
@@ -322,6 +396,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical consumption rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption rate summary
         unique_id: electrical_consumption_rate_summary
         unit_of_measurement: "öre/kWh"
@@ -367,6 +442,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical consumption rate, min.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption rate summary min
         unique_id: electrical_consumption_rate_summary_min
         unit_of_measurement: "öre/kWh"
@@ -412,6 +488,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical consumption rate, max.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption rate summary max
         unique_id: electrical_consumption_rate_summary_max
         unit_of_measurement: "öre/kWh"
@@ -457,6 +534,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical consumption rate, mean.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical consumption rate summary mean
         unique_id: electrical_consumption_rate_summary_mean
         unit_of_measurement: "öre/kWh"
@@ -502,6 +580,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical average consumption rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical average consumption rate summary
         unique_id: electrical_average_consumption_rate_summary
         unit_of_measurement: "öre/kWh"
@@ -547,6 +626,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical distribution plus consumption rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical distribution consumption rate summary
         unique_id: electrical_distribution_consumption_rate_summary
         unit_of_measurement: "öre/kWh"
@@ -570,6 +650,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical distribution plus average consumption rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical distribution average consumption rate summary
         unique_id: electrical_distribution_average_consumption_rate_summary
         unit_of_measurement: "öre/kWh"
@@ -593,6 +674,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical distribution plus consumption rate, in SEK/kWh.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical distribution consumption rate summary SEK
         unique_id: electrical_distribution_consumption_rate_summary_sek
         unit_of_measurement: "SEK/kWh"
@@ -610,6 +692,7 @@ template:
   - sensor:
       # We want to keep track of total electrical distribution plus average consumption rate, in SEK/kWh.
       # This one is named 'sensor.electrical_distribution_consumption_rate_summary_sek_2' in HA, as it was first wrongly defined.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical distribution average consumption rate summary SEK
         unique_id: electrical_distribution_average_consumption_rate_summary_sek
         unit_of_measurement: "SEK/kWh"
@@ -628,6 +711,7 @@ template:
       # TWEAK. Since the unit from spot sensor, is SEK/kWh we cannot use it directly in: electrical_yield_spot_sensor
       # We otherwise will get: WARNING (Recorder) [homeassistant.components.sensor.recorder] The unit of sensor.electrical_consumption_rate_summary (öre/kWh) does not match the unit of already compiled statistics (SEK/kWh). Generation of long term statistics will be suppressed unless the unit changes back to SEK/kWh.
       # Therefore we create a intermediary sensor to get it to [öre/kWh].
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical yield spot sensor intermediary
         unique_id: electrical_yield_spot_sensor_intermediary
         state_class: measurement
@@ -642,6 +726,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical yield rate.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical yield rate summary
         unique_id: electrical_yield_rate_summary
         unit_of_measurement: "öre/kWh"
@@ -693,6 +778,7 @@ template:
 
   - sensor:
       # We want to keep track of total electrical yield rate., in SEK/kWh.
+      # 20251011: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: Electrical yield rate summary SEK
         unique_id: electrical_yield_rate_summary_sek
         unit_of_measurement: "SEK/kWh"
@@ -711,6 +797,7 @@ template:
       # We want to keep track of the consumption of the house: consumption_intake + solar_production - solar_yield
       # We know that this already exists elsewhere in other integrations.
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
+      # 20221011: XXX
       - name: electrical consumption total hour
         unique_id: electrical_consumption_total_hour
         unit_of_measurement: "kWh"
@@ -793,9 +880,10 @@ template:
         seconds: "56"
     sensor:
       # First we get the intake consumption from the last snapshot (delta) to set the consumption for the hour.
-      # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
+      # We will therefore not capture the last seconds for the hour, but the seconds will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
+      # 20221011: XXX
       - name: electrical_consumption_intake_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -830,6 +918,7 @@ template:
       # Then we summarize the daily intake consumption and distribution for the hour.
       # We reset the sum at first hour of day.
       # 20221110: We increase decimals from 4 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
+      # 20221011: XXX
       - name: electrical_daily_sum_consumption_intake_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -866,6 +955,7 @@ template:
           {{ result }}
 
       # Then we calculate the consumption and distribution cost for the hour.
+      # 20221011: XXX
       - name: electrical_consumption_intake_cost_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -896,6 +986,7 @@ template:
 
       # Then we summarize the daily intake consumption and distribution cost for the hour.
       # We reset the sum at first hour of day.
+      # 20221011: XXX
       - name: electrical_daily_sum_consumption_intake_cost_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -935,6 +1026,7 @@ template:
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
+      # 20221011: XXX
       - name: electrical_solar_yield_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -967,6 +1059,7 @@ template:
           {{ result }}
 
       # Then we calculate the yield-return for solar production.
+      # 20221011: XXX
       - name: electrical_solar_yield_return_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -993,6 +1086,7 @@ template:
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
+      # 20221011: XXX
       - name: electrical_solar_production_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -1027,6 +1121,7 @@ template:
       # Then we calculate the reduction from solar production (i.e. that we do not need to buy the electricity).
       # Update 20220316. We need to compensate for yield back to the grid, as we do not get monetary value for all that is produced.
       # So prior to this date, the total monetary value was too large.
+      # 20221011: XXX
       - name: electrical_solar_production_reduction_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -1062,6 +1157,7 @@ template:
           {{ reduction }}
 
       # Then we calculate the total reduction, plus yield income for solar production).
+      # 20221011: XXX
       - name: electrical_solar_total_return_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -1085,6 +1181,7 @@ template:
           {{ total_reduction }}
 
       # Last we set the snapshots.
+      # 20221011: XXX
       - name: electrical_consumption_intake_hour_snapshot
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -1114,11 +1211,12 @@ template:
       # Trigger at the near end of every hour, since we want to keep hourly states for energy rates.
       - platform: time_pattern
         hours: "/1"
-        minutes: "59"
+        minutes: "58"
         seconds: "0"
     sensor:
       # We set the hourly state for: electrical_yield_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
+      # 20221011: XXX
       - name: electrical_yield_rate_summary_hour
         unit_of_measurement: "öre/kWh"
         state_class: measurement
@@ -1135,6 +1233,7 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_yield_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
+      # 20221011: XXX
       - name: electrical_yield_rate_summary_sek_hour
         unit_of_measurement: "SEK/kWh"
         state_class: measurement
@@ -1149,8 +1248,9 @@ template:
         attributes:
           updated: >
             {{ now() }}
-      # We set the hourly state for: electrical_consumption_rate_summary_sek
+      # We set the hourly state for: electrical_consumption_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity not has changed: https://github.com/home-assistant/core/pull/41147
+      # 20221011: XXX
       - name: electrical_consumption_rate_summary_hour
         unit_of_measurement: "öre/kWh"
         state_class: measurement
@@ -1167,6 +1267,7 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
+      # 20221011: XXX
       - name: electrical_distribution_consumption_rate_summary_hour
         unit_of_measurement: "öre/kWh"
         state_class: measurement
@@ -1183,6 +1284,7 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
+      # 20221011: XXX
       - name: electrical_distribution_consumption_rate_summary_sek_hour
         unit_of_measurement: "SEK/kWh"
         state_class: measurement
@@ -1481,6 +1583,7 @@ template:
           {% endif %}
           {{ result }}
 
+
 automation:
   # For persistence, On every state change for electrical_consumption_intake_hour_snapshot, set input_number sensor.
   - id: automation_electrical_consumption_intake_hour_snapshot
@@ -1537,3 +1640,129 @@ automation:
       data_template:
         entity_id: input_number.electrical_daily_sum_consumption_intake_hour_persistent
         value: "{{ states('sensor.electrical_daily_sum_consumption_intake_hour') }}"
+
+  # We want to track the intake consumption each 15 minute during the hour.
+  - id: test_automation_electrical_consumption_intake_array
+    alias: "Automation related to test_electrical_consumption_intake_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "56"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.test_electrical_consumption_intake_array
+        data:
+          value: >-
+            {% set current_array = states('input_text.test_electrical_consumption_intake_array') %}
+            {% set current_consumption = states(states('input_text.electrical_consumption_sensor')) %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
+            {%   set current_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% set current_array = current_array | from_json %}
+            {% if (current_consumption == 'unknown' or current_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set current_consumption = current_consumption | float %}
+            {% endif %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set new_array = [current_consumption] + [current_array[1]] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set new_array = [current_array[0]] + [current_consumption] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_consumption] + [current_array[3]] %}
+            {%   elif (current_minute >= 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_array[2]] + [current_consumption] %}
+            {%   endif %}
+            {%   set result = new_array %}
+            {% else %}
+            {%   set result = current_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the intake consumption cost each 15 minute during the hour.
+  # We perform this after test_electrical_consumption_intake_array is set.
+  - id: test_automation_test_electrical_consumption_intake_cost_array
+    alias: "Automation related to test_electrical_consumption_intake_cost_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "57"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.test_electrical_consumption_intake_cost_array
+        data:
+          value: >-
+            {% set current_consumption_array = states('input_text.test_electrical_consumption_intake_array') %}
+            {% set current_cost_array = states('input_text.test_electrical_consumption_intake_cost_array') %}
+            {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+            {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_consumption_array == 'unknown' or current_consumption_array == 'unavailable' or current_consumption_array == 'none' or current_consumption_array == None or current_consumption_array == "") %}
+            {%   set current_consumption_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+            {%   set current_cost_array = "[0,0,0,0,0]" %}
+            {% endif %}
+            {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_distribution = float(rate_distribution, 0) %}
+            {% endif %}
+            {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_consumption = float(rate_consumption, 0) %}
+            {% endif %}
+            {% set current_consumption_array = current_consumption_array | from_json %}
+            {% set current_cost_array = current_cost_array | from_json %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     if (current_consumption_array[0] == 0 or current_consumption_array[3] == 0) %}
+            {%     endif %}
+            {%     set delta_consumption = current_consumption_array[0] - current_consumption_array[3] %}
+            {%     set sum_cost = delta_consumption + current_cost_array[1] + current_cost_array[2] + current_cost_array[3] %}
+            {%     set new_cost_array = [delta_consumption] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set delta_consumption = current_consumption_array[1] - current_consumption_array[0] %}
+            {%     set sum_cost = current_cost_array[0] + delta_consumption + current_cost_array[2] + current_cost_array[3] %}
+            {%     set new_cost_array = [current_cost_array[0]] + [delta_consumption] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set delta_consumption = current_consumption_array[2] - current_consumption_array[1] %}
+            {%     set sum_cost = current_cost_array[0] + current_cost_array[1] + delta_consumption + current_cost_array[3] %}
+            {%     set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_consumption] + [current_cost_array[3]] + [sum_cost] %}
+            {%   elif (current_minute >= 45) %}
+            {%     set delta_consumption = current_consumption_array[3] - current_consumption_array[2] %}
+            {%     set sum_cost = current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_consumption %}
+            {%     set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_consumption] + [sum_cost] %}
+            {%   endif %}
+            {%   set result = new_cost_array %}
+            {% else %}
+            {%   set result = current_cost_array %}
+            {% endif %}
+            {{ result | tojson }}
