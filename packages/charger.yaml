@@ -31,17 +31,31 @@ input_text:
   evcharger_consumption_sensor:
     name: "Name of sensor for EV-charger consumption (full name)"
     icon: mdi:ev-station
+  # We want to track consumption each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # unit_of_measurement: "kWh"
+  evcharger_consumption_array:
+    name: "Array for calculating correct 15 minute evcharger consumption"
+    icon: mdi:application-array-outline
+  # We want to track evcharger intake cost each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # Index 4 is the summary of cost for each 15 minute during the hour.
+  # unit_of_measurement: "SEK"
+  evcharger_consumption_cost_hour_array:
+    name: "Array for calculating correct 15 minute consumption cost"
+    icon: mdi:application-array-outline
 
 template:
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
       # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
+      # 20251126: Changed back to 59.57, since we now have automations that run 59.56 and 59.57 each hour.
       # TWEAK: We appear to get the data plus one hour, i.e. the timestamp needs to be adjusted in Grafana (it is stored one hour plus also in InfluxDB).
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
-        seconds: "56"
+        seconds: "58"
     sensor:
       # First we get the EV-charger consumption from the last snapshot (delta) to set the consumption for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
@@ -121,28 +135,40 @@ template:
         unit_of_measurement: "SEK"
         # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
         # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        # 20251122: We updated to get the correct hourly price
+        #          {% set delta = states('sensor.evcharger_consumption_hour') %}
+        #          {% if (delta == 'unknown' or delta == 'unavailable') %}
+        #          {%   set delta = 0 %}
+        #          {% else %}
+        #          {%   set delta = float(delta, 0) %}
+        #          {% endif %}
+        #          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+        #          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+        #          {%   set rate_distribution = 0 %}
+        #          {% else %}
+        #          {%   set rate_distribution = float(rate_distribution, 0) %}
+        #          {% endif %}
+        #          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+        #          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+        #          {%   set rate_consumption = 0 %}
+        #          {% else %}
+        #          {%   set rate_consumption = float(rate_consumption, 0) %}
+        #          {% endif %}
+        #          {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(5, default=0) %}
+        #          {{ cost }}
         state_class: total
         state: >
-          {% set delta = states('sensor.evcharger_consumption_hour') %}
-          {% if (delta == 'unknown' or delta == 'unavailable') %}
-          {%   set delta = 0 %}
-          {% else %}
-          {%   set delta = float(delta, 0) %}
+          {% set current_cost_array = states('input_text.evcharger_consumption_cost_hour_array') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+          {%   set inputs_valid = false %}
           {% endif %}
-          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
-          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
-          {%   set rate_distribution = 0 %}
-          {% else %}
-          {%   set rate_distribution = float(rate_distribution, 0) %}
+          {% if (inputs_valid == true) %}
+          {%   set current_cost_array = current_cost_array | from_json %}
+          {%   set result = current_cost_array[4] %}
           {% endif %}
-          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
-          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
-          {%   set rate_consumption = 0 %}
-          {% else %}
-          {%   set rate_consumption = float(rate_consumption, 0) %}
-          {% endif %}
-          {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(2, default=0) %}
-          {{ cost }}
+          {{ result }}
       # Then we summarize the daily sum for evcharger_consumption_cost_hour.
       # 20221231: Added.
       - name: evcharger_daily_sum_consumption_cost_hour
@@ -233,3 +259,147 @@ automation:
       data_template:
         entity_id: input_number.evcharger_daily_sum_consumption_cost_hour_persistent
         value: "{{ states('sensor.evcharger_daily_sum_consumption_cost_hour') }}"
+
+  # We want to track the evcharger consumption each 15 minute during the hour.
+  - id: automation_evcharger_consumption_array
+    alias: "Automation related to evcharger_consumption_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "56"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.evcharger_consumption_array
+        data:
+          value: >-
+            {% set current_array = states('input_text.evcharger_consumption_array') %}
+            {% set current_snapshot = states(states('input_text.evcharger_consumption_sensor')) %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
+            {%   set current_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% set current_array = current_array | from_json %}
+            {% if (current_snapshot == 'unknown' or current_snapshot == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set current_snapshot = current_snapshot | float %}
+            {% endif %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set new_array = [current_snapshot] + [current_array[1]] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set new_array = [current_array[0]] + [current_snapshot] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_snapshot] + [current_array[3]] %}
+            {%   elif (current_minute >= 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_array[2]] + [current_snapshot] %}
+            {%   endif %}
+            {%   set result = new_array %}
+            {% else %}
+            {%   set result = current_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the evcharger consumption cost each 15 minute during the hour.
+  # We perform this after evcharger_consumption_array is set.
+  - id: automation_evcharger_consumption_cost_hour_array
+    alias: "Automation related to evcharger_consumption_cost_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "57"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.evcharger_consumption_cost_hour_array
+        data:
+          value: >-
+            {% set current_consumption_array = states('input_text.evcharger_consumption_array') %}
+            {% set current_cost_array = states('input_text.evcharger_consumption_cost_hour_array') %}
+            {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+            {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_consumption_array == 'unknown' or current_consumption_array == 'unavailable' or current_consumption_array == 'none' or current_consumption_array == None or current_consumption_array == "") %}
+            {%   set current_consumption_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+            {%   set current_cost_array = "[0,0,0,0,0]" %}
+            {% endif %}
+            {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_distribution = float(rate_distribution, 0) %}
+            {% endif %}
+            {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_consumption = float(rate_consumption, 0) %}
+            {% endif %}
+            {% set current_consumption_array = current_consumption_array | from_json %}
+            {% set current_cost_array = current_cost_array | from_json %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set delta_consumption = current_consumption_array[0] - current_consumption_array[3] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[0] == 0 or current_consumption_array[3] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (delta_cost + current_cost_array[1] + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [delta_cost] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set delta_consumption = current_consumption_array[1] - current_consumption_array[0] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[1] == 0 or current_consumption_array[0] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + delta_cost + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [delta_cost] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set delta_consumption = current_consumption_array[2] - current_consumption_array[1] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[2] == 0 or current_consumption_array[1] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + delta_cost + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_cost] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 45) %}
+            {%     set delta_consumption = current_consumption_array[3] - current_consumption_array[2] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[3] == 0 or current_consumption_array[2] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_cost) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_cost] + [sum_cost] %}
+            {%     endif %}
+            {%   endif %}
+            {%   set result = new_cost_array %}
+            {% else %}
+            {%   set result = current_cost_array %}
+            {% endif %}
+            {{ result | tojson }}

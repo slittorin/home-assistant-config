@@ -189,6 +189,7 @@ influxdb:
       - sensor.sovrum_energi
       # We exclude Shelly-sensors, since we create hourly-sensors instead.
       - sensor.shelly_heatpump_livingroom_energy
+      - sensor.shelly_heatpump_livingroom_power
       - sensor.shelly_heatpump_livingroom_power_min
       - sensor.shelly_heatpump_livingroom_power_max
       - sensor.shelly_heatpump_livingroom_power_mean
@@ -198,6 +199,24 @@ influxdb:
       - sensor.shelly_heatpump_upstairs_power_max
       - sensor.shelly_heatpump_upstairs_power_mean
       - sensor.shelly_heatpumps_total_increasing_energy
+      - sensor.shelly_heat_exchanger_total_energy
+      - sensor.shelly_heat_exchanger_returned_energy
+      - sensor.shelly_heat_exchanger_power
+      - sensor.shelly_heat_exchanger_power_min
+      - sensor.shelly_heat_exchanger_power_max
+      - sensor.shelly_heat_exchanger_power_mean
+      # We exclude sensors to keep track of cost over the hour for 15 minute spot-prices.
+      - input_text.electrical_consumption_intake_array
+      - input_text.electrical_consumption_intake_cost_array
+      - input_text.electrical_solar_yield_hour_array
+      - input_text.electrical_solar_yield_return_hour_array
+      - input_text.electrical_solar_production_hour_array
+      - input_text.electrical_solar_production_reduction_hour_array
+      - input_text.evcharger_consumption_array
+      - input.text.evcharger_consumption_cost_hour_array
+      # We exclude the total sensor, since we do not require it in graphs.
+      - sensor.sma_total_power_used_by_house
+      - sensor.adax_heater_energy_last_hour
 
 notify:
   - name: email_notification

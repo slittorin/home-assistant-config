@@ -1,17 +1,34 @@
 # This file includes all the entitites for tracking sensor data for Adax integration.
 
-
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 
+input_text:
+  # We want to track consumption each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # unit_of_measurement: "kWh"
+  test_adax_kok_energi_array:
+    name: "Array for calculating correct 15 minute Adax heater consumption"
+    icon: mdi:application-array-outline
+
+sensor:
+  # test_adax_heater_kok_energy_last_hour
+  - platform: statistics
+    name: "Test Adax heater kok energy last hour"
+    entity_id: sensor.kok_energi
+    state_characteristic: sum_differences_nonnegative
+    max_age:
+      hours: 1
+    sampling_size: 16
+
 template:
   - sensor:
-        # We get the temperature in the kitchen.
+      # We get the temperature in the kitchen.
       - name: Adax heater kitchen temperature
         unique_id: adax_heater_kitchen_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.kok', 'current_temperature') %}
@@ -28,12 +45,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the set temperature in the kitchen.
+      # We get the set temperature in the kitchen.
       - name: Adax heater kitchen set temperature
         unique_id: adax_heater_kitchen_set_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.kok', 'temperature') %}
@@ -50,12 +67,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the temperature in the toilett.
+      # We get the temperature in the toilett.
       - name: Adax heater toilett temperature
         unique_id: adax_heater_toilett_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.toalett', 'current_temperature') %}
@@ -72,12 +89,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the set temperature in the toilett.
+      # We get the set temperature in the toilett.
       - name: Adax heater toilett set temperature
         unique_id: adax_heater_toliett_set_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.toalett', 'temperature') %}
@@ -94,12 +111,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the temperature in the livingroom - behind the sofa.
+      # We get the temperature in the livingroom - behind the sofa.
       - name: Adax heater livingroom temperature
         unique_id: adax_heater_livingroom_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.vardagsrum', 'current_temperature') %}
@@ -116,12 +133,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the set temperature in the livingroom - behind the sofa.
+      # We get the set temperature in the livingroom - behind the sofa.
       - name: Adax heater livingroom set temperature
         unique_id: adax_heater_livingroom_set_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.vardagsrum', 'temperature') %}
@@ -138,12 +155,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the temperature in the bathroom.
+      # We get the temperature in the bathroom.
       - name: Adax heater bathroom temperature
         unique_id: adax_heater_bathroom_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.badrum', 'current_temperature') %}
@@ -160,12 +177,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the set temperature in the bathroom.
+      # We get the set temperature in the bathroom.
       - name: Adax heater bathroom set temperature
         unique_id: adax_heater_bathroom_set_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.badrum', 'temperature') %}
@@ -182,12 +199,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the temperature in the bedroom.
+      # We get the temperature in the bedroom.
       - name: Adax heater bedroom temperature
         unique_id: adax_heater_bedroom_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.sovrum', 'current_temperature') %}
@@ -204,12 +221,12 @@ template:
           {{ result }}
 
   - sensor:
-        # We get the set temperature in the bedroom.
+      # We get the set temperature in the bedroom.
       - name: Adax heater bedroom set temperature
         unique_id: adax_heater_bedroom_set_temperature
         state_class: measurement
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         icon: mdi:thermometer-lines
         state: >
           {% set temperature = state_attr('climate.sovrum', 'temperature') %}
@@ -225,28 +242,29 @@ template:
           {% endif %}
           {{ result }}
 
-  - sensor:
-        # We get the total consumed for all adax heaters.
-        # Needs to be added one, by one.
-      - name: Adax heaters total increasing energy
-        unique_id: adax_heaters_total_increasing_energy
-        state_class: total_increasing
-        device_class: 'energy'
-        unit_of_measurement: 'kWh'
-        icon: mdi:radiator
-        state: >
-          {% set heater1 = states('sensor.kok_energi') %}
-          {% set heater2 = states('sensor.toalett_energi') %}
-          {% set heater3 = states('sensor.vardagsrum_energi') %}
-          {% set heater4 = states('sensor.badrum_energi') %}
-          {% set heater5 = states('sensor.sovrum_energi') %}
-          {% set heater1 = float(heater1, default=0) %}
-          {% set heater2 = float(heater2, default=0) %}
-          {% set heater3 = float(heater3, default=0) %}
-          {% set heater4 = float(heater4, default=0) %}
-          {% set heater5 = float(heater5, default=0) %}
-          {% set result = heater1 + heater2 + heater3 + heater4 + heater5 %}
-          {{ result }}
+  # Removed 20251115: Can sometime give faulty numbers.
+  #  - sensor:
+  #        # We get the total consumed for all adax heaters.
+  #        # Needs to be added one, by one.
+  #      - name: Adax heaters total increasing energy
+  #        unique_id: adax_heaters_total_increasing_energy
+  #        state_class: total_increasing
+  #        device_class: 'energy'
+  #        unit_of_measurement: 'kWh'
+  #        icon: mdi:radiator
+  #        state: >
+  #          {% set heater1 = states('sensor.kok_energi') %}
+  #          {% set heater2 = states('sensor.toalett_energi') %}
+  #          {% set heater3 = states('sensor.vardagsrum_energi') %}
+  #          {% set heater4 = states('sensor.badrum_energi') %}
+  #          {% set heater5 = states('sensor.sovrum_energi') %}
+  #          {% set heater1 = float(heater1, default=0) %}
+  #          {% set heater2 = float(heater2, default=0) %}
+  #          {% set heater3 = float(heater3, default=0) %}
+  #          {% set heater4 = float(heater4, default=0) %}
+  #          {% set heater5 = float(heater5, default=0) %}
+  #          {% set result = heater1 + heater2 + heater3 + heater4 + heater5 %}
+  #          {{ result }}
 
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour.
@@ -320,6 +338,20 @@ template:
         state_class: total_increasing
         state: >
           {% set input = states('sensor.sovrum_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save kok_energi
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: test_adax_heater_kok_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.test_adax_heater_kok_energy_last_hour') %}
           {% if (input == 'unknown' or input == 'unavailable') %}
           {%   set value = 0 %}
           {% else %}

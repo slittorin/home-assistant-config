@@ -84,6 +84,14 @@ sensor:
     start: "{{ now().replace(minute=0, second=0) }}"
     end: "{{ now() }}"
 
+  - platform: history_stats
+    name: test_balboa_spa_circulationpump_running_time_hour
+    entity_id: binary_sensor.nbp6013h_circ_pump
+    state: "on"
+    type: time
+    start: "{{ now().replace(minute=(now().minute // 15) * 15, second=0, microsecond=0) }}"
+    end: "{{ now() }}"
+
     # We want to keep track of the time that the heater has been running each hour (depends of course on polling).
     # Since we cannot track attribute-state in history_stats, we need to utilize the binary template-sensor created below.
   - platform: history_stats
@@ -593,28 +601,27 @@ automation:
         entity_id: input_number.balboa_spa_temperature_hour_persistent
         value: "{{ float(states('sensor.balboa_spa_temperature_hour'), 0) }}"
 
-#binary_sensor:
-#  - platform: ping
-#    name: "Balboa Spa online" # Friendly name for the sensor
-#    host: 192.168.4.20 # Replace with IP or hostname of the device
-#    count: 2 # Number of ping packets to send
-#    scan_interval: 60 # How often to check (in seconds)
+  #binary_sensor:
+  #  - platform: ping
+  #    name: "Balboa Spa online" # Friendly name for the sensor
+  #    host: 192.168.4.20 # Replace with IP or hostname of the device
+  #    count: 2 # Number of ping packets to send
+  #    scan_interval: 60 # How often to check (in seconds)
 
-# Send email when Balboa spa is not online.
-# Dependency: A ping sensor towards 192.168.4.20 through GUI.
+  # Send email when Balboa spa is not online.
+  # Dependency: A ping sensor towards 192.168.4.20 through GUI.
   - alias: "Send email when Balboa Spa is not online"
     trigger:
       - platform: state
         entity_id: binary_sensor.192_168_4_20
         to: "off"
         for:
-          seconds: 180   # Must stay OFF for 180 seconds before triggering
+          seconds: 180 # Must stay OFF for 180 seconds before triggering
     action:
       - service: notify.email_notification
         data:
           title: "Balboa Spa is offline"
-          message: "HA cannot ping Balboa Spa on 192.168.4.20. Please turn power off at the Spa, and on after 10 seconds."
-          
+          message: "HA cannot ping Balboa Spa on 192.168.4.20 for 180 seconds. Please turn power off at the Spa, and on after 10 seconds."
 # Send email when Balboa spa is online.
 # Dependency: A ping sensor towards 192.168.4.20 through GUI.
 #  - alias: "Send email when Balboa Spa is online"

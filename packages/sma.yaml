@@ -841,6 +841,33 @@ template:
           {%   endif %}
           {% endif %}
           {{ result }}
+      # Summarize the power-load towards the house.
+      - name: SMA total power used by house
+        unique_id: sma_total_power_used_by_house
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        icon: mdi:home-import-outline
+        state: >
+          {% set metering_power_absorbed = states('sensor.metering_power_absorbed') %}
+          {% set grid_power = states('sensor.grid_power') %}
+          {% set metering_power_supplied = states('sensor.metering_power_supplied') %}
+          {% set result = none %}
+          {% set inputs_valid = true %}
+          {% if (metering_power_absorbed == 'unknown' or metering_power_absorbed == 'unavailable' or metering_power_absorbed == 'none' or metering_power_absorbed == None) %}
+          {%   set inputs_valid = false %}
+          {% elif (grid_power == 'unknown' or grid_power == 'unavailable' or grid_power == 'none' or grid_power == None) %}
+          {%   set inputs_valid = false %}
+          {% elif (metering_power_supplied == 'unknown' or metering_power_supplied == 'unavailable' or metering_power_supplied == 'none' or metering_power_supplied == None) %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set metering_power_absorbed = metering_power_absorbed | float %}
+          {%   set grid_power = grid_power | float %}
+          {%   set metering_power_supplied = metering_power_supplied | float %}
+          {%   set result = metering_power_absorbed + (grid_power - metering_power_supplied) | float %}
+          {% endif %}
+          {{ result }}
 
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour.

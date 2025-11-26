@@ -13,9 +13,6 @@
               "entities": [
                 {
                   "entity": "sensor.electrical_daily_calculated_consumption_index_pct"
-                },
-                {
-                  "entity": "sensor.electrical_daily_calculated_consumption_index_sek"
                 }
               ],
               "hours_to_show": 336

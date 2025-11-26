@@ -232,14 +232,42 @@ input_text:
     icon: mdi:home-export-outline
   # We want to track consumption each 15-minute during the hour
   # Index 0 through 3 is each 15 minute.
-  test_electrical_consumption_intake_array:
+  # unit_of_measurement: "kWh"
+  electrical_consumption_intake_array:
     name: "Array for calculating correct 15 minute consumption"
     icon: mdi:application-array-outline
-  # We want to track cost each 15-minute during the hour
+  # We want to track consumption intake cost each 15-minute during the hour
   # Index 0 through 3 is each 15 minute.
-  # Index 4 is the summary for each 15 minute during the hour.
-  test_electrical_consumption_intake_cost_array:
+  # Index 4 is the summary of cost for each 15 minute during the hour.
+  # unit_of_measurement: "SEK"
+  electrical_consumption_intake_cost_array:
     name: "Array for calculating correct 15 minute consumption cost"
+    icon: mdi:application-array-outline
+  # We want to track solary yield each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # unit_of_measurement: "kWh"
+  electrical_solar_yield_hour_array:
+    name: "Array for calculating correct 15 minute solary yield"
+    icon: mdi:application-array-outline
+  # We want to track solar yield return each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # Index 4 is the summary of cost for each 15 minute during the hour.
+  # unit_of_measurement: "SEK"
+  electrical_solar_yield_return_hour_array:
+    name: "Array for calculating correct 15 minute solar yield return"
+    icon: mdi:application-array-outline
+  # We want to track reduction from solar production each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # unit_of_measurement: "kWh"
+  electrical_solar_production_hour_array:
+    name: "Array for calculating correct 15 minute reduction from solar production"
+    icon: mdi:application-array-outline
+  # We want to track the reduction from solar production (i.e. that we do not need to buy the electricity) each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # Index 4 is the summary of cost for each 15 minute during the hour.
+  # unit_of_measurement: "SEK"
+  electrical_solar_production_reduction_hour_array:
+    name: "Array for calculating correct 15 minute reduction from solar production (i.e. that we do not need to buy the electricity)"
     icon: mdi:application-array-outline
 
 template:
@@ -797,7 +825,7 @@ template:
       # We want to keep track of the consumption of the house: consumption_intake + solar_production - solar_yield
       # We know that this already exists elsewhere in other integrations.
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
-      # 20221011: XXX
+      # 20251022: This will be able to manage 15 minute changes when the NordPool-integration is updated.
       - name: electrical consumption total hour
         unique_id: electrical_consumption_total_hour
         unit_of_measurement: "kWh"
@@ -827,63 +855,64 @@ template:
 
   - sensor:
       # We want to keep track of the daily average consumption rate.
-      - name: Electrical consumption average rate summary
-        unique_id: electrical_consumption_average_rate_summary
-        unit_of_measurement: "öre/kWh"
-        state_class: measurement
-        icon: mdi:transmission-tower-import
-        state: >
-          {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
-          {%   set rate = states('input_number.electrical_consumption_rate_manual') %}
-          {%   if (rate == 'unknown' or rate == 'unavailable') %}
-          {%     set rate = 0 %}
-          {%   else %}
-          {%     set rate = float(rate, 0) %}
-          {%   endif %}
-          {% else %}
-          {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary') %}
-          {%   if (rate == 'unknown' or rate == 'unavailable') %}
-          {%     set rate = 0 %}
-          {%   else %}
-          {%     set rate = float(rate, 0) %}
-          {%   endif %}
-          {% endif %}
-          {% set compensation = states('input_number.electrical_consumption_rate_compensation_manual') %}
-          {% if (compensation == 'unknown' or compensation == 'unavailable') %}
-          {%   set compensation = 0 %}
-          {% else %}
-          {%   set compensation = float(compensation, 0) %}
-          {% endif %}
-          {% set compensated_rate = rate + compensation  %}
-          {% set tax = states('input_number.electrical_consumption_rate_tax') %}
-          {% if (tax == 'unknown' or tax == 'unavailable') %}
-          {%   set tax = 0 %}
-          {% else %}
-          {%   set tax = float(tax, 0) %}
-          {% endif %}
-          {% set vat = states('input_number.electrical_consumption_rate_vat') %}
-          {% if (vat == 'unknown' or vat == 'unavailable') %}
-          {%   set vat = 0 %}
-          {% else %}
-          {%   set vat = float(vat, 0) %}
-          {% endif %}
-          {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4, default=0) %}
-          {{ total_rate }}
+      # 20251022: This sensor seems obsolete. Is not referenced anywhere. Commented out.
+  #      - name: Electrical consumption average rate summary
+  #        unique_id: electrical_consumption_average_rate_summary
+  #        unit_of_measurement: "öre/kWh"
+  #        state_class: measurement
+  #        icon: mdi:transmission-tower-import
+  #        state: >
+  #          {% if (states('input_boolean.electrical_consumption_rate_toggle') == "on") %}
+  #          {%   set rate = states('input_number.electrical_consumption_rate_manual') %}
+  #          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+  #          {%     set rate = 0 %}
+  #          {%   else %}
+  #          {%     set rate = float(rate, 0) %}
+  #          {%   endif %}
+  #          {% else %}
+  #          {%   set rate = states('sensor.electrical_consumption_spot_sensor_intermediary') %}
+  #          {%   if (rate == 'unknown' or rate == 'unavailable') %}
+  #          {%     set rate = 0 %}
+  #          {%   else %}
+  #          {%     set rate = float(rate, 0) %}
+  #          {%   endif %}
+  #          {% endif %}
+  #          {% set compensation = states('input_number.electrical_consumption_rate_compensation_manual') %}
+  #          {% if (compensation == 'unknown' or compensation == 'unavailable') %}
+  #          {%   set compensation = 0 %}
+  #          {% else %}
+  #          {%   set compensation = float(compensation, 0) %}
+  #          {% endif %}
+  #          {% set compensated_rate = rate + compensation  %}
+  #          {% set tax = states('input_number.electrical_consumption_rate_tax') %}
+  #          {% if (tax == 'unknown' or tax == 'unavailable') %}
+  #          {%   set tax = 0 %}
+  #          {% else %}
+  #          {%   set tax = float(tax, 0) %}
+  #          {% endif %}
+  #          {% set vat = states('input_number.electrical_consumption_rate_vat') %}
+  #          {% if (vat == 'unknown' or vat == 'unavailable') %}
+  #          {%   set vat = 0 %}
+  #          {% else %}
+  #          {%   set vat = float(vat, 0) %}
+  #          {% endif %}
+  #          {% set total_rate = ((compensated_rate + tax) * ((1+(vat/100)))) | round(4, default=0) %}
+  #          {{ total_rate }}
 
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
       # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
+      # 20251126: Changed back to 59.57, since we now have automations that run 59.56 and 59.57 each hour.
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
-        seconds: "56"
+        seconds: "58"
     sensor:
       # First we get the intake consumption from the last snapshot (delta) to set the consumption for the hour.
       # We will therefore not capture the last seconds for the hour, but the seconds will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
-      # 20221011: XXX
       - name: electrical_consumption_intake_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -918,7 +947,6 @@ template:
       # Then we summarize the daily intake consumption and distribution for the hour.
       # We reset the sum at first hour of day.
       # 20221110: We increase decimals from 4 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
-      # 20221011: XXX
       - name: electrical_daily_sum_consumption_intake_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -955,38 +983,48 @@ template:
           {{ result }}
 
       # Then we calculate the consumption and distribution cost for the hour.
-      # 20221011: XXX
       - name: electrical_consumption_intake_cost_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
         # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
         # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        # 20251122: We updated to get the correct hourly price
+        #          {% set delta = states('sensor.electrical_consumption_intake_hour') %}
+        #          {% if (delta == 'unknown' or delta == 'unavailable') %}
+        #          {%   set delta = 0 %}
+        #          {% else %}
+        #          {%   set delta = float(delta, 0) %}
+        #          {% endif %}
+        #          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+        #          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+        #          {%   set rate_distribution = 0 %}
+        #          {% else %}
+        #          {%   set rate_distribution = float(rate_distribution, 0) %}
+        #          {% endif %}
+        #          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+        #          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+        #          {%   set rate_consumption = 0 %}
+        #          {% else %}
+        #          {%   set rate_consumption = float(rate_consumption, 0) %}
+        #          {% endif %}
+        #          {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(5, default=0) %}
+        #          {{ cost }}
         state_class: total
         state: >
-          {% set delta = states('sensor.electrical_consumption_intake_hour') %}
-          {% if (delta == 'unknown' or delta == 'unavailable') %}
-          {%   set delta = 0 %}
-          {% else %}
-          {%   set delta = float(delta, 0) %}
+          {% set current_cost_array = states('input_text.electrical_consumption_intake_cost_array') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+          {%   set inputs_valid = false %}
           {% endif %}
-          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
-          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
-          {%   set rate_distribution = 0 %}
-          {% else %}
-          {%   set rate_distribution = float(rate_distribution, 0) %}
+          {% if (inputs_valid == true) %}
+          {%   set current_cost_array = current_cost_array | from_json %}
+          {%   set result = current_cost_array[4] %}
           {% endif %}
-          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
-          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
-          {%   set rate_consumption = 0 %}
-          {% else %}
-          {%   set rate_consumption = float(rate_consumption, 0) %}
-          {% endif %}
-          {% set cost = (delta * ((rate_distribution + rate_consumption))/100) | round(2, default=0) %}
-          {{ cost }}
+          {{ result }}
 
       # Then we summarize the daily intake consumption and distribution cost for the hour.
       # We reset the sum at first hour of day.
-      # 20221011: XXX
       - name: electrical_daily_sum_consumption_intake_cost_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -1026,7 +1064,6 @@ template:
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
-      # 20221011: XXX
       - name: electrical_solar_yield_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -1059,34 +1096,44 @@ template:
           {{ result }}
 
       # Then we calculate the yield-return for solar production.
-      # 20221011: XXX
       - name: electrical_solar_yield_return_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
         # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
         # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        # 20251126: We updated to get the correct hourly price
+        #          {% set delta = states('sensor.electrical_solar_yield_hour') %}
+        #          {% if (delta == 'unknown' or delta == 'unavailable') %}
+        #          {%   set delta = 0 %}
+        #          {% else %}
+        #          {%   set delta = float(delta, 0) %}
+        #          {% endif %}
+        #          {% set yield_summary = states('sensor.electrical_yield_rate_summary') %}
+        #          {% if (yield_summary == 'unknown' or yield_summary == 'unavailable') %}
+        #          {%   set yield_summary = 0 %}
+        #          {% else %}
+        #          {%   set yield_summary = float(yield_summary, 0) %}
+        #          {% endif %}
+        #          {% set yield = (delta * (yield_summary)/100) | round(5, default=0) %}
+        #          {{ yield }}
         state_class: total
         state: >
-          {% set delta = states('sensor.electrical_solar_yield_hour') %}
-          {% if (delta == 'unknown' or delta == 'unavailable') %}
-          {%   set delta = 0 %}
-          {% else %}
-          {%   set delta = float(delta, 0) %}
+          {% set current_cost_array = states('input_text.electrical_solar_yield_return_hour_array') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+          {%   set inputs_valid = false %}
           {% endif %}
-          {% set yield_summary = states('sensor.electrical_yield_rate_summary') %}
-          {% if (yield_summary == 'unknown' or yield_summary == 'unavailable') %}
-          {%   set yield_summary = 0 %}
-          {% else %}
-          {%   set yield_summary = float(yield_summary, 0) %}
+          {% if (inputs_valid == true) %}
+          {%   set current_cost_array = current_cost_array | from_json %}
+          {%   set result = current_cost_array[4] %}
           {% endif %}
-          {% set yield = (delta * (yield_summary)/100) | round(2, default=0) %}
-          {{ yield }}
+          {{ result }}
 
       # Then we get the solar production from the last snapshot (delta) to set the solar consumption for the hour.
       # We will therefore not capture the last second for the hour, but the second will not be 'lost' until as we set the new snapshot directly after this.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
       # 20221110: We increase decimals from 2 to 5, so we decrease the chance that a value is the same across hours, i.e. no state change (yes, can happen with 2 digits).
-      # 20221011: XXX
       - name: electrical_solar_production_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -1121,43 +1168,53 @@ template:
       # Then we calculate the reduction from solar production (i.e. that we do not need to buy the electricity).
       # Update 20220316. We need to compensate for yield back to the grid, as we do not get monetary value for all that is produced.
       # So prior to this date, the total monetary value was too large.
-      # 20221011: XXX
       - name: electrical_solar_production_reduction_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
         # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
         # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        # 20251126: We updated to get the correct hourly price
+        #          {% set production_delta = states('sensor.electrical_solar_production_hour') %}
+        #          {% if (production_delta == 'unknown' or production_delta == 'unavailable') %}
+        #          {%   set production_delta = 0 %}
+        #          {% else %}
+        #          {%   set production_delta = float(production_delta, 0) %}
+        #          {% endif %}
+        #          {% set yield_delta = states('sensor.electrical_solar_yield_hour') %}
+        #          {% if (yield_delta == 'unknown' or yield_delta == 'unavailable') %}
+        #          {%   set yield_delta = 0 %}
+        #          {% else %}
+        #          {%   set yield_delta = float(yield_delta, 0) %}
+        #          {% endif %}
+        #          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+        #          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+        #          {%   set rate_distribution = 0 %}
+        #          {% else %}
+        #          {%   set rate_distribution = float(rate_distribution, 0) %}
+        #          {% endif %}
+        #          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+        #          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+        #          {%   set rate_consumption = 0 %}
+        #          {% else %}
+        #          {%   set rate_consumption = float(rate_consumption, 0) %}
+        #          {% endif %}
+        #          {% set reduction = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100, 0) | round(5, default=0) %}
+        #          {{ reduction }}
         state_class: total
         state: >
-          {% set production_delta = states('sensor.electrical_solar_production_hour') %}
-          {% if (production_delta == 'unknown' or production_delta == 'unavailable') %}
-          {%   set production_delta = 0 %}
-          {% else %}
-          {%   set production_delta = float(production_delta, 0) %}
+          {% set current_cost_array = states('input_text.electrical_solar_production_reduction_hour_array') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+          {%   set inputs_valid = false %}
           {% endif %}
-          {% set yield_delta = states('sensor.electrical_solar_yield_hour') %}
-          {% if (yield_delta == 'unknown' or yield_delta == 'unavailable') %}
-          {%   set yield_delta = 0 %}
-          {% else %}
-          {%   set yield_delta = float(yield_delta, 0) %}
+          {% if (inputs_valid == true) %}
+          {%   set current_cost_array = current_cost_array | from_json %}
+          {%   set result = current_cost_array[4] %}
           {% endif %}
-          {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
-          {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
-          {%   set rate_distribution = 0 %}
-          {% else %}
-          {%   set rate_distribution = float(rate_distribution, 0) %}
-          {% endif %}
-          {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
-          {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
-          {%   set rate_consumption = 0 %}
-          {% else %}
-          {%   set rate_consumption = float(rate_consumption, 0) %}
-          {% endif %}
-          {% set reduction = float(((production_delta - yield_delta) * ((rate_distribution + rate_consumption)))/100, 0) | round(2, default=0) %}
-          {{ reduction }}
+          {{ result }}
 
       # Then we calculate the total reduction, plus yield income for solar production).
-      # 20221011: XXX
       - name: electrical_solar_total_return_hour
         device_class: "monetary"
         unit_of_measurement: "SEK"
@@ -1181,7 +1238,6 @@ template:
           {{ total_reduction }}
 
       # Last we set the snapshots.
-      # 20221011: XXX
       - name: electrical_consumption_intake_hour_snapshot
         device_class: "energy"
         unit_of_measurement: "kWh"
@@ -1216,7 +1272,6 @@ template:
     sensor:
       # We set the hourly state for: electrical_yield_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
-      # 20221011: XXX
       - name: electrical_yield_rate_summary_hour
         unit_of_measurement: "öre/kWh"
         state_class: measurement
@@ -1233,7 +1288,6 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_yield_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
-      # 20221011: XXX
       - name: electrical_yield_rate_summary_sek_hour
         unit_of_measurement: "SEK/kWh"
         state_class: measurement
@@ -1250,7 +1304,6 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_consumption_rate_summary
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity not has changed: https://github.com/home-assistant/core/pull/41147
-      # 20221011: XXX
       - name: electrical_consumption_rate_summary_hour
         unit_of_measurement: "öre/kWh"
         state_class: measurement
@@ -1267,7 +1320,6 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
-      # 20221011: XXX
       - name: electrical_distribution_consumption_rate_summary_hour
         unit_of_measurement: "öre/kWh"
         state_class: measurement
@@ -1284,7 +1336,6 @@ template:
             {{ now() }}
       # We set the hourly state for: electrical_distribution_consumption_rate_summary_sek
       # TWEAK: We add now() in the Jinja2-code, to allow update, even though the underlying entity has not changed: https://github.com/home-assistant/core/pull/41147
-      # 20221011: XXX
       - name: electrical_distribution_consumption_rate_summary_sek_hour
         unit_of_measurement: "SEK/kWh"
         state_class: measurement
@@ -1409,105 +1460,107 @@ template:
       # If lower than 0, then we have more intake consumption-cost on lower rate than average hours. I.e. good, we 'earn' money.
       # If higher than 0, then we have more intake consumption-cost on higher rate than average hours. I.e. bad, we 'loose' money.
       # If equal to 0, then we are at the average for the day. Neither good or bad.
-      - name: electrical_daily_calculated_consumption_index_sek
-        device_class: "monetary"
-        unit_of_measurement: "SEK"
-        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
-        state_class: total
-        state: >
-          {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
-          {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
-          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
-          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
-          {% set daily_average_rate = states('sensor.electrical_distribution_average_consumption_rate_summary') %}
-          {% set inputs_valid = true %}
-          {% set result = 0 %}
-          {% if (current_cost_sum == 'unknown' or current_cost_sum == 'unavailable') %}
-          {%   if (persistent_cost_sum == 'unknown' or persistent_cost_sum == 'unavailable' or persistent_cost_sum == 0) %}
-          {%     set inputs_valid = false %}
-          {%   else %}
-          {%      set current_cost_sum = float(persistent_cost_sum, 0) %}
-          {%   endif %}
-          {% else %}
-          {%   set current_cost_sum = float(current_cost_sum, 0) %}
-          {% endif %}
-          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
-          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
-          {%     set inputs_valid = false %}
-          {%   else %}
-          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
-          {%   endif %}
-          {% else %}
-          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
-          {% endif %}
-          {% if (daily_average_rate == 'unknown' or daily_average_rate == 'unavailable') %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set daily_average_rate = float(daily_average_rate, 0)/100 %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%  set result = (current_cost_sum - (current_consumption_sum * daily_average_rate)) | round(2, default=0) %}
-          {% endif %}
-          {{ result }}
+      # 20251026: We disable this sensor, as we do not want this sensor anymore (and it will be more coding since we have 15 minute prices).
+      #      - name: electrical_daily_calculated_consumption_index_sek
+      #        device_class: "monetary"
+      #        unit_of_measurement: "SEK"
+      #        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+      #        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      #        state_class: total
+      #        state: >
+      #          {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
+      #          {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
+      #          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
+      #          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
+      #          {% set daily_average_rate = states('sensor.electrical_distribution_average_consumption_rate_summary') %}
+      #          {% set inputs_valid = true %}
+      #          {% set result = 0 %}
+      #          {% if (current_cost_sum == 'unknown' or current_cost_sum == 'unavailable') %}
+      #          {%   if (persistent_cost_sum == 'unknown' or persistent_cost_sum == 'unavailable' or persistent_cost_sum == 0) %}
+      #          {%     set inputs_valid = false %}
+      #          {%   else %}
+      #          {%      set current_cost_sum = float(persistent_cost_sum, 0) %}
+      #          {%   endif %}
+      #          {% else %}
+      #          {%   set current_cost_sum = float(current_cost_sum, 0) %}
+      #          {% endif %}
+      #          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
+      #          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
+      #          {%     set inputs_valid = false %}
+      #          {%   else %}
+      #          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
+      #          {%   endif %}
+      #          {% else %}
+      #          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
+      #          {% endif %}
+      #          {% if (daily_average_rate == 'unknown' or daily_average_rate == 'unavailable') %}
+      #          {%   set inputs_valid = false %}
+      #          {% else %}
+      #          {%   set daily_average_rate = float(daily_average_rate, 0)/100 %}
+      #          {% endif %}
+      #          {% if (inputs_valid == true) %}
+      #          {%  set result = (current_cost_sum - (current_consumption_sum * daily_average_rate)) | round(2, default=0) %}
+      #          {% endif %}
+      #          {{ result }}
       # At the end of the day, get the average daily calculated intake consumption index in SEK, without evcharger consumption.
       # If lower than 0, then we have more intake consumption-cost on lower rate than average hours. I.e. good, we 'earn' money.
       # If higher than 0, then we have more intake consumption-cost on higher rate than average hours. I.e. bad, we 'loose' money.
       # If equal to 0, then we are at the average for the day. Neither good or bad.
       # 20221231: Added.
-      - name: electrical_daily_calculated_consumption_index_sek_without_evcharger
-        device_class: "monetary"
-        unit_of_measurement: "SEK"
-        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
-        state_class: total
-        state: >
-          {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
-          {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
-          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
-          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
-          {% set daily_average_rate = states('sensor.electrical_distribution_average_consumption_rate_summary') %}
-          {% set persistent_evcharger_cost_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
-          {% set evcharger_cost_sum = states('sensor.evcharger_daily_sum_consumption_cost_hour') %}
-          {% set inputs_valid = true %}
-          {% set result = 0 %}
-          {% if (current_cost_sum == 'unknown' or current_cost_sum == 'unavailable') %}
-          {%   if (persistent_cost_sum == 'unknown' or persistent_cost_sum == 'unavailable' or persistent_cost_sum == 0) %}
-          {%     set inputs_valid = false %}
-          {%   else %}
-          {%      set current_cost_sum = float(persistent_cost_sum, 0) %}
-          {%   endif %}
-          {% else %}
-          {%   set current_cost_sum = float(current_cost_sum, 0) %}
-          {% endif %}
-          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
-          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
-          {%     set inputs_valid = false %}
-          {%   else %}
-          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
-          {%   endif %}
-          {% else %}
-          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
-          {% endif %}
-          {% if (daily_average_rate == 'unknown' or daily_average_rate == 'unavailable') %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set daily_average_rate = float(daily_average_rate, 0)/100 %}
-          {% endif %}
-          {% if (evcharger_cost_sum == 'unknown' or evcharger_cost_sum == 'unavailable') %}
-          {%   if (persistent_evcharger_cost_sum == 'unknown' or persistent_evcharger_cost_sum == 'unavailable' or persistent_evcharger_cost_sum == 0) %}
-          {%     set inputs_valid = false %}
-          {%   else %}
-          {%      set evcharger_cost_sum = float(persistent_evcharger_cost_sum, 0) %}
-          {%   endif %}
-          {% else %}
-          {%   set evcharger_cost_sum = float(evcharger_cost_sum, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%  set current_cost_sum = (current_cost_sum - evcharger_cost_sum) %}
-          {%  set result = (current_cost_sum - (current_consumption_sum * daily_average_rate)) | round(2, default=0) %}
-          {% endif %}
-          {{ result }}
+      # 20251026: We disable this sensor, as we do not want this sensor anymore (and it will be more coding since we have 15 minute prices).
+      #      - name: electrical_daily_calculated_consumption_index_sek_without_evcharger
+      #        device_class: "monetary"
+      #        unit_of_measurement: "SEK"
+      #        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+      #        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      #        state_class: total
+      #        state: >
+      #          {% set persistent_cost_sum = states('input_number.electrical_daily_sum_consumption_intake_cost_hour_persistent') %}
+      #          {% set current_cost_sum = states('sensor.electrical_daily_sum_consumption_intake_cost_hour') %}
+      #          {% set persistent_consumption_sum = states('input_number.electrical_daily_sum_consumption_intake_hour_persistent') %}
+      #          {% set current_consumption_sum = states('sensor.electrical_daily_sum_consumption_intake_hour') %}
+      #          {% set daily_average_rate = states('sensor.electrical_distribution_average_consumption_rate_summary') %}
+      #          {% set persistent_evcharger_cost_sum = states('input_number.evcharger_daily_sum_consumption_cost_hour_persistent') %}
+      #          {% set evcharger_cost_sum = states('sensor.evcharger_daily_sum_consumption_cost_hour') %}
+      #          {% set inputs_valid = true %}
+      #          {% set result = 0 %}
+      #          {% if (current_cost_sum == 'unknown' or current_cost_sum == 'unavailable') %}
+      #          {%   if (persistent_cost_sum == 'unknown' or persistent_cost_sum == 'unavailable' or persistent_cost_sum == 0) %}
+      #          {%     set inputs_valid = false %}
+      #          {%   else %}
+      #          {%      set current_cost_sum = float(persistent_cost_sum, 0) %}
+      #          {%   endif %}
+      #          {% else %}
+      #          {%   set current_cost_sum = float(current_cost_sum, 0) %}
+      #          {% endif %}
+      #          {% if (current_consumption_sum == 'unknown' or current_consumption_sum == 'unavailable') %}
+      #          {%   if (persistent_consumption_sum == 'unknown' or persistent_consumption_sum == 'unavailable' or persistent_consumption_sum == 0) %}
+      #          {%     set inputs_valid = false %}
+      #          {%   else %}
+      #          {%      set current_consumption_sum = float(persistent_consumption_sum, 0) %}
+      #          {%   endif %}
+      #          {% else %}
+      #          {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
+      #          {% endif %}
+      #          {% if (daily_average_rate == 'unknown' or daily_average_rate == 'unavailable') %}
+      #          {%   set inputs_valid = false %}
+      #          {% else %}
+      #          {%   set daily_average_rate = float(daily_average_rate, 0)/100 %}
+      #          {% endif %}
+      #          {% if (evcharger_cost_sum == 'unknown' or evcharger_cost_sum == 'unavailable') %}
+      #          {%   if (persistent_evcharger_cost_sum == 'unknown' or persistent_evcharger_cost_sum == 'unavailable' or persistent_evcharger_cost_sum == 0) %}
+      #          {%     set inputs_valid = false %}
+      #          {%   else %}
+      #          {%      set evcharger_cost_sum = float(persistent_evcharger_cost_sum, 0) %}
+      #          {%   endif %}
+      #          {% else %}
+      #          {%   set evcharger_cost_sum = float(evcharger_cost_sum, 0) %}
+      #          {% endif %}
+      #          {% if (inputs_valid == true) %}
+      #          {%  set current_cost_sum = (current_cost_sum - evcharger_cost_sum) %}
+      #          {%  set result = (current_cost_sum - (current_consumption_sum * daily_average_rate)) | round(2, default=0) %}
+      #          {% endif %}
+      #          {{ result }}
       # At the end of the day summarize electrical_daily_sum_consumption_intake_hour, without evcharger consumption.
       # 20221231: Added.
       - name: electrical_daily_sum_consumption_intake_hour_without_evcharger
@@ -1532,7 +1585,7 @@ template:
           {% else %}
           {%   set current_consumption_sum = float(current_consumption_sum, 0) %}
           {% endif %}
-           {% if (evcharger_sum == 'unknown' or evcharger_sum == 'unavailable') %}
+          {% if (evcharger_sum == 'unknown' or evcharger_sum == 'unavailable') %}
           {%   if (persistent_evcharger_sum == 'unknown' or persistent_evcharger_sum == 'unavailable' or persistent_evcharger_sum == 0) %}
           {%     set inputs_valid = false %}
           {%   else %}
@@ -1582,7 +1635,6 @@ template:
           {%  set result = (current_consumption_sum - evcharger_sum) | round(2, default=0) %}
           {% endif %}
           {{ result }}
-
 
 automation:
   # For persistence, On every state change for electrical_consumption_intake_hour_snapshot, set input_number sensor.
@@ -1642,8 +1694,8 @@ automation:
         value: "{{ states('sensor.electrical_daily_sum_consumption_intake_hour') }}"
 
   # We want to track the intake consumption each 15 minute during the hour.
-  - id: test_automation_electrical_consumption_intake_array
-    alias: "Automation related to test_electrical_consumption_intake_array"
+  - id: automation_electrical_consumption_intake_array
+    alias: "Automation related to electrical_consumption_intake_array"
     trigger:
       - platform: time_pattern
         minutes: "14"
@@ -1660,10 +1712,10 @@ automation:
     action:
       - service: input_text.set_value
         target:
-          entity_id: input_text.test_electrical_consumption_intake_array
+          entity_id: input_text.electrical_consumption_intake_array
         data:
           value: >-
-            {% set current_array = states('input_text.test_electrical_consumption_intake_array') %}
+            {% set current_array = states('input_text.electrical_consumption_intake_array') %}
             {% set current_consumption = states(states('input_text.electrical_consumption_sensor')) %}
             {% set current_minute = now().minute %}
             {% set inputs_valid = true %}
@@ -1694,9 +1746,9 @@ automation:
             {{ result | tojson }}
 
   # We want to track the intake consumption cost each 15 minute during the hour.
-  # We perform this after test_electrical_consumption_intake_array is set.
-  - id: test_automation_test_electrical_consumption_intake_cost_array
-    alias: "Automation related to test_electrical_consumption_intake_cost_array"
+  # We perform this after electrical_consumption_intake_array is set.
+  - id: automation_electrical_consumption_intake_cost_array
+    alias: "Automation related to electrical_consumption_intake_cost_array"
     trigger:
       - platform: time_pattern
         minutes: "14"
@@ -1713,11 +1765,11 @@ automation:
     action:
       - service: input_text.set_value
         target:
-          entity_id: input_text.test_electrical_consumption_intake_cost_array
+          entity_id: input_text.electrical_consumption_intake_cost_array
         data:
           value: >-
-            {% set current_consumption_array = states('input_text.test_electrical_consumption_intake_array') %}
-            {% set current_cost_array = states('input_text.test_electrical_consumption_intake_cost_array') %}
+            {% set current_consumption_array = states('input_text.electrical_consumption_intake_array') %}
+            {% set current_cost_array = states('input_text.electrical_consumption_intake_cost_array') %}
             {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
             {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
             {% set current_minute = now().minute %}
@@ -1743,23 +1795,356 @@ automation:
             {% set current_cost_array = current_cost_array | from_json %}
             {% if (inputs_valid == true) %}
             {%   if (current_minute < 15) %}
-            {%     if (current_consumption_array[0] == 0 or current_consumption_array[3] == 0) %}
-            {%     endif %}
             {%     set delta_consumption = current_consumption_array[0] - current_consumption_array[3] %}
-            {%     set sum_cost = delta_consumption + current_cost_array[1] + current_cost_array[2] + current_cost_array[3] %}
-            {%     set new_cost_array = [delta_consumption] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[0] == 0 or current_consumption_array[3] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (delta_cost + current_cost_array[1] + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [delta_cost] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
             {%   elif (current_minute >= 15 and current_minute < 30) %}
             {%     set delta_consumption = current_consumption_array[1] - current_consumption_array[0] %}
-            {%     set sum_cost = current_cost_array[0] + delta_consumption + current_cost_array[2] + current_cost_array[3] %}
-            {%     set new_cost_array = [current_cost_array[0]] + [delta_consumption] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[1] == 0 or current_consumption_array[0] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + delta_cost + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [delta_cost] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
             {%   elif (current_minute >= 30 and current_minute < 45) %}
             {%     set delta_consumption = current_consumption_array[2] - current_consumption_array[1] %}
-            {%     set sum_cost = current_cost_array[0] + current_cost_array[1] + delta_consumption + current_cost_array[3] %}
-            {%     set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_consumption] + [current_cost_array[3]] + [sum_cost] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[2] == 0 or current_consumption_array[1] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + delta_cost + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_cost] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
             {%   elif (current_minute >= 45) %}
             {%     set delta_consumption = current_consumption_array[3] - current_consumption_array[2] %}
-            {%     set sum_cost = current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_consumption %}
-            {%     set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_consumption] + [sum_cost] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[3] == 0 or current_consumption_array[2] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_cost) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_cost] + [sum_cost] %}
+            {%     endif %}
+            {%   endif %}
+            {%   set result = new_cost_array %}
+            {% else %}
+            {%   set result = current_cost_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the solar yield each 15 minute during the hour.
+  - id: automation_electrical_solar_yield_hour_array
+    alias: "Automation related to electrical_solar_yield_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "56"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.electrical_solar_yield_hour_array
+        data:
+          value: >-
+            {% set current_array = states('input_text.electrical_solar_yield_hour_array') %}
+            {% set current_consumption = states(states('input_text.electrical_yield_sensor')) %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
+            {%   set current_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% set current_array = current_array | from_json %}
+            {% if (current_consumption == 'unknown' or current_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set current_consumption = current_consumption | float %}
+            {% endif %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set new_array = [current_consumption] + [current_array[1]] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set new_array = [current_array[0]] + [current_consumption] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_consumption] + [current_array[3]] %}
+            {%   elif (current_minute >= 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_array[2]] + [current_consumption] %}
+            {%   endif %}
+            {%   set result = new_array %}
+            {% else %}
+            {%   set result = current_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the solar yield return each 15 minute during the hour.
+  # We perform this after electrical_solar_yield_hour_array is set.
+  - id: automation_electrical_solar_yield_return_hour_array
+    alias: "Automation related to electrical_solar_yield_return_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "57"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.electrical_solar_yield_return_hour_array
+        data:
+          value: >-
+            {% set current_consumption_array = states('input_text.electrical_solar_yield_hour_array') %}
+            {% set current_cost_array = states('input_text.electrical_solar_yield_return_hour_array') %}
+            {% set yield_summary = states('sensor.electrical_yield_rate_summary') %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_consumption_array == 'unknown' or current_consumption_array == 'unavailable' or current_consumption_array == 'none' or current_consumption_array == None or current_consumption_array == "") %}
+            {%   set current_consumption_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+            {%   set current_cost_array = "[0,0,0,0,0]" %}
+            {% endif %}
+            {% if (yield_summary == 'unknown' or yield_summary == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set yield_summary = float(yield_summary, 0) %}
+            {% endif %}
+            {% set current_consumption_array = current_consumption_array | from_json %}
+            {% set current_cost_array = current_cost_array | from_json %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set delta_consumption = current_consumption_array[0] - current_consumption_array[3] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[0] == 0 or current_consumption_array[3] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_yield = (delta_consumption * (yield_summary/100)) | round(5, default=0) %}
+            {%       set sum_cost = (delta_yield + current_cost_array[1] + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [delta_yield] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set delta_consumption = current_consumption_array[1] - current_consumption_array[0] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[1] == 0 or current_consumption_array[0] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_yield = (delta_consumption * (yield_summary/100)) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + delta_yield + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [delta_yield] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set delta_consumption = current_consumption_array[2] - current_consumption_array[1] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[2] == 0 or current_consumption_array[1] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_yield = (delta_consumption * (yield_summary/100)) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + delta_yield + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_yield] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 45) %}
+            {%     set delta_consumption = current_consumption_array[3] - current_consumption_array[2] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[3] == 0 or current_consumption_array[2] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_yield = (delta_consumption * (yield_summary/100)) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_yield) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_yield] + [sum_cost] %}
+            {%     endif %}
+            {%   endif %}
+            {%   set result = new_cost_array %}
+            {% else %}
+            {%   set result = current_cost_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the reduction from solar production each 15 minute during the hour.
+  - id: automation_electrical_solar_production_hour_array
+    alias: "Automation related to electrical_solar_production_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "56"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.electrical_solar_production_hour_array
+        data:
+          value: >-
+            {% set current_array = states('input_text.electrical_solar_production_hour_array') %}
+            {% set current_production = states(states('input_text.electrical_production_sensor')) %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
+            {%   set current_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% set current_array = current_array | from_json %}
+            {% if (current_production == 'unknown' or current_production == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set current_production = current_production | float %}
+            {% endif %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set new_array = [current_production] + [current_array[1]] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set new_array = [current_array[0]] + [current_production] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_production] + [current_array[3]] %}
+            {%   elif (current_minute >= 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_array[2]] + [current_production] %}
+            {%   endif %}
+            {%   set result = new_array %}
+            {% else %}
+            {%   set result = current_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the reduction from solar production (i.e. that we do not need to buy the electricity) each 15 minute during the hour.
+  # We perform this after electrical_solar_production_hour_array and electrical_solar_yield_hour_array is set.
+  - id: automation_electrical_solar_production_reduction_hour_array
+    alias: "Automation related to electrical_solar_production_reduction_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "57"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.electrical_solar_production_reduction_hour_array
+        data:
+          value: >-
+            {% set current_production_array = states('input_text.electrical_solar_production_hour_array') %}
+            {% set current_yield_array = states('input_text.electrical_solar_yield_hour_array') %}
+            {% set current_cost_array = states('input_text.electrical_solar_production_reduction_hour_array') %}
+            {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+            {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_production_array == 'unknown' or current_production_array == 'unavailable' or current_production_array == 'none' or current_production_array == None or current_production_array == "") %}
+            {%   set current_production_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% if (current_yield_array == 'unknown' or current_yield_array == 'unavailable' or current_yield_array == 'none' or current_yield_array == None or current_yield_array == "") %}
+            {%   set current_yield_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+            {%   set current_cost_array = "[0,0,0,0,0]" %}
+            {% endif %}
+            {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_distribution = float(rate_distribution, 0) %}
+            {% endif %}
+            {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_consumption = float(rate_consumption, 0) %}
+            {% endif %}
+            {% set current_production_array = current_production_array | from_json %}
+            {% set current_yield_array = current_yield_array | from_json %}
+            {% set current_cost_array = current_cost_array | from_json %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set delta_production = current_production_array[0] - current_production_array[3] %}
+            {%     set delta_yield = current_yield_array[0] - current_yield_array[3] %}
+            {%     if (delta_production < 0 or current_production_array[0] == 0 or current_production_array[3] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (delta_yield < 0 or current_yield_array[0] == 0 or current_yield_array[3] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (inputs_valid == true) %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * (delta_production - delta_yield)) | round(5, default=0) %}
+            {%       set sum_cost = (delta_cost + current_cost_array[1] + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [delta_cost] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     else %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     endif %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set delta_production = current_production_array[1] - current_production_array[0] %}
+            {%     set delta_yield = current_yield_array[1] - current_yield_array[0] %}
+            {%     if (delta_production < 0 or current_production_array[1] == 0 or current_production_array[0] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (delta_yield < 0 or current_yield_array[1] == 0 or current_yield_array[0] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (inputs_valid == true) %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * (delta_production - delta_yield)) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + delta_cost + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [delta_cost] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     else %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     endif %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set delta_production = current_production_array[2] - current_production_array[1] %}
+            {%     set delta_yield = current_yield_array[2] - current_yield_array[1] %}
+            {%     if (delta_production < 0 or current_production_array[2] == 0 or current_production_array[1] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (delta_yield < 0 or current_yield_array[2] == 0 or current_yield_array[1] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (inputs_valid == true) %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * (delta_production - delta_yield)) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + delta_cost + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_cost] + [current_cost_array[3]] + [sum_cost] %}
+            {%     else %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     endif %}
+            {%   elif (current_minute >= 45) %}
+            {%     set delta_production = current_production_array[3] - current_production_array[2] %}
+            {%     set delta_yield = current_yield_array[3] - current_yield_array[2] %}
+            {%     if (delta_production < 0 or current_production_array[3] == 0 or current_production_array[2] == 0) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (delta_yield < 0 or current_yield_array[3] == 0 or current_yield_array[2] == 2) %}
+            {%       set inputs_valid = false %}
+            {%     endif %}
+            {%     if (inputs_valid == true) %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * (delta_production - delta_yield)) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_cost) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_cost] + [sum_cost] %}
+            {%     else %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     endif %}
             {%   endif %}
             {%   set result = new_cost_array %}
             {% else %}
