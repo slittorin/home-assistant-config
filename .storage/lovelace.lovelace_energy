@@ -42,12 +42,8 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "sensor.balboa_spa_heater_cost_hour",
-                      "name": "Varav kostnad för värmare spabad"
-                    },
-                    {
-                      "entity": "sensor.balboa_spa_circulationpump_cost_hour",
-                      "name": "Varav kostnad för cirkulationspump spabad"
+                      "entity": "sensor.balboa_spa_circulationpump_heater_cost_hour",
+                      "name": "Varav kostnad för spabad"
                     },
                     {
                       "entity": "sensor.evcharger_consumption_cost_hour",

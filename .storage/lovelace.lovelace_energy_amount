@@ -43,12 +43,8 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "sensor.balboa_spa_heater_consumption_hour",
-                      "name": "Varav energimängd för värmare spabad"
-                    },
-                    {
-                      "entity": "sensor.balboa_spa_circulationpump_consumption_hour",
-                      "name": "Varav energimängd för cirkulationspump spabad"
+                      "entity": "sensor.balboa_spa_circulation_pump_heater_consumption_hour",
+                      "name": "Varav energimängd för spabad"
                     },
                     {
                       "entity": "sensor.evcharger_consumption_hour",

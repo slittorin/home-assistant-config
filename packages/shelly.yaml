@@ -95,6 +95,36 @@ sensor:
     sampling_size: 120
     max_age:
       hours: 1
+  # We want to get the min statistics for the power (W) for spa.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly spa total active power min
+    unique_id: shelly_spa_total_active_power_min
+    entity_id: sensor.shelly_spa_total_active_power
+    state_characteristic: value_min
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the max statistics for the power (W) for spa.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly spa total active power max
+    unique_id: shelly_spa_total_active_power_max
+    entity_id: sensor.shelly_spa_total_active_power
+    state_characteristic: value_max
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for the power (W) for spa.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly spa total active power mean
+    unique_id: shelly_spa_total_active_power_mean
+    entity_id: sensor.shelly_spa_total_active_power
+    state_characteristic: mean
+    sampling_size: 120
+    max_age:
+      hours: 1
 
 template:
   # Removed 20251115: Can sometime give faulty numbers.
@@ -301,6 +331,109 @@ template:
         state_class: total_increasing
         state: >
           {% set input = states('sensor.shelly_heat_exchanger_total_energy') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+
+      # We save shelly_spa_total_active_energy for last hour.
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      # Updated 20260321 since 'shelly_spa_total_active_energy_hour' can go down to zero when Shelly reboots, we need to make sure that too large data is set.
+      - name: shelly_spa_total_active_energy_last_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set old_consumption = states('sensor.shelly_spa_total_active_energy_hour') %}
+          {% set consumption = states('sensor.shelly_spa_total_active_energy') %}
+          {% set inputs_valid = true %}
+          {% if (old_consumption == 'unknown' or old_consumption == 'unavailable' or old_consumption == 0) %}
+          {%   set inputs_valid = false %}
+          {% elif (consumption == 'unknown' or consumption == 'unavailable') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set old_consumption = old_consumption | float %}
+          {%   set consumption = consumption | float %}
+          {%   if (old_consumption == 0) %}
+          {%     set value = 0 %}
+          {%   else %}
+          {%     set value = float(consumption - old_consumption, default=0) %}
+          {%   endif %}
+          {%   if (value < 0) %}
+          {%     set value = 0 %}
+          {%   endif %}
+          {% else %}
+          {%   set value = 0 %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_spa_total_active_energy
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_spa_total_active_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.shelly_spa_total_active_energy') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_spa_total_active_power_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_spa_total_active_power_min_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_spa_total_active_power_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_spa_total_active_power_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_spa_total_active_power_max_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_spa_total_active_power_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_spa_total_active_power_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_spa_total_active_power_mean_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_spa_total_active_power_mean') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+
+      # We save shelly_spa_total_active_energy
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_water_heater_total_active_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.shelly_water_heater_total_active_energy') %}
           {% if (input == 'unknown' or input == 'unavailable') %}
           {%   set value = 0 %}
           {% else %}

@@ -3907,6 +3907,7 @@ template:
         unique_id: systemair_read_heater_on
         icon: mdi:heat-wave
         state: >
+          {% set old_value = state_attr('binary_sensor.systemair_read_heater_on', 'response') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -3927,6 +3928,8 @@ template:
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 

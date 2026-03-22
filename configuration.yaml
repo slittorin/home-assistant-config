@@ -31,7 +31,7 @@ logger:
 # Recorder is enabled by default.
 recorder:
   db_url: !secret recorder_db_url
-  purge_keep_days: 15
+  purge_keep_days: 10
   #auto_purge: true
   commit_interval: 30
   exclude:
@@ -217,6 +217,71 @@ influxdb:
       # We exclude the total sensor, since we do not require it in graphs.
       - sensor.sma_total_power_used_by_house
       - sensor.adax_heater_energy_last_hour
+      # We exclude Shelly sensors for the spa.
+      - sensor.shelly_spa_temperature
+      - sensor.shelly_spa_total_active_energy
+      - sensor.shelly_spa_total_active_power
+      - sensor.shelly_spa_total_active_power_mean
+      - sensor.shelly_spa_total_active_power_max
+      - sensor.shelly_spa_total_active_power_min
+      - sensor.shelly_spa_total_active_returned_energy
+      - sensor.shelly_spa_total_apparent_power
+      - sensor.shelly_spa_phase_a_active_power
+      - sensor.shelly_spa_phase_a_apparent_power
+      - sensor.shelly_spa_phase_a_power_factor
+      - sensor.shelly_spa_phase_b_active_power
+      - sensor.shelly_spa_phase_b_apparent_power
+      - sensor.shelly_spa_phase_b_power_factor
+      - sensor.shelly_spa_phase_c_active_power
+      - sensor.shelly_spa_phase_c_apparent_power
+      - sensor.shelly_spa_phase_c_power_factor
+      # We exclude array sensors for spa
+      - input_text.balboa_spa_circulationpump_heater_hour_array
+      - input_text.balboa_spa_circulationpump_heater_cost_hour_array
+      # We exclude Shely sensors for the water heater.
+      - sensor.shelly_water_heater_temperature
+      - sensor.shelly_water_heater_total_active_energy
+      - sensor.shelly_water_heater_total_active_power
+      - sensor.shelly_water_heater_total_active_returned_energy
+      - sensor.shelly_water_heater_total_apparent_power
+      - sensor.shelly_water_heater_phase_a_active_power
+      - sensor.shelly_water_heater_phase_a_apparent_power
+      - sensor.shelly_water_heater_phase_a_power_factor
+      - sensor.shelly_water_heater_phase_b_active_power
+      - sensor.shelly_water_heater_phase_b_apparent_power
+      - sensor.shelly_water_heater_phase_b_power_factor
+      - sensor.shelly_water_heater_phase_c_active_power
+      - sensor.shelly_water_heater_phase_c_apparent_power
+      - sensor.shelly_water_heater_phase_c_power_factor
+      # We exclude all automations as of 20260315.
+      - automation.*
+      # We exclude climate.nbp6013h_climate since it is not used as of 20260315.
+      - climate.nbp6013h_climate
+      # We exclude datetime sensors as of 20260315.
+      - sensor.server1_cpu_used_pct_datetime
+      - sensor.server1_cpu_temperature_datetime
+      - sensor.server1_mem_used_pct_datetime
+      - sensor.server1_swap_used_pct_datetime
+      - sensor.server1_uptime_datetime
+      - sensor.server1_influxdb_size_datetime
+      # We exclude climate sensors we already extract data from as of 20260322.
+      - climate.kok
+      - climate.badrum
+      - climate.toalett
+      - climate.vardagsrum
+      - climate.sovrum
+      # We exclude sensors related to data for server1 as of 20260322.
+      - sensor.server1_disk_used_pct_datetime
+      - sensor.server1_cpu_temperature_datetime
+      - sensor.server1_cpu_used_pct_datetime
+      - sensor.server1_mem_used_pct_datetime
+      - sensor.server1_swap_used_pct_datetime
+      - sensor.server1_uptime_datetime
+      - sensor.server1_influxdb_size_datetime
+      # We exclude data from car-charger as of 20260322.
+      - sensor.ehs4plem_status
+      # We exclude weather sensor as of 20260322 since we already take data from this.
+      - weather.smhi_home
 
 notify:
   - name: email_notification

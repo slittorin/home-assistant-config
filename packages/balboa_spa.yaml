@@ -1,12 +1,14 @@
 # This file includes all the entitites for tracking sensor data for the Balboa Spa Client add-on.
 
-# The following are the consumptions for Denform Montana:
-# - Heater: 3 kW.
-# - Circulation pump: 0.2 kW + 0.1 kW for the ozone-device (that takes 0.2 kW, but we assume that the ozone-device is only running 50% of the time).
-#
-# Logic:
-# - We utilize history_stat to increase time running over each hour, when binary sensor is true/on.
-# - Based on increase time, we create energy sensor that with state_class 'total_increasing' to allow HA to capture energy correct.
+# 20251207: The below logic is not required anymore since we have the correct consumption from a Shelly-device.
+
+# # The following are the consumptions for Denform Montana:
+# # - Heater: 3 kW.
+# # - Circulation pump: 0.2 kW + 0.1 kW for the ozone-device (that takes 0.2 kW, but we assume that the ozone-device is only running 50% of the time).
+# #
+# # Logic:
+# # - We utilize history_stat to increase time running over each hour, when binary sensor is true/on.
+# # - Based on increase time, we create energy sensor that with state_class 'total_increasing' to allow HA to capture energy correct.
 
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
@@ -72,69 +74,87 @@ input_text:
   balboa_spa_temperature_sensor:
     name: "Name of sensor for spa temperatures (full name)"
     icon: mdi:thermometer-lines
+  # We want to track spa consumption each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # unit_of_measurement: "kWh"
+  balboa_spa_circulationpump_heater_hour_array:
+    name: "Array for calculating correct 15 minute spa consumption"
+    icon: mdi:application-array-outline
+  # We want to track the production for the spa each 15-minute during the hour
+  # Index 0 through 3 is each 15 minute.
+  # Index 4 is the summary of cost for each 15 minute during the hour.
+  # unit_of_measurement: "SEK"
+  balboa_spa_circulationpump_heater_cost_hour_array:
+    name: "Array for calculating correct 15 minute cost for spa consumption"
+    icon: mdi:application-array-outline
 
-sensor:
-  # We want to keep track of the time that the circulation pump has been running each hour (depends of course on polling).
-  # We can utilize the binary sensor from the Balboa Spa Client integration.
-  - platform: history_stats
-    name: balboa_spa_circulationpump_running_time_hour
-    entity_id: binary_sensor.nbp6013h_circ_pump
-    state: "on"
-    type: time
-    start: "{{ now().replace(minute=0, second=0) }}"
-    end: "{{ now() }}"
+#sensor:
+# We want to keep track of the time that the circulation pump has been running each hour (depends of course on polling).
+# We can utilize the binary sensor from the Balboa Spa Client integration.
+# 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+#  - platform: history_stats
+#    name: balboa_spa_circulationpump_running_time_hour
+#    entity_id: binary_sensor.nbp6013h_circ_pump
+#    state: "on"
+#    type: time
+#    start: "{{ now().replace(minute=0, second=0) }}"
+#    end: "{{ now() }}"
 
-  - platform: history_stats
-    name: test_balboa_spa_circulationpump_running_time_hour
-    entity_id: binary_sensor.nbp6013h_circ_pump
-    state: "on"
-    type: time
-    start: "{{ now().replace(minute=(now().minute // 15) * 15, second=0, microsecond=0) }}"
-    end: "{{ now() }}"
+# 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+#  - platform: history_stats
+#    name: test_balboa_spa_circulationpump_running_time_hour
+#    entity_id: binary_sensor.nbp6013h_circ_pump
+#    state: "on"
+#    type: time
+#    start: "{{ now().replace(minute=(now().minute // 15) * 15, second=0, microsecond=0) }}"
+#    end: "{{ now() }}"
 
-    # We want to keep track of the time that the heater has been running each hour (depends of course on polling).
-    # Since we cannot track attribute-state in history_stats, we need to utilize the binary template-sensor created below.
-  - platform: history_stats
-    name: balboa_spa_heater_running_time_hour
-    entity_id: binary_sensor.balboa_spa_heater_on
-    state: "on"
-    type: time
-    start: "{{ now().replace(minute=0, second=0) }}"
-    end: "{{ now() }}"
+# We want to keep track of the time that the heater has been running each hour (depends of course on polling).
+# Since we cannot track attribute-state in history_stats, we need to utilize the binary template-sensor created below.
+# 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+#  - platform: history_stats
+#    name: balboa_spa_heater_running_time_hour
+#    entity_id: binary_sensor.balboa_spa_heater_on
+#    state: "on"
+#    type: time
+#    start: "{{ now().replace(minute=0, second=0) }}"
+#    end: "{{ now() }}"
 
 template:
-  - sensor:
-      # We want to keep track of accumulated hourly consumption for the circulation pump.
-      - name: Balboa Spa circulationpump consumption hour
-        unique_id: balboa_spa_circulationpump_consumption_hour
-        unit_of_measurement: "kWh"
-        device_class: energy
-        state_class: total_increasing
-        state: "{{ float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3 }}"
+  # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+  #  - sensor:
+  # We want to keep track of accumulated hourly consumption for the circulation pump.
+  #      - name: Balboa Spa circulationpump consumption hour
+  #        unique_id: balboa_spa_circulationpump_consumption_hour
+  #        unit_of_measurement: "kWh"
+  #        device_class: energy
+  #        state_class: total_increasing
+  #        state: "{{ float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3 }}"
 
-  - sensor:
-      # Added 20231123: We want to keep track of power for the circulation pump.
-      - name: balboa spa circulationpump power
-        unique_id: balboa_spa_circulationpump_power
-        unit_of_measurement: "kW"
-        device_class: power
-        state: >
-          {% set running = states('binary_sensor.nbp6013h_circ_pump') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (running == 'unknown' or running == 'unavailable' or running == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   if (running == 'on') %}
-          {%     set power = 0.3 %}
-          {% else %}
-          {%     set power = 0 %}
-          {%   endif %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = power %}
-          {% endif %}
-          {{ result }}
+  # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+  #  - sensor:
+  # Added 20231123: We want to keep track of power for the circulation pump.
+  #      - name: balboa spa circulationpump power
+  #        unique_id: balboa_spa_circulationpump_power
+  #        unit_of_measurement: "kW"
+  #        device_class: power
+  #        state: >
+  #          {% set running = states('binary_sensor.nbp6013h_circ_pump') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (running == 'unknown' or running == 'unavailable' or running == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   if (running == 'on') %}
+  #          {%     set power = 0.3 %}
+  #          {% else %}
+  #          {%     set power = 0 %}
+  #          {%   endif %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   set result = power %}
+  #          {% endif %}
+  #          {{ result }}
 
   - binary_sensor:
       # Since we cannot track attribute-state in history_stats, we need to create a binary template-sensor.
@@ -144,49 +164,52 @@ template:
         device_class: heat
         state: "{{ is_state_attr('climate.nbp6013h_climate', 'hvac_action', 'heating') }}"
 
-  - sensor:
-      # We want to keep track of accumulated (hourly) consumption for the heater.
-      - name: Balboa Spa heater consumption hour
-        unique_id: balboa_spa_heater_consumption_hour
-        unit_of_measurement: "kWh"
-        device_class: energy
-        state_class: total_increasing
-        state: "{{ float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3 }}"
+  # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+  #  - sensor:
+  # We want to keep track of accumulated (hourly) consumption for the heater.
+  #      - name: Balboa Spa heater consumption hour
+  #        unique_id: balboa_spa_heater_consumption_hour
+  #        unit_of_measurement: "kWh"
+  #        device_class: energy
+  #        state_class: total_increasing
+  #        state: "{{ float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3 }}"
 
-  - sensor:
-      # Added 20231123: We want to keep track of power for the heater.
-      - name: balboa spa heater power
-        unique_id: balboa_spa_heater_power
-        unit_of_measurement: "kW"
-        device_class: power
-        state: >
-          {% set heating = states('binary_sensor.balboa_spa_heater_on') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (heating == 'unknown' or heating == 'unavailable' or heating == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   if (heating == 'on') %}
-          {%     set power = 3.0 %}
-          {% else %}
-          {%     set power = 0 %}
-          {%   endif %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = power %}
-          {% endif %}
-          {{ result }}
+  # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
+  #  - sensor:
+  # Added 20231123: We want to keep track of power for the heater.
+  #      - name: balboa spa heater power
+  #        unique_id: balboa_spa_heater_power
+  #        unit_of_measurement: "kW"
+  #        device_class: power
+  #        state: >
+  #          {% set heating = states('binary_sensor.balboa_spa_heater_on') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (heating == 'unknown' or heating == 'unavailable' or heating == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   if (heating == 'on') %}
+  #          {%     set power = 3.0 %}
+  #          {% else %}
+  #          {%     set power = 0 %}
+  #          {%   endif %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   set result = power %}
+  #          {% endif %}
+  #          {{ result }}
 
-  - sensor:
-      # We want to keep track of accumulated (hourly) consumption for the circulation pump and heater.
-      # Sometimes HA seems to not add entities when the name and unique_id is not the same, and this 'sticks' in the system.
-      # Therefore we split circulation and pump.
-      - name: Balboa Spa circulation pump heater consumption hour
-        unique_id: balboa_spa_circulation_pump_heater_consumption_hour
-        unit_of_measurement: "kWh"
-        device_class: energy
-        state_class: total_increasing
-        state: "{{ float((float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3) + (float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3.0)) }}"
+  # 20251209: The below code is not required anymore, replaced by automation below.
+  #  - sensor:
+  # We want to keep track of accumulated (hourly) consumption for the circulation pump and heater.
+  # Sometimes HA seems to not add entities when the name and unique_id is not the same, and this 'sticks' in the system.
+  # Therefore we split circulation and pump.
+  #      - name: Balboa Spa circulation pump heater consumption hour
+  #        unique_id: balboa_spa_circulation_pump_heater_consumption_hour
+  #        unit_of_measurement: "kWh"
+  #        device_class: energy
+  #        state_class: total_increasing
+  #        state: "{{ float((float(states('sensor.balboa_spa_circulationpump_running_time_hour'), 0) * 0.3) + (float(states('sensor.balboa_spa_heater_running_time_hour'), 0) * 3.0)) }}"
 
   - sensor:
       # We set the spa temperature sensor.
@@ -258,59 +281,64 @@ template:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
       # 20230102: Changed from 59.58 to 59.56 to further add space before 59.58 each hour.
+      # 20251209: Changed from 59.56 to 59.58 to manage calculations with arrays that occur the second(s) before.
       - platform: time_pattern
         hours: "/1"
         minutes: "59"
-        seconds: "56"
+        seconds: "58"
     sensor:
+      # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
       # We set the cost for the circulation pump
       # We will therefore not capture the last second for the hour.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
-      - name: balboa_spa_circulationpump_cost_hour
-        device_class: "monetary"
-        unit_of_measurement: "SEK"
-        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
-        state_class: total
-        state: >
-          {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
-          {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
-          {% if (consumption == 'unknown' or consumption == 'unavailable') %}
-          {%   set consumption = 0 %}
-          {% else %}
-          {%   set consumption = float(consumption, 0) %}
-          {% endif %}
-          {% if (cost == 'unknown' or cost == 'unavailable') %}
-          {%   set cost = 0 %}
-          {% else %}
-          {%   set cost = float(cost, 0) %}
-          {% endif %}
-          {% set total_cost = (consumption * cost) | round(2, default=0) %}
-          {{ total_cost }}
+      #- name: balboa_spa_circulationpump_cost_hour
+      #  device_class: "monetary"
+      #  unit_of_measurement: "SEK"
+      #  # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+      #  # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      #  state_class: total
+      # state: >
+      #    {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
+      #    {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+      #    {% if (consumption == 'unknown' or consumption == 'unavailable') %}
+      #    {%   set consumption = 0 %}
+      #    {% else %}
+      #    {%   set consumption = float(consumption, 0) %}
+      #    {% endif %}
+      #    {% if (cost == 'unknown' or cost == 'unavailable') %}
+      #    {%   set cost = 0 %}
+      #    {% else %}
+      #    {%   set cost = float(cost, 0) %}
+      #    {% endif %}
+      #    {% set total_cost = (consumption * cost) | round(2, default=0) %}
+      #    {{ total_cost }}
+
+      # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
       # We set the cost for the heater
       # We will therefore not capture the last second for the hour.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
-      - name: balboa_spa_heater_cost_hour
-        device_class: "monetary"
-        unit_of_measurement: "SEK"
-        # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
-        # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
-        state_class: total
-        state: >
-          {% set consumption = states('sensor.balboa_spa_heater_consumption_hour') %}
-          {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
-          {% if (consumption == 'unknown' or consumption == 'unavailable') %}
-          {%   set consumption = 0 %}
-          {% else %}
-          {%   set consumption = float(consumption, 0) %}
-          {% endif %}
-          {% if (cost == 'unknown' or cost == 'unavailable') %}
-          {%   set cost = 0 %}
-          {% else %}
-          {%   set cost = float(cost, 0) %}
-          {% endif %}
-          {% set total_cost = (consumption * cost) | round(2, default=0)  %}
-          {{ total_cost }}
+      #- name: balboa_spa_heater_cost_hour
+      #  device_class: "monetary"
+      #  unit_of_measurement: "SEK"
+      #  # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
+      #  # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+      #  state_class: total
+      #  state: >
+      #    {% set consumption = states('sensor.balboa_spa_heater_consumption_hour') %}
+      #    {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+      #    {% if (consumption == 'unknown' or consumption == 'unavailable') %}
+      #    {%   set consumption = 0 %}
+      #    {% else %}
+      #    {%   set consumption = float(consumption, 0) %}
+      #    {% endif %}
+      #    {% if (cost == 'unknown' or cost == 'unavailable') %}
+      #    {%   set cost = 0 %}
+      #    {% else %}
+      #    {%   set cost = float(cost, 0) %}
+      #    {% endif %}
+      #    {% set total_cost = (consumption * cost) | round(2, default=0)  %}
+      #    {{ total_cost }}
+
       # We set the cost for the  circulation pump and heater.
       # We will therefore not capture the last second for the hour.
       # This however means that the hourly consumption will differ a bit, but we never stated that this was a precise sensor ;)
@@ -319,28 +347,57 @@ template:
         unit_of_measurement: "SEK"
         # 20230502: Removed since gave warning in 2023.2.5: (<class 'homeassistant.components.template.sensor.TriggerSensorEntity'>) is using state class 'measurement' which is impossible considering device class ('monetary') it is using; expected None or one of 'total'
         # 20241127: Added again after error 'Entiteten har inte längre någon tillståndsklass'.
+        # 20251209: The below sensor is altered to manage 15 minute cost.
         state_class: total
         state: >
-          {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
-          {% set consumption2 = states('sensor.balboa_spa_heater_consumption_hour') %}
-          {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+          {% set current_cost_array = states('input_text.balboa_spa_circulationpump_heater_cost_hour_array') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set current_cost_array = current_cost_array | from_json %}
+          {%   set result = current_cost_array[4] %}
+          {% endif %}
+          {{ result }}
+      #          {% set consumption = states('sensor.balboa_spa_circulationpump_consumption_hour') %}
+      #          {% set consumption2 = states('sensor.balboa_spa_heater_consumption_hour') %}
+      #          {% set cost = states('sensor.electrical_distribution_consumption_rate_summary_sek') %}
+      #          {% if (consumption == 'unknown' or consumption == 'unavailable') %}
+      #          {%   set consumption = 0 %}
+      #          {% else %}
+      #          {%   set consumption = float(consumption, 0) %}
+      #          {% endif %}
+      #          {% if (consumption2 == 'unknown' or consumption2 == 'unavailable') %}
+      #          {%   set consumption2 = 0 %}
+      #          {% else %}
+      #          {%   set consumption2 = float(consumption2, 0) %}
+      #          {% endif %}
+      #          {% if (cost == 'unknown' or cost == 'unavailable') %}
+      #          {%   set cost = 0 %}
+      #          {% else %}
+      #          {%   set cost = float(cost, 0) %}
+      #          {% endif %}
+      #          {% set total_cost = ((consumption + consumption2) * cost) | round(2, default=0)  %}
+      #          {{ total_cost }}
+
+      # 20251211: Added as duplicate of shelly_spa_total_active_energy_hour, to be able to keep historical sensor.
+      # We want to keep track of accumulated (hourly) consumption for the circulation pump and heater.
+      - name: Balboa Spa circulation pump heater consumption hour
+        unique_id: balboa_spa_circulation_pump_heater_consumption_hour
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing
+        state: >
+          {% set consumption = states('sensor.shelly_spa_total_active_energy_last_hour') %}
           {% if (consumption == 'unknown' or consumption == 'unavailable') %}
-          {%   set consumption = 0 %}
+          {%   set value = 0 %}
           {% else %}
-          {%   set consumption = float(consumption, 0) %}
+          {%   set value = float(consumption, default=0) %}
           {% endif %}
-          {% if (consumption2 == 'unknown' or consumption2 == 'unavailable') %}
-          {%   set consumption2 = 0 %}
-          {% else %}
-          {%   set consumption2 = float(consumption2, 0) %}
-          {% endif %}
-          {% if (cost == 'unknown' or cost == 'unavailable') %}
-          {%   set cost = 0 %}
-          {% else %}
-          {%   set cost = float(cost, 0) %}
-          {% endif %}
-          {% set total_cost = ((consumption + consumption2) * cost) | round(2, default=0)  %}
-          {{ total_cost }}
+          {{ value }}
+
       # We set the hourly spa temperature.
       - name: balboa_spa_temperature_hour
         device_class: "temperature"
@@ -361,30 +418,34 @@ template:
           {%   set result = temperature | round(1, default=0) %}
           {% endif %}
           {{ result }}
+
+      # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
       # We save balboa_spa_circulationpump_running_time_hour each hour.
-      - name: balboa_spa_circulationpump_running_time_hour_last
-        unit_of_measurement: "time"
-        state_class: measurement
-        state: >
-          {% set input = states('sensor.balboa_spa_circulationpump_running_time_hour') %}
-          {% if (input == 'unknown' or input == 'unavailable') %}
-          {%   set value = 0 %}
-          {% else %}
-          {%   set value = float(input, default=0) %}
-          {% endif %}
-          {{ value }}
+      #- name: balboa_spa_circulationpump_running_time_hour_last
+      #  unit_of_measurement: "time"
+      #  state_class: measurement
+      #  state: >
+      #    {% set input = states('sensor.balboa_spa_circulationpump_running_time_hour') %}
+      #    {% if (input == 'unknown' or input == 'unavailable') %}
+      #    {%   set value = 0 %}
+      #    {% else %}
+      #    {%   set value = float(input, default=0) %}
+      #    {% endif %}
+      #    {{ value }}
+
+      # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
       # We save balboa_spa_heater_running_time_hour each hour.
-      - name: balboa_spa_heater_running_time_hour_last
-        unit_of_measurement: "time"
-        state_class: measurement
-        state: >
-          {% set input = states('sensor.balboa_spa_heater_running_time_hour') %}
-          {% if (input == 'unknown' or input == 'unavailable') %}
-          {%   set value = 0 %}
-          {% else %}
-          {%   set value = float(input, default=0) %}
-          {% endif %}
-          {{ value }}
+      #- name: balboa_spa_heater_running_time_hour_last
+      #  unit_of_measurement: "time"
+      #  state_class: measurement
+      #  state: >
+      #    {% set input = states('sensor.balboa_spa_heater_running_time_hour') %}
+      #    {% if (input == 'unknown' or input == 'unavailable') %}
+      #    {%   set value = 0 %}
+      #    {% else %}
+      #    {%   set value = float(input, default=0) %}
+      #    {% endif %}
+      #    {{ value }}
 
 automation:
   # This is not really persistence.
@@ -622,15 +683,159 @@ automation:
         data:
           title: "Balboa Spa is offline"
           message: "HA cannot ping Balboa Spa on 192.168.4.20 for 180 seconds. Please turn power off at the Spa, and on after 10 seconds."
-# Send email when Balboa spa is online.
-# Dependency: A ping sensor towards 192.168.4.20 through GUI.
-#  - alias: "Send email when Balboa Spa is online"
-#    trigger:
-#      - platform: state
-#        entity_id: binary_sensor.192_168_4_20
-#        to: "on"
-#    action:
-#      - service: notify.email_notification
-#        data:
-#          title: "Balboa Spa is online"
-#          message: "HA can ping Balboa Spa on 192.168.4.20. Balboa Spa is online."
+  # Send email when Balboa spa is online.
+  # Dependency: A ping sensor towards 192.168.4.20 through GUI.
+  #  - alias: "Send email when Balboa Spa is online"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: binary_sensor.192_168_4_20
+  #        to: "on"
+  #    action:
+  #      - service: notify.email_notification
+  #        data:
+  #          title: "Balboa Spa is online"
+  #          message: "HA can ping Balboa Spa on 192.168.4.20. Balboa Spa is online."
+
+  # We want to track the spa consumption each 15 minute during the hour.
+  - id: automation_balboa_spa_circulationpump_heater_hour_array
+    alias: "Automation related to balboa_spa_circulationpump_heater_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "56"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "56"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.balboa_spa_circulationpump_heater_hour_array
+        data:
+          value: >-
+            {% set current_array = states('input_text.balboa_spa_circulationpump_heater_hour_array') %}
+            {% set current_consumption = states('sensor.shelly_spa_total_active_energy') %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_array == 'unknown' or current_array == 'unavailable' or current_array == 'none' or current_array == None or current_array == "") %}
+            {%   set current_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% set current_array = current_array | from_json %}
+            {% if (current_consumption == 'unknown' or current_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set current_consumption = current_consumption | float %}
+            {% endif %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set new_array = [current_consumption] + [current_array[1]] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set new_array = [current_array[0]] + [current_consumption] + [current_array[2]] + [current_array[3]] %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_consumption] + [current_array[3]] %}
+            {%   elif (current_minute >= 45) %}
+            {%     set new_array = [current_array[0]] + [current_array[1]] + [current_array[2]] + [current_consumption] %}
+            {%   endif %}
+            {%   set result = new_array %}
+            {% else %}
+            {%   set result = current_array %}
+            {% endif %}
+            {{ result | tojson }}
+
+  # We want to track the spa consumption cost each 15 minute during the hour.
+  # We perform this after electrical_consumption_intake_array is set.
+  - id: automation_balboa_spa_circulationpump_heater_cost_hour_array
+    alias: "Automation related to balboa_spa_circulationpump_heater_cost_hour_array"
+    trigger:
+      - platform: time_pattern
+        minutes: "14"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "29"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "44"
+        seconds: "57"
+      - platform: time_pattern
+        minutes: "59"
+        seconds: "57"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.balboa_spa_circulationpump_heater_cost_hour_array
+        data:
+          value: >-
+            {% set current_consumption_array = states('input_text.balboa_spa_circulationpump_heater_hour_array') %}
+            {% set current_cost_array = states('input_text.balboa_spa_circulationpump_heater_cost_hour_array') %}
+            {% set rate_distribution = states('sensor.electrical_distribution_rate_summary') %}
+            {% set rate_consumption = states('sensor.electrical_consumption_rate_summary') %}
+            {% set current_minute = now().minute %}
+            {% set inputs_valid = true %}
+            {% set result = none %}
+            {% if (current_consumption_array == 'unknown' or current_consumption_array == 'unavailable' or current_consumption_array == 'none' or current_consumption_array == None or current_consumption_array == "") %}
+            {%   set current_consumption_array = "[0,0,0,0]" %}
+            {% endif %}
+            {% if (current_cost_array == 'unknown' or current_cost_array == 'unavailable' or current_cost_array == 'none' or current_cost_array == None or current_cost_array == "") %}
+            {%   set current_cost_array = "[0,0,0,0,0]" %}
+            {% endif %}
+            {% if (rate_distribution == 'unknown' or rate_distribution == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_distribution = float(rate_distribution, 0) %}
+            {% endif %}
+            {% if (rate_consumption == 'unknown' or rate_consumption == 'unavailable') %}
+            {%   set inputs_valid = false %}
+            {% else %}
+            {%   set rate_consumption = float(rate_consumption, 0) %}
+            {% endif %}
+            {% set current_consumption_array = current_consumption_array | from_json %}
+            {% set current_cost_array = current_cost_array | from_json %}
+            {% if (inputs_valid == true) %}
+            {%   if (current_minute < 15) %}
+            {%     set delta_consumption = current_consumption_array[0] - current_consumption_array[3] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[0] == 0 or current_consumption_array[3] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (delta_cost + current_cost_array[1] + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [delta_cost] + [current_cost_array[1]] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 15 and current_minute < 30) %}
+            {%     set delta_consumption = current_consumption_array[1] - current_consumption_array[0] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[1] == 0 or current_consumption_array[0] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + delta_cost + current_cost_array[2] + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [delta_cost] + [current_cost_array[2]] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 30 and current_minute < 45) %}
+            {%     set delta_consumption = current_consumption_array[2] - current_consumption_array[1] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[2] == 0 or current_consumption_array[1] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + delta_cost + current_cost_array[3]) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [delta_cost] + [current_cost_array[3]] + [sum_cost] %}
+            {%     endif %}
+            {%   elif (current_minute >= 45) %}
+            {%     set delta_consumption = current_consumption_array[3] - current_consumption_array[2] %}
+            {%     if (delta_consumption < 0 or current_consumption_array[3] == 0 or current_consumption_array[2] == 0) %}
+            {%       set new_cost_array = current_cost_array %}
+            {%     else %}
+            {%       set delta_cost = (((rate_distribution + rate_consumption)/100) * delta_consumption) | round(5, default=0) %}
+            {%       set sum_cost = (current_cost_array[0] + current_cost_array[1] + current_cost_array[2] + delta_cost) | round(5, default=0) %}
+            {%       set new_cost_array = [current_cost_array[0]] + [current_cost_array[1]] + [current_cost_array[2]] + [delta_cost] + [sum_cost] %}
+            {%     endif %}
+            {%   endif %}
+            {%   set result = new_cost_array %}
+            {% else %}
+            {%   set result = current_cost_array %}
+            {% endif %}
+            {{ result | tojson }}
