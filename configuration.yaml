@@ -282,6 +282,9 @@ influxdb:
       - sensor.ehs4plem_status
       # We exclude weather sensor as of 20260322 since we already take data from this.
       - weather.smhi_home
+      # We exclude spa filter sensors as of 20260315.
+      - binary_sensor.nbp6013h_filter1
+      - binary_sensor.nbp6013h_filter2
 
 notify:
   - name: email_notification

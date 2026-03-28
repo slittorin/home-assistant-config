@@ -47,7 +47,7 @@ template:
       # As the Save Connect device seems to be overwhelmed with adding too many registers at once, they are retrieved on priority:
       #   The priorities are
       #     Prio 0: Added every time.
-      #     Prio 1 through 3: First 1, then 2 and lastly 3, then over again with 1.
+      #     Prio 1 through 8: First 1, then iterative up to 8, then 1.
       # Note that at least one item must exist for each prio.
       #
       # Note:
@@ -97,7 +97,7 @@ template:
                                    "REG_UNIT_CONFIG_REHEATER_TYPE": { "register": "3001", "prio": "4", "desc": "Heater type." },
                                    "REG_UNIT_CONFIG_COOLER": { "register": "3013", "prio": "4", "desc": "Cooler type." },
                                    "REG_UNIT_CONFIG_EXTRA_CONTROLLER": { "register": "3014", "prio": "4", "desc": "Extra Controller Mode." },
-                                   "REG_FUNCTION_ACTIVE_HEATING": { "register": "3102", "prio": "1", "desc": "Function, active heating." },
+                                   "REG_FUNCTION_ACTIVE_HEATING": { "register": "3102", "prio": "0", "desc": "Function, active heating." },
                                    "REG_FUNCTION_ACTIVE_DEFROSTING": { "register": "3103", "prio": "1", "desc": "Function, active defrosting." },
                                    "REG_FUNCTION_ACTIVE_HEAT_RECOVERY": { "register": "3104", "prio": "1", "desc": "Function, active heat recovery." },
                                    "REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER": { "register": "3106", "prio": "1", "desc": "Function, active moisture transfer." },
@@ -143,8 +143,8 @@ template:
                                    "REG_ALARM_TYPE_A": { "register": "15900", "prio": "3", "desc": "Indicates if an alarm Type A is active." },
                                    "REG_ALARM_TYPE_B": { "register": "15901", "prio": "3", "desc": "Indicates if an alarm Type B is active." },
                                    "REG_ALARM_TYPE_C": { "register": "15902", "prio": "3", "desc": "Indicates if an alarm Type C is active." },
-                                   "REG_TIME_RTC_SECONDS_L": { "register": "6011", "prio": "3", "desc": "Now time in seconds. Lower 16 bits." },
-                                   "REG_TIME_RTC_SECONDS_H": { "register": "6012", "prio": "3", "desc": "Now time in seconds. Higher 16 bits." }
+                                   "REG_TIME_RTC_SECONDS_L": { "register": "6010", "prio": "3", "desc": "Now time in seconds. Lower 16 bits." },
+                                   "REG_TIME_RTC_SECONDS_H": { "register": "6011", "prio": "3", "desc": "Now time in seconds. Higher 16 bits." }
                                   }
                                 } %}
             {{ json_array }}
@@ -237,16 +237,54 @@ template:
             {% endif %}
             {{ result }}
 
+      # We want to gather information about the Real Time Clock (RTC).
+      # Modbus register in configuration: REG_TIME_RTC_SECONDS_L
+      - name: Systemair read time rtc seconds lower
+        unique_id: systemair_read_time_rtc_seconds_lower
+        state_class: measurement
+        icon: mdi:clock
+        state: >
+          {% set old_value = states('sensor.systemair_read_time_rtc_seconds_lower') %}
+          {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set device_type = states('input_select.systemair_chosen_unit_type') %}
+          {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none' or value_json == None ) %}
+          {%   set inputs_valid = false %}
+          {% elif (device_type == 'unknown' or device_type == 'unavailable' or device_type == 'none' or device_type == None) %}
+          {%   set inputs_valid = false %}
+          {% elif (json_array == 'unknown' or json_array == 'unavailable' or json_array == 'none' or json_array == None or json_array == {} or json_array == '{}None') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set register = json_array[device_type]["REG_TIME_RTC_SECONDS_L"].register | string %}
+          {%   set value = value_json[register] %}
+          {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
+          {%   else %}
+          {%     set result = int(value) %}
+          {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
+          {% endif %}
+          {{ result }}
+
       # We want to gather information about the temperature unit.
       # Modbus register in configuration: REG_SYSTEM_UNIT_TEMPERATURE
       # Logic:
       # 0 - Celcius
-      # 1- Fahrenheit
+      # 1 - Fahrenheit
       - name: Systemair read temperature unit
         unique_id: systemair_read_temperature_unit
         state_class: measurement
         icon: mdi:thermometer
         state: >
+          {% set old_value = states('sensor.systemair_read_temperature_unit') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -263,10 +301,16 @@ template:
           {%   set register = json_array[device_type]["REG_SYSTEM_UNIT_TEMPERATURE"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -274,11 +318,12 @@ template:
       # Modbus register in configuration: REG_SYSTEM_UNIT_TEMPERATURE
       # Logic:
       # 0 - Celcius
-      # 1- Fahrenheit
+      # 1 - Fahrenheit
       - name: Systemair read temperature unit str
         unique_id: systemair_read_temperature_unit_str
         icon: mdi:thermometer
         state: >
+          {% set old_value = states('sensor.systemair_read_temperature_unit_str') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -295,7 +340,11 @@ template:
           {%   set register = json_array[device_type]["REG_SYSTEM_UNIT_TEMPERATURE"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set value = int(value) %}
           {%     if (value == 0) %}
@@ -304,6 +353,8 @@ template:
           {%       set result = "°F" %}
           {%     endif %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -320,6 +371,7 @@ template:
         state_class: measurement
         icon: mdi:thermometer
         state: >
+          {% set old_value = states('sensor.systemair_read_current_temperature_setpoint_celcius') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -339,7 +391,11 @@ template:
           {%   set register = json_array[device_type]["REG_TC_SP"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set value = int(value) %}
           {%     set temp_unit = int(temp_unit) %}
@@ -355,6 +411,8 @@ template:
           {%     endif %}
           {%     set result = result | round(1) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -371,6 +429,7 @@ template:
         state_class: measurement
         icon: mdi:thermometer
         state: >
+          {% set old_value = states('sensor.systemair_read_current_temperature_setpoint_fahrenheit') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -390,7 +449,11 @@ template:
           {%   set register = json_array[device_type]["REG_TC_SP"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set value = int(value) %}
           {%     set temp_unit = int(temp_unit) %}
@@ -406,6 +469,8 @@ template:
           {%     endif %}
           {%     set result = result | round(1) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -429,6 +494,7 @@ template:
         state_class: measurement
         icon: mdi:cog
         state: >
+          {% set old_value = states('sensor.systemair_read_active_user_mode') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -445,10 +511,16 @@ template:
           {%   set register = json_array[device_type]["REG_USERMODE_MODE"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -471,6 +543,7 @@ template:
         unique_id: systemair_read_active_user_mode_str
         icon: mdi:cog
         state: >
+          {% set old_value = states('sensor.systemair_read_active_user_mode_str') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -487,7 +560,11 @@ template:
           {%   set register = json_array[device_type]["REG_USERMODE_MODE"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set value = int(value) %}
           {%     if (value == 0) %}
@@ -516,6 +593,8 @@ template:
           {%       set result = "Configurable D" %}
           {%     endif %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -532,6 +611,7 @@ template:
         state_class: measurement
         icon: mdi:fan
         state: >
+          {% set old_value = states('sensor.systemair_read_usermode_manual_airflow_level') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -548,10 +628,16 @@ template:
           {%   set register = json_array[device_type]["REG_USERMODE_MANUAL_AIRFLOW_LEVEL"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -567,6 +653,7 @@ template:
         unique_id: systemair_read_usermode_manual_airflow_level_str
         icon: mdi:fan
         state: >
+          {% set old_value = states('sensor.systemair_read_usermode_manual_airflow_level_str') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -583,7 +670,11 @@ template:
           {%   set register = json_array[device_type]["REG_USERMODE_MANUAL_AIRFLOW_LEVEL"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set value = int(value) %}
           {%     if (value == 0) %}
@@ -598,6 +689,8 @@ template:
           {%       set result = "High" %}
           {%     endif %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -609,6 +702,7 @@ template:
         state_class: measurement
         icon: mdi:fan
         state: >
+          {% set old_value = states('sensor.systemair_read_saf_rpm_indication') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -625,10 +719,16 @@ template:
           {%   set register = json_array[device_type]["REG_SENSOR_RPM_SAF"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
 
@@ -641,6 +741,7 @@ template:
         state_class: measurement
         icon: mdi:fan
         state: >
+          {% set old_value = states('sensor.systemair_read_saf_percentage') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -657,12 +758,21 @@ template:
           {%   set register = json_array[device_type]["REG_OUTPUT_SAF"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = none %}
+          {%     else %}
+          {%       set result = old_value %}
+          {%     endif %}
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
+          {% else %}
+          {%   set result = old_value %}
           {% endif %}
           {{ result }}
+
+      # We are here with updates.
+      ############################################################################################
 
       # We want to gather information about the Extract Air Fan (EAF) RPM indication.
       # Modbus register in configuration: REG_SENSOR_RPM_EAF
@@ -3903,11 +4013,12 @@ template:
 
       # We want to gather information if the heater is on.
       # Modbus register in configuration: REG_FUNCTION_ACTIVE_HEATING
+      # If not value found, we set to 0 (zero = off).
       - name: Systemair read heater on
         unique_id: systemair_read_heater_on
         icon: mdi:heat-wave
         state: >
-          {% set old_value = state_attr('binary_sensor.systemair_read_heater_on', 'response') %}
+          {% set old_value = states('binary_sensor.systemair_read_heater_on') %}
           {% set value_json = state_attr('sensor.systemair_save_connect_response', 'response') %}
           {% set device_type = states('input_select.systemair_chosen_unit_type') %}
           {% set json_array = state_attr('sensor.systemair_configuration', 'configuration') %}
@@ -3924,12 +4035,16 @@ template:
           {%   set register = json_array[device_type]["REG_FUNCTION_ACTIVE_HEATING"].register | string %}
           {%   set value = value_json[register] %}
           {%   if (value == 'unknown' or value == 'unavailable' or value == 'none' or value == None ) %}
-          {%     set result = none %}
+          {%     if (old_value == 'unknown' or old_value == 'unavailable' or old_value == 'none' or old_value == None ) %}
+          {%       set result = 0 %}
+          {%     else %}
+          {%        set result = 1 if old_value == 'on' else 0 %}
+          {%     endif %}
           {%   else %}
           {%     set result = int(value) %}
           {%   endif %}
           {% else %}
-          {%   set result = old_value %}
+          {%   set result = 1 if old_value == 'on' else 0 %}
           {% endif %}
           {{ result }}
 
@@ -4156,6 +4271,23 @@ automation:
               title: "Error: Wrote to Systemair Save Connect"
               message: "Error. Content: {{ systemair_write_response['content'] }}"
               level: warning
+
+  # The Systemair heat exchanger regularly stucks and do not respond.
+  # We therefore check the real time clock (rtc) lower 16 bits for change.
+  # If they have not change in 30 minutes, we send an email.
+  - alias: "Check if Systemair RTC is changing"
+    mode: single
+    trigger:
+      - platform: state
+        entity_id: sensor.systemair_read_time_rtc_seconds_lower
+        for:
+          minutes: 30
+    condition: []
+    action:
+      service: notify.email_notification
+      data:
+        title: "Systemair not responding"
+        message: "Systemair heat exchanger has not responded for 30 minutes."
 
 rest:
   # To not overflow the Save Connect device, we gather all data we need in one rest-sensor, and go divide the sensors in different priorities.
