@@ -1092,7 +1092,7 @@
               "column_span": 6
             }
           ],
-          "max_columns": 6
+          "max_columns": 4
         },
         {
           "theme": "Backend-selected",
@@ -1187,19 +1187,15 @@
                     "columns": 6,
                     "rows": "auto"
                   }
-                },
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
-                  "type": "gauge",
-                  "entity": "sensor.balboa_spa_heater_power",
-                  "name": "Spabad värmare",
-                  "unit": "kW",
-                  "min": 0,
-                  "max": 3,
-                  "needle": true,
-                  "grid_options": {
-                    "columns": 6,
-                    "rows": "auto"
-                  }
+                  "type": "heading",
+                  "heading": "Ny sektion"
                 }
               ]
             }

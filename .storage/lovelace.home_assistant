@@ -72,7 +72,8 @@
                   ],
                   "title": "Backup från server1 till NAS"
                 }
-              ]
+              ],
+              "title": "Sista status, uppdateras var 15:e minut. Ingen historik sparas."
             },
             {
               "type": "entities",

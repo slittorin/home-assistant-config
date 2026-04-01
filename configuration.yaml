@@ -37,7 +37,7 @@ recorder:
   exclude:
     entities:
       # 20230312. We excluded these that do not have any purpose.
-      - sensor.sn_3006917520_current_total
+      #- sensor.sn_3006917520_current_total not needed to be excluded as of 20260328 (earlier, look into sma.yaml).
       - sensor.metering_total_yield_compensation
       # We exclude systemair sensors that are related to the rest-response. Not needed in database as we create sensors based on the response.
       - sensor.systemair_save_connect_response_1_part
@@ -46,6 +46,13 @@ recorder:
       - sensor.systemair_save_connect_response_4_part
       - sensor.systemair_save_connect_response
       - sensor.systemair_save_connect_response_priority
+      # We exclude log-sensor data as it is own for viewing, not history. As of 20260328.
+      - sensor.home_assistant_copy_backup_log
+      - sensor.home_assistant_backup_to_server1
+      - sensor.server1_influxdb_backup_log
+      - sensor.server1_grafana_backup_log
+      - sensor.server1_backup_to_nas_log
+      - sensor.server1_influxdb_export_yesterday_log
 
 # Logbook is enabled by default.
 logbook:
@@ -73,218 +80,108 @@ influxdb:
   token: !secret history_db_token
   max_retries: 3
   exclude:
+    # Updated 20260328 after a session with Claude, to reduce CPU load with EntityFilter.__call__() for each event.
+    # ---------------------------------------------------------------
+    # TIER 1: Domain-level exclusions (O(1) hash lookup, cheapest)
+    # ---------------------------------------------------------------
     domains:
-      # Updater: Is not required in history data.
-      #- updater. Depreceated in 2022.3.3?
+      - automation # All automations excluded as of 20260315
+      - input_text # All input_text arrays excluded
+      - climate # All climate entities excluded (Adax + nbp6013h)
+      - sun # sun.sun as of 20250825
+      - update # As of 20260328
+    # ---------------------------------------------------------------
+    # TIER 2: Globs — only where 6+ entities share a genuine pattern
+    # ---------------------------------------------------------------
     entity_globs:
-      # We do not include any of the test_-sensors.
+      # Test sensors — unknown count, glob justified
       - binary_sensor.test_*
       - sensor.test_*
-      # We exclude specific SMA related sensors, as we down-sample already in HA, and that they otherwise drive increase in database size.
-      - sensor.metering_current_l1
-      - sensor.metering_current_l2
-      - sensor.metering_current_l3
-      - sensor.sma_metering_current_l1_min
-      - sensor.sma_metering_current_l1_mean
-      - sensor.sma_metering_current_l1_max
-      - sensor.sma_metering_current_l2_min
-      - sensor.sma_metering_current_l2_mean
-      - sensor.sma_metering_current_l2_max
-      - sensor.sma_metering_current_l3_min
-      - sensor.sma_metering_current_l3_mean
-      - sensor.sma_metering_current_l3_max
+      # SMA metering: current L1/L2/L3 base + stats (12 entities)
+      - sensor.metering_current_l*
+      - sensor.sma_metering_current_l*
+      # SMA metering: active power draw L1/L2/L3 base + stats (12 entities)
+      - sensor.metering_active_power_draw_l*
+      - sensor.sma_metering_active_power_draw_*
+      # SMA metering: active power feed L1/L2/L3 base + stats (12 entities)
+      - sensor.metering_active_power_feed_l*
+      - sensor.sma_metering_active_power_feed_*
+      # SMA PV: current and power stats for strings A+B (6 entities each)
+      - sensor.sma_pv_current_*
+      - sensor.sma_pv_power_*
+      # Systemair: all response/status sensors (7 entities)
+      - sensor.systemair_save_connect_*
+      # Shelly: heatpumps livingroom + upstairs + total (11 entities)
+      # Note: no trailing underscore — catches both shelly_heatpump_ and shelly_heatpumps_
+      - sensor.shelly_heatpump*
+      # Shelly: heat exchanger (6 entities)
+      - sensor.shelly_heat_exchanger_*
+      # Shelly: spa all phases and totals (18 entities)
+      - sensor.shelly_spa_*
+      # Shelly: water heater all phases and totals (14 entities)
+      - sensor.shelly_water_heater_*
+      # Server1: datetime snapshot sensors (7 entities)
+      - sensor.server1_*_datetime
+      # All iphone sensors are removed (10+) as of 20260328.
+      - sensor.iphone*
+    # ---------------------------------------------------------------
+    # TIER 3: Exact entity IDs — O(1) set lookup, no regex cost
+    # ---------------------------------------------------------------
+    entities:
+      # SMA metering: power absorbed base + stats (4 entities, not worth a glob)
       - sensor.metering_power_absorbed
       - sensor.sma_metering_power_absorbed_min
       - sensor.sma_metering_power_absorbed_mean
       - sensor.sma_metering_power_absorbed_max
-      - sensor.metering_active_power_draw_l1
-      - sensor.metering_active_power_draw_l2
-      - sensor.metering_active_power_draw_l3
-      - sensor.sma_metering_active_power_draw_l1_min
-      - sensor.sma_metering_active_power_draw_l1_mean
-      - sensor.sma_metering_active_power_draw_l1_max
-      - sensor.sma_metering_active_power_draw_l2_min
-      - sensor.sma_metering_active_power_draw_l2_mean
-      - sensor.sma_metering_active_power_draw_l2_max
-      - sensor.sma_metering_active_power_draw_l3_min
-      - sensor.sma_metering_active_power_draw_l3_mean
-      - sensor.sma_metering_active_power_draw_l3_max
+      # SMA metering: frequency base + stats
       - sensor.metering_frequency
       - sensor.sma_metering_frequency_min
       - sensor.sma_metering_frequency_mean
       - sensor.sma_metering_frequency_max
-      # 20221011. Exluded since we down-sample these as well.
+      # SMA: grid power base + stats
       - sensor.grid_power
       - sensor.sma_grid_power_min
       - sensor.sma_grid_power_mean
       - sensor.sma_grid_power_max
+      # SMA metering: power supplied base + stats
       - sensor.metering_power_supplied
       - sensor.sma_metering_power_supplied_min
       - sensor.sma_metering_power_supplied_mean
       - sensor.sma_metering_power_supplied_max
-      # 20221226. Excluded since we down-sample these.
+      # SMA PV: base current and power (stats covered by globs above)
       - sensor.pv_current_a
-      - sensor.sma_pv_current_a_min
-      - sensor.sma_pv_current_a_mean
-      - sensor.sma_pv_current_a_max
       - sensor.pv_current_b
-      - sensor.sma_pv_current_b_min
-      - sensor.sma_pv_current_b_mean
-      - sensor.sma_pv_current_b_max
       - sensor.pv_power_a
-      - sensor.sma_pv_power_a_min
-      - sensor.sma_pv_power_a_mean
-      - sensor.sma_pv_power_a_max
       - sensor.pv_power_b
-      - sensor.sma_pv_power_b_min
-      - sensor.sma_pv_power_b_mean
-      - sensor.sma_pv_power_b_max
-      # 20221226. Excluded since we do not need to capture these (takes approx 1% or more of events)
-      - sensor.sn_3006917520_current_total
-      # 20230127. Excluded since they update every 5:th second, and we take snapshot each our instead (takes roughly 39% of events each per month).
+      # SMA metering: totals and yield
       - sensor.metering_total_absorbed
       - sensor.metering_total_absorbed_cost
-      # 20230219. Excluded since we do not need to capture these history_stats events, as we capture last value each hour.
-      - sensor.balboa_spa_heater_running_time_hour
-      # 20230222 (22:15). Excluded since it is not required to be captured, and it generates alot of data each hour.
-      #                   Can be completely removed from Influx as we calculate yield compensation our own way.
+      - sensor.metering_total_yield
       - sensor.metering_total_yield_compensation
-      # 20230222 (22:15). Excluded since they update often, , and we take snapshot each our instead.
       - sensor.pv_gen_meter
       - sensor.total_yield
-      - sensor.metering_total_yield
       - sensor.daily_yield
-      # 20230223 (09:20). Excluded since we do not need to capture these history_stats events, as we capture last value each hour.
-      - sensor.balboa_spa_circulationpump_running_time_hour
-      # 20230223 (19:40). Excluded since we take snapshot each hour.
-      - sensor.metering_active_power_feed_l1
-      - sensor.metering_active_power_feed_l2
-      - sensor.metering_active_power_feed_l3
-      - sensor.sma_metering_active_power_feed_l1_min
-      - sensor.sma_metering_active_power_feed_l1_max
-      - sensor.sma_metering_active_power_feed_l1_mean
-      - sensor.sma_metering_active_power_feed_l2_min
-      - sensor.sma_metering_active_power_feed_l2_max
-      - sensor.sma_metering_active_power_feed_l2_mean
-      - sensor.sma_metering_active_power_feed_l3_min
-      - sensor.sma_metering_active_power_feed_l3_max
-      - sensor.
-      # We exclude systemair sensors.
-      - sensor.systemair_save_connect_response_1_part
-      - sensor.systemair_save_connect_response_2_part
-      - sensor.systemair_save_connect_response_3_part
-      - sensor.systemair_save_connect_response_4_part
-      - sensor.systemair_save_connect_response
-      - sensor.systemair_save_connect_response_length
-      - sensor.systemair_save_connect_response_priority
-      # We exclude binary_sensor.ehs4plem_online since it fills upp InfluxDB, and the sensor is not really needed / 20250825.
-      - binary_sensor.ehs4plem_online
-      # We exclude sun.sun since it fills upp InfluxDB, and we already have the data as sensors (and not attributes) / 20250825.
-      - sun.sun
-      # We exclude Adax-sensors, since we create hourly-sensors instead.
+      - sensor.sma_total_power_used_by_house
+      # Adax: room energy sensors
       - sensor.kok_energi
       - sensor.toalett_energi
       - sensor.vardagsrum_energi
       - sensor.badrum_energi
       - sensor.sovrum_energi
-      # We exclude Shelly-sensors, since we create hourly-sensors instead.
-      - sensor.shelly_heatpump_livingroom_energy
-      - sensor.shelly_heatpump_livingroom_power
-      - sensor.shelly_heatpump_livingroom_power_min
-      - sensor.shelly_heatpump_livingroom_power_max
-      - sensor.shelly_heatpump_livingroom_power_mean
-      - sensor.shelly_heatpump_upstairs_energy
-      - sensor.shelly_heatpump_upstairs_power
-      - sensor.shelly_heatpump_upstairs_power_min
-      - sensor.shelly_heatpump_upstairs_power_max
-      - sensor.shelly_heatpump_upstairs_power_mean
-      - sensor.shelly_heatpumps_total_increasing_energy
-      - sensor.shelly_heat_exchanger_total_energy
-      - sensor.shelly_heat_exchanger_returned_energy
-      - sensor.shelly_heat_exchanger_power
-      - sensor.shelly_heat_exchanger_power_min
-      - sensor.shelly_heat_exchanger_power_max
-      - sensor.shelly_heat_exchanger_power_mean
-      # We exclude sensors to keep track of cost over the hour for 15 minute spot-prices.
-      - input_text.electrical_consumption_intake_array
-      - input_text.electrical_consumption_intake_cost_array
-      - input_text.electrical_solar_yield_hour_array
-      - input_text.electrical_solar_yield_return_hour_array
-      - input_text.electrical_solar_production_hour_array
-      - input_text.electrical_solar_production_reduction_hour_array
-      - input_text.evcharger_consumption_array
-      - input.text.evcharger_consumption_cost_hour_array
-      # We exclude the total sensor, since we do not require it in graphs.
-      - sensor.sma_total_power_used_by_house
-      - sensor.adax_heater_energy_last_hour
-      # We exclude Shelly sensors for the spa.
-      - sensor.shelly_spa_temperature
-      - sensor.shelly_spa_total_active_energy
-      - sensor.shelly_spa_total_active_power
-      - sensor.shelly_spa_total_active_power_mean
-      - sensor.shelly_spa_total_active_power_max
-      - sensor.shelly_spa_total_active_power_min
-      - sensor.shelly_spa_total_active_returned_energy
-      - sensor.shelly_spa_total_apparent_power
-      - sensor.shelly_spa_phase_a_active_power
-      - sensor.shelly_spa_phase_a_apparent_power
-      - sensor.shelly_spa_phase_a_power_factor
-      - sensor.shelly_spa_phase_b_active_power
-      - sensor.shelly_spa_phase_b_apparent_power
-      - sensor.shelly_spa_phase_b_power_factor
-      - sensor.shelly_spa_phase_c_active_power
-      - sensor.shelly_spa_phase_c_apparent_power
-      - sensor.shelly_spa_phase_c_power_factor
-      # We exclude array sensors for spa
-      - input_text.balboa_spa_circulationpump_heater_hour_array
-      - input_text.balboa_spa_circulationpump_heater_cost_hour_array
-      # We exclude Shely sensors for the water heater.
-      - sensor.shelly_water_heater_temperature
-      - sensor.shelly_water_heater_total_active_energy
-      - sensor.shelly_water_heater_total_active_power
-      - sensor.shelly_water_heater_total_active_returned_energy
-      - sensor.shelly_water_heater_total_apparent_power
-      - sensor.shelly_water_heater_phase_a_active_power
-      - sensor.shelly_water_heater_phase_a_apparent_power
-      - sensor.shelly_water_heater_phase_a_power_factor
-      - sensor.shelly_water_heater_phase_b_active_power
-      - sensor.shelly_water_heater_phase_b_apparent_power
-      - sensor.shelly_water_heater_phase_b_power_factor
-      - sensor.shelly_water_heater_phase_c_active_power
-      - sensor.shelly_water_heater_phase_c_apparent_power
-      - sensor.shelly_water_heater_phase_c_power_factor
-      # We exclude all automations as of 20260315.
-      - automation.*
-      # We exclude climate.nbp6013h_climate since it is not used as of 20260315.
-      - climate.nbp6013h_climate
-      # We exclude datetime sensors as of 20260315.
-      - sensor.server1_cpu_used_pct_datetime
-      - sensor.server1_cpu_temperature_datetime
-      - sensor.server1_mem_used_pct_datetime
-      - sensor.server1_swap_used_pct_datetime
-      - sensor.server1_uptime_datetime
-      - sensor.server1_influxdb_size_datetime
-      # We exclude climate sensors we already extract data from as of 20260322.
-      - climate.kok
-      - climate.badrum
-      - climate.toalett
-      - climate.vardagsrum
-      - climate.sovrum
-      # We exclude sensors related to data for server1 as of 20260322.
-      - sensor.server1_disk_used_pct_datetime
-      - sensor.server1_cpu_temperature_datetime
-      - sensor.server1_cpu_used_pct_datetime
-      - sensor.server1_mem_used_pct_datetime
-      - sensor.server1_swap_used_pct_datetime
-      - sensor.server1_uptime_datetime
-      - sensor.server1_influxdb_size_datetime
-      # We exclude data from car-charger as of 20260322.
+      # Miscellaneous individual sensors
+      - sensor.sn_3006917520_current_total
       - sensor.ehs4plem_status
-      # We exclude weather sensor as of 20260322 since we already take data from this.
       - weather.smhi_home
-      # We exclude spa filter sensors as of 20260315.
+      - binary_sensor.ehs4plem_online
       - binary_sensor.nbp6013h_filter1
       - binary_sensor.nbp6013h_filter2
+      # We exclude log-sensor data as it is own for viewing, not history. As of 20260328.
+      - sensor.home_assistant_copy_backup_log
+      - sensor.home_assistant_backup_to_server1
+      - sensor.server1_influxdb_backup_log
+      - sensor.server1_grafana_backup_log
+      - sensor.server1_backup_to_nas_log
+      - sensor.server1_influxdb_export_yesterday_log
 
 notify:
   - name: email_notification

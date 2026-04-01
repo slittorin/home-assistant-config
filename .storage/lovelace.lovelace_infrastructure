@@ -98,7 +98,7 @@
                   "name": "Tabell - statistics_short_term"
                 }
               ],
-              "hours_to_show": 720,
+              "hours_to_show": 9000,
               "refresh_interval": 0,
               "title": "Storlek på Recorder-databas och tabeller"
             },
@@ -109,7 +109,7 @@
                   "entity": "sensor.server1_influxdb_size"
                 }
               ],
-              "hours_to_show": 720,
+              "hours_to_show": 9000,
               "refresh_interval": 0,
               "title": "Storlek på Recorder-databas och tabeller"
             }
