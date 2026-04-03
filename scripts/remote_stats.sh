@@ -80,7 +80,7 @@ RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_
 RESULT_CODE=$?
 if [ ${RESULT_CODE} -ne 0 ] 
 then
-    echo "ERROR. SSH command error. Exit code: ${RESULT_CODE}: ${RESULT}" 
+    echo "ERROR. SSH command error. Exit code: ${RESULT_CODE}: ${RESULT}"
     echo "$(date +%Y%m%d_%H%M%S): ERROR. SSH command error. Exit code: ${RESULT_CODE}: ${RESULT}" >> ${logfile}
     exit 1
 fi
@@ -98,11 +98,11 @@ fi
 
 # Log, and limit logfile to 1000 rows.
 echo "$(date +%Y%m%d_%H%M%S): INFO. Server: ${SERVER}. File: ${FILE}. Measure: ${MEASURE}. Result: ${RESULT}." >> ${logfile}
-#tail -n1000 ${logfile} > ${logfile_tmp}
+#tail -n 1000 ${logfile} > ${logfile_tmp}
 #rm ${logfile}
 #mv ${logfile_tmp} ${logfile}
 
-echo "$(tail -n1000 ${logfile})" > ${logfile}
+echo "$(tail -n 1000 ${logfile})" > ${logfile}
 
 # Show output
 echo "${RESULT}"

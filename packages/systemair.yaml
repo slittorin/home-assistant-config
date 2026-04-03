@@ -112,6 +112,7 @@ template:
                                    "REG_UI_CONNECTION_DIGITAL1": { "register": "11300", "prio": "6", "desc": "Universal input 1 digital type." },
                                    "REG_UI_CONNECTION_DIGITAL2": { "register": "11301", "prio": "6", "desc": "Universal input 1 digital type." },
                                    "REG_DI_CONNECTION_1": { "register": "11400","prio": "6", "desc": "Digital input 1 type." },
+                                   "REG_DI_CONNECTION_2": { "register": "11401","prio": "6", "desc": "Digital input 1 type." },
                                    "REG_INPUT_DIGITAL_UI_1": { "register": "12020", "prio": "2", "desc": "Universal input 1, digital value." },
                                    "REG_INPUT_DIGITAL_UI_2": { "register": "12021", "prio": "2", "desc": "Universal input 1, digital value." },
                                    "REG_INPUT_DIGITAL_DI_1": { "register": "12030", "prio": "2", "desc": "Digital input 1, value." },
@@ -254,9 +255,14 @@ template:
         unique_id: systemair_read_time_rtc_seconds_lower
         state_class: measurement
         icon: mdi:clock
+        availability: >
+          {% set old = states('sensor.systemair_read_time_rtc_seconds_lower') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.test_systemair_read_time_rtc_seconds_lower', 'REG_TIME_RTC_SECONDS_L') | from_json %}
+          {% set json = get_register('sensor.systemair_read_time_rtc_seconds_lower', 'REG_TIME_RTC_SECONDS_L') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -274,6 +280,11 @@ template:
         unique_id: systemair_read_temperature_unit
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_temperature_unit') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_temperature_unit', 'REG_SYSTEM_UNIT_TEMPERATURE') | from_json %}
@@ -321,6 +332,11 @@ template:
         unit_of_measurement: "°C"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_current_temperature_setpoint_celcius') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_current_temperature_setpoint_celcius', 'REG_TC_SP') | from_json %}
@@ -365,6 +381,11 @@ template:
         unit_of_measurement: "°F"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_current_temperature_setpoint_fahrenheit') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_current_temperature_setpoint_fahrenheit', 'REG_TC_SP') | from_json %}
@@ -416,6 +437,11 @@ template:
         unique_id: systemair_read_active_user_mode
         state_class: measurement
         icon: mdi:cog
+        availability: >
+          {% set old = states('sensor.systemair_read_active_user_mode') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_active_user_mode', 'REG_USERMODE_MODE') | from_json %}
@@ -493,6 +519,11 @@ template:
         unique_id: systemair_read_usermode_manual_airflow_level
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_usermode_manual_airflow_level') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_usermode_manual_airflow_level', 'REG_USERMODE_MANUAL_AIRFLOW_LEVEL') | from_json %}
@@ -544,6 +575,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_saf_rpm_indication') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_saf_rpm_indication', 'REG_SENSOR_RPM_SAF') | from_json %}
@@ -563,6 +599,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_saf_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_saf_percentage', 'REG_OUTPUT_SAF') | from_json %}
@@ -581,6 +622,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_eaf_rpm_indication') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_eaf_rpm_indication', 'REG_SENSOR_RPM_EAF') | from_json %}
@@ -600,6 +646,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_eaf_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_eaf_percentage', 'REG_OUTPUT_EAF') | from_json %}
@@ -623,6 +674,11 @@ template:
         unit_of_measurement: "°C"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_outdoor_air_temperature_celcius') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_outdoor_air_temperature_celcius', 'REG_SENSOR_OAT') | from_json %}
@@ -667,6 +723,11 @@ template:
         unit_of_measurement: "°F"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_outdoor_air_temperature_fahrenheit') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_outdoor_air_temperature_fahrenheit', 'REG_SENSOR_OAT') | from_json %}
@@ -711,6 +772,11 @@ template:
         unit_of_measurement: "°C"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_temperature_celcius') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_temperature_celcius', 'REG_SENSOR_SAT') | from_json %}
@@ -755,6 +821,11 @@ template:
         unit_of_measurement: "°F"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_temperature_fahrenheit') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_temperature_fahrenheit', 'REG_SENSOR_SAT') | from_json %}
@@ -800,6 +871,11 @@ template:
         unit_of_measurement: "°C"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_temperature_celcius') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_temperature_celcius', 'REG_SENSOR_PDM_EAT_VALUE') | from_json %}
@@ -845,6 +921,11 @@ template:
         unit_of_measurement: "°F"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_temperature_fahrenheit') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_temperature_fahrenheit', 'REG_SENSOR_PDM_EAT_VALUE') | from_json %}
@@ -889,6 +970,11 @@ template:
         unit_of_measurement: "°C"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_overheat_temperature_celcius') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_overheat_temperature_celcius', 'REG_SENSOR_OHT') | from_json %}
@@ -933,6 +1019,11 @@ template:
         unit_of_measurement: "°F"
         state_class: measurement
         icon: mdi:thermometer
+        availability: >
+          {% set old = states('sensor.systemair_read_overheat_temperature_fahrenheit') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_overheat_temperature_fahrenheit', 'REG_SENSOR_OHT') | from_json %}
@@ -973,6 +1064,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:water-percent
+        availability: >
+          {% set old = states('sensor.systemair_read_eaf_relative_humidity') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_eaf_relative_humidity', 'REG_SENSOR_RHS_PDM') | from_json %}
@@ -993,6 +1089,11 @@ template:
         unique_id: systemair_read_heat_exchanger_type
         state_class: measurement
         icon: mdi:hvac
+        availability: >
+          {% set old = states('sensor.systemair_read_heat_exchanger_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_heat_exchanger_type', 'REG_HEAT_EXCHANGER_TYPE') | from_json %}
@@ -1039,6 +1140,11 @@ template:
         unique_id: systemair_read_heat_exchanger_actuator
         state_class: measurement
         icon: mdi:current-dc
+        availability: >
+          {% set old = states('sensor.systemair_read_heat_exchanger_actuator') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_heat_exchanger_actuator', 'REG_CFG_HEAT_EXCHANGER_ACTUATOR_TYPE') | from_json %}
@@ -1091,6 +1197,11 @@ template:
         unique_id: systemair_read_heater_type
         state_class: measurement
         icon: mdi:heat-wave
+        availability: >
+          {% set old = states('sensor.systemair_read_heater_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_heater_type', 'REG_UNIT_CONFIG_REHEATER_TYPE') | from_json %}
@@ -1143,6 +1254,11 @@ template:
         unique_id: systemair_read_heater_actuator
         state_class: measurement
         icon: mdi:current-dc
+        availability: >
+          {% set old = states('sensor.systemair_read_heater_actuator') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_heater_actuator', 'REG_CFG_HEATER_ACTUATOR_TYPE') | from_json %}
@@ -1194,6 +1310,11 @@ template:
         unique_id: systemair_read_cooler_type
         state_class: measurement
         icon: mdi:snowflake
+        availability: >
+          {% set old = states('sensor.systemair_read_cooler_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_cooler_type', 'REG_UNIT_CONFIG_COOLER') | from_json %}
@@ -1243,6 +1364,11 @@ template:
         unique_id: systemair_read_cooler_actuator
         state_class: measurement
         icon: mdi:current-dc
+        availability: >
+          {% set old = states('sensor.systemair_read_cooler_actuator') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_cooler_actuator', 'REG_CFG_COOLER_ACTUATOR_TYPE') | from_json %}
@@ -1296,6 +1422,11 @@ template:
         unique_id: systemair_read_extra_controller_mode
         state_class: measurement
         icon: mdi:cog-outline
+        availability: >
+          {% set old = states('sensor.systemair_read_extra_controller_mode') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extra_controller_mode', 'REG_UNIT_CONFIG_EXTRA_CONTROLLER') | from_json %}
@@ -1350,6 +1481,11 @@ template:
         unique_id: systemair_read_control_mode
         state_class: measurement
         icon: mdi:gamepad-circle-up
+        availability: >
+          {% set old = states('sensor.systemair_read_control_mode') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_control_mode', 'REG_TC_CONTROL_MODE') | from_json %}
@@ -1400,6 +1536,11 @@ template:
         unique_id: systemair_read_airflow_type
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_airflow_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_airflow_type', 'REG_FAN_REGULATION_UNIT') | from_json %}
@@ -1451,6 +1592,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:percent-circle-outline
+        availability: >
+          {% set old = states('sensor.systemair_read_heat_exchanger_recovery_demand_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_heat_exchanger_recovery_demand_percentage', 'REG_HEAT_EXCHANGER_FROM_SATC') | from_json %}
@@ -1469,6 +1615,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:percent-circle-outline
+        availability: >
+          {% set old = states('sensor.systemair_read_heater_control_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_heater_control_percentage', 'REG_HEATER_FROM_SATC') | from_json %}
@@ -1487,6 +1638,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_min_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_min_percentage', 'REG_FAN_LEVEL_SAF_MIN_PERCENTAGE') | from_json %}
@@ -1505,6 +1661,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_min_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_min_percentage', 'REG_FAN_LEVEL_EAF_MIN_PERCENTAGE') | from_json %}
@@ -1523,6 +1684,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_low_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_low_percentage', 'REG_FAN_LEVEL_SAF_LOW_PERCENTAGE') | from_json %}
@@ -1541,6 +1707,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_low_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_low_percentage', 'REG_FAN_LEVEL_EAF_LOW_PERCENTAGE') | from_json %}
@@ -1559,6 +1730,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_normal_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_normal_percentage', 'REG_FAN_LEVEL_SAF_NORMAL_PERCENTAGE') | from_json %}
@@ -1577,6 +1753,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_normal_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_normal_percentage', 'REG_FAN_LEVEL_EAF_NORMAL_PERCENTAGE') | from_json %}
@@ -1595,6 +1776,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_high_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_high_percentage', 'REG_FAN_LEVEL_SAF_HIGH_PERCENTAGE') | from_json %}
@@ -1613,6 +1799,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_high_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_high_percentage', 'REG_FAN_LEVEL_EAF_HIGH_PERCENTAGE') | from_json %}
@@ -1631,6 +1822,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_max_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_max_percentage', 'REG_FAN_LEVEL_SAF_MAX_PERCENTAGE') | from_json %}
@@ -1649,6 +1845,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_max_percentage') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_max_percentage', 'REG_FAN_LEVEL_EAF_MAX_PERCENTAGE') | from_json %}
@@ -1667,6 +1868,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_min_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_min_rpm', 'REG_FAN_LEVEL_SAF_MIN_RPM') | from_json %}
@@ -1685,6 +1891,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_min_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_min_rpm', 'REG_FAN_LEVEL_EAF_MIN_RPM') | from_json %}
@@ -1703,6 +1914,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_low_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_low_rpm', 'REG_FAN_LEVEL_SAF_LOW_RPM') | from_json %}
@@ -1721,6 +1937,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_low_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_low_rpm', 'REG_FAN_LEVEL_EAF_LOW_RPM') | from_json %}
@@ -1739,6 +1960,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_normal_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_normal_rpm', 'REG_FAN_LEVEL_SAF_NORMAL_RPM') | from_json %}
@@ -1757,6 +1983,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_normal_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_normal_rpm', 'REG_FAN_LEVEL_EAF_NORMAL_RPM') | from_json %}
@@ -1775,6 +2006,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_high_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_high_rpm', 'REG_FAN_LEVEL_SAF_HIGH_RPM') | from_json %}
@@ -1793,6 +2029,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_high_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_high_rpm', 'REG_FAN_LEVEL_EAF_HIGH_RPM') | from_json %}
@@ -1811,6 +2052,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_supply_air_fan_max_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_supply_air_fan_max_rpm', 'REG_FAN_LEVEL_SAF_MAX_RPM') | from_json %}
@@ -1829,6 +2075,11 @@ template:
         unit_of_measurement: "rpm"
         state_class: measurement
         icon: mdi:fan
+        availability: >
+          {% set old = states('sensor.systemair_read_extract_air_fan_max_rpm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_extract_air_fan_max_rpm', 'REG_FAN_LEVEL_EAF_MAX_RPM') | from_json %}
@@ -1843,13 +2094,18 @@ template:
       # We want to gather information about the rotor relative humidity transfer control setpoint.
       # Modbus register in configuration: REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT
       - name: Systemair read rotor relative humidity transfer control setpoint
-        unique_id: systemair_read_heat_rotor_relative_humidity_transfer_control_setpoint
+        unique_id: systemair_read_rotor_relative_humidity_transfer_control_setpoint
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:water-percent-alert
+        availability: >
+          {% set old = states('sensor.systemair_read_rotor_relative_humidity_transfer_control_setpoint') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_heat_rotor_relative_humidity_transfer_control_setpoint', 'REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT') | from_json %}
+          {% set json = get_register('sensor.systemair_read_rotor_relative_humidity_transfer_control_setpoint', 'REG_ROTOR_RH_TRANSFER_CTRL_SETPOINT') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -1865,6 +2121,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:water-percent
+        availability: >
+          {% set old = states('sensor.systemair_read_calculated_moisture_extract_air') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_calculated_moisture_extract_air', 'REG_CALC_RHS_EAF') | from_json %}
@@ -1883,6 +2144,11 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         icon: mdi:water-percent
+        availability: >
+          {% set old = states('sensor.systemair_read_calculated_moisture_supply_air') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
           {% set json = get_register('sensor.systemair_read_calculated_moisture_supply_air', 'REG_CALC_RHS_SAF') | from_json %}
@@ -1907,12 +2173,17 @@ template:
       # 7: Extra Controller Temperature sensor (ECT)
       # 8: Efficiency temperature sensor (EFT)
       - name: Systemair read analog input 1 type
-        unique_id: systemair_analog_input_1_type
+        unique_id: systemair_read_analog_input_1_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_analog_input_1_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_analog_input_1_type', 'REG_AI_CFG_CONNECTION_NTC1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_analog_input_1_type', 'REG_AI_CFG_CONNECTION_NTC1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -1934,11 +2205,11 @@ template:
       # 7: Extra Controller Temperature sensor (ECT)
       # 8: Efficiency temperature sensor (EFT)
       - name: Systemair read analog input 1 type_str
-        unique_id: systemair_analog_input_1_type_str
+        unique_id: systemair_read_analog_input_1_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_analog_input_1_type_str', 'REG_AI_CFG_CONNECTION_NTC1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_analog_input_1_type_str', 'REG_AI_CFG_CONNECTION_NTC1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -1989,12 +2260,17 @@ template:
       # 17: Configurable digital input 3
       # 18: Pressure Guard
       - name: Systemair read digital input 1 type
-        unique_id: systemair_digital_input_1_type
+        unique_id: systemair_read_digital_input_1_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_digital_input_1_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_digital_input_1_type', 'REG_DI_CONNECTION_1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_digital_input_1_type', 'REG_DI_CONNECTION_1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2026,11 +2302,128 @@ template:
       # 17: Configurable digital input 3
       # 18: Pressure Guard
       - name: Systemair read digital input 1 type str
-        unique_id: systemair_digital_input_1_type_str
+        unique_id: systemair_read_digital_input_1_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_digital_input_1_type_str', 'REG_DI_CONNECTION_1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_digital_input_1_type_str', 'REG_DI_CONNECTION_1') | from_json %}
+          {% set result = none %}
+          {% if (json.valid) %}
+          {%   set value = int(json.value) %}
+          {%   if (value == 0) %}
+          {%     set result = "Inactive Input" %}
+          {%   elif (value == 1) %}
+          {%     set result = "Away" %}
+          {%   elif (value == 2) %}
+          {%     set result = "Bypass Damper (BYS)" %}
+          {%   elif (value == 3) %}
+          {%     set result = "Vacuum Cleaner" %}
+          {%   elif (value == 4) %}
+          {%     set result = "Cooker Hood" %}
+          {%   elif (value == 5) %}
+          {%     set result = "Crowded" %}
+          {%   elif (value == 6) %}
+          {%     set result = "EMT" %}
+          {%   elif (value == 7) %}
+          {%     set result = "External Stop" %}
+          {%   elif (value == 8) %}
+          {%     set result = "Extra Controller Alarm" %}
+          {%   elif (value == 9) %}
+          {%     set result = "Fireplace" %}
+          {%   elif (value == 10) %}
+          {%     set result = "Holiday" %}
+          {%   elif (value == 11) %}
+          {%     set result = "Refresh" %}
+          {%   elif (value == 12) %}
+          {%     set result = "RGS" %}
+          {%   elif (value == 13) %}
+          {%     set result = "Change Over Feedback" %}
+          {%   elif (value == 14) %}
+          {%     set result = "Fire Alarm" %}
+          {%   elif (value == 15) %}
+          {%     set result = "Configurable digital input 1" %}
+          {%   elif (value == 16) %}
+          {%     set result = "Configurable digital input 2" %}
+          {%   elif (value == 17) %}
+          {%     set result = "Configurable digital input 3" %}
+          {%   elif (value == 18) %}
+          {%    set result = "Pressure Guard" %}
+          {%   endif %}
+          {% else %}
+          {%   set result = json.old_value %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type for digital input 2.
+      # Modbus register in configuration: REG_DI_CONNECTION_2
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read digital input 2 type
+        unique_id: systemair_read_digital_input_2_type
+        state_class: measurement
+        icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_digital_input_2_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
+        state: >
+          {% from 'systemair.jinja' import get_register %}
+          {% set json = get_register('sensor.systemair_read_digital_input_2_type', 'REG_DI_CONNECTION_2') | from_json %}
+          {% set result = none %}
+          {% if (json.valid) %}
+          {%   set result = int(json.value) %}
+          {% else %}
+          {%   set result = json.old_value %}
+          {% endif %}
+          {{ result }}
+
+      # We want to gather the type for digital input 2, to string.
+      # Modbus register in configuration: REG_DI_CONNECTION_2
+      # Logic:
+      # 0: Inactive Input
+      # 1: Away
+      # 2: Bypass Damper (BYS)
+      # 3: Vacuum Cleaner
+      # 4: Cooker Hood
+      # 5: Crowded
+      # 6: EMT
+      # 7: External Stop
+      # 8: Extra Controller Alarm
+      # 9: Fireplace
+      # 10: Holiday
+      # 11: Refresh
+      # 12: RGS
+      # 13: Change Over Feedback
+      # 14: Fire Alarm
+      # 15: Configurable digital input 1
+      # 16: Configurable digital input 2
+      # 17: Configurable digital input 3
+      # 18: Pressure Guard
+      - name: Systemair read digital input 2 type str
+        unique_id: systemair_read_digital_input_2_type_str
+        icon: mdi:import
+        state: >
+          {% from 'systemair.jinja' import get_register %}
+          {% set json = get_register('sensor.systemair_read_digital_input_2_type_str', 'REG_DI_CONNECTION_2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2085,12 +2478,17 @@ template:
       # 1: Analog Input
       # 2: Digital Input
       - name: Systemair read universal input 1 type
-        unique_id: systemair_universal_input_1_type
+        unique_id: systemair_read_universal_input_1_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_universal_input_1_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_1_type', 'REG_UI_CFG_TYPE_1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_1_type', 'REG_UI_CFG_TYPE_1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2106,11 +2504,11 @@ template:
       # 1: Analog Input
       # 2: Digital Input
       - name: Systemair read universal input 1 type str
-        unique_id: systemair_universal_input_1_type_str
+        unique_id: systemair_read_universal_input_1_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_1_type_str', 'REG_UI_CFG_TYPE_1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_1_type_str', 'REG_UI_CFG_TYPE_1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2133,12 +2531,17 @@ template:
       # 1: Analog Input
       # 2: Digital Input
       - name: Systemair read universal input 2 type
-        unique_id: systemair_universal_input_2_type
+        unique_id: systemair_read_universal_input_2_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_universal_input_2_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_2_type', 'REG_UI_CFG_TYPE_2') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_2_type', 'REG_UI_CFG_TYPE_2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2154,11 +2557,11 @@ template:
       # 1: Analog Input
       # 2: Digital Input
       - name: Systemair read universal input 2 type str
-        unique_id: systemair_universal_input_2_type_str
+        unique_id: systemair_read_universal_input_2_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_2_type_str', 'REG_UI_CFG_TYPE_2') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_2_type_str', 'REG_UI_CFG_TYPE_2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2184,12 +2587,17 @@ template:
       # 4: Extract Air Fan Control (EAFC)
       # 5: Bypass damper Feedback (BYF)
       - name: Systemair read universal input 1 analog type
-        unique_id: systemair_universal_input_1_analog_type
+        unique_id: systemair_read_universal_input_1_analog_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_universal_input_1_analog_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_1_analog_type', 'REG_UI_CONNECTION_ANALOG1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_1_analog_type', 'REG_UI_CONNECTION_ANALOG1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2208,11 +2616,11 @@ template:
       # 4: Extract Air Fan Control (EAFC)
       # 5: Bypass damper Feedback (BYF)
       - name: Systemair read universal input 1 analog type str
-        unique_id: systemair_universal_input_1_analog_type_str
+        unique_id: systemair_read_universal_input_1_analog_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_1_analog_type_str', 'REG_UI_CONNECTION_ANALOG1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_1_analog_type_str', 'REG_UI_CONNECTION_ANALOG1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2244,12 +2652,17 @@ template:
       # 4: Extract Air Fan Control (EAFC)
       # 5: Bypass damper Feedback (BYF)
       - name: Systemair read universal input 2 analog type
-        unique_id: systemair_universal_input_2_analog_type
+        unique_id: systemair_read_universal_input_2_analog_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_universal_input_2_analog_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_2_analog_type', 'REG_UI_CONNECTION_ANALOG2') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_2_analog_type', 'REG_UI_CONNECTION_ANALOG2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2268,11 +2681,11 @@ template:
       # 4: Extract Air Fan Control (EAFC)
       # 5: Bypass damper Feedback (BYF)
       - name: Systemair read universal input 2 analog type str
-        unique_id: systemair_universal_input_2_analog_type_str
+        unique_id: systemair_read_universal_input_2_analog_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_2_analog_type_str', 'REG_UI_CONNECTION_ANALOG2') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_2_analog_type_str', 'REG_UI_CONNECTION_ANALOG2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2317,12 +2730,17 @@ template:
       # 17: Configurable digital input 3
       # 18: Pressure Guard
       - name: Systemair read universal input 1 digital type
-        unique_id: systemair_universal_input_1_digital_type
+        unique_id: systemair_read_universal_input_1_digital_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_universal_input_1_digital_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_1_digital_type', 'REG_UI_CONNECTION_DIGITAL1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_1_digital_type', 'REG_UI_CONNECTION_DIGITAL1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2354,11 +2772,11 @@ template:
       # 17: Configurable digital input 3
       # 18: Pressure Guard
       - name: Systemair read universal input 1 digital type str
-        unique_id: systemair_universal_input_1_digital_type_str
+        unique_id: systemair_read_universal_input_1_digital_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_1_digital_type_str', 'REG_UI_CONNECTION_DIGITAL1') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_1_digital_type_str', 'REG_UI_CONNECTION_DIGITAL1') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2429,12 +2847,17 @@ template:
       # 17: Configurable digital input 3
       # 18: Pressure Guard
       - name: Systemair read universal input 2 digital type
-        unique_id: systemair_universal_input_2_digital_type
+        unique_id: systemair_read_universal_input_2_digital_type
         state_class: measurement
         icon: mdi:import
+        availability: >
+          {% set old = states('sensor.systemair_read_universal_input_2_digital_type') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_2_digital_type', 'REG_UI_CONNECTION_DIGITAL2') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_2_digital_type', 'REG_UI_CONNECTION_DIGITAL2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2466,11 +2889,11 @@ template:
       # 17: Configurable digital input 3
       # 18: Pressure Guard
       - name: Systemair read universal input 2 digital type str
-        unique_id: systemair_universal_input_2_digital_type_str
+        unique_id: systemair_read_universal_input_2_digital_type_str
         icon: mdi:import
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_universal_input_2_digital_type_str', 'REG_UI_CONNECTION_DIGITAL2') | from_json %}
+          {% set json = get_register('sensor.systemair_read_universal_input_2_digital_type_str', 'REG_UI_CONNECTION_DIGITAL2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set value = int(json.value) %}
@@ -2697,9 +3120,14 @@ template:
       - name: Systemair read fan manual stop allowed
         unique_id: systemair_read_fan_manual_stop_allowed
         icon: mdi:fan-off
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_fan_manual_stop_allowed') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_fan_manual_stop_allowed', 'REG_FAN_MANUAL_STOP_ALLOWED') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_fan_manual_stop_allowed', 'REG_FAN_MANUAL_STOP_ALLOWED') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2713,9 +3141,14 @@ template:
       - name: Systemair read ECO mode configuration status
         unique_id: systemair_read_eco_mode_configuration_status
         icon: mdi:sprout
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_eco_mode_configuration_status') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_eco_mode_configuration_status', 'REG_ECO_MODE_ON_OFF') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_eco_mode_configuration_status', 'REG_ECO_MODE_ON_OFF') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2729,9 +3162,14 @@ template:
       - name: Systemair read filter replacement alarm
         unique_id: systemair_read_filter_replacement_alarm
         icon: mdi:air-filter
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_filter_replacement_alarm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_filter_replacement_alarm', 'REG_FILTER_REPLACEMENT_ALARM') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_filter_replacement_alarm', 'REG_FILTER_REPLACEMENT_ALARM') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2745,9 +3183,14 @@ template:
       - name: Systemair read filter warning alarm
         unique_id: systemair_read_filter_warning_alarm
         icon: mdi:air-filter
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_filter_warning_alarm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_filter_warning_alarm', 'REG_ALARM_FILTER_WARNING_ALARM') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_filter_warning_alarm', 'REG_ALARM_FILTER_WARNING_ALARM') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2761,9 +3204,14 @@ template:
       - name: Systemair read filter alarm
         unique_id: systemair_read_filter_alarm
         icon: mdi:air-filter
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_filter_alarm') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_filter_alarm', 'REG_ALARM_FILTER_ALARM') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_filter_alarm', 'REG_ALARM_FILTER_ALARM') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2787,9 +3235,14 @@ template:
       - name: Systemair read alarm type a
         unique_id: systemair_read_alarm_type_a
         icon: mdi:alarm-light
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_alarm_type_a') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_alarm_type_a', 'REG_ALARM_TYPE_A') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_alarm_type_a', 'REG_ALARM_TYPE_A') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2818,9 +3271,14 @@ template:
       - name: Systemair read alarm type b
         unique_id: systemair_read_alarm_type_b
         icon: mdi:alarm-light
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_alarm_type_b') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_alarm_type_b', 'REG_ALARM_TYPE_B') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_alarm_type_b', 'REG_ALARM_TYPE_B') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2840,9 +3298,14 @@ template:
       - name: Systemair read alarm type c
         unique_id: systemair_read_alarm_type_c
         icon: mdi:alarm-light
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_alarm_type_c') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_alarm_type_c', 'REG_ALARM_TYPE_C') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_alarm_type_c', 'REG_ALARM_TYPE_C') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2856,9 +3319,14 @@ template:
       - name: Systemair read heat exchanger on
         unique_id: systemair_read_heat_exchanger_on
         icon: mdi:heat-pump
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_heat_exchanger_on') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_heat_exchanger_on', 'REG_FUNCTION_ACTIVE_HEAT_RECOVERY') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_heat_exchanger_on', 'REG_FUNCTION_ACTIVE_HEAT_RECOVERY') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2873,9 +3341,14 @@ template:
       - name: Systemair read heater on
         unique_id: systemair_read_heater_on
         icon: mdi:heat-wave
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_heater_on') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_heater_on', 'REG_FUNCTION_ACTIVE_HEATING') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_heater_on', 'REG_FUNCTION_ACTIVE_HEATING') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2889,9 +3362,14 @@ template:
       - name: Systemair read rotor relative humidity transfer control_mode
         unique_id: systemair_read_rotor_relative_humidity_transfer_control_mode
         icon: mdi:water-percent-alert
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_rotor_relative_humidity_transfer_control_mode') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_rotor_relative_humidity_transfer_control_mode', 'REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_rotor_relative_humidity_transfer_control_mode', 'REG_ROTOR_RH_TRANSFER_CTRL_ON_OFF') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2905,9 +3383,14 @@ template:
       - name: Systemair read rotor relative humidity transfer control_on
         unique_id: systemair_read_rotor_relative_humidity_transfer_control_on
         icon: mdi:water-percent-alert
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_rotor_relative_humidity_transfer_control_on') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_rotor_relative_humidity_transfer_control_on', 'REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_rotor_relative_humidity_transfer_control_on', 'REG_FUNCTION_ACTIVE_MOISTURE_TRANSFER') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2921,9 +3404,14 @@ template:
       - name: Systemair read function active defrosting on
         unique_id: systemair_read_function_active_defrosting_on
         icon: mdi:snowflake-melt
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_function_active_defrosting_on') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_function_active_defrosting_on', 'REG_FUNCTION_ACTIVE_DEFROSTING') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_function_active_defrosting_on', 'REG_FUNCTION_ACTIVE_DEFROSTING') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2937,9 +3425,14 @@ template:
       - name: Systemair read function active heater cool down on
         unique_id: systemair_read_function_active_heater_cool_down_on
         icon: mdi:heat-wave
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_function_active_heater_cool_down_on') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_function_active_heater_cool_down_on', 'REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_function_active_heater_cool_down_on', 'REG_FUNCTION_ACTIVE_HEATER_COOL_DOWN') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -2954,9 +3447,14 @@ template:
       - name: Systemair read kitchen fan pressure sensor on
         unique_id: systemair_read_kitchen_fan_pressure_sensor_on
         icon: mdi:fan-chevron-up
+        availability: >
+          {% set old = states('binary_sensor.systemair_read_kitchen_fan_pressure_sensor_on') %}
+          {% set response = state_attr('sensor.systemair_save_connect_response', 'response') %}
+          {% set bad = ['unknown', 'unavailable', 'none', ''] %}
+          {{ (response is mapping) or (old not in bad and old is not none) }}
         state: >
           {% from 'systemair.jinja' import get_register %}
-          {% set json = get_register('sensor.systemair_read_kitchen_fan_pressure_sensor_on', 'REG_INPUT_DIGITAL_UI_2') | from_json %}
+          {% set json = get_register('binary_sensor.systemair_read_kitchen_fan_pressure_sensor_on', 'REG_INPUT_DIGITAL_UI_2') | from_json %}
           {% set result = none %}
           {% if (json.valid) %}
           {%   set result = int(json.value) %}
@@ -3158,13 +3656,14 @@ rest:
       - name: Systemair Save connect response length
         unique_id: systemair_save_connect_response_length
         value_template: >
+          {% set value_json2 = value_json | default(none) %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none'  or value_json == None or value_json == '{}') %}
+          {% if (value_json2 == 'unknown' or value_json2 == 'unavailable' or value_json2 == 'none'  or value_json2 == None or value_json2 == '{}') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = value_json %}
+          {%   set value = value_json2 %}
           {%   set value = value | replace("'", '"') %}
           {%   set result = value | count %}
           {% endif %}
@@ -3174,13 +3673,14 @@ rest:
       - name: Systemair Save connect response 1 part
         unique_id: systemair_save_connect_response_1_part
         value_template: >
+          {% set value_json2 = value_json | default(none) %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none'  or value_json == None or value_json == '{}') %}
+          {% if (value_json2 == 'unknown' or value_json2 == 'unavailable' or value_json2 == 'none'  or value_json2 == None or value_json2 == '{}') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = value_json %}
+          {%   set value = value_json2 %}
           {%   set result = value | replace("'", '"') %}
           {%   set length = result | count %}
           {%   if (length > 0) %}
@@ -3195,13 +3695,14 @@ rest:
       - name: Systemair Save connect response 2 part
         unique_id: systemair_save_connect_response_2_part
         value_template: >
+          {% set value_json2 = value_json | default(none) %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none'  or value_json == None or value_json == '{}') %}
+          {% if (value_json2 == 'unknown' or value_json2 == 'unavailable' or value_json2 == 'none'  or value_json2 == None or value_json2 == '{}') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = value_json %}
+          {%   set value = value_json2 %}
           {%   set result = value | replace("'", '"') %}
           {%   set length = result | count %}
           {%   if (length > 255) %}
@@ -3216,13 +3717,14 @@ rest:
       - name: Systemair Save connect response 3 part
         unique_id: systemair_save_connect_response_3_part
         value_template: >
+          {% set value_json2 = value_json | default(none) %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none'  or value_json == None or value_json == '{}') %}
+          {% if (value_json2 == 'unknown' or value_json2 == 'unavailable' or value_json2 == 'none'  or value_json2 == None or value_json2 == '{}') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = value_json %}
+          {%   set value = value_json2 %}
           {%   set result = value | replace("'", '"') %}
           {%   set length = result | count %}
           {%   if (length > 510) %}
@@ -3237,13 +3739,14 @@ rest:
       - name: Systemair Save connect response 4 part
         unique_id: systemair_save_connect_response_4_part
         value_template: >
+          {% set value_json2 = value_json | default(none) %}
           {% set inputs_valid = true %}
           {% set result = none %}
-          {% if (value_json == 'unknown' or value_json == 'unavailable' or value_json == 'none'  or value_json == None or value_json == '{}') %}
+          {% if (value_json2 == 'unknown' or value_json2 == 'unavailable' or value_json2 == 'none'  or value_json2 == None or value_json2 == '{}') %}
           {%   set inputs_valid = false %}
           {% endif %}
           {% if (inputs_valid == true) %}
-          {%   set value = value_json %}
+          {%   set value = value_json2 %}
           {%   set result = value | replace("'", '"') %}
           {%   set length = result | count %}
           {%   if (length > 510) %}

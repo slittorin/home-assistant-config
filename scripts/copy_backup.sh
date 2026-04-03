@@ -185,7 +185,7 @@ fi
 # Log, and limit logfile to 1000 rows.
 RESULT="$(date +%Y%m%d_%H%M%S): No error. Removed files: ${FILES_REMOVED}. Copied files: ${FILES_COPIED}."
 echo "${RESULT}" >> ${logfile}
-tail -n1000 ${logfile} > ${logfile_tmp}
+tail -n 1000 ${logfile} > ${logfile_tmp}
 rm ${logfile}
 mv ${logfile_tmp} ${logfile}
 

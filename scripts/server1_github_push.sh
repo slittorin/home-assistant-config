@@ -70,7 +70,7 @@ RESULT=`ssh -o BatchMode=yes -o UserKnownHostsFile=${known_hosts_file} -i ${rsa_
 
 # Log, and limit logfile to 1000 rows.
 echo "${RESULT}" >> ${logfile}
-tail -n1000 ${logfile} > ${logfile_tmp}
+tail -n 1000 ${logfile} > ${logfile_tmp}
 rm ${logfile}
 mv ${logfile_tmp} ${logfile}
 

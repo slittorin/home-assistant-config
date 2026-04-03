@@ -89,7 +89,7 @@ fi
 _finalize >> "${logfile}" 2>&1
 
 # Limit the number of rows in the logfile
-tail -n1000 ${logfile} > ${logfile_tmp}
+tail -n 1000 ${logfile} > ${logfile_tmp}
 rm ${logfile}
 mv ${logfile_tmp} ${logfile}
 

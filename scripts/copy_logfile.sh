@@ -37,7 +37,7 @@ fi
 # Log, and limit logfile to 1000 rows.
 RESULT="$(date +%Y%m%d_%H%M%S): No error. Copied file ${ha_logfile} to ${ha_logfile_copied}."
 echo "${RESULT}" >> ${logfile}
-tail -n1000 ${logfile} > ${logfile_tmp}
+tail -n 1000 ${logfile} > ${logfile_tmp}
 rm ${logfile}
 mv ${logfile_tmp} ${logfile}
 

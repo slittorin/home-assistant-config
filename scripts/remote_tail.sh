@@ -58,11 +58,11 @@ fi
 
 # Log, and limit logfile to 1000 rows.
 echo "$(date +%Y%m%d_%H%M%S): INFO. Server: ${SERVER}. File: ${FILE}. Result: ${RESULT}." >> ${logfile}
-#tail -n1000 ${logfile} > ${logfile_tmp}
+#tail -n 1000 ${logfile} > ${logfile_tmp}
 #rm ${logfile}
 #mv ${logfile_tmp} ${logfile}
 
-echo "$(tail -n1000 ${logfile})" > ${logfile}
+echo "$(tail -n 1000 ${logfile})" > ${logfile}
 
 # Show output
 echo "${RESULT}"
