@@ -1,7 +1,6 @@
 # This file includes all the entitites for tracking sensor data for the Balboa Spa Client add-on.
 
-# 20251207: The below logic is not required anymore since we have the correct consumption from a Shelly-device.
-
+# 20251207: The below logic for power usage (kWh) is not required anymore since we have the correct consumption from a Shelly-device.
 # # The following are the consumptions for Denform Montana:
 # # - Heater: 3 kW.
 # # - Circulation pump: 0.2 kW + 0.1 kW for the ozone-device (that takes 0.2 kW, but we assume that the ozone-device is only running 50% of the time).
@@ -13,62 +12,68 @@
 # Updates made for Core updates and breaking changes:
 # --------------------------------------------------------
 # 20221108 - Clear to upgrade to 2022.6.7 from 2022.5.3: https://www.home-assistant.io/blog/2022/06/01/release-20226/#breaking-changes Template filter/function defaults
+# 20260427 - Added automation for Balboa Spa to heat and clean during hours with low tariffs.
+#            Slot-size/length of filter cycle 1 and 2 can be manually set.
+#            Automation takes data from Nordpool and choses the best start hour for filter cycle 1 and 2 for the next day.
+#            The automation is only run when automation is enabled.
+#            Temperature is also set only when spa is in Ready-mode, and temperature is set to a default lower value based on the average temperature for tomorrow.
+# 20260428 - Remove (#) all sensors and automation to keep track of change per hour, since it really did not work.
 
 input_number:
-  balboa_spa_temperature_persistent:
-    name: "Persistence for balboa_spa_temperature"
-    icon: mdi:thermometer-lines
-    mode: box
-    min: 0
-    max: 100
-    unit_of_measurement: "°C"
-  balboa_spa_temperature_hour_persistent:
-    name: "Persistence for balboa_spa_temperature"
-    icon: mdi:thermometer-lines
-    mode: box
-    min: 0
-    max: 100
-    unit_of_measurement: "°C"
-  balboa_spa_temperature_change_per_hour_persistent:
-    name: "Persistence for balboa_spa_temperature_change_per_hour"
-    icon: mdi:thermometer-lines
-    mode: box
-    initial: 0
-    min: -100
-    max: 100
-    unit_of_measurement: "°C"
-  balboa_spa_temperature_at_start_of_heating_persistent:
-    name: "Persistence for balboa_spa_temperature_at_start_of_heating"
-    icon: mdi:thermometer-lines
-    mode: box
-    initial: 0
-    min: -100
-    max: 100
-    unit_of_measurement: "°C"
-  balboa_spa_temperature_at_end_of_heating_persistent:
-    name: "Persistence for balboa_spa_temperature_at_end_of_heating"
-    icon: mdi:thermometer-lines
-    mode: box
-    initial: 0
-    min: -100
-    max: 100
-    unit_of_measurement: "°C"
-  balboa_spa_temperature_change_at_start_of_heating_persistent:
-    name: "Persistence for balboa_spa_temperature_change_at_start_of_heating"
-    icon: mdi:thermometer-lines
-    mode: box
-    initial: 0
-    min: -100
-    max: 100
-    unit_of_measurement: "°C"
-  balboa_spa_temperature_change_at_end_of_heating_persistent:
-    name: "Persistence for balboa_spa_temperature_change_at_end_of_heating_persistent"
-    icon: mdi:thermometer-lines
-    mode: box
-    initial: 0
-    min: -100
-    max: 100
-    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_persistent:
+  #    name: "Persistence for balboa_spa_temperature"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    min: 0
+  #    max: 100
+  #    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_hour_persistent:
+  #    name: "Persistence for balboa_spa_temperature"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    min: 0
+  #    max: 100
+  #    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_change_per_hour_persistent:
+  #    name: "Persistence for balboa_spa_temperature_change_per_hour"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    initial: 0
+  #    min: -100
+  #    max: 100
+  #    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_at_start_of_heating_persistent:
+  #    name: "Persistence for balboa_spa_temperature_at_start_of_heating"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    initial: 0
+  #    min: -100
+  #    max: 100
+  #    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_at_end_of_heating_persistent:
+  #    name: "Persistence for balboa_spa_temperature_at_end_of_heating"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    initial: 0
+  #    min: -100
+  #    max: 100
+  #    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_change_at_start_of_heating_persistent:
+  #    name: "Persistence for balboa_spa_temperature_change_at_start_of_heating"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    initial: 0
+  #    min: -100
+  #    max: 100
+  #    unit_of_measurement: "°C"
+  #  balboa_spa_temperature_change_at_end_of_heating_persistent:
+  #    name: "Persistence for balboa_spa_temperature_change_at_end_of_heating_persistent"
+  #    icon: mdi:thermometer-lines
+  #    mode: box
+  #    initial: 0
+  #    min: -100
+  #    max: 100
+  #    unit_of_measurement: "°C"
   balboa_spa_automation_filter_cycle_length:
     name: "The filter cycle length in hours for automation (2-4 hours)"
     icon: mdi:camera-timer
@@ -167,13 +172,13 @@ template:
   #          {% endif %}
   #          {{ result }}
 
-  - binary_sensor:
-      # Since we cannot track attribute-state in history_stats, we need to create a binary template-sensor.
-      # Returns true if heater is 'heating'.
-      - name: Balboa Spa heater on
-        unique_id: balboa_spa_heater_on
-        device_class: heat
-        state: "{{ is_state_attr('climate.nbp6013h_climate', 'hvac_action', 'heating') }}"
+  #  - binary_sensor:
+  #      # Since we cannot track attribute-state in history_stats, we need to create a binary template-sensor.
+  #      # Returns true if heater is 'heating'.
+  #      - name: Balboa Spa heater on
+  #        unique_id: balboa_spa_heater_on
+  #        device_class: heat
+  #        state: "{{ is_state_attr('climate.nbp6013h_climate', 'hvac_action', 'heating') }}"
 
   # 20251209: The below sensor is not required anymore since we have the correct consumption from a Shelly-device.
   #  - sensor:
@@ -244,49 +249,49 @@ template:
           {% endif %}
           {{ result }}
 
-  - sensor:
-      # We set the balboa_spa_temperature_change_at_start_of_heating sensor.
-      - name: Balboa Spa temperature change at start of heating
-        unique_id: balboa_spa_temperature_change_at_start_of_heating
-        state_class: measurement
-        device_class: "temperature"
-        unit_of_measurement: "°C"
-        icon: mdi:thermometer-lines
-        state: >
-          {% set temperature = states('input_number.balboa_spa_temperature_change_at_start_of_heating_persistent') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temperature = float(temperature, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = temperature | round(2, default=0) %}
-          {% endif %}
-          {{ result }}
+  #  - sensor:
+  #      # We set the balboa_spa_temperature_change_at_start_of_heating sensor.
+  #      - name: Balboa Spa temperature change at start of heating
+  #        unique_id: balboa_spa_temperature_change_at_start_of_heating
+  #        state_class: measurement
+  #        device_class: "temperature"
+  #        unit_of_measurement: "°C"
+  #        icon: mdi:thermometer-lines
+  #        state: >
+  #          {% set temperature = states('input_number.balboa_spa_temperature_change_at_start_of_heating_persistent') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temperature = float(temperature, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   set result = temperature | round(2, default=0) %}
+  #          {% endif %}
+  #          {{ result }}
 
-  - sensor:
-      # We set the balboa_spa_temperature_change_at_end_of_heating.
-      - name: Balboa Spa temperature change at end of heating
-        unique_id: balboa_spa_temperature_change_at_end_of_heating
-        state_class: measurement
-        device_class: "temperature"
-        unit_of_measurement: "°C"
-        icon: mdi:thermometer-lines
-        state: >
-          {% set temperature = states('input_number.balboa_spa_temperature_change_at_end_of_heating_persistent') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temperature = float(temperature, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = temperature | round(2, default=0) %}
-          {% endif %}
-          {{ result }}
+  #  - sensor:
+  #      # We set the balboa_spa_temperature_change_at_end_of_heating.
+  #      - name: Balboa Spa temperature change at end of heating
+  #        unique_id: balboa_spa_temperature_change_at_end_of_heating
+  #        state_class: measurement
+  #        device_class: "temperature"
+  #        unit_of_measurement: "°C"
+  #        icon: mdi:thermometer-lines
+  #        state: >
+  #          {% set temperature = states('input_number.balboa_spa_temperature_change_at_end_of_heating_persistent') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (temperature == 'unknown' or temperature == 'unavailable' or temperature == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temperature = float(temperature, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   set result = temperature | round(2, default=0) %}
+  #          {% endif %}
+  #          {{ result }}
 
   - sensor:
       # We set a preferred rest-temperature, based on the average temperature for today.
@@ -622,214 +627,214 @@ automation:
   # Note that we need to have delimiting, as the data from the Spa can give wild results, specifically if the delta-time is short:
   # - It should be (nearly) physically impossible to increase the temperature over 3 degrees per hour.
   # - It should be (nearly) physically impossible to decrease the temperature over 7 degrees per hour. Only if the spa is uncovered, and in minus celcius.
-  - id: automation_balboa_spa_temperature_change_per_hour
-    alias: "Automation for balboa_spa_temperature_change_per_hour"
-    trigger:
-      - platform: state
-        entity_id: sensor.balboa_spa_temperature_hour
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_change_per_hour_persistent
-        value: >
-          {% set time_from = states.input_number['balboa_spa_temperature_hour_persistent'].last_updated %}
-          {% set time_now = now().timestamp() %}
-          {% set temp_from = states('input_number.balboa_spa_temperature_hour_persistent') %}
-          {% set temp_now = states('sensor.balboa_spa_temperature_hour') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set time_from = as_timestamp(time_from) %}
-          {% endif %}
-          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
-          {%    set inputs_valid = false %}
-          {% else %}
-          {%   set temp_from = float(temp_from, 0) %}
-          {% endif %}
-          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temp_now = float(temp_now, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   if (temp_now != temp_from) %}
-          {%     set delta_time = ((time_now - time_from) / 3600) %}
-          {%     set delta_temp = temp_now - temp_from %}
-          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
-          {%     if (result >= 3) %}
-          {%       set result = 0 %}
-          {%     elif (result <= -7) %}
-          {%       set result = 0 %}
-          {%     endif %}
-          {%  endif %}
-          {% endif %}
-          {{ result }}
+  #  - id: automation_balboa_spa_temperature_change_per_hour
+  #    alias: "Automation for balboa_spa_temperature_change_per_hour"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: sensor.balboa_spa_temperature_hour
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_change_per_hour_persistent
+  #        value: >
+  #          {% set time_from = states.input_number['balboa_spa_temperature_hour_persistent'].last_updated %}
+  #          {% set time_now = now().timestamp() %}
+  #          {% set temp_from = states('input_number.balboa_spa_temperature_hour_persistent') %}
+  #          {% set temp_now = states('sensor.balboa_spa_temperature_hour') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set time_from = as_timestamp(time_from) %}
+  #          {% endif %}
+  #          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+  #          {%    set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_from = float(temp_from, 0) %}
+  #          {% endif %}
+  #          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_now = float(temp_now, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   if (temp_now != temp_from) %}
+  #          {%     set delta_time = ((time_now - time_from) / 3600) %}
+  #          {%     set delta_temp = temp_now - temp_from %}
+  #          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+  #          {%     if (result >= 3) %}
+  #          {%       set result = 0 %}
+  #          {%     elif (result <= -7) %}
+  #          {%       set result = 0 %}
+  #          {%     endif %}
+  #          {%  endif %}
+  #          {% endif %}
+  #          {{ result }}
 
-  - id: automation_balboa_spa_temperature_at_start_of_heating_persistent
-    alias: "Automation for balboa_spa_temperature_at_start_of_heating_persistent"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.balboa_spa_heater_on
-        to: "on"
-        for: "00:00:30"
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_at_start_of_heating_persistent
-        value: >
-          {% set temp_now = states('sensor.balboa_spa_temperature') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temp_now = float(temp_now, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = temp_now %}
-          {% endif %}
-          {{ result }}
+  #  - id: automation_balboa_spa_temperature_at_start_of_heating_persistent
+  #    alias: "Automation for balboa_spa_temperature_at_start_of_heating_persistent"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: binary_sensor.balboa_spa_heater_on
+  #        to: "on"
+  #        for: "00:00:30"
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_at_start_of_heating_persistent
+  #        value: >
+  #          {% set temp_now = states('sensor.balboa_spa_temperature') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_now = float(temp_now, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   set result = temp_now %}
+  #          {% endif %}
+  #          {{ result }}
 
-  - id: automation_balboa_spa_temperature_change_at_start_of_heating_persistent
-    alias: "Automation for balboa_spa_temperature_change_at_start_of_heating_persistent"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.balboa_spa_heater_on
-        to: "on"
-        for: "00:01:00"
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_change_at_start_of_heating_persistent
-        value: >
-          {% set time_from = states.input_number['balboa_spa_temperature_at_end_of_heating_persistent'].last_updated %}
-          {% set time_now = now().timestamp() %}
-          {% set temp_from = states('input_number.balboa_spa_temperature_at_end_of_heating_persistent') %}
-          {% set temp_now = states('input_number.balboa_spa_temperature_at_start_of_heating_persistent') %}
-          {% set inputs_valid = true %}
-          {% set result = 0 %}
-          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set time_from = as_timestamp(time_from) %}
-          {% endif %}
-          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
-          {%    set inputs_valid = false %}
-          {% else %}
-          {%   set temp_from = float(temp_from, 0) %}
-          {% endif %}
-          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temp_now = float(temp_now, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   if (temp_now != temp_from) %}
-          {%     set delta_time = ((time_now - time_from) / 3600) %}
-          {%     set delta_temp = temp_now - temp_from %}
-          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
-          {%     if (result >= 5 or result <= -10) %}
-          {%       set result = 0 %}
-          {%     endif %}
-          {%  endif %}
-          {% endif %}
-          {{ result }}
+  #  - id: automation_balboa_spa_temperature_change_at_start_of_heating_persistent
+  #    alias: "Automation for balboa_spa_temperature_change_at_start_of_heating_persistent"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: binary_sensor.balboa_spa_heater_on
+  #        to: "on"
+  #        for: "00:01:00"
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_change_at_start_of_heating_persistent
+  #        value: >
+  #          {% set time_from = states.input_number['balboa_spa_temperature_at_end_of_heating_persistent'].last_updated %}
+  #          {% set time_now = now().timestamp() %}
+  #          {% set temp_from = states('input_number.balboa_spa_temperature_at_end_of_heating_persistent') %}
+  #          {% set temp_now = states('input_number.balboa_spa_temperature_at_start_of_heating_persistent') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = 0 %}
+  #          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set time_from = as_timestamp(time_from) %}
+  #          {% endif %}
+  #          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+  #          {%    set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_from = float(temp_from, 0) %}
+  #          {% endif %}
+  #          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_now = float(temp_now, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   if (temp_now != temp_from) %}
+  #          {%     set delta_time = ((time_now - time_from) / 3600) %}
+  #          {%     set delta_temp = temp_now - temp_from %}
+  #          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+  #          {%     if (result >= 5 or result <= -10) %}
+  #          {%       set result = 0 %}
+  #          {%     endif %}
+  #          {%  endif %}
+  #          {% endif %}
+  #          {{ result }}
 
-  - id: automation_balboa_spa_temperature_at_end_of_heating_persistent
-    alias: "Automation for balboa_spa_temperature_at_end_of_heating_persistent"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.balboa_spa_heater_on
-        to: "off"
-        for: "00:00:30"
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_at_end_of_heating_persistent
-        value: >
-          {% set temp_now = states('sensor.balboa_spa_temperature') %}
-          {% set inputs_valid = true %}
-          {% set result = none %}
-          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temp_now = float(temp_now, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   set result = temp_now %}
-          {% endif %}
-          {{ result }}
+  #  - id: automation_balboa_spa_temperature_at_end_of_heating_persistent
+  #    alias: "Automation for balboa_spa_temperature_at_end_of_heating_persistent"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: binary_sensor.balboa_spa_heater_on
+  #        to: "off"
+  #        for: "00:00:30"
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_at_end_of_heating_persistent
+  #        value: >
+  #          {% set temp_now = states('sensor.balboa_spa_temperature') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = none %}
+  #          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_now = float(temp_now, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   set result = temp_now %}
+  #          {% endif %}
+  #          {{ result }}
 
-  - id: automation_balboa_spa_temperature_change_at_end_of_heating_persistent
-    alias: "Automation for balboa_spa_temperature_change_at_end_of_heating_persistent"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.balboa_spa_heater_on
-        to: "off"
-        for: "00:01:00"
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_change_at_end_of_heating_persistent
-        value: >
-          {% set time_from = states.input_number['balboa_spa_temperature_at_start_of_heating_persistent'].last_updated %}
-          {% set time_now = now().timestamp() %}
-          {% set temp_from = states('input_number.balboa_spa_temperature_at_start_of_heating_persistent') %}
-          {% set temp_now = states('input_number.balboa_spa_temperature_at_end_of_heating_persistent') %}
-          {% set inputs_valid = true %}
-          {% set result = 0 %}
-          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set time_from = as_timestamp(time_from) %}
-          {% endif %}
-          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
-          {%    set inputs_valid = false %}
-          {% else %}
-          {%   set temp_from = float(temp_from, 0) %}
-          {% endif %}
-          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
-          {%   set inputs_valid = false %}
-          {% else %}
-          {%   set temp_now = float(temp_now, 0) %}
-          {% endif %}
-          {% if (inputs_valid == true) %}
-          {%   if (temp_now != temp_from) %}
-          {%     set delta_time = ((time_now - time_from) / 3600) %}
-          {%     set delta_temp = temp_now - temp_from %}
-          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
-          {%     if (result >= 5 or result <= -10) %}
-          {%       set result = 0 %}
-          {%     endif %}
-          {%  endif %}
-          {% endif %}
-          {{ result }}
+  #  - id: automation_balboa_spa_temperature_change_at_end_of_heating_persistent
+  #    alias: "Automation for balboa_spa_temperature_change_at_end_of_heating_persistent"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: binary_sensor.balboa_spa_heater_on
+  #        to: "off"
+  #        for: "00:01:00"
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_change_at_end_of_heating_persistent
+  #        value: >
+  #          {% set time_from = states.input_number['balboa_spa_temperature_at_start_of_heating_persistent'].last_updated %}
+  #          {% set time_now = now().timestamp() %}
+  #          {% set temp_from = states('input_number.balboa_spa_temperature_at_start_of_heating_persistent') %}
+  #          {% set temp_now = states('input_number.balboa_spa_temperature_at_end_of_heating_persistent') %}
+  #          {% set inputs_valid = true %}
+  #          {% set result = 0 %}
+  #          {% if (time_from == 'unknown' or time_from == 'unavailable' or time_from == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set time_from = as_timestamp(time_from) %}
+  #          {% endif %}
+  #          {% if (temp_from == 'unknown' or temp_from == 'unavailable' or temp_from == none) %}
+  #          {%    set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_from = float(temp_from, 0) %}
+  #          {% endif %}
+  #          {% if (temp_now == 'unknown' or temp_now == 'unavailable' or temp_now == none) %}
+  #          {%   set inputs_valid = false %}
+  #          {% else %}
+  #          {%   set temp_now = float(temp_now, 0) %}
+  #          {% endif %}
+  #          {% if (inputs_valid == true) %}
+  #          {%   if (temp_now != temp_from) %}
+  #          {%     set delta_time = ((time_now - time_from) / 3600) %}
+  #          {%     set delta_temp = temp_now - temp_from %}
+  #          {%     set result = (delta_temp / delta_time) | round(2, default=0) %}
+  #          {%     if (result >= 5 or result <= -10) %}
+  #          {%       set result = 0 %}
+  #          {%     endif %}
+  #          {%  endif %}
+  #          {% endif %}
+  #          {{ result }}
 
   # For persistence, and spa temperature
-  - id: automation_balboa_spa_temperature
-    alias: "Automation for persistance of balboa_spa_temperature change"
-    trigger:
-      - platform: state
-        entity_id: sensor.balboa_spa_temperature
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_persistent
-        value: "{{ float(states('sensor.balboa_spa_temperature'), 0) }}"
+  #  - id: automation_balboa_spa_temperature
+  #    alias: "Automation for persistance of balboa_spa_temperature change"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: sensor.balboa_spa_temperature
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_persistent
+  #        value: "{{ float(states('sensor.balboa_spa_temperature'), 0) }}"
 
-  # For persistence, and spa hourly temperature
-  - id: automation_balboa_spa_temperature_hour
-    alias: "Automation for persistance of balboa_spa_temperature_hour change"
-    trigger:
-      - platform: state
-        entity_id: sensor.balboa_spa_temperature_hour
-    action:
-      service: input_number.set_value
-      data_template:
-        entity_id: input_number.balboa_spa_temperature_hour_persistent
-        value: "{{ float(states('sensor.balboa_spa_temperature_hour'), 0) }}"
+  #  # For persistence, and spa hourly temperature
+  #  - id: automation_balboa_spa_temperature_hour
+  #    alias: "Automation for persistance of balboa_spa_temperature_hour change"
+  #    trigger:
+  #      - platform: state
+  #        entity_id: sensor.balboa_spa_temperature_hour
+  #    action:
+  #      service: input_number.set_value
+  #      data_template:
+  #        entity_id: input_number.balboa_spa_temperature_hour_persistent
+  #        value: "{{ float(states('sensor.balboa_spa_temperature_hour'), 0) }}"
 
   #binary_sensor:
   #  - platform: ping
