@@ -1,112 +1,123 @@
 {
-    "version": 1,
-    "minor_version": 1,
-    "key": "lovelace.lovelace_weather",
-    "data": {
-        "config": {
-            "views": [
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.lovelace_weather",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Väder",
+          "icon": "mdi:cloud-outline",
+          "badges": [],
+          "cards": [
+            {
+              "show_current": true,
+              "show_forecast": true,
+              "type": "weather-forecast",
+              "entity": "weather.smhi_home",
+              "forecast_type": "daily",
+              "forecast_slots": 12
+            },
+            {
+              "type": "entity",
+              "entity": "sensor.smhi_daily_average_temperature",
+              "name": "Medeltemperatur över dagen",
+              "state_color": false
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
                 {
-                    "title": "V\u00e4der",
-                    "icon": "mdi:cloud-outline",
-                    "badges": [],
-                    "cards": [
-                        {
-                            "type": "weather-forecast",
-                            "entity": "weather.smhi_home"
-                        },
-                        {
-                            "type": "vertical-stack",
-                            "cards": [
-                                {
-                                    "type": "entities",
-                                    "title": "SMHI: Vindinformation",
-                                    "entities": [
-                                        {
-                                            "entity": "sensor.weather_wind_bearing_readable",
-                                            "name": "SMHI: Vindriktning",
-                                            "icon": "mdi:compass"
-                                        },
-                                        {
-                                            "type": "attribute",
-                                            "entity": "weather.smhi_home",
-                                            "attribute": "wind_bearing",
-                                            "name": "SMHI: Vindriktning i grader",
-                                            "icon": "mdi:compass",
-                                            "unit": "\u00b0",
-                                            "suffix": "\u00b0"
-                                        },
-                                        {
-                                            "entity": "sensor.weather_wind_speed_ms",
-                                            "name": "SMHI: Vindhastighet",
-                                            "icon": "mdi:weather-windy",
-                                            "unit": "m/s",
-                                            "suffix": "m/s"
-                                        },
-                                        {
-                                            "entity": "sensor.weather_wind_speed_readable_format",
-                                            "name": "SMHI: Vindhastighet",
-                                            "icon": "mdi:weather-windy"
-                                        },
-                                        {
-                                            "entity": "sensor.weather_wind_feels_like",
-                                            "name": "SMHI: Temperatur k\u00e4nns som",
-                                            "icon": "mdi:thermometer",
-                                            "unit": "\u00b0C",
-                                            "suffix": "\u00b0C"
-                                        },
-                                        {
-                                            "entity": "sensor.weather_wind_gust_speed_ms",
-                                            "name": "SMHI: Vindhastighet i byarna",
-                                            "icon": "mdi:weather-windy",
-                                            "unit": "m/s",
-                                            "suffix": "m/s",
-                                            "card_mod": {
-                                                "style": ":host {\n  --paper-item-icon-color: #984ea3;\n}\n"
-                                            }
-                                        },
-                                        {
-                                            "entity": "sensor.weather_wind_gust_speed_readable",
-                                            "name": "SMHI: Vindhastighet i byarna",
-                                            "icon": "mdi:weather-windy",
-                                            "card_mod": {
-                                                "style": ":host {\n  --paper-item-icon-color: #984ea3;\n}\n"
-                                            }
-                                        },
-                                        {
-                                            "entity": "sensor.weather_wind_gust_feels_like",
-                                            "name": "SMHI: Temperatur k\u00e4nns som i byarna",
-                                            "icon": "mdi:thermometer",
-                                            "unit": "\u00b0C",
-                                            "suffix": "\u00b0C",
-                                            "card_mod": {
-                                                "style": ":host {\n  --paper-item-icon-color: #984ea3;\n}\n"
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "statistics-graph",
-                                    "entities": [
-                                        "sensor.weather_wind_speed_ms",
-                                        "sensor.weather_wind_gust_speed_ms"
-                                    ],
-                                    "days_to_show": 30,
-                                    "title": "SMHI: Vindhastighet \u00f6ver 30 dagar",
-                                    "stat_types": [
-                                        "mean",
-                                        "min",
-                                        "max"
-                                    ],
-                                    "style": {
-                                        ".": "h1 {\n  padding-bottom: 0;\n}\n",
-                                        "statistics-chart$ha-chart-base$": ".chartLegend { \n  display: none;\n}\n"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
+                  "type": "entities",
+                  "title": "SMHI: Vindinformation",
+                  "entities": [
+                    {
+                      "entity": "sensor.weather_wind_bearing_readable",
+                      "name": "SMHI: Vindriktning",
+                      "icon": "mdi:compass"
+                    },
+                    {
+                      "type": "attribute",
+                      "entity": "weather.smhi_home",
+                      "attribute": "wind_bearing",
+                      "name": "SMHI: Vindriktning i grader",
+                      "icon": "mdi:compass",
+                      "unit": "°",
+                      "suffix": "°"
+                    },
+                    {
+                      "entity": "sensor.weather_wind_speed_ms",
+                      "name": "SMHI: Vindhastighet",
+                      "icon": "mdi:weather-windy",
+                      "unit": "m/s",
+                      "suffix": "m/s"
+                    },
+                    {
+                      "entity": "sensor.weather_wind_speed_readable_format",
+                      "name": "SMHI: Vindhastighet",
+                      "icon": "mdi:weather-windy"
+                    },
+                    {
+                      "entity": "sensor.weather_wind_feels_like",
+                      "name": "SMHI: Temperatur känns som",
+                      "icon": "mdi:thermometer",
+                      "unit": "°C",
+                      "suffix": "°C"
+                    },
+                    {
+                      "entity": "sensor.weather_wind_gust_speed_ms",
+                      "name": "SMHI: Vindhastighet i byarna",
+                      "icon": "mdi:weather-windy",
+                      "unit": "m/s",
+                      "suffix": "m/s",
+                      "card_mod": {
+                        "style": ":host {\n  --paper-item-icon-color: #984ea3;\n}\n"
+                      }
+                    },
+                    {
+                      "entity": "sensor.weather_wind_gust_speed_readable",
+                      "name": "SMHI: Vindhastighet i byarna",
+                      "icon": "mdi:weather-windy",
+                      "card_mod": {
+                        "style": ":host {\n  --paper-item-icon-color: #984ea3;\n}\n"
+                      }
+                    },
+                    {
+                      "entity": "sensor.weather_wind_gust_feels_like",
+                      "name": "SMHI: Temperatur känns som i byarna",
+                      "icon": "mdi:thermometer",
+                      "unit": "°C",
+                      "suffix": "°C",
+                      "card_mod": {
+                        "style": ":host {\n  --paper-item-icon-color: #984ea3;\n}\n"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "statistics-graph",
+                  "entities": [
+                    "sensor.weather_wind_speed_ms",
+                    "sensor.weather_wind_gust_speed_ms"
+                  ],
+                  "days_to_show": 30,
+                  "title": "SMHI: Vindhastighet över 30 dagar",
+                  "stat_types": [
+                    "mean",
+                    "min",
+                    "max"
+                  ],
+                  "style": {
+                    ".": "h1 {\n  padding-bottom: 0;\n}\n",
+                    "statistics-chart$ha-chart-base$": ".chartLegend { \n  display: none;\n}\n"
+                  }
                 }
-            ]
+              ]
+            }
+          ],
+          "type": "custom:horizontal-layout"
         }
+      ]
     }
+  }
 }

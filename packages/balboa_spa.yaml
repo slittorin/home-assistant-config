@@ -69,6 +69,12 @@ input_number:
     min: -100
     max: 100
     unit_of_measurement: "°C"
+  balboa_spa_automation_filter_cycle_length:
+    name: "The filter cycle length in hours for automation (2-4 hours)"
+    icon: mdi:camera-timer
+    mode: slider
+    min: 2
+    max: 4
 
 input_text:
   balboa_spa_temperature_sensor:
@@ -87,6 +93,11 @@ input_text:
   balboa_spa_circulationpump_heater_cost_hour_array:
     name: "Array for calculating correct 15 minute cost for spa consumption"
     icon: mdi:application-array-outline
+
+input_boolean:
+  balboa_spa_automation_toggle:
+    name: "Enable automation for Balboa Spa"
+    icon: mdi:toggle-switch
 
 #sensor:
 # We want to keep track of the time that the circulation pump has been running each hour (depends of course on polling).
@@ -158,7 +169,7 @@ template:
 
   - binary_sensor:
       # Since we cannot track attribute-state in history_stats, we need to create a binary template-sensor.
-      # Returns true if
+      # Returns true if heater is 'heating'.
       - name: Balboa Spa heater on
         unique_id: balboa_spa_heater_on
         device_class: heat
@@ -277,6 +288,41 @@ template:
           {% endif %}
           {{ result }}
 
+  - sensor:
+      # We set a preferred rest-temperature, based on the average temperature for today.
+      # We have the following logic:
+      # - Above 0 degrees celcius = 32 degrees for spa
+      # - Between -5 to 0 celcius = 28 degrees for spa
+      # - Lower than -5 celcius = 24 degrees for spa
+      # Always fall back to 32 degrees.
+      - name: Balboa Spa temperature rest temperature to set
+        unique_id: balboa_spa_temperature_rest_temperature_to_set
+        state_class: measurement
+        device_class: "temperature"
+        unit_of_measurement: "°C"
+        icon: mdi:thermometer-lines
+        state: >
+          {% set average_temp_today = states('sensor.smhi_daily_average_temperature') %}
+          {% set inputs_valid = true %}
+          {% set result = none %}
+          {% if (average_temp_today == 'unknown' or average_temp_today == 'unavailable' or average_temp_today == none) %}
+          {%   set inputs_valid = false %}
+          {% else %}
+          {%   set average_temp_today = average_temp_today | float %}
+          {%   set temperature = 32 %}
+          {%   if (average_temp_today >= 0) %}
+          {%     set temperature = 31 %}
+          {%   elif (average_temp_today >= -5 and average_temp_today < 0) %}
+          {%     set temperature = 28 %}
+          {%   elif (average_temp_today < -5) %}
+          {%     set temperature = 24 %}'
+          {%   endif %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set result = 32 %}
+          {% endif %}
+          {{ result }}
+
   - trigger:
       # Trigger at the end of every hour, since we want the sensor value to be set for the hour (since this is a state/event driven platform).
       # 20221024: Changed from 59.59 to 59.58 to allow some further yaml to be executed 59.59 each hour.
@@ -388,7 +434,8 @@ template:
         unique_id: balboa_spa_circulation_pump_heater_consumption_hour
         unit_of_measurement: "kWh"
         device_class: energy
-        state_class: total_increasing
+        #state_class: total_increasing - Changed to measurement 20260416
+        state_class: measurement
         state: >
           {% set consumption = states('sensor.shelly_spa_total_active_energy_last_hour') %}
           {% if (consumption == 'unknown' or consumption == 'unavailable') %}
@@ -446,6 +493,128 @@ template:
       #    {%   set value = float(input, default=0) %}
       #    {% endif %}
       #    {{ value }}
+
+  # We set hour for tomorrows lower tariff and filtercycle 1 at 23:59:00 each day.
+  # Always revert back to default 0 if not correct data.
+  # Slot size is between 2 and 4.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_2
+  # - automation_balboa_spa_automation_set_filter_cycle_1_length
+  # - automation_balboa_spa_automation_set_filter_cycle_2_length
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_1_start
+  # - automation_balboa_spa_automation_set_filter_cycle_2_start
+  - trigger:
+      - platform: time
+        at: "23:59:00"
+    sensor:
+      - name: balboa_spa_automation_start_filtercycle_1
+        unique_id: balboa_spa_automation_start_filtercycle_1
+        state_class: measurement
+        icon: mdi:clock-outline
+        state: >
+          {% set slot_size = states('input_number.balboa_spa_automation_filter_cycle_length') | int(2) %}
+          {% set slot_size = [slot_size, 2] | max %}
+          {% set slot_size = [slot_size, 4] | min %}
+          {% set raw_tomorrow = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'tomorrow') %}
+          {% set inputs_valid = true %}
+          {% set result = 0 %}
+          {% if (raw_tomorrow == 'unknown' or raw_tomorrow == 'unavailable' or raw_tomorrow == 'None' or raw_tomorrow == []) %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if inputs_valid %}
+          {% set raw_tomorrow = raw_tomorrow | list %}
+          {%   set ns = namespace(day_h=[]) %}
+          {%   for h in range(24) %}
+          {%     set b = h * 4 %}
+          {%     set ns.day_h = ns.day_h + [(raw_tomorrow[b] + raw_tomorrow[b+1] + raw_tomorrow[b+2] + raw_tomorrow[b+3]) / 4] %}
+          {%   endfor %}
+          {%   set ns3 = namespace(best1=-1, best2=-1, best_total=999999.0) %}
+          {%   set last = 24 - slot_size %}
+          {%   for i in range(last) %}
+          {%     set ns_ci = namespace(cost=0) %}
+          {%     for k in range(slot_size) %}
+          {%       set ns_ci.cost = ns_ci.cost + ns.day_h[i + k] %}
+          {%     endfor %}
+          {%     for j in range(i + slot_size, last) %}
+          {%       set ns_cj = namespace(cost=0) %}
+          {%       for k in range(slot_size) %}
+          {%         set ns_cj.cost = ns_cj.cost + ns.day_h[j + k] %}
+          {%       endfor %}
+          {%       set total = ns_ci.cost + ns_cj.cost %}
+          {%       if total < ns3.best_total %}
+          {%         set ns3.best_total = total %}
+          {%         set ns3.best1 = i %}
+          {%         set ns3.best2 = j %}
+          {%       endif %}
+          {%     endfor %}
+          {%   endfor %}
+          {%   if ns3.best1 != -1 %}
+          {%     set result = ns3.best1 | int %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
+
+  # We set hour for tomorrows lower tariff and filtercycle 2 at 23:59:00 each day.
+  # Always revert back to default 12 if not correct data.
+  # Slot size is between 2 and 4.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_1
+  # - automation_balboa_spa_automation_set_filter_cycle_1_length
+  # - automation_balboa_spa_automation_set_filter_cycle_2_length
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_1_start
+  # - automation_balboa_spa_automation_set_filter_cycle_2_start
+  - trigger:
+      - platform: time
+        at: "23:59:00"
+    sensor:
+      - name: balboa_spa_automation_start_filtercycle_2
+        unique_id: balboa_spa_automation_start_filtercycle_2
+        state_class: measurement
+        icon: mdi:clock-outline
+        state: >
+          {% set slot_size = states('input_number.balboa_spa_automation_filter_cycle_length') | int(2) %}
+          {% set slot_size = [slot_size, 2] | max %}
+          {% set slot_size = [slot_size, 4] | min %}
+          {% set raw_tomorrow = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'tomorrow') %}
+          {% set inputs_valid = true %}
+          {% set result = 12 %}
+          {% if (raw_tomorrow == 'unknown' or raw_tomorrow == 'unavailable' or raw_tomorrow == 'None' or raw_tomorrow == []) %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if inputs_valid %}
+          {% set raw_tomorrow = raw_tomorrow | list %}
+          {%   set ns = namespace(day_h=[]) %}
+          {%   for h in range(24) %}
+          {%     set b = h * 4 %}
+          {%     set ns.day_h = ns.day_h + [(raw_tomorrow[b] + raw_tomorrow[b+1] + raw_tomorrow[b+2] + raw_tomorrow[b+3]) / 4] %}
+          {%   endfor %}
+          {%   set ns3 = namespace(best1=-1, best2=-1, best_total=999999.0) %}
+          {%   set last = 24 - slot_size %}
+          {%   for i in range(last) %}
+          {%     set ns_ci = namespace(cost=0) %}
+          {%     for k in range(slot_size) %}
+          {%       set ns_ci.cost = ns_ci.cost + ns.day_h[i + k] %}
+          {%     endfor %}
+          {%     for j in range(i + slot_size, last) %}
+          {%       set ns_cj = namespace(cost=0) %}
+          {%       for k in range(slot_size) %}
+          {%         set ns_cj.cost = ns_cj.cost + ns.day_h[j + k] %}
+          {%       endfor %}
+          {%       set total = ns_ci.cost + ns_cj.cost %}
+          {%       if total < ns3.best_total %}
+          {%         set ns3.best_total = total %}
+          {%         set ns3.best1 = i %}
+          {%         set ns3.best2 = j %}
+          {%       endif %}
+          {%     endfor %}
+          {%   endfor %}
+          {%   if ns3.best1 != -1 %}
+          {%     set result = ns3.best2 | int %}
+          {%   endif %}
+          {% endif %}
+          {{ result }}
 
 automation:
   # This is not really persistence.
@@ -635,7 +804,7 @@ automation:
           {%       set result = 0 %}
           {%     endif %}
           {%  endif %}
-          {% endif %}f
+          {% endif %}
           {{ result }}
 
   # For persistence, and spa temperature
@@ -839,3 +1008,154 @@ automation:
             {%   set result = current_cost_array %}
             {% endif %}
             {{ result | tojson }}
+
+  # We set the start time for filter cycle 1.
+  # We set to default 00:00:00.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_1
+  # - balboa_spa_automation_start_filtercycle_2
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_2_start
+  # - automation_balboa_spa_automation_set_filter_cycle_1_end
+  # - automation_balboa_spa_automation_set_filter_cycle_2_end
+  - id: automation_balboa_spa_automation_set_filter_cycle_1_start
+    alias: "Automation for automation_set_filter_cycle_1_start"
+    trigger:
+      - platform: time
+        at: "23:59:05"
+    condition:
+      - condition: state
+        entity_id: input_boolean.balboa_spa_automation_toggle
+        state: "on"
+    action:
+      - service: time.set_value
+        target:
+          entity_id: time.nbp6013h_filtercykeln_1_startar
+        data:
+          time: >-
+            {% set hour_start = states('sensor.balboa_spa_automation_start_filtercycle_1') | int(0) %}
+            {{ "%02d:00" | format(hour_start) }}
+
+  # We set the end time for filter cycle 1, only if spa automation is on.
+  # Min slot size is 2, max 4. If error, we set to default 2.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_1
+  # - balboa_spa_automation_start_filtercycle_2
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_1_start
+  # - automation_balboa_spa_automation_set_filter_cycle_2_start
+  # - automation_balboa_spa_automation_set_filter_cycle_2_end
+  - id: automation_balboa_spa_automation_set_filter_cycle_1_end
+    alias: "Automation for balboa_spa_automation_set_filter_cycle_1_end"
+    trigger:
+      - platform: time
+        at: "23:59:10"
+    condition:
+      - condition: state
+        entity_id: input_boolean.balboa_spa_automation_toggle
+        state: "on"
+    action:
+      - service: time.set_value
+        target:
+          entity_id: time.nbp6013h_filtercykel_1_slutar
+        data:
+          time: >-
+            {% set hour_start = states('sensor.balboa_spa_automation_start_filtercycle_1') | int(0) %}
+            {% set slot_size = states('input_number.balboa_spa_automation_filter_cycle_length') | int(2) %}
+            {% set slot_size = [slot_size, 2] | max %}
+            {% set slot_size = [slot_size, 4] | min %}
+            {% set hour_end = hour_start + slot_size %}
+            {% if (hour_end > 24) %}
+            {%   set hour_end = hour_end - 24 %}
+            {% endif %}
+            {{ "%02d:00" | format(hour_end) }}
+
+  # We set the start for filter cycle 2.
+  # We set to default 12:00:00.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_1
+  # - balboa_spa_automation_start_filtercycle_2
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_1_start
+  # - automation_balboa_spa_automation_set_filter_cycle_1_end
+  # - automation_balboa_spa_automation_set_filter_cycle_2_end
+  - id: automation_balboa_spa_automation_set_filter_cycle_2_start
+    alias: "Automation for automation_set_filter_cycle_2_start"
+    trigger:
+      - platform: time
+        at: "23:59:15"
+    condition:
+      - condition: state
+        entity_id: input_boolean.balboa_spa_automation_toggle
+        state: "on"
+    action:
+      - service: time.set_value
+        target:
+          entity_id: time.nbp6013h_filtercykeln_2_startar
+        data:
+          time: >-
+            {% set hour = states('sensor.balboa_spa_automation_start_filtercycle_2') | int(12) %}
+            {{ "%02d:00" | format(hour) }}
+
+  # We set the end time for filter cycle 2, only if spa automation is on.
+  # Min slot size is 2, max 4. If error, we set to default 2.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_1
+  # - balboa_spa_automation_start_filtercycle_2
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_1_start
+  # - automation_balboa_spa_automation_set_filter_cycle_2_start
+  # - automation_balboa_spa_automation_set_filter_cycle_1_end
+  - id: automation_balboa_spa_automation_set_filter_cycle_2_end
+    alias: "Automation for balboa_spa_automation_set_filter_cycle_2_end"
+    trigger:
+      - platform: time
+        at: "23:59:20"
+    condition:
+      - condition: state
+        entity_id: input_boolean.balboa_spa_automation_toggle
+        state: "on"
+    action:
+      - service: time.set_value
+        target:
+          entity_id: time.nbp6013h_filtercykel_2_slutar
+        data:
+          time: >-
+            {% set hour_start = states('sensor.balboa_spa_automation_start_filtercycle_2') | int(12) %}
+            {% set slot_size = states('input_number.balboa_spa_automation_filter_cycle_length') | int(2) %}
+            {% set slot_size = [slot_size, 2] | max %}
+            {% set slot_size = [slot_size, 4] | min %}
+            {% set hour_end = hour_start + slot_size %}
+            {% if (hour_end > 24) %}
+            {%   set hour_end = hour_end - 24 %}
+            {% endif %}
+            {{ "%02d:00" | format(hour_end) }}
+
+  # Set the ready-temperature 5 minutes past each hour, only when the spa is in 'rest' mode and spa automation is on.
+  # The ready temperature is taken from sensor balboa_spa_temperature_rest_temperature_to_set and defaults to 32 on error.
+  # Set also the following sensors/automation for timing:
+  # - balboa_spa_automation_start_filtercycle_1
+  # - balboa_spa_automation_start_filtercycle_2
+  # - automation_balboa_spa_automation_set_temperature_when_ready_mode
+  # - automation_balboa_spa_automation_set_filter_cycle_1_start
+  # - automation_balboa_spa_automation_set_filter_cycle_2_start
+  # - automation_balboa_spa_automation_set_filter_cycle_1_end
+  # - automation_balboa_spa_automation_set_filter_cycle_2_end
+  - id: automation_balboa_spa_automation_set_temperature_when_ready_mode
+    alias: "automation_balboa_spa_automation_set_temperature_when_ready_mode"
+    trigger:
+      - platform: time_pattern
+        minutes: "58"
+    condition:
+      - condition: template
+        value_template: >
+          {{ state_attr('climate.nbp6013h_climate', 'preset_mode') == 'rest' }}
+      - condition: state
+        entity_id: input_boolean.balboa_spa_automation_toggle
+        state: "on"
+    action:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.nbp6013h_climate
+        data:
+          temperature: "{{ states('sensor.balboa_spa_temperature_rest_temperature_to_set') | float(32.0) }}"

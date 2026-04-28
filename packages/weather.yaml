@@ -12,62 +12,62 @@
 
 input_text:
   weather_sun_snapshot_elevation_above_0_degrees_hhmmss_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_above_0_degrees_hhmmss'
+    name: "Persistence for weather_sun_snapshot_elevation_above_0_degrees_hhmmss"
     icon: mdi:angle-acute
   weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss'
+    name: "Persistence for weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss"
     icon: mdi:angle-acute
   weather_sun_snapshot_elevation_below_0_degrees_hhmmss_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_below_0_degrees_hhmmss'
+    name: "Persistence for weather_sun_snapshot_elevation_below_0_degrees_hhmmss"
     icon: mdi:angle-acute
   weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss'
+    name: "Persistence for weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss"
     icon: mdi:angle-acute
   weather_sun_time_reaches_solarpanels_hhmmss_persistent:
-    name: 'Persistence for weather_sun_time_reaches_solarpanels_hhmmss'
+    name: "Persistence for weather_sun_time_reaches_solarpanels_hhmmss"
     icon: mdi:angle-acute
   weather_sun_time_above_horizon_hhmmss_persistent:
-    name: 'Persistence for weather_sun_time_above_horizon_hhmmss'
+    name: "Persistence for weather_sun_time_above_horizon_hhmmss"
     icon: mdi:angle-acute
 
 input_number:
   weather_sun_snapshot_elevation_above_0_degrees_seconds_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_above_0_degrees_seconds'
+    name: "Persistence for weather_sun_snapshot_elevation_above_0_degrees_seconds"
     icon: mdi:angle-acute
     mode: box
     min: 0
     max: 86400
     unit_of_measurement: "timestamp"
   weather_sun_snapshot_elevation_reaches_solarpanels_seconds_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_reaches_solarpanels_seconds'
+    name: "Persistence for weather_sun_snapshot_elevation_reaches_solarpanels_seconds"
     icon: mdi:angle-acute
     mode: box
     min: 0
     max: 86400
     unit_of_measurement: "timestamp"
   weather_sun_snapshot_elevation_below_0_degrees_seconds_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_below_0_degrees_seconds'
+    name: "Persistence for weather_sun_snapshot_elevation_below_0_degrees_seconds"
     icon: mdi:angle-acute
     mode: box
     min: 0
     max: 86400
     unit_of_measurement: "timestamp"
   weather_sun_snapshot_elevation_leaves_solarpanels_seconds_persistent:
-    name: 'Persistence for weather_sun_snapshot_elevation_leaves_solarpanels_seconds'
+    name: "Persistence for weather_sun_snapshot_elevation_leaves_solarpanels_seconds"
     icon: mdi:angle-acute
     mode: box
     min: 0
     max: 86400
     unit_of_measurement: "timestamp"
   weather_sun_time_reaches_solarpanels_seconds_persistent:
-    name: 'Persistence for weather_sun_time_reaches_solarpanels_seconds_seconds'
+    name: "Persistence for weather_sun_time_reaches_solarpanels_seconds_seconds"
     icon: mdi:angle-acute
     mode: box
     min: 0
     max: 86400
     unit_of_measurement: "timestamp"
   weather_sun_time_above_horizon_seconds_persistent:
-    name: 'Persistence for weather_sun_time_above_horizon_seconds'
+    name: "Persistence for weather_sun_time_above_horizon_seconds"
     icon: mdi:angle-acute
     mode: box
     min: 0
@@ -89,7 +89,7 @@ template:
           {% else %}
           {{ false }}
           {% endif %}
-          
+
   - binary_sensor:
       # Binary sensor for when sun is not rising and below the horizon.
       - name: Weather sun snapshot elevation below 0 degrees
@@ -137,14 +137,14 @@ template:
         to: "on"
     sensor:
       - name: weather_sun_snapshot_elevation_above_0_degrees_seconds
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_above_0_degrees_hhmmss
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class None and unit time thus indicating it has a numeric value
-#        unit_of_measurement: 'time'
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class None and unit time thus indicating it has a numeric value
+        #        unit_of_measurement: 'time'
+        #        state_class: measurement
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
@@ -156,14 +156,14 @@ template:
         to: "on"
     sensor:
       - name: weather_sun_snapshot_elevation_reaches_solarpanels_seconds
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class None and unit time thus indicating it has a numeric value
-#        unit_of_measurement: 'time'
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class None and unit time thus indicating it has a numeric value
+        #        unit_of_measurement: 'time'
+        #        state_class: measurement
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
@@ -175,16 +175,16 @@ template:
         to: "on"
     sensor:
       - name: weather_sun_snapshot_elevation_below_0_degrees_seconds
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_below_0_degrees_hhmmss
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        unit_of_measurement: 'time'
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        unit_of_measurement: 'time'
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
-          
+
   # Set time in seconds and readable format for how long time has been above the horizon.
   - trigger:
       - entity_id: binary_sensor.weather_sun_snapshot_elevation_below_0_degrees
@@ -193,7 +193,7 @@ template:
         to: "on"
     sensor:
       - name: weather_sun_time_above_horizon_seconds
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') %}
@@ -206,9 +206,9 @@ template:
           {{   int(time) }}
           {% endif %}
       - name: weather_sun_time_above_horizon_hhmmss
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        unit_of_measurement: 'time'
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        unit_of_measurement: 'time'
+        #        state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') %}
           {% if (snapshot == "unknown" or snapshot == "unavailable") %}
@@ -233,13 +233,13 @@ template:
         to: "on"
     sensor:
       - name: weather_sun_snapshot_elevation_leaves_solarpanels_seconds
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {{ (now().hour * 3600) + (now().minute * 60) + now().second }}
       - name: weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        unit_of_measurement: 'time'
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        unit_of_measurement: 'time'
         state: >
           {{ "%02d"|format(now().hour) }}:{{ "%02d"|format(now().minute) }}:{{ "%02d"|format(now().second) }}
 
@@ -251,7 +251,7 @@ template:
         to: "on"
     sensor:
       - name: weather_sun_time_reaches_solarpanels_seconds
-        unit_of_measurement: 'time'
+        unit_of_measurement: "time"
         state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') %}
@@ -264,9 +264,9 @@ template:
           {{   time }}
           {% endif %}
       - name: weather_sun_time_reaches_solarpanels_hhmmss
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        unit_of_measurement: 'time'
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        unit_of_measurement: 'time'
+        #        state_class: measurement
         state: >
           {% set snapshot = states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') %}
           {% if (snapshot == "unknown" or snapshot == "unavailable") %}
@@ -283,92 +283,123 @@ template:
           {{ "%02d"|format(hours) }}:{{ "%02d"|format(minutes) }}:{{ "%02d"|format(seconds) }}
           {% endif %}
 
+  # Set the daily average temperature for tomorrow at 23:58:00.
+  # If not retrieve, set to unknown.
+  - trigger:
+      - platform: time
+        at: "23:58:00"
+    action:
+      - service: weather.get_forecasts
+        target:
+          entity_id: weather.smhi_home
+        data:
+          type: hourly
+        response_variable: forecast_response
+    sensor:
+      - name: smhi_daily_average_temperature
+        unique_id: smhi_daily_average_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set tomorrow = (now().date() + timedelta(days=1)) %}
+          {% set forecasts = forecast_response['weather.smhi_home'].forecast %}
+          {% set ns = namespace(total=0, count=0) %}
+          {% for entry in forecasts %}
+          {%   if as_local(as_datetime(entry.datetime)).date() == tomorrow  %}
+          {%     set ns.total = ns.total + entry.temperature %}
+          {%     set ns.count = ns.count + 1 %}
+          {%   endif %}
+          {% endfor %}
+          {% set average = (ns.total / ns.count) | round(1) if ns.count > 0 else 'unknown' %}
+          {{ average }}
+
   - sensor:
       # We want to keep track of temperature, since that sensor data is in an attribute.
       - name: Weather temperature
         unique_id: weather_temperature
-        device_class: 'temperature'
-        unit_of_measurement: '°C'
+        device_class: "temperature"
+        unit_of_measurement: "°C"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'temperature'), 0) }}"
 
       # We want to keep track of humidity, since that sensor data is in an attribute.
       - name: Weather humidity
         unique_id: weather_humidity
-        device_class: 'humidity'
-        unit_of_measurement: '%'
+        device_class: "humidity"
+        unit_of_measurement: "%"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'humidity'), 0) }}"
 
       # We want to keep track of atmospheric pressure, since that sensor data is in an attribute.
       - name: Weather pressure
         unique_id: weather_pressure
-        device_class: 'pressure'
-        unit_of_measurement: 'hPa'
+        device_class: "pressure"
+        unit_of_measurement: "hPa"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'pressure'), 0) }}"
 
       # We want to keep track of wind bearing, since that sensor data is in an attribute.
       - name: Weather wind bearing
         unique_id: weather_wind_bearing
-        unit_of_measurement: '°'
+        unit_of_measurement: "°"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'wind_bearing'), 0) }}"
 
       # We want to keep track of wind speed, since that sensor data is in an attribute.
       - name: Weather wind speed
         unique_id: weather_wind_speed
-        unit_of_measurement: 'km/h'
+        unit_of_measurement: "km/h"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'wind_speed'), 0) }}"
 
       # We want to keep track of wind gust speed, since that sensor data is in an attribute.
       - name: Weather wind gust speed
         unique_id: weather_wind_gust_speed
-        unit_of_measurement: 'km/h'
+        unit_of_measurement: "km/h"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'wind_gust_speed'), 0) }}"
 
       # We want to keep track of visibility, since that sensor data is in an attribute.
       - name: Weather visibility
         unique_id: weather_visibility
-        unit_of_measurement: 'km'
+        unit_of_measurement: "km"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'visibility'), 0) }}"
 
       # We want to keep track of humidity, since that sensor data is in an attribute.
       - name: Weather cloudiness
         unique_id: weather_cloudiness
-        unit_of_measurement: '%'
+        unit_of_measurement: "%"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'cloud_coverage'), 0) }}"
 
       # We want to keep track of thunder probability, since that sensor data is in an attribute.
       - name: Weather thunder probability
         unique_id: weather_thunder_probability
-        unit_of_measurement: '%'
+        unit_of_measurement: "%"
         state_class: measurement
         state: "{{ float(state_attr('weather.smhi_home', 'thunder_probability'), 0) }}"
 
       # We want to keep track of weather wind speed in m/s, as SMHI integration gives km/h.
       - name: Weather wind speed ms
         unique_id: weather_wind_speed_ms
-        unit_of_measurement: 'm/s' # SMHI integration gives km/h, so we convert.
+        unit_of_measurement: "m/s" # SMHI integration gives km/h, so we convert.
         state_class: measurement
         state: "{{ (state_attr('weather.smhi_home', 'wind_speed') / 3.6) | round(1, default=0) }}"
-        
+
       # We want to keep track of weather wind gust speed in m/s, as SMHI integration gives km/h.
       - name: Weather wind gust speed ms
         unique_id: weather_wind_gust_speed_ms
-        unit_of_measurement: 'm/s' # SMHI integration gives km/h, so we convert.
+        unit_of_measurement: "m/s" # SMHI integration gives km/h, so we convert.
         state_class: measurement
         state: "{{ (state_attr('weather.smhi_home', 'wind_gust_speed') / 3.6) | round(1, default=0) }}"
-        
+
       # We want to measure the chill-effect of wind speed on temperature
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/vindens-kyleffekt-1.259
       - name: Weather wind feels like
         unique_id: weather_wind_feels_like
-        unit_of_measurement: '°C'
+        unit_of_measurement: "°C"
         state_class: measurement
         state: >
           {% set t = float(state_attr('weather.smhi_home', 'temperature'), 0) %}
@@ -381,12 +412,12 @@ template:
           {%   set t_calc = (13.12 + t1 + t2 + t3) | round(1, default=0) %}
           {% endif %}
           {{ t_calc }}
-          
+
       # We want to measure the chill-effect of wind-gust speed on temperature
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/vindens-kyleffekt-1.259
       - name: Weather wind gust feels like
         unique_id: weather_wind_gust_feels_like
-        unit_of_measurement: '°C'
+        unit_of_measurement: "°C"
         state_class: measurement
         state: >
           {% set t = float(state_attr('weather.smhi_home', 'temperature'), 0) %}
@@ -399,12 +430,12 @@ template:
           {%   set t_calc = (13.12 + t1 + t2 + t3) | round(1, default=0) %}
           {% endif %}
           {{ t_calc }}
-          
+
       # We want to transate wind bearing to readable format.
       - name: Weather wind bearing readable
         unique_id: weather_wind_bearing_readable
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        state_class: measurement
         state: >
           {% set bearing = float(state_attr('weather.smhi_home', 'wind_bearing'), 0) %}
           {% set readable = '' %}
@@ -442,12 +473,12 @@ template:
           {%   set readable = 'NNV' %}
           {% endif %}
           {{ readable }}
-          
+
       # We want to transate wind speed to readable format.
       - name: Weather wind speed readable
         unique_id: weather_wind_speed_readable
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        state_class: measurement
         state: >
           {% set bearing = float(state_attr('weather.smhi_home', 'wind_speed'), 0) %}
           {% set readable = '' %}
@@ -485,13 +516,13 @@ template:
           {%   set readable = 'NNV' %}
           {% endif %}
           {{ readable }}
-          
+
       # We want to transate wind speed to readable format.
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252
       - name: Weather wind speed readable format
         unique_id: weather_wind_speed_readable_format
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        state_class: measurement
         state: >
           {% set speed = float(states('sensor.weather_wind_speed_ms'), 0) %}
           {% set readable = '123' %}
@@ -516,8 +547,8 @@ template:
       # https://www.smhi.se/kunskapsbanken/meteorologi/vind/skalor-for-vindhastighet-1.252
       - name: Weather wind gust speed readable
         unique_id: weather_wind_gust_speed_readable
-# 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
-#        state_class: measurement
+        # 20230502: Removed since gave warning in 2023.2.5: has device class None, state class measurement and unit None thus indicating it has a numeric value
+        #        state_class: measurement
         state: >
           {% set speed = float(states('sensor.weather_wind_gust_speed_ms'), 0) %}
           {% set readable = '' %}
@@ -541,21 +572,21 @@ template:
       # We want to keep track of sun elevation, since that sensor data is in an attribute.
       - name: Sun elevation
         unique_id: sun_elevation
-        unit_of_measurement: '°'
+        unit_of_measurement: "°"
         state_class: measurement
         state: "{{ float(state_attr('sun.sun', 'elevation'), 0) }}"
 
       # We want to keep track of sun azimuth, since that sensor data is in an attribute.
       - name: Sun azimuth
         unique_id: sun_azimuth
-        unit_of_measurement: '°'
+        unit_of_measurement: "°"
         state_class: measurement
         state: "{{ float(state_attr('sun.sun', 'azimuth'), 0) }}"
 
 automation:
   # For persistence, On every state change for weather_sun_snapshot_elevation_above_0_degrees_hhmmss, set input_number sensor.
   - id: automation_weather_sun_snapshot_elevation_above_0_degrees_hhmmss
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_above_0_degrees_hhmmss'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_above_0_degrees_hhmmss"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_above_0_degrees_hhmmss
@@ -566,7 +597,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_above_0_degrees_hhmmss') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_above_0_degrees_seconds, set input_text sensor.
   - id: automation_weather_sun_snapshot_elevation_above_0_degrees_seconds
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_above_0_degrees_seconds'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_above_0_degrees_seconds"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds
@@ -577,7 +608,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_above_0_degrees_seconds') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss, set input_number sensor.
   - id: automation_weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss
@@ -588,7 +619,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_hhmmss') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_reaches_solarpanels_seconds, set input_text sensor.
   - id: automation_weather_sun_snapshot_elevation_reaches_solarpanels_seconds
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_reaches_solarpanels_seconds'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_reaches_solarpanels_seconds"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds
@@ -599,7 +630,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_reaches_solarpanels_seconds') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_below_0_degrees_seconds, set input_number sensor.
   - id: automation_weather_sun_snapshot_elevation_below_0_degrees_seconds
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_below_0_degrees_seconds'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_below_0_degrees_seconds"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_below_0_degrees_seconds
@@ -610,7 +641,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_below_0_degrees_seconds') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_below_0_degrees_hhmmss, set input_text sensor.
   - id: automation_weather_sun_snapshot_elevation_below_0_degrees_hhmmss
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_below_0_degrees_hhmmss'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_below_0_degrees_hhmmss"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_below_0_degrees_hhmmss
@@ -621,7 +652,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_below_0_degrees_hhmmss') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_leaves_solarpanels_seconds, set input_number sensor.
   - id: automation_weather_sun_snapshot_elevation_leaves_solarpanels_seconds
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_leaves_solarpanels_seconds'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_leaves_solarpanels_seconds"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_leaves_solarpanels_seconds
@@ -632,7 +663,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_leaves_solarpanels_seconds') }}"
   # For persistence, On every state change for weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss, set input_text sensor.
   - id: automation_weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
-    alias: 'Automation for persistance of weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss'
+    alias: "Automation for persistance of weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss
@@ -643,7 +674,7 @@ automation:
         value: "{{ states('sensor.weather_sun_snapshot_elevation_leaves_solarpanels_hhmmss') }}"
   # For persistence, On every state change for weather_sun_time_reaches_solarpanels_seconds, set input_number sensor.
   - id: automation_weather_sun_time_reaches_solarpanels_seconds
-    alias: 'Automation for persistance of weather_sun_time_reaches_solarpanels_seconds'
+    alias: "Automation for persistance of weather_sun_time_reaches_solarpanels_seconds"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_time_reaches_solarpanels_seconds
@@ -654,7 +685,7 @@ automation:
         value: "{{ states('sensor.weather_sun_time_reaches_solarpanels_seconds') }}"
   # For persistence, On every state change for weather_sun_time_reaches_solarpanels_hhmmss, set input_text sensor.
   - id: automation_weather_sun_time_reaches_solarpanels_hhmmss
-    alias: 'Automation for persistance of weather_sun_time_reaches_solarpanels_hhmmss'
+    alias: "Automation for persistance of weather_sun_time_reaches_solarpanels_hhmmss"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_time_reaches_solarpanels_hhmmss
@@ -665,7 +696,7 @@ automation:
         value: "{{ states('sensor.weather_sun_time_reaches_solarpanels_hhmmss') }}"
   # For persistence, On every state change for weather_sun_time_above_horizon_seconds, set input_number sensor.
   - id: automation_weather_sun_time_above_horizon_seconds
-    alias: 'Automation for persistance of weather_sun_time_above_horizon_seconds'
+    alias: "Automation for persistance of weather_sun_time_above_horizon_seconds"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_time_above_horizon_seconds
@@ -676,7 +707,7 @@ automation:
         value: "{{ states('sensor.weather_sun_time_above_horizon_seconds') }}"
   # For persistence, On every state change for weather_sun_time_above_horizon_hhmmss, set input_text sensor.
   - id: automation_weather_sun_time_above_horizon_hhmmss
-    alias: 'Automation for persistance of weather_sun_time_above_horizon_hhmmss'
+    alias: "Automation for persistance of weather_sun_time_above_horizon_hhmmss"
     trigger:
       - platform: state
         entity_id: sensor.weather_sun_time_above_horizon_hhmmss

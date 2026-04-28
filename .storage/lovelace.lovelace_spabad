@@ -11,6 +11,62 @@
             {
               "type": "thermostat",
               "entity": "climate.nbp6013h_climate"
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_boolean.balboa_spa_automation_toggle",
+                      "name": " Automation påslagen vid Ready-mode"
+                    }
+                  ],
+                  "show_header_toggle": false,
+                  "state_color": false,
+                  "title": "Spa-automation för billigaste uppvärmning"
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "input_boolean.balboa_spa_automation_toggle",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "entities",
+                    "entities": [
+                      {
+                        "entity": "input_number.balboa_spa_automation_filter_cycle_length",
+                        "name": "Längd på filtercykel (2-4 timmar)"
+                      },
+                      {
+                        "type": "section",
+                        "label": "Värden sätts strax innan varje hel timme vid Ready-mode, om automation är påslagen"
+                      },
+                      {
+                        "entity": "sensor.balboa_spa_temperature_rest_temperature_to_set",
+                        "name": "Temperatur som sätts vid Ready-mode"
+                      },
+                      {
+                        "type": "section",
+                        "label": "Värden sätts strax innan midnatt varje dag baserat på tariff för dagen efter, om automation är påslagen."
+                      },
+                      {
+                        "entity": "sensor.balboa_spa_automation_start_filtercycle_1",
+                        "name": "Starttimme för filtercykel 1"
+                      },
+                      {
+                        "entity": "sensor.balboa_spa_automation_start_filtercycle_2",
+                        "name": "Starttimme för filtercykel 2"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },

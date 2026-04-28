@@ -120,6 +120,15 @@
         "require_admin": false,
         "mode": "storage",
         "url_path": "dashboard-varmevaxlare"
+      },
+      {
+        "id": "lovelace",
+        "icon": "mdi:view-dashboard",
+        "title": "Översikt",
+        "url_path": "lovelace",
+        "require_admin": false,
+        "show_in_sidebar": true,
+        "mode": "storage"
       }
     ]
   }
