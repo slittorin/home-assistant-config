@@ -24,35 +24,7 @@
                   "type": "weather-forecast",
                   "entity": "weather.smhi_home",
                   "forecast_type": "daily",
-                  "forecast_slots": 8,
-                  "grid_options": {
-                    "rows": 4
-                  }
-                },
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "sensor.electrical_consumption_rate_summary",
-                      "name": "Nuvarande timpris"
-                    },
-                    {
-                      "entity": "sensor.electrical_consumption_rate_summary_min",
-                      "name": "Minimum"
-                    },
-                    {
-                      "entity": "sensor.electrical_consumption_rate_summary_mean",
-                      "name": "Medel"
-                    },
-                    {
-                      "entity": "sensor.electrical_consumption_rate_summary_max",
-                      "name": "Max"
-                    }
-                  ],
-                  "grid_options": {
-                    "columns": 12,
-                    "rows": 4
-                  }
+                  "forecast_slots": 7
                 },
                 {
                   "type": "horizontal-stack",
@@ -65,11 +37,14 @@
                       "apex_config": {
                         "chart": {
                           "height": "192px"
+                        },
+                        "legend": {
+                          "show": false
                         }
                       },
                       "graph_span": "48h",
                       "header": {
-                        "title": "Energipris idag och imorgon [öre/kWh] inkl. avgifter och moms",
+                        "title": "Energipris inkl. avgifter och moms, samt estimat för solel och spauppvärmningstid i blått",
                         "show": true
                       },
                       "show": {
@@ -82,12 +57,64 @@
                         "show": true,
                         "label": "Nu"
                       },
+                      "yaxis": [
+                        {
+                          "id": "price",
+                          "show": true,
+                          "decimals": 0,
+                          "apex_config": {
+                            "title": {
+                              "text": "öre/kWh"
+                            }
+                          }
+                        },
+                        {
+                          "id": "wh",
+                          "opposite": true,
+                          "show": true,
+                          "decimals": 2,
+                          "apex_config": {
+                            "title": {
+                              "text": "kWh"
+                            }
+                          }
+                        },
+                        {
+                          "id": "background",
+                          "show": false,
+                          "min": 0,
+                          "max": 1
+                        }
+                      ],
                       "series": [
+                        {
+                          "entity": "sensor.balboa_spa_automation_start_filtercycle_1",
+                          "name": "Filtercykel 1",
+                          "type": "area",
+                          "yaxis_id": "background",
+                          "color": "#4A90D9",
+                          "opacity": 0.15,
+                          "stroke_width": 0,
+                          "curve": "straight",
+                          "data_generator": "const fc = parseInt(entity.state); const len = parseFloat(hass.states['input_number.balboa_spa_automation_filter_cycle_length'].state); const today = new Date(); today.setHours(0, 0, 0, 0); const result = []; [0, 1].forEach(dayOffset => {\n  const base = today.getTime() + dayOffset * 86400000;\n  const start = base + fc * 3600000;\n  const end = start + len * 3600000;\n  if (dayOffset === 0) {\n    result.push([start - 1, null]);\n    result.push([start, 1]);\n    result.push([end, 1]);\n    result.push([end + 1, null]);\n  } else {\n    result.push([start, null]);\n    result.push([end, null]);\n  }\n}); return result;\n"
+                        },
+                        {
+                          "entity": "sensor.balboa_spa_automation_start_filtercycle_2",
+                          "name": "Filtercykel 2",
+                          "type": "area",
+                          "yaxis_id": "background",
+                          "color": "#4A90D9",
+                          "opacity": 0.15,
+                          "stroke_width": 0,
+                          "curve": "straight",
+                          "data_generator": "const fc = parseInt(entity.state); const len = parseFloat(hass.states['input_number.balboa_spa_automation_filter_cycle_length'].state); const today = new Date(); today.setHours(0, 0, 0, 0); const result = []; [0, 1].forEach(dayOffset => {\n  const base = today.getTime() + dayOffset * 86400000;\n  const start = base + fc * 3600000;\n  const end = start + len * 3600000;\n  if (dayOffset === 0) {\n    result.push([start - 1, null]);\n    result.push([start, 1]);\n    result.push([end, 1]);\n    result.push([end + 1, null]);\n  } else {\n    result.push([start, null]);\n    result.push([end, null]);\n  }\n}); return result;\n"
+                        },
                         {
                           "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
                           "type": "column",
                           "unit": "öre/kWh",
-                          "data_generator": "const vat = (1 + (hass.states['input_number.electrical_consumption_rate_vat'].state * 1) / 100);\nconst comp = hass.states['input_number.electrical_consumption_rate_compensation_manual'].state * 1;\nconst tax = hass.states['input_number.electrical_consumption_rate_tax'].state * 1;\nconst todayValues = entity.attributes.today || [];\nconst tomorrowValues = entity.attributes.tomorrow || [];\nconst baseToday = new Date();\nbaseToday.setHours(0, 0, 0, 0);\nconst baseTomorrow = new Date(baseToday);\nbaseTomorrow.setDate(baseTomorrow.getDate() + 1);\nconst intervalMinutes = 15;\n\nconst todayData = todayValues.map((value, index) => {\n  const timestamp = new Date(baseToday.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n});\nconst tomorrowData = tomorrowValues.map((value, index) => {\n  const timestamp = new Date(baseTomorrow.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n});\n\nreturn [...todayData, ...tomorrowData];\n",
+                          "yaxis_id": "price",
+                          "data_generator": "const vat = (1 + (hass.states['input_number.electrical_consumption_rate_vat'].state * 1) / 100); const comp = hass.states['input_number.electrical_consumption_rate_compensation_manual'].state * 1; const tax = hass.states['input_number.electrical_consumption_rate_tax'].state * 1; const todayValues = entity.attributes.today || []; const tomorrowValues = entity.attributes.tomorrow || []; const baseToday = new Date(); baseToday.setHours(0, 0, 0, 0); const baseTomorrow = new Date(baseToday); baseTomorrow.setDate(baseTomorrow.getDate() + 1); const intervalMinutes = 15; const todayData = todayValues.map((value, index) => {\n  const timestamp = new Date(baseToday.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n}); const tomorrowData = tomorrowValues.map((value, index) => {\n  const timestamp = new Date(baseTomorrow.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n}); return [...todayData, ...tomorrowData];\n",
                           "color_threshold": [
                             {
                               "value": 0,
@@ -134,6 +161,17 @@
                               "color": "#DC182F"
                             }
                           ]
+                        },
+                        {
+                          "entity": "sensor.solar_forecast_home_south_east",
+                          "name": "Solprognos totalt [kWh]",
+                          "type": "line",
+                          "unit": "kWh",
+                          "yaxis_id": "wh",
+                          "color": "#FFD700",
+                          "stroke_width": 2,
+                          "curve": "smooth",
+                          "data_generator": "const se = hass.states['sensor.solar_forecast_home_south_east']; const s = hass.states['sensor.solar_forecast_home_south']; const seData = se?.attributes?.watt_hours_period || {}; const sData  = s?.attributes?.watt_hours_period  || {}; const allKeys = new Set([\n  ...Object.keys(seData),\n  ...Object.keys(sData)\n]); const result = []; allKeys.forEach(key => {\n  const ts  = new Date(key).getTime();\n  const val = ((seData[key] || 0) + (sData[key] || 0)) / 1000;\n  if (!isNaN(ts)) result.push([ts, val]);\n}); result.sort((a, b) => a[0] - b[0]); return result;\n"
                         }
                       ]
                     }
@@ -142,253 +180,7 @@
                     "rows": 4,
                     "columns": 24
                   }
-                }
-              ],
-              "column_span": 6
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "custom:bar-card",
-                  "entities": [
-                    {
-                      "entity": "sensor.metering_current_l1",
-                      "name": "L1",
-                      "positions": {
-                        "icon": "off",
-                        "name": "outside",
-                        "indicator": "off"
-                      },
-                      "type": "custom:bar-card",
-                      "min": 0,
-                      "max": 30,
-                      "height": 38,
-                      "severity": [
-                        {
-                          "color": "Red",
-                          "from": 25.000001,
-                          "to": 30
-                        },
-                        {
-                          "color": "Orange",
-                          "from": 15.000001,
-                          "to": 25
-                        },
-                        {
-                          "color": "Green",
-                          "from": 5.000001,
-                          "to": 15
-                        },
-                        {
-                          "color": "Lightblue",
-                          "from": 0,
-                          "to": 5
-                        }
-                      ]
-                    },
-                    {
-                      "entity": "sensor.metering_current_l2",
-                      "name": "L2",
-                      "positions": {
-                        "icon": "off",
-                        "name": "outside",
-                        "indicator": "off"
-                      },
-                      "type": "custom:bar-card",
-                      "min": 0,
-                      "max": 30,
-                      "height": 38,
-                      "severity": [
-                        {
-                          "color": "Red",
-                          "from": 25.000001,
-                          "to": 30
-                        },
-                        {
-                          "color": "Orange",
-                          "from": 15.000001,
-                          "to": 25
-                        },
-                        {
-                          "color": "Green",
-                          "from": 5.000001,
-                          "to": 15
-                        },
-                        {
-                          "color": "Lightblue",
-                          "from": 0,
-                          "to": 5
-                        }
-                      ]
-                    },
-                    {
-                      "entity": "sensor.metering_current_l3",
-                      "name": "L3",
-                      "positions": {
-                        "icon": "off",
-                        "name": "outside",
-                        "indicator": "off"
-                      },
-                      "type": "custom:bar-card",
-                      "min": 0,
-                      "max": 30,
-                      "height": 38,
-                      "severity": [
-                        {
-                          "color": "Red",
-                          "from": 25.000001,
-                          "to": 30
-                        },
-                        {
-                          "color": "Orange",
-                          "from": 15.000001,
-                          "to": 25
-                        },
-                        {
-                          "color": "Green",
-                          "from": 5.000001,
-                          "to": 15
-                        },
-                        {
-                          "color": "Lightblue",
-                          "from": 0,
-                          "to": 5
-                        }
-                      ]
-                    }
-                  ],
-                  "grid_options": {
-                    "columns": 6,
-                    "rows": "auto"
-                  }
                 },
-                {
-                  "layout": "horizontal",
-                  "height": 130,
-                  "unit_prefix": null,
-                  "round": 0,
-                  "convert_units_to": "",
-                  "co2_intensity_entity": "sensor.co2_signal_co2_intensity",
-                  "gas_co2_intensity": 2351.6459999999997,
-                  "min_box_size": 3,
-                  "min_box_distance": 5,
-                  "show_states": true,
-                  "show_units": true,
-                  "sections": [
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [
-                            "sensor.metering_power_supplied",
-                            "sensor.sma_total_power_used_by_house"
-                          ],
-                          "entity_id": "sensor.grid_power",
-                          "color": "Yellow",
-                          "icon": "mdi:solar-power",
-                          "name": "Solelsproduktion"
-                        }
-                      ]
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.metering_power_supplied",
-                          "name": "Utmatning av solelsproduktion",
-                          "color": "Yellow",
-                          "icon": "mdi:transmission-tower-import"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [
-                            "sensor.ehs4plem_power",
-                            "sensor.shelly_heatpump_upstairs_power",
-                            "sensor.shelly_heatpump_livingroom_power",
-                            "sensor.shelly_heat_exchanger_power",
-                            "sensor.shelly_water_heater_total_active_power",
-                            "sensor.shelly_spa_total_active_power"
-                          ],
-                          "entity_id": "sensor.sma_total_power_used_by_house",
-                          "name": "Använt av huset",
-                          "icon": "mdi:transmission-tower-export",
-                          "color": "Lightgreen"
-                        }
-                      ]
-                    },
-                    {
-                      "entities": [
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.ehs4plem_power",
-                          "name": "Elbilsladdning",
-                          "color": "rosybrown",
-                          "icon": "mdi:car-electric"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.shelly_heatpump_upstairs_power",
-                          "name": "Värmepump övervåning",
-                          "color": "lightcoral",
-                          "icon": "mdi:heat-pump"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.shelly_heatpump_livingroom_power",
-                          "name": "Värmepump nedervåning",
-                          "color": "lightcoral",
-                          "icon": "mdi:heat-pump"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.shelly_heat_exchanger_power",
-                          "name": "Värmeväxlare",
-                          "color": "lightcoral",
-                          "icon": "mdi:hvac"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.shelly_water_heater_total_active_power",
-                          "name": "Varmvattenberedare",
-                          "icon": "mdi:water-boiler",
-                          "color": "lightcoral"
-                        },
-                        {
-                          "type": "entity",
-                          "children": [],
-                          "entity_id": "sensor.shelly_spa_total_active_power",
-                          "name": "Spabad",
-                          "icon": "mdi:spa",
-                          "color": "rosybrown"
-                        }
-                      ]
-                    }
-                  ],
-                  "energy_date_selection": false,
-                  "type": "custom:sankey-chart",
-                  "min_state": 0,
-                  "show_names": true,
-                  "show_icons": true,
-                  "wide": true,
-                  "throttle": 2000,
-                  "grid_options": {
-                    "columns": 18,
-                    "rows": "auto"
-                  }
-                }
-              ],
-              "column_span": 6
-            },
-            {
-              "type": "grid",
-              "cards": [
                 {
                   "layout": "horizontal",
                   "height": 200,
@@ -1197,6 +989,222 @@
                 {
                   "type": "heading",
                   "heading": "Ny sektion"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "experimental": {
+                        "color_threshold": true
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": "192px"
+                        }
+                      },
+                      "graph_span": "48h",
+                      "header": {
+                        "title": "Energipris idag och imorgon [öre/kWh] inkl. avgifter och moms",
+                        "show": true
+                      },
+                      "show": {
+                        "loading": true
+                      },
+                      "span": {
+                        "start": "day"
+                      },
+                      "now": {
+                        "show": true,
+                        "label": "Nu"
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
+                          "type": "column",
+                          "unit": "öre/kWh",
+                          "data_generator": "const vat = (1 + (hass.states['input_number.electrical_consumption_rate_vat'].state * 1) / 100);\nconst comp = hass.states['input_number.electrical_consumption_rate_compensation_manual'].state * 1;\nconst tax = hass.states['input_number.electrical_consumption_rate_tax'].state * 1;\nconst todayValues = entity.attributes.today || [];\nconst tomorrowValues = entity.attributes.tomorrow || [];\nconst baseToday = new Date();\nbaseToday.setHours(0, 0, 0, 0);\nconst baseTomorrow = new Date(baseToday);\nbaseTomorrow.setDate(baseTomorrow.getDate() + 1);\nconst intervalMinutes = 15;\n\nconst todayData = todayValues.map((value, index) => {\n  const timestamp = new Date(baseToday.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n});\nconst tomorrowData = tomorrowValues.map((value, index) => {\n  const timestamp = new Date(baseTomorrow.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n});\n\nreturn [...todayData, ...tomorrowData];\n",
+                          "color_threshold": [
+                            {
+                              "value": 0,
+                              "color": "#2085e3"
+                            },
+                            {
+                              "value": 10,
+                              "color": "#04822e"
+                            },
+                            {
+                              "value": 15,
+                              "color": "#12A141"
+                            },
+                            {
+                              "value": 30,
+                              "color": "#79B92C"
+                            },
+                            {
+                              "value": 35,
+                              "color": "#C4D81D"
+                            },
+                            {
+                              "value": 40,
+                              "color": "#F3DC0C"
+                            },
+                            {
+                              "value": 45,
+                              "color": "#F4C616"
+                            },
+                            {
+                              "value": 50,
+                              "color": "#EFA51E"
+                            },
+                            {
+                              "value": 55,
+                              "color": "#E76821"
+                            },
+                            {
+                              "value": 100,
+                              "color": "#E33F20"
+                            },
+                            {
+                              "value": 200,
+                              "color": "#DC182F"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "grid_options": {
+                    "rows": 4,
+                    "columns": 24
+                  }
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "experimental": {
+                        "color_threshold": true
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": "192px"
+                        },
+                        "legend": {
+                          "show": false
+                        }
+                      },
+                      "graph_span": "48h",
+                      "header": {
+                        "title": "Energipris idag och imorgon inkl. avgifter och moms, samt estimat för solel",
+                        "show": true
+                      },
+                      "show": {
+                        "loading": true
+                      },
+                      "span": {
+                        "start": "day"
+                      },
+                      "now": {
+                        "show": true,
+                        "label": "Nu"
+                      },
+                      "yaxis": [
+                        {
+                          "id": "price",
+                          "show": true,
+                          "decimals": 0,
+                          "apex_config": {
+                            "title": {
+                              "text": "öre/kWh"
+                            }
+                          }
+                        },
+                        {
+                          "id": "wh",
+                          "opposite": true,
+                          "show": true,
+                          "decimals": 2,
+                          "apex_config": {
+                            "title": {
+                              "text": "kWh"
+                            }
+                          }
+                        }
+                      ],
+                      "series": [
+                        {
+                          "entity": "sensor.nordpool_kwh_se3_sek_3_10_0",
+                          "type": "column",
+                          "unit": "öre/kWh",
+                          "yaxis_id": "price",
+                          "data_generator": "const vat = (1 + (hass.states['input_number.electrical_consumption_rate_vat'].state * 1) / 100); const comp = hass.states['input_number.electrical_consumption_rate_compensation_manual'].state * 1; const tax = hass.states['input_number.electrical_consumption_rate_tax'].state * 1; const todayValues = entity.attributes.today || []; const tomorrowValues = entity.attributes.tomorrow || []; const baseToday = new Date(); baseToday.setHours(0, 0, 0, 0); const baseTomorrow = new Date(baseToday); baseTomorrow.setDate(baseTomorrow.getDate() + 1); const intervalMinutes = 15; const todayData = todayValues.map((value, index) => {\n  const timestamp = new Date(baseToday.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n}); const tomorrowData = tomorrowValues.map((value, index) => {\n  const timestamp = new Date(baseTomorrow.getTime() + index * intervalMinutes * 60000).getTime();\n  const adjustedValue = ((value * 100) + comp + tax) * vat;\n  return [timestamp, adjustedValue];\n}); return [...todayData, ...tomorrowData];\n",
+                          "color_threshold": [
+                            {
+                              "value": 0,
+                              "color": "#2085e3"
+                            },
+                            {
+                              "value": 10,
+                              "color": "#04822e"
+                            },
+                            {
+                              "value": 15,
+                              "color": "#12A141"
+                            },
+                            {
+                              "value": 30,
+                              "color": "#79B92C"
+                            },
+                            {
+                              "value": 35,
+                              "color": "#C4D81D"
+                            },
+                            {
+                              "value": 40,
+                              "color": "#F3DC0C"
+                            },
+                            {
+                              "value": 45,
+                              "color": "#F4C616"
+                            },
+                            {
+                              "value": 50,
+                              "color": "#EFA51E"
+                            },
+                            {
+                              "value": 55,
+                              "color": "#E76821"
+                            },
+                            {
+                              "value": 100,
+                              "color": "#E33F20"
+                            },
+                            {
+                              "value": 200,
+                              "color": "#DC182F"
+                            }
+                          ]
+                        },
+                        {
+                          "entity": "sensor.solar_forecast_home_south_east",
+                          "name": "Solprognos totalt [kWh]",
+                          "type": "line",
+                          "unit": "kWh",
+                          "yaxis_id": "wh",
+                          "color": "#FFD700",
+                          "stroke_width": 2,
+                          "curve": "smooth",
+                          "data_generator": "const se = hass.states['sensor.solar_forecast_home_south_east']; const s = hass.states['sensor.solar_forecast_home_south']; const seData = se?.attributes?.watt_hours_period || {}; const sData  = s?.attributes?.watt_hours_period  || {}; const allKeys = new Set([\n  ...Object.keys(seData),\n  ...Object.keys(sData)\n]); const result = []; allKeys.forEach(key => {\n  const ts  = new Date(key).getTime();\n  const val = ((seData[key] || 0) + (sData[key] || 0)) / 1000;\n  if (!isNaN(ts)) result.push([ts, val]);\n}); result.sort((a, b) => a[0] - b[0]); return result;\n"
+                        }
+                      ]
+                    }
+                  ],
+                  "grid_options": {
+                    "rows": 4,
+                    "columns": 24
+                  }
                 }
               ]
             }

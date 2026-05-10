@@ -20,7 +20,7 @@
                   "entities": [
                     {
                       "entity": "input_boolean.balboa_spa_automation_toggle",
-                      "name": " Automation påslagen vid Ready-mode"
+                      "name": " Automation påslagen vid Rest-mode"
                     }
                   ],
                   "show_header_toggle": false,
@@ -45,11 +45,11 @@
                       },
                       {
                         "type": "section",
-                        "label": "Värden sätts strax innan varje hel timme vid Ready-mode, om automation är påslagen"
+                        "label": "Värden sätts strax innan varje hel timme vid Rest-mode, om automation är påslagen"
                       },
                       {
                         "entity": "sensor.balboa_spa_temperature_rest_temperature_to_set",
-                        "name": "Temperatur som sätts vid Ready-mode"
+                        "name": "Temperatur som sätts vid Rest-mode"
                       },
                       {
                         "type": "section",

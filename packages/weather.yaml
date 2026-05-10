@@ -74,6 +74,64 @@ input_number:
     max: 86400
     unit_of_measurement: "timestamp"
 
+# We want to get the solar forecast for today and the panels to south-east.
+# Updates every second hour.
+# We use the following parameters:
+# - Latitude - For my home town.
+# - Longitude - For my home town.
+# - Declination - The roof is angled 45 degrees.
+# - Azimith - My home is slightly south-east, about -50 (see note about how HA defines this: https://doc.forecast.solar/doku.php?id=api:estimate#url_parameters).
+# - Installed power - In total roughly 8.8 kWp on the house. We set to 7 for this side.
+# The sensor is set to the total number of Wh of current day.
+# The following attributes are set:
+# - watts - Power per hour (W)
+# - watt_hours_period - Energy per hour slot (Wh)
+# - watt_hours_day - Daily totals
+rest:
+  - resource: "https://api.forecast.solar/estimate/58.5366/15.0418/45/-50/7"
+    scan_interval: 7200
+    sensor:
+      - name: "Solar Forecast Home South East"
+        unique_id: solar_forecast_home_south_east
+        value_template: >
+          {{ value_json.result.watt_hours_day.get(now().strftime('%Y-%m-%d'), 0) }}
+        unit_of_measurement: "Wh"
+        device_class: energy
+        state_class: measurement
+        json_attributes_path: "$.result"
+        json_attributes:
+          - watts
+          - watt_hours_period
+          - watt_hours_day
+
+  # We want to get the solar forecast for today and the panels to the south.
+  # We use the following parameters:
+  # - Latitude - For my home town.
+  # - Longitude - For my home town.
+  # - Declination - The panels are in the side if the house, so 90 degrees (vertical)
+  # - Azimith - My home is slightly south, about 40 (see note about how HA defines this: https://doc.forecast.solar/doku.php?id=api:estimate#url_parameters).
+  # - Installed power - In total roughly 8.8 kWp on the house, We set to 1.8 for this side (5 panels in total).
+  # The sensor is set to the total number of Wh of current day.
+  # The following attributes are set:
+  # - watts - Power per hour (W)
+  # - watt_hours_period - Energy per hour slot (Wh)
+  # - watt_hours_day - Daily totals
+  - resource: "https://api.forecast.solar/estimate/58.5366/15.0418/90/40/1.8"
+    scan_interval: 7200
+    sensor:
+      - name: "Solar Forecast Home South"
+        unique_id: solar_forecast_home_south
+        value_template: >
+          {{ value_json.result.watt_hours_day.get(now().strftime('%Y-%m-%d'), 0) }}
+        unit_of_measurement: "Wh"
+        device_class: energy
+        state_class: measurement
+        json_attributes_path: "$.result"
+        json_attributes:
+          - watts
+          - watt_hours_period
+          - watt_hours_day
+
 # Modern format.
 # If required, utilize name, and set unique_id.
 template:

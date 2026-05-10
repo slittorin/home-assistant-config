@@ -71,13 +71,14 @@ history:
 
 # We utilize InfluxDB as state-history database.
 influxdb:
-  api_version: 2
-  ssl: false
-  host: 192.168.2.30
-  port: 8086
-  organization: lite
-  bucket: ha
-  token: !secret history_db_token
+  # Commented out 20260428 due to config being imported to GUI.
+  #  api_version: 2
+  #  ssl: false
+  #  host: 192.168.2.30
+  #  port: 8086
+  #  organization: lite
+  #  bucket: ha
+  #  token: !secret history_db_token
   max_retries: 3
   exclude:
     # Updated 20260328 after a session with Claude, to reduce CPU load with EntityFilter.__call__() for each event.
