@@ -1,0 +1,234 @@
+# This file includes all the entitites for calculating and settings trend/slots related to electrical tariffs, consumption and so fort.
+#
+# Updates made for Core updates and breaking changes:
+# --------------------------------------------------------
+# N/A for the moment.
+
+template:
+  # We want to build an average of hourly stats for the last 7 days for the consumption of the house.
+  # Here we take the consumption minus spa and eletrical car charger.
+  # This to be able to calculate the best hours to charge electrical car, heat spa and so forth.
+  # The values are empty at first and fully populated after 7 full days.
+  # Triggered by hourly update at 59.59 of sensor: electrical_consumption_total_hour_without_spa_evcharger.
+  - trigger:
+      - trigger: state
+        entity_id: sensor.electrical_consumption_total_hour_without_spa_evcharger
+    condition:
+      - condition: template
+        value_template: >-
+          {{ states('sensor.electrical_consumption_total_hour_without_spa_evcharger') not in ['unknown', 'unavailable', none] }}
+    sensor:
+      - name: Electrical Hourly Consumption Profile
+        unique_id: electrical_hourly_consumption_profile
+        icon: mdi:chart-timeline-variant
+        device_class: timestamp
+        state: "{{ now().isoformat() }}"
+        attributes:
+          hourly_profile: >-
+            {% set current_hour = now().hour | string %}
+            {% set new_value = states('sensor.electrical_consumption_total_hour_without_spa_evcharger') | float(0) %}
+            {% set old_raw = this.attributes.get('hourly_profile') if this is defined else None %}
+            {% if old_raw is mapping %}
+            {%   set old_profile = old_raw %}
+            {% elif old_raw is string %}
+            {%   set old_profile = old_raw | from_json %}
+            {% else %}
+            {%   set old_profile = {} %}
+            {% endif %}
+            {% set ns = namespace(profile = {}) %}
+            {% for h in range(24) %}
+            {%   set hk = h | string %}
+            {%   if hk == current_hour %}
+            {%     set old_slot = old_profile[hk] if hk in old_profile else [0,0,0,0,0,0,0,0] %}
+            {%     set new_days = [new_value, old_slot[1], old_slot[2], old_slot[3], old_slot[4], old_slot[5], old_slot[6]] %}
+            {%     set valid = new_days | select('gt', 0) | list %}
+            {%     set avg = ((valid | sum) / (valid | length)) | round(5) if valid | length > 0 else 0 %}
+            {%     set slot = [avg] + new_days %}
+            {%   elif hk in old_profile %}
+            {%     set slot = old_profile[hk] %}
+            {%   else %}
+            {%     set slot = [0,0,0,0,0,0,0,0] %}
+            {% endif %}
+            {% set ns.profile = ns.profile | combine({hk: slot}) %}
+            {% endfor %}
+            {{ ns.profile | tojson }}
+
+  # Analyses the next 48 hours (today + tomorrow) and rates each hour as
+  # Best (5), Better (4), Good (3), Neutral (2), or Avoid (1 and 0) for running flexible electrical loads
+  # such as EV charging, washing machine, dishwasher and so forth.
+  # Each slot has 8 hours each over the 48 hours.
+  #
+  # The rating is based on the cost of consuming one kWh in that hour,
+  # taking into account the:
+  # - Spot tariff
+  # - Fixed distribution cost
+  # - Solar production
+  # - And what could alternatively be earned by exporting surplus solar to the grid.
+  #
+  # Triggers:
+  # Recalculates only when Nordpool tariff or either solar forecast updates.
+  # On HA restart the sensor is unavailable until the first trigger fires.
+  #
+  # Output:
+  # Attribute 'slots' — a list of 48 entries, one per hour, each containing:
+  #   hour        : 0–47 (0 = midnight today, 24 = midnight tomorrow)
+  #   tariff      : Nordpool spot price in SEK/kWh for that hour
+  #   buy_cost    : What you pay per kWh from the grid (tariff + distribution)
+  #   sell_price  : What you earn per kWh exported (tariff + compensation)
+  #   solar_kwh   : Combined solar forecast for that hour in kWh
+  #   surplus     : Solar production above the household base load (kWh)
+  #   eff_cost    : The effective cost used for ranking (see logic below)
+  #   tier        : 2=Good · 1=Neutral · 0=Avoid
+  #
+  # Sensors:
+  # sensor.nordpool_kwh_se3_sek_3_10_0
+  #   Provides 'today' and 'tomorrow' as lists of 96 values each (15-minute
+  #   intervals, same price repeated 4 times per hour). Unit: SEK/kWh.
+  #
+  # sensor.electrical_distribution_rate_summary
+  #   The fixed network distribution fee added on top of the spot tariff
+  #   when buying from the grid. Unit: öre/kWh — divided by 100 → SEK/kWh.
+  #
+  # input_number.electrical_yield_rate_compensation_manual
+  #   The fixed bonus received on top of the spot tariff when exporting
+  #   surplus solar to the grid. Unit: öre/kWh — divided by 100 → SEK/kWh.
+  #
+  # sensor.solar_forecast_home_south_east
+  # sensor.solar_forecast_home_south
+  #   Both provide attribute 'watt_hours_period': a dictionary keyed by
+  #   datetime string ('YYYY-MM-DD HH:00:00') with forecast Wh per hour.
+  #   The two forecasts are summed and converted to kWh.
+  #
+  # sensor. electrical_hourly_consumption_profile and attribute hourly_profile.
+  #   The consumption profile in kWh per daily hour (0-23) as median of last 7 days for each hour.
+  #
+  # Logic:
+  # Step 1 — Tariff array
+  #   today[] and tomorrow[] are concatenated into a single 192-element list.
+  #   For each hour h (0–47), slot index h×4 gives the price for that hour.
+  #
+  # Step 2 — Buy cost vs sell price
+  #   buy_cost   = tariff + distribution_rate
+  #   sell_price = tariff + export_compensation
+  #   buy_cost is always higher than sell_price because the distribution fee
+  #   only applies when purchasing, not when exporting.
+  #
+  # Step 3.1 Base load for the last 7 days
+  #   Base load as taken from electrical_hourly_consumption_profile.
+  #
+  # Step 3.2 Base load by season
+  #   Only utilized if there is no data from electrical_hourly_consumption_profile
+  #   A fixed household baseline consumption is subtracted from solar
+  #   production to determine whether a true surplus exists:
+  #     Winter (Dec/Jan/Feb) : 2.5 kWh/h
+  #     All other months     : 1.0 kWh/h
+  #
+  # Step 4 — Effective cost per hour
+  #   This is the key value used for ranking each hour:
+  #   IF solar_kwh > base_load (surplus exists):
+  #     effective_cost = sell_price
+  #     Reason: you are not paying grid price, but you forgo export earnings.
+  #     Self-consumption is always preferable to exporting, so the opportunity
+  #       cost (sell_price) is what running a load truly costs you.
+  #   IF no surplus:
+  #     effective_cost = buy_cost
+  #     Reason: every kWh consumed must be purchased from the grid.
+  #   Because sell_price < buy_cost, surplus hours will naturally always rank
+  #   among the cheapest — no special solar priority logic is needed.
+  #
+  # Step 5 — Relative thresholds
+  #   All 48 hours are sorted by effective_cost ascending.
+  #   The sorted list is split into three equal bands of 16 hours each:
+  #     Hours ranked  1–16 : thresh_good  (cheapest third)
+  #     Hours ranked 17–32 : middle third
+  #     Hours ranked 33–48 : thresh_avoid (most expensive third)
+  #   Thresholds are relative to the 48-hour window, so the rating
+  #   self-adjusts on both cheap and expensive days.
+  #
+  # Step 6 — Tier assignment
+  #   Each hour is compared to the thresholds and assigned a tier:
+  #     effective_cost <= thresh_good  → tier 2 (Good)
+  #     effective_cost <= thresh_avoid → tier 1 (Neutral)
+  #     otherwise                      → tier 0 (Avoid)
+  - trigger:
+      - platform: state
+        entity_id:
+          - sensor.nordpool_kwh_se3_sek_3_10_0
+          - sensor.solar_forecast_home_south_east
+          - sensor.solar_forecast_home_south
+    sensor:
+      - name: "Electrical Load Slot Rating"
+        unique_id: electrical_load_slot_rating
+        icon: mdi:clock-check-outline
+        state: >
+          {% set t_tom = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'tomorrow') %}
+          {{ 'today_and_tomorrow' if t_tom is not none else 'today_only' }}
+        attributes:
+          slots: >
+            {% set ns = namespace(hours=[]) %}
+            {% set t_today = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'today') | default([], true) %}
+            {% set t_tomorrow = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'tomorrow') | default([], true) %}
+            {% set tariffs = t_today + t_tomorrow %}
+            {% set dist = states('sensor.electrical_distribution_rate_summary') | float(0) / 100 %}
+            {% set comp = states('input_number.electrical_yield_rate_compensation_manual') | float(0) / 100 %}
+            {% set sol_se = state_attr('sensor.solar_forecast_home_south_east', 'watt_hours_period') | default({}, true) %}
+            {% set sol_s = state_attr('sensor.solar_forecast_home_south', 'watt_hours_period') | default({}, true) %}
+            {% set hourly_profile = state_attr('sensor.electrical_hourly_consumption_profile', 'hourly_profile') | default([], true) %}
+            {% set expected_keys = range(24) | map('string') | list %}
+            {% set is_valid = hourly_profile is mapping and (hourly_profile.keys() | list | sort) == (expected_keys | sort) %}
+            {% set hourly_profile = hourly_profile if is_valid else None %}
+            {% set today_str = now().strftime('%Y-%m-%d') %}
+            {% set tomorrow_str = (now() + timedelta(days=1)).strftime('%Y-%m-%d') %}
+            {% for h in range(48) %}
+            {%   set slot       = h * 4 %}
+            {%   set tariff_h   = tariffs[slot] | float(0) if slot < tariffs | length else 0.0 %}
+            {%   set buy_cost   = tariff_h + dist %}
+            {%   set sell_price = tariff_h + comp %}
+            {%   if h < 24 %}
+            {%     set day_str = today_str %}
+            {%     set hh = h %}
+            {%   else %}
+            {%     set day_str = tomorrow_str %}
+            {%     set hh = h - 24 %}
+            {%   endif %}
+            {%   if (hourly_profile is not none) %}
+            {%     if (h < 24) %}
+            {%       set h_list = hourly_profile[h | string] %}
+            {%     else %}
+            {%       set h_list = hourly_profile[(h-24) | string] %}
+            {%     endif %}
+            {%     set base_load = h_list[0] %}
+            {%   else %}
+            {%     set base_load = 2.5 if now().month in [12, 1, 2] else 1.0 %}
+            {%   endif %}
+            {%   set hh_str = ('0' ~ hh | string) if hh < 10 else hh | string %}
+            {%   set solar_key = day_str ~ ' ' ~ hh_str ~ ':00:00' %}
+            {%   set wh_se = sol_se[solar_key] | float(0) if solar_key in sol_se else 0.0 %}
+            {%   set wh_s = sol_s[solar_key]  | float(0) if solar_key in sol_s else 0.0 %}
+            {%   set solar_kwh = (wh_se + wh_s) / 1000 %}
+            {%   set surplus = [solar_kwh - base_load, 0] | max %}
+            {%   set eff_cost = sell_price if surplus > 0 else buy_cost %}
+            {%   set ns.hours = ns.hours + [{'hour': h, 'tariff': tariff_h | round(5), 'base_load': base_load, 'buy_cost': buy_cost | round(5), 'sell_price': sell_price | round(5), 'solar_kwh': solar_kwh | round(5), 'surplus': surplus | round(5), 'eff_cost': eff_cost | round(5) }] %}
+            {% endfor %}
+            {% set ranked = ns.hours | sort(attribute='eff_cost') %}
+            {% set thresh_best = ranked[7].eff_cost %}
+            {% set thresh_better = ranked[15].eff_cost %}
+            {% set thresh_good = ranked[23].eff_cost %}
+            {% set thresh_neutral = ranked[31].eff_cost %}
+            {% set thresh_avoid = ranked[39].eff_cost %}
+            {% set ns2 = namespace(result=[]) %}
+            {% for entry in ns.hours %}
+            {%   if entry.eff_cost <= thresh_best  %}
+            {%     set tier = 5 %}
+            {%   elif entry.eff_cost <= thresh_better %}
+            {%     set tier = 4 %}
+            {%   elif entry.eff_cost <= thresh_good %}
+            {%     set tier = 3 %}
+            {%   elif entry.eff_cost <= thresh_neutral %}
+            {%     set tier = 2 %}
+            {%   else %}
+            {%     set tier = 0 %}
+            {%   endif %}
+            {%   set ns2.result = ns2.result + [dict(entry, tier=tier)] %}
+            {% endfor %}
+            {{ ns2.result }}

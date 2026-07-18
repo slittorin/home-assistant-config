@@ -1264,6 +1264,40 @@ template:
           {{ states(states('input_text.electrical_yield_sensor')) }}
 
   - trigger:
+      # Added 20260522.
+      # We want to keep track of the total consumption per hour, without spa and evcharger.
+      # Trigger at the end of every hour, after:
+      # - electrical_consumption_total_hour
+      # - balboa_spa_circulation_pump_heater_consumption_hour
+      # -
+      # has been set at 59.58 each hour, so at 59.59 each hour.
+      - platform: time_pattern
+        hours: "/1"
+        minutes: "59"
+        seconds: "59"
+    sensor:
+      - name: electrical_consumption_total_hour_without_spa_evcharger
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total
+        state: >
+          {% set intake = states('sensor.electrical_consumption_total_hour') %}
+          {% set spa = states('sensor.balboa_spa_circulation_pump_heater_consumption_hour') %}
+          {% set evcharger = states('sensor.evcharger_consumption_hour') %}
+          {% set snapshots_valid = true %}
+          {% set result = none %}
+          {% if (intake == 'unknown' or intake == 'unavailable') %}
+          {%   set snapshots_valid = false %}
+          {% endif %}
+          {% if (snapshots_valid == true) %}
+          {%  set intake = intake | round(5, default=0) %}
+          {%  set spa = spa | round(5, default=0) %}
+          {%  set evcharger = evcharger | round(5, default=0) %}
+          {%  set result = intake - spa - evcharger %}
+          {% endif %}
+          {{ result }}
+
+  - trigger:
       # Trigger at the near end of every hour, since we want to keep hourly states for energy rates.
       - platform: time_pattern
         hours: "/1"

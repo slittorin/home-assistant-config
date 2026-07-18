@@ -125,6 +125,36 @@ sensor:
     sampling_size: 120
     max_age:
       hours: 1
+  # We want to get the min statistics for the power (W) for charger.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly charger total active power min
+    unique_id: shelly_charger_total_active_power_min
+    entity_id: sensor.shelly_charger_effekt
+    state_characteristic: value_min
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the max statistics for the power (W) for charger.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly charger total active power max
+    unique_id: shelly_charger_total_active_power_max
+    entity_id: sensor.shelly_charger_effekt
+    state_characteristic: value_max
+    sampling_size: 120
+    max_age:
+      hours: 1
+  # We want to get the mean statistics for the power (W) for charger.
+  # Standard update interval is 30 seconds.
+  - platform: statistics
+    name: Shelly charger total active power mean
+    unique_id: shelly_charger_total_active_power_mean
+    entity_id: sensor.shelly_charger_effekt
+    state_characteristic: mean
+    sampling_size: 120
+    max_age:
+      hours: 1
 
 template:
   # Removed 20251115: Can sometime give faulty numbers.
@@ -281,6 +311,8 @@ template:
       #          {% endif %}
       #          {{ value }}
 
+      # Heat exchanger
+
       # We save shelly_heat_exchanger_power_min
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
       - name: shelly_heat_exchanger_power_min_hour
@@ -337,6 +369,8 @@ template:
           {%   set value = float(input, default=0) %}
           {% endif %}
           {{ value }}
+
+      # Spa
 
       # We save shelly_spa_total_active_energy for last hour.
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
@@ -426,14 +460,88 @@ template:
           {% endif %}
           {{ value }}
 
-      # We save shelly_spa_total_active_energy
+      # Charger
+
+      # We save shelly_charger_energi for last hour.
       # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
-      - name: shelly_water_heater_total_active_energy_hour
+      - name: shelly_charger_total_active_energy_last_hour
         device_class: "energy"
         unit_of_measurement: "kWh"
         state_class: total_increasing
         state: >
-          {% set input = states('sensor.shelly_water_heater_total_active_energy') %}
+          {% set old_consumption = states('sensor.shelly_charger_total_active_energy_hour') %}
+          {% set consumption = states('sensor.shelly_charger_energi') %}
+          {% set inputs_valid = true %}
+          {% if (old_consumption == 'unknown' or old_consumption == 'unavailable' or old_consumption == 0) %}
+          {%   set inputs_valid = false %}
+          {% elif (consumption == 'unknown' or consumption == 'unavailable') %}
+          {%   set inputs_valid = false %}
+          {% endif %}
+          {% if (inputs_valid == true) %}
+          {%   set old_consumption = old_consumption | float %}
+          {%   set consumption = consumption | float %}
+          {%   if (old_consumption == 0) %}
+          {%     set value = 0 %}
+          {%   else %}
+          {%     set value = float(consumption - old_consumption, default=0) %}
+          {%   endif %}
+          {%   if (value < 0) %}
+          {%     set value = 0 %}
+          {%   endif %}
+          {% else %}
+          {%   set value = 0 %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_charger_total_active_energy
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_charger_total_active_energy_hour
+        device_class: "energy"
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {% set input = states('sensor.shelly_charger_energi') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_charger_total_active_power_min
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_charger_total_active_power_min_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_charger_total_active_power_min') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_charger_total_active_power_max
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_charger_total_active_power_max_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_charger_total_active_power_max') %}
+          {% if (input == 'unknown' or input == 'unavailable') %}
+          {%   set value = 0 %}
+          {% else %}
+          {%   set value = float(input, default=0) %}
+          {% endif %}
+          {{ value }}
+      # We save shelly_charger_total_active_power_mean
+      # We will therefore not capture the last seconds for the hour, but that will have minor impact as we gather data for 60 minutes.
+      - name: shelly_charger_total_active_power_mean_hour
+        device_class: "power"
+        unit_of_measurement: "W"
+        state_class: measurement
+        state: >
+          {% set input = states('sensor.shelly_charger_total_active_power_mean') %}
           {% if (input == 'unknown' or input == 'unavailable') %}
           {%   set value = 0 %}
           {% else %}

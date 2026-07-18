@@ -27,6 +27,8 @@ logger:
     supervisor: info
     # 20241218: To check for errors with SMA-integration.
     #homeassistant.components.sma: debug
+    # 20270701: To understand why backups are not deleted.
+    homeassistant.components.backup: debug
 
 # Recorder is enabled by default.
 recorder:
@@ -121,6 +123,8 @@ influxdb:
       - sensor.shelly_spa_*
       # Shelly: water heater all phases and totals (14 entities)
       - sensor.shelly_water_heater_*
+      # Shelly: Charger all phases and totals (14 entities)
+      - sensor.shelly_charger_*
       # Server1: datetime snapshot sensors (7 entities)
       - sensor.server1_*_datetime
       # All iphone sensors are removed (10+) as of 20260328.
@@ -183,6 +187,8 @@ influxdb:
       - sensor.server1_grafana_backup_log
       - sensor.server1_backup_to_nas_log
       - sensor.server1_influxdb_export_yesterday_log
+      # This sensor only has attributes.
+      - sensor.electrical_load_slot_rating
 
 notify:
   - name: email_notification
@@ -219,13 +225,15 @@ homeassistant:
     server1: !include packages/server1.yaml
     server1_github_push: !include packages/server1_github_push.yaml
     weather: !include packages/weather.yaml
-    sma: !include packages/sma.yaml
-    tariff_electrical: !include packages/tariff_electrical.yaml
     balboa_spa: !include packages/balboa_spa.yaml
     charger: !include packages/charger.yaml
     systemair: !include packages/systemair.yaml
     adax: !include packages/adax.yaml
-    shelly: !include packages/shelly.yaml
+    electrical_effekttariff: !include packages/electrical_effekttariff.yaml
+    electrical_shelly: !include packages/electrical_shelly.yaml
+    electrical_sma: !include packages/electrical_sma.yaml
+    electrical_tariff: !include packages/electrical_tariff.yaml
+    electrical_trend: !include packages/electrical_trend.yaml
 
 shell_command:
   # We run copy_backup as background process, since otherwise HA will terminate the process after 60 seconds.

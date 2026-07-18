@@ -1076,7 +1076,6 @@ automation:
             {{ "%02d:00" | format(hour_end) }}
 
   # We set the start for filter cycle 2.
-  # We set to default 12:00:00.
   # Set also the following sensors/automation for timing:
   # - balboa_spa_automation_start_filtercycle_1
   # - balboa_spa_automation_start_filtercycle_2
