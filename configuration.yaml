@@ -190,17 +190,18 @@ influxdb:
       # This sensor only has attributes.
       - sensor.electrical_load_slot_rating
 
-notify:
-  - name: email_notification
-    platform: smtp
-    server: !secret email_server
-    port: 587
-    timeout: 15
-    sender: !secret email_email_from
-    recipient: !secret email_email_to
-    starttls: true
-    username: !secret email_email_from
-    password: !secret email_password
+# Removed 20260922, moved into GUI.
+#notify:
+#  - name: email_notification
+#    platform: smtp
+#    server: !secret email_server
+#    port: 587
+#    timeout: 15
+#    sender: !secret email_email_from
+#    recipient: !secret email_email_to
+#    starttls: true
+#    username: !secret email_email_from
+#    password: !secret email_password
 
 # Text to speech
 tts:

@@ -156,6 +156,10 @@ template:
           - sensor.nordpool_kwh_se3_sek_3_10_0
           - sensor.solar_forecast_home_south_east
           - sensor.solar_forecast_home_south
+      - platform: homeassistant
+        event: start
+      - platform: time_pattern
+        minutes: "/30"
     sensor:
       - name: "Electrical Load Slot Rating"
         unique_id: electrical_load_slot_rating
@@ -168,6 +172,7 @@ template:
             {% set ns = namespace(hours=[]) %}
             {% set t_today = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'today') | default([], true) %}
             {% set t_tomorrow = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'tomorrow') | default([], true) %}
+            {% set tomorrow_valid = state_attr('sensor.nordpool_kwh_se3_sek_3_10_0', 'tomorrow_valid') == true %}
             {% set tariffs = t_today + t_tomorrow %}
             {% set dist = states('sensor.electrical_distribution_rate_summary') | float(0) / 100 %}
             {% set comp = states('input_number.electrical_yield_rate_compensation_manual') | float(0) / 100 %}
@@ -179,7 +184,8 @@ template:
             {% set hourly_profile = hourly_profile if is_valid else None %}
             {% set today_str = now().strftime('%Y-%m-%d') %}
             {% set tomorrow_str = (now() + timedelta(days=1)).strftime('%Y-%m-%d') %}
-            {% for h in range(48) %}
+            {% set loop_hours = 48 if tomorrow_valid else 24 %}
+            {% for h in range(loop_hours) %}
             {%   set slot       = h * 4 %}
             {%   set tariff_h   = tariffs[slot] | float(0) if slot < tariffs | length else 0.0 %}
             {%   set buy_cost   = tariff_h + dist %}
@@ -192,11 +198,7 @@ template:
             {%     set hh = h - 24 %}
             {%   endif %}
             {%   if (hourly_profile is not none) %}
-            {%     if (h < 24) %}
-            {%       set h_list = hourly_profile[h | string] %}
-            {%     else %}
-            {%       set h_list = hourly_profile[(h-24) | string] %}
-            {%     endif %}
+            {%     set h_list = hourly_profile[hh | string] %}
             {%     set base_load = h_list[0] %}
             {%   else %}
             {%     set base_load = 2.5 if now().month in [12, 1, 2] else 1.0 %}
@@ -211,11 +213,12 @@ template:
             {%   set ns.hours = ns.hours + [{'hour': h, 'tariff': tariff_h | round(5), 'base_load': base_load, 'buy_cost': buy_cost | round(5), 'sell_price': sell_price | round(5), 'solar_kwh': solar_kwh | round(5), 'surplus': surplus | round(5), 'eff_cost': eff_cost | round(5) }] %}
             {% endfor %}
             {% set ranked = ns.hours | sort(attribute='eff_cost') %}
-            {% set thresh_best = ranked[7].eff_cost %}
-            {% set thresh_better = ranked[15].eff_cost %}
-            {% set thresh_good = ranked[23].eff_cost %}
-            {% set thresh_neutral = ranked[31].eff_cost %}
-            {% set thresh_avoid = ranked[39].eff_cost %}
+            {% set n = ranked | length %}
+            {% set b = n // 6 %}
+            {% set thresh_best = ranked[b - 1].eff_cost %}
+            {% set thresh_better = ranked[(2 * b) - 1].eff_cost %}
+            {% set thresh_good = ranked[(3 * b) - 1].eff_cost %}
+            {% set thresh_neutral = ranked[(4 * b) - 1].eff_cost %}
             {% set ns2 = namespace(result=[]) %}
             {% for entry in ns.hours %}
             {%   if entry.eff_cost <= thresh_best  %}

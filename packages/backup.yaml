@@ -80,3 +80,21 @@ input_button:
 #  - platform: file
 #    name: home_assistant_copy_backup_log
 #    file_path: /config/logs/copy_backup.log
+
+# Added 20260919 to get email sent when backup fail.
+automation:
+  - alias: Alert on failed backup
+    trigger:
+      - platform: state
+        entity_id: event.backup_automatic_backup
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.attributes.event_type == 'failed' }}"
+    action:
+      - service: notify.email_notification
+        data:
+          title: "Home Assistant backup failed"
+          message: >
+            Backup failed on {{ now().strftime('%Y-%m-%d %H:%M') }}.
+            Reason: {{ trigger.to_state.attributes.failed_reason | default('unknown') }}
+    mode: single

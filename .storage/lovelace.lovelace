@@ -34,7 +34,6 @@
                   "type": "custom:sankey-chart",
                   "layout": "horizontal",
                   "height": 154,
-                  "min_box_height": 154,
                   "unit_prefix": null,
                   "round": 0,
                   "convert_units_to": "",
@@ -49,11 +48,11 @@
                   "show_names": true,
                   "show_icons": false,
                   "wide": true,
-                  "throttle": 2000,
                   "grid_options": {
                     "columns": 15,
                     "rows": 4
                   },
+                  "throttle": 2000,
                   "title": "Nuvarande effekt",
                   "nodes": [
                     {
@@ -1187,7 +1186,12 @@
             }
           ],
           "max_columns": 4,
-          "dense_section_placement": false
+          "dense_section_placement": false,
+          "header": {
+            "layout": "start",
+            "badges_position": "bottom",
+            "badges_wrap": "wrap"
+          }
         },
         {
           "theme": "Backend-selected",
